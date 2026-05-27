@@ -57,3 +57,13 @@
 | DEC-spec02-token-system | 2026-05-27 | Design tokens implemented as TypeScript constants in packages/ui/src/tokens/. | Framework-agnostic approach allows tokens to be consumed by any rendering layer. Aligns with military-intelligence visual doctrine. | Colours, typography, spacing tokens all derive from Spec #11a and Spec #41. |
 | DEC-spec02-accessibility | 2026-05-27 | All status and priority indicators use colour + text + shape (never colour alone). | v1.3 Requirement 24 mandates colour accessibility. | Status badges include text labels; priority indicators include shapes (◆▲●■○). |
 | DEC-spec02-intensity-levels | 2026-05-27 | Three visual intensity levels implemented (Operational Standard, Tactical Analysis, Emergency Command). | Spec #41 §5 requires distinct visual intensity levels. | Emergency styling reserved for P0/zero-day only. |
+
+## Spec 03 execution decisions
+
+| Decision ID | Date | Decision | Rationale | Impact |
+|---|---|---|---|---|
+| DEC-spec03-owner-authorised | 2026-05-27 | Owner authorised seed data and canonical entity types for spec 03. | Owner explicitly directed: "Execute spec 03 end-to-end." | Canonical types in packages/contracts/, fixtures in packages/contracts/src/fixtures/. |
+| DEC-spec03-canonical-entities | 2026-05-27 | Five canonical entities implemented: Asset, Identity, Case, Connector, AuditEvent. | Spec #05 §6.4 defines minimum Phase 0 entities. All include common fields, tenant context, and source provenance. | Foundation for all domain specs that consume canonical data. |
+| DEC-spec03-connector-classes | 2026-05-27 | Connector fixtures use only classes A/B/C/D per Spec #61. | Doctrinal Assertion 11 prohibits inventing connector classes. | Four mock connectors cover all four classes. |
+| DEC-spec03-no-credentials | 2026-05-27 | All fixtures use synthetic data with .example domains and (Mock) suffixes. | Domain Req 1 and v1.3 Req 19 prohibit real credentials. | No real customer data, secrets, or vendor identifiers in fixtures. |
+| DEC-spec03-deterministic-ids | 2026-05-27 | Fixture IDs use seedId() function producing stable prefix-NNNN format. | v1.3 Req 20 requires repeatable fixture runs. | Tests are deterministic and reproducible. |

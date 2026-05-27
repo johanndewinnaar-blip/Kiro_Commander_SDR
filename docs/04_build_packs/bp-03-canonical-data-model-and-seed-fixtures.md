@@ -1,7 +1,7 @@
 # BP-03 — Canonical Data Model and Seed Fixtures
 
 **Target version:** v1.1  
-**Status:** Planned / Kiro-ready  
+**Status:** Implemented — canonical entities, seed fixtures, and tests complete  
 **Type:** Build pack, not application code.
 
 ## Purpose
