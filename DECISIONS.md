@@ -77,3 +77,12 @@
 | DEC-spec04-residency | 2026-05-27 | Data residency enum supports UK, US, EU per Master Technical Specification §11.2. | Tenant-selected residency boundary must be honoured. | Tenants table carries residency column; future enforcement at query layer. |
 | DEC-spec04-builds-on-spec03 | 2026-05-27 | Drizzle schema mirrors canonical entity types from packages/contracts (spec 03). | Design.md specifies contracts and persistence are separate layers. | No duplication — schema tables match contract interfaces. |
 | DEC-spec04-no-live-db | 2026-05-27 | No live database provisioned. Schema is definition-only. | Local-first development; no AWS resources during validation. | drizzle.config.ts points to localhost; no migrations run. |
+
+## Spec 05 execution decisions
+
+| Decision ID | Date | Decision | Rationale | Impact |
+|---|---|---|---|---|
+| DEC-spec05-owner-authorised | 2026-05-27 | Owner authorised Command Centre implementation for spec 05. | Owner explicitly directed: "Execute spec 05 end-to-end." | Command Centre page created at apps/web/src/app/page.tsx. |
+| DEC-spec05-display-only | 2026-05-27 | Command Centre is a display surface consuming canonical seed data. No new entities invented. | Design.md and constraints specify: "consume canonical data and seed fixtures, do not invent new entities." | Page imports from packages/contracts/src/fixtures/ directly. |
+| DEC-spec05-p0-prominent | 2026-05-27 | P0 zero-day banner displayed prominently at top of Command Centre. | Domain Requirement 4 requires P0 surfaced prominently without hiding normal posture. | Emergency styling (red border, glow) applied per Spec #41 P0 visual rule. |
+| DEC-spec05-scaffold-labelled | 2026-05-27 | Scaffold metrics show "—" with SCAFFOLD badge. | Domain Requirement 3 requires mock/scaffold status labelled. Domain Requirement 6 requires source gaps shown. | Users see which domains are not yet populated. |

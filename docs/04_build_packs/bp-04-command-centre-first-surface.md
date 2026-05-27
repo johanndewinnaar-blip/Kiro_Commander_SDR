@@ -1,7 +1,7 @@
 # BP-04 — Command Centre First Surface
 
 **Target version:** v1.1  
-**Status:** Planned / Kiro-ready  
+**Status:** Implemented — Command Centre first functional surface complete  
 **Type:** Build pack, not application code.
 
 ## Purpose
