@@ -1,5 +1,5 @@
 ---
-inclusion: auto
+inclusion: always
 name: aws-alignment
 description: Use when discussing AWS target architecture, Bedrock, AgentCore, cloud deployment, infrastructure, environments, or production hardening.
 ---

@@ -1,5 +1,5 @@
 ---
-inclusion: auto
+inclusion: always
 name: security-testing
 description: Use when creating tests, reviewing security, writing backend behaviour, adding connectors, changing auth, handling secrets or planning Phase 2.
 ---

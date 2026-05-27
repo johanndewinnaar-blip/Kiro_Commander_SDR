@@ -1,5 +1,5 @@
 ---
-inclusion: auto
+inclusion: always
 name: commander-ai-grounding
 description: Use when working on Commander AI, prompts, AI runtime, LLM output validation, Bedrock, AgentCore or AI-assisted case/report drafting.
 ---
