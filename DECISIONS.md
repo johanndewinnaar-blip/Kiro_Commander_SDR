@@ -48,3 +48,12 @@
 | DEC-spec01-six-workspaces | 2026-05-27 | All six workspaces from Master Technical Specification §8.1 represented in route registry. | v1.2 Requirements 1-6 mandate workspace presence. | Executive Posture, Drift Operations, Control & Architecture, Identity & Asset Intelligence, Assurance & Audit, Transformation & M&A all have routes. |
 | DEC-spec01-build-mode | 2026-05-27 | Build-mode visibility shows all committed routes with status badges. | Spec #56 §6 requires scaffold/build/stub routes visible in build mode. | `isRouteVisible()` function implements dual-mode logic. |
 | DEC-spec01-no-code-test-updated | 2026-05-27 | Updated spec 00 no-code-before-validation test to reflect owner authorisation of apps/web/src. | Owner validated pack and authorised implementation. The test's original constraint is satisfied. | `apps/web/src` removed from blocked directories; `apps/api/src` and others remain blocked. |
+
+## Spec 02 execution decisions
+
+| Decision ID | Date | Decision | Rationale | Impact |
+|---|---|---|---|---|
+| DEC-spec02-owner-authorised | 2026-05-27 | Owner authorised application code for spec 02 (Design System and UI Component Catalogue). | Owner explicitly directed: "Execute spec 02 end-to-end... Use the tech stack defined in tech.md." | Implementation proceeds in packages/ui/. |
+| DEC-spec02-token-system | 2026-05-27 | Design tokens implemented as TypeScript constants in packages/ui/src/tokens/. | Framework-agnostic approach allows tokens to be consumed by any rendering layer. Aligns with military-intelligence visual doctrine. | Colours, typography, spacing tokens all derive from Spec #11a and Spec #41. |
+| DEC-spec02-accessibility | 2026-05-27 | All status and priority indicators use colour + text + shape (never colour alone). | v1.3 Requirement 24 mandates colour accessibility. | Status badges include text labels; priority indicators include shapes (◆▲●■○). |
+| DEC-spec02-intensity-levels | 2026-05-27 | Three visual intensity levels implemented (Operational Standard, Tactical Analysis, Emergency Command). | Spec #41 §5 requires distinct visual intensity levels. | Emergency styling reserved for P0/zero-day only. |

@@ -1,7 +1,7 @@
 # BP-02 — Design System and Component Catalogue
 
 **Target version:** v1.1  
-**Status:** Planned / Kiro-ready  
+**Status:** Implemented — design tokens, components, and tests complete  
 **Type:** Build pack, not application code.
 
 ## Purpose
