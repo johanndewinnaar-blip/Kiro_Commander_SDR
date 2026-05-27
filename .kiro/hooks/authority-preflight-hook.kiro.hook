@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Authority Preflight",
+  "description": "Pre-prompt authority and scope check. Source: 01-authority-preflight-hook.md",
+  "version": "1",
+  "when": {
+    "type": "promptSubmit"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Before acting on this prompt, perform the following authority preflight checks:\n\n1. Does the prompt request generation of application code (frontend, backend, API endpoints, UI components)? If yes, refuse unless explicit owner approval is present in this conversation. No application code is authorised during initial Kiro pack validation.\n2. Does the prompt request creation of live AWS resources (infrastructure, deployments, provisioning)? If yes, refuse unless explicit owner approval is present.\n3. Does the prompt request real vendor API integrations (credentials, live connector calls, production endpoints)? If yes, refuse. Real vendor APIs are not permitted before Phase 2 readiness approval.\n4. Does the prompt request production billing implementation? If yes, refuse unless explicit owner approval is present.\n5. Does the prompt request custom Kiro powers or n8n orchestration? If yes, refuse. These are not authorised in this programme.\n\nIf any of the above are detected and no explicit owner approval is present, block the request and explain which constraint applies.\n\nBefore proceeding with any permitted work, confirm you have read and will follow:\n- AGENTS.md (prime directive and hard stops)\n- docs/00_authority/AUTHORITY_MODEL.md\n- The authority read order defined in AGENTS.md\n- All active .kiro/steering/ files\n\nOnly proceed if the prompt passes all checks."
+  }
+}
