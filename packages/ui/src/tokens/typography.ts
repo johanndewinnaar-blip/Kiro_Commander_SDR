@@ -1,26 +1,40 @@
 /**
- * Commander SDR Design Tokens — Typography
+ * Commander SDR Design Tokens — Typography (v1.3.2 Remediated)
  *
- * Dense but legible layout per v1.3 Requirement 2.
- * Sharp alignment and symmetry per UI Design System steering.
+ * v1.3.2 Requirement 1: Bebas Neue display font
+ * v1.3.2 Requirement 2: Inter body font (400/500/600/700/800)
+ * v1.3.2 Requirement 3: 13px base font size
  *
- * Source: Spec #11a §3.2 Typography
+ * Source: both shell references
  */
 
 export const typography = {
   fontFamily: {
-    sans: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+    /** Body font — Inter via CSS variable */
+    body: "var(--font-body, 'Inter', system-ui, sans-serif)",
+    /** Display font — Bebas Neue via CSS variable */
+    display: "var(--font-display, 'Bebas Neue', Impact, sans-serif)",
+    /** Monospace for code/data */
     mono: '"JetBrains Mono", "Fira Code", "Cascadia Code", monospace',
   },
 
   fontSize: {
-    xs: '0.6875rem',     // 11px — badges, metadata
-    sm: '0.75rem',       // 12px — labels, secondary
-    base: '0.8125rem',   // 13px — body text (dense)
-    md: '0.875rem',      // 14px — primary content
-    lg: '1rem',          // 16px — section headings
-    xl: '1.25rem',       // 20px — page headings
-    '2xl': '1.5rem',     // 24px — dashboard titles
+    /** 10px — role labels, muted metadata */
+    xs: '10px',
+    /** 11.4px — sidebar sub-items */
+    sidebarSub: '11.4px',
+    /** 12px — user name, secondary labels */
+    sm: '12px',
+    /** 13px — base body text (v1.3.2 Req 3) */
+    base: '13px',
+    /** 14px — primary content */
+    md: '14px',
+    /** 21px — brand wordmark SEIERTECH */
+    brandSm: '21px',
+    /** 22px — page heading h1 (v1.3.2 Req 16) */
+    h1: '22px',
+    /** 23px — brand wordmark COMMANDER/SDR */
+    brandLg: '23px',
   },
 
   fontWeight: {
@@ -28,19 +42,26 @@ export const typography = {
     medium: '500',
     semibold: '600',
     bold: '700',
+    extrabold: '800',
   },
 
   lineHeight: {
     tight: '1.25',
-    normal: '1.5',
+    normal: '1.45',
     relaxed: '1.75',
   },
 
   letterSpacing: {
-    tight: '-0.01em',
+    /** Standard body text */
     normal: '0',
-    wide: '0.025em',
-    wider: '0.05em',     // Used for labels, badges
+    /** Uppercase eyebrows, card titles (v1.3.2 Req 16, 17) */
+    eyebrow: '0.06em',
+    /** Badge text */
+    badge: '0.08em',
+    /** Display font — brand wordmark (v1.3.2 Req 10) */
+    display: '0.09em',
+    /** Display font — brand large variant */
+    displayWide: '0.11em',
   },
 } as const;
 

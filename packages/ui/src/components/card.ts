@@ -31,20 +31,20 @@ export function getCardStyles(options: CardStyleOptions = {}) {
   const variants = {
     default: {
       ...base,
-      backgroundColor: colors.background.elevated,
-      border: `1px solid ${colors.border.subtle}`,
+      backgroundColor: colors.operational.panel,
+      border: `1px solid ${colors.operational.line}`,
       boxShadow: 'none',
     },
     elevated: {
       ...base,
-      backgroundColor: colors.background.elevated,
-      border: `1px solid ${colors.border.subtle}`,
+      backgroundColor: colors.operational.panel,
+      border: `1px solid ${colors.operational.line}`,
       boxShadow: shadows.md,
     },
     outlined: {
       ...base,
       backgroundColor: 'transparent',
-      border: `1px solid ${colors.border.default}`,
+      border: `1px solid ${colors.operational.line}`,
       boxShadow: 'none',
     },
   };
@@ -55,9 +55,8 @@ export function getCardStyles(options: CardStyleOptions = {}) {
     return {
       ...styles,
       cursor: 'pointer',
-      // Hover: gold accent border
       _hover: {
-        borderColor: colors.border.accent,
+        borderColor: colors.gold.primary,
         boxShadow: shadows.glow.gold,
       },
     };
