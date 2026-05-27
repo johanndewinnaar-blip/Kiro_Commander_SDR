@@ -163,3 +163,63 @@ v1.3 addresses the narrow remediation brief finding that sixteen existing Kiro s
 - Work Item 16 and 17 — deepened `41-internal-risk-investigation-sub-lifecycle` with jurisdictional configuration and insider-risk boundary prohibitions.
 - Updated SPEC_COVERAGE_MATRIX, DECISIONS, BUILD_SEQUENCE and pack version markers to v1.3.1.
 - Execution posture confirmed as Kiro + Git only; no external orchestration layer, custom Kiro powers, app code, live AWS resources or real vendor integrations were added.
+
+
+## Build session 2026-05-27 (final close-out, verified)
+
+### 1. Specs completed end-to-end today
+
+| Spec | Description | Key commits |
+|------|-------------|-------------|
+| 00 | Programme Foundation | ca7f8fd, 5893df1, ccec0e5 |
+| 01 | Application Shell + Routes | 13e055b |
+| 02 | Design System | 65fdb84 |
+| 03 | Seed Data + Fixtures | 14b63f1 |
+| 04 | Canonical Data Model | 8c47e58 |
+| 05 | Command Centre | ba19877 |
+| 43 | Strategy Layer Runtime Surface | 788471b |
+
+### 2. Design Language Remediation completed in 5 phases
+
+| Phase | Scope | Commit |
+|-------|-------|--------|
+| Phase 1 | 18 EARS requirements appended to Spec 02 | 16c6775 |
+| Phase 2 | Fonts (Bebas Neue, Inter), tokens (#061936 navy, #ffd21f gold), 9 new components | 265607a |
+| Phase 3 | Three boundary shells (Operational App, Commercial Control Plane, Tenant Admin), route boundary tags, 18 sidebar nav groups | 936fc68 |
+| Phase 4 | Command Centre re-implementation against v11 shell reference | d4747d8 |
+| Phase 5 | Sidebar expand/collapse interactivity with localStorage persistence | 79443d3 |
+
+### 3. Spec 06 started in phased approach
+
+- **Phase A complete** — Case domain model: 12 case types, closed-loop lifecycle states, 2 new risk object types (coverage_blindspot, ooda_phase_degradation), surface attribution. Commit f4d2ca2, +26 tests.
+- **Phase B complete** — Strategy consumption resolvers for SLA, Routing, Prioritisation Weight, Validation Window, Closure Gate, Reopening Trigger. Commit ea3ebff, +32 tests. Verified zero hardcoded strategy values; resolvers take strategies as parameter from Spec 43's seed-strategies.ts fixture.
+- **Phases C (UI), D (full state machine), E (communication/evidence) deferred to next session.**
+
+### 4. Total test count at session close
+
+**297 tests passing** across 15 test files.
+
+### 5. Key decisions recorded today
+
+- DEC-spec00-planning-complete, DEC-spec00-no-mock-data-needed, DEC-spec00-section3-blocked
+- DEC-spec01 through DEC-spec05 (per-spec execution decisions)
+- DEC-spec43-twelve-surfaces, DEC-spec43-runtime-binding, DEC-spec43-build-blocking, DEC-spec43-automation-boundary
+- DEC-v1.3.2-design-language-remediation
+- DEC-v1.3.2-tenant-admin-shell-pending-reference
+- DEC-v1.3.2-sidebar-interactivity
+
+### 6. Validation observation
+
+Spec 06 Phase B was diagnostically verified post-implementation. Resolver code contains zero hardcoded strategy values; SLA/routing/priority values flow from Spec 43 strategy policies via dependency injection (strategies parameter). Tenant Admin → Strategy Centre → resolver runtime path confirmed.
+
+### 7. Open items for next session
+
+- Spec 06 Phases C, D, E.
+- Responsive design scope: laptops 1280-1600px, standard monitors 1920×1080, wide monitors 2560×1440 and ultrawide. No phone or tablet. To be captured as a dedicated future spec.
+- Tenant Admin reference HTML pending. Tenant Admin currently inherits Operational App visual language per DEC-v1.3.2-tenant-admin-shell-pending-reference.
+- Hook file format cleanup: .md recipes, .json files from initial conversion, and runtime .kiro.hook files coexist. To be tidied in a future small task.
+- Phased-execution pattern proven effective for large specs (worked for design remediation in 5 phases, for Spec 06 in 2 phases so far). Same pattern recommended for any spec with >20 tasks.
+
+### 8. Working copy status
+
+Working copy clean. Branch: main. HEAD matches origin/main.
