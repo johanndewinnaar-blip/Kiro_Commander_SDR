@@ -29,3 +29,11 @@
 |---|---|---|---|---|
 | DEC-v1.3.1-Spec32-coverage-correction | 2026-05-27 | Correct Spec #32 coverage by adding Kiro spec `43-strategy-layer-runtime-surface`. | v1.2 and v1.3 matrices claimed coverage through governance/CISO dashboard specs, but baseline Spec #32 is a standalone mandatory build-blocking Strategy Layer Runtime Surface. | v1.3.1 adds the new Kiro spec and updates build sequence precedence before strategy-dependent features. |
 | DEC-v1.3.1-audit-residuals-closed | 2026-05-27 | Close the residual lineage gaps identified by the v1.2 completeness audit and v1.3.1 lineage sweep. | Remaining partial/absent items from Master Proposition v5.0, Master Technical Specification v7.0 and V1_2_COMPLETENESS_AUDIT required explicit EARS coverage. | v1.3.1 appends source-cited lineage closure requirements to the affected Kiro specs and updates coverage evidence. |
+
+## Spec 00 execution decisions
+
+| Decision ID | Date | Decision | Rationale | Impact |
+|---|---|---|---|---|
+| DEC-spec00-planning-complete | 2026-05-27 | Spec 00 validation and planning tasks (1.1–1.4, 2.1–2.5) completed without code generation. | Tasks are documentation/planning only; no code is authorised before pack validation. Authority read order confirmed, scope-in/out aligned with BP-00, no prohibited dependencies introduced. | Planning artefact created at `.kiro/specs/00-programme-foundation/planning.md`. Implementation tasks (3.1–3.3) remain blocked. |
+| DEC-spec00-no-mock-data-needed | 2026-05-27 | This domain requires no synthetic data fixtures. | Programme Foundation consumes source documents as its "data" — all already present as markdown files. | No fixture files created for this domain. |
+| DEC-spec00-section3-blocked | 2026-05-27 | Tasks 3.1, 3.2, 3.3 remain blocked pending owner pack validation approval. | AGENTS.md and BP-00 both require owner approval before code generation. | No implementation code produced. |
