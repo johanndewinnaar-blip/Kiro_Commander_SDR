@@ -2,7 +2,7 @@
 
 **Spec ID:** `00-programme-foundation`  
 **Target version:** v1.3.1  
-**Status:** Planned / Kiro-ready  
+**Status:** Validated — planning and tests complete  
 **Source doctrine:** Commander SDR baseline v2.6.2; see `docs/99_source_archive/baseline_v2_6_2/`.
 **Translated from baseline:** Spec #01 AI Build Agent Workflow, Spec #18 Unified Identity Architecture / register mismatch noted, Spec #56 Shell Reference vs Build Authority Doctrine
 **v1.3 depth:** full content-depth translation applied to this spec during v1.3 remediation.

@@ -1,7 +1,7 @@
 # BP-00 — Programme Foundation and Authority
 
 **Target version:** v1.1  
-**Status:** Planned / Kiro-ready  
+**Status:** Validated — planning and tests complete  
 **Type:** Build pack, not application code.
 
 ## Purpose
