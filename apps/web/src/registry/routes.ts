@@ -238,6 +238,20 @@ export const operationalRoutes: RouteEntry[] = [
     icon: 'transformation',
     sortOrder: 25,
   },
+  // === Strategy Centre (Spec #32 — build-blocking) ===
+  {
+    path: '/strategy',
+    label: 'Strategy Centre',
+    boundary: 'operational',
+    status: 'BUILD',
+    version: 'v1.1',
+    owningSpec: '43-strategy-layer-runtime-surface',
+    workspaces: ['executive-posture', 'drift-operations'],
+    rbac: ['SOM', 'CISO', 'Tenant Admin'],
+    showInNav: true,
+    icon: 'strategy',
+    sortOrder: 5,
+  },
   {
     path: '/architecture/aws-ai-runtime-evaluation',
     label: 'AWS/Bedrock/AgentCore Evaluation',

@@ -10,3 +10,4 @@ export { seedAssets } from './seed-assets';
 export { seedIdentities } from './seed-identities';
 export { seedCases } from './seed-cases';
 export { seedConnectors } from './seed-connectors';
+export { seedStrategies } from './seed-strategies';

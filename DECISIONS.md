@@ -86,3 +86,13 @@
 | DEC-spec05-display-only | 2026-05-27 | Command Centre is a display surface consuming canonical seed data. No new entities invented. | Design.md and constraints specify: "consume canonical data and seed fixtures, do not invent new entities." | Page imports from packages/contracts/src/fixtures/ directly. |
 | DEC-spec05-p0-prominent | 2026-05-27 | P0 zero-day banner displayed prominently at top of Command Centre. | Domain Requirement 4 requires P0 surfaced prominently without hiding normal posture. | Emergency styling (red border, glow) applied per Spec #41 P0 visual rule. |
 | DEC-spec05-scaffold-labelled | 2026-05-27 | Scaffold metrics show "—" with SCAFFOLD badge. | Domain Requirement 3 requires mock/scaffold status labelled. Domain Requirement 6 requires source gaps shown. | Users see which domains are not yet populated. |
+
+## Spec 43 execution decisions
+
+| Decision ID | Date | Decision | Rationale | Impact |
+|---|---|---|---|---|
+| DEC-spec43-owner-authorised | 2026-05-27 | Owner authorised Strategy Layer Runtime Surface implementation for spec 43. | Owner explicitly directed: "Execute spec 43 end-to-end... Implement all twelve strategy surfaces." | Strategy types, fixtures, route, and tests created. |
+| DEC-spec43-twelve-surfaces | 2026-05-27 | All twelve named strategy surfaces implemented as typed contracts with seed fixtures. | Spec #32 mandates exactly twelve surfaces. No non-baseline surfaces added. | SLA, Threshold, Automation Boundary, Routing, Posture, Mission Objective, Operational Tempo, Domain-Specific, Prioritisation Weight, Validation Window, Closure Gate, Reopening Trigger. |
+| DEC-spec43-runtime-binding | 2026-05-27 | Six runtime binding events defined as typed contracts. | Spec #32 §Runtime Binding requires priority, route, validation, closure-gate, reopening, and Fusion Map recalculation triggers. | RuntimeBindingTrigger interface with affected scope and audit ref. Mock-data scope; real engines come later. |
+| DEC-spec43-build-blocking | 2026-05-27 | Strategy Layer is now complete and unblocks case management, routing, validation/closure, reopening, and Fusion Map specs. | BUILD_SEQUENCE prerequisite chain item 7 satisfied. | Specs 06 (Case Management) and dependent features can now proceed. |
+| DEC-spec43-automation-boundary | 2026-05-27 | Automation boundary strategy explicitly forbids manual-case-creation and manual-lifecycle-override. | Doctrinal Assertion 1 (closed-loop case model) requires system-owned lifecycle. | Seed fixture enforces this constraint. |
