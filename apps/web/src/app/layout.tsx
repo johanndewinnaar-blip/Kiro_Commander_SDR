@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import { inter, bebasNeue } from './fonts';
+import { Shell } from '@/components/shell';
 
 export const metadata: Metadata = {
   title: 'Commander SDR',
@@ -6,15 +8,13 @@ export const metadata: Metadata = {
 };
 
 /**
- * Root layout — Commander SDR Application Shell
+ * Root Layout — Commander SDR Operational App
  *
- * Provides the persistent shell structure:
- * - Top navigation bar (search, Commander AI, notifications)
- * - Left sidebar navigation (registry-driven)
- * - Main content area (scrollable operational surface)
+ * Wraps all pages in the Operational App shell (v1.3.2 remediated).
+ * Loads Bebas Neue (display) and Inter (body) fonts via next/font/google.
  *
  * Source: Spec #45 Application Shell Boundary
- * Visual direction: Military-intelligence, brutalist, precise, executive-grade
+ * Visual: shell reference v11
  */
 export default function RootLayout({
   children,
@@ -22,9 +22,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body style={{ margin: 0, fontFamily: 'system-ui, sans-serif' }}>
-        {children}
+    <html lang="en" className={`${inter.variable} ${bebasNeue.variable}`}>
+      <body style={{ margin: 0, fontFamily: "var(--font-body, 'Inter', system-ui, sans-serif)", fontSize: '13px' }}>
+        <Shell>
+          {children}
+        </Shell>
       </body>
     </html>
   );
