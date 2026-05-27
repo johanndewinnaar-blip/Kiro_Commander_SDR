@@ -12,6 +12,8 @@
     "test:watch": "vitest"
   },
   "devDependencies": {
+    "drizzle-kit": "^0.31.10",
+    "drizzle-orm": "^0.45.2",
     "typescript": "^6.0.3",
     "vitest": "^4.1.7"
   }

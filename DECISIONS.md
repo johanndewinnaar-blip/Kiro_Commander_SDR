@@ -67,3 +67,13 @@
 | DEC-spec03-connector-classes | 2026-05-27 | Connector fixtures use only classes A/B/C/D per Spec #61. | Doctrinal Assertion 11 prohibits inventing connector classes. | Four mock connectors cover all four classes. |
 | DEC-spec03-no-credentials | 2026-05-27 | All fixtures use synthetic data with .example domains and (Mock) suffixes. | Domain Req 1 and v1.3 Req 19 prohibit real credentials. | No real customer data, secrets, or vendor identifiers in fixtures. |
 | DEC-spec03-deterministic-ids | 2026-05-27 | Fixture IDs use seedId() function producing stable prefix-NNNN format. | v1.3 Req 20 requires repeatable fixture runs. | Tests are deterministic and reproducible. |
+
+## Spec 04 execution decisions
+
+| Decision ID | Date | Decision | Rationale | Impact |
+|---|---|---|---|---|
+| DEC-spec04-owner-authorised | 2026-05-27 | Owner authorised Drizzle ORM schema for spec 04 (Canonical Data Model). | Owner explicitly directed: "Execute spec 04 end-to-end... Use Drizzle ORM, Postgres 16+." | Persistence schema in packages/db/ using Drizzle ORM. |
+| DEC-spec04-seven-classifications | 2026-05-27 | Data classification enum implements all 7 types from Master Technical Specification §11.1. | Configuration, State, Verdict, Detection, Case, Threat Intelligence, Audit. | Every table carries a data_classification column. |
+| DEC-spec04-residency | 2026-05-27 | Data residency enum supports UK, US, EU per Master Technical Specification §11.2. | Tenant-selected residency boundary must be honoured. | Tenants table carries residency column; future enforcement at query layer. |
+| DEC-spec04-builds-on-spec03 | 2026-05-27 | Drizzle schema mirrors canonical entity types from packages/contracts (spec 03). | Design.md specifies contracts and persistence are separate layers. | No duplication — schema tables match contract interfaces. |
+| DEC-spec04-no-live-db | 2026-05-27 | No live database provisioned. Schema is definition-only. | Local-first development; no AWS resources during validation. | drizzle.config.ts points to localhost; no migrations run. |
