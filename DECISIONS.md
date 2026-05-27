@@ -109,3 +109,10 @@
 | Decision ID | Date | Decision | Rationale | Impact |
 |---|---|---|---|---|
 | DEC-v1.3.2-tenant-admin-shell-pending-reference | 2026-05-27 | Tenant Admin inherits Operational App visual language until a dedicated reference HTML is produced. | Spec #47 states Tenant Admin uses "SDR Operational App shell frame with admin-specific page navigation." No separate Tenant Admin shell HTML exists in the baseline. | Tenant Admin layout uses navy chrome, gold accent, and light content area. Brand wordmark adds "· TENANT ADMIN" suffix. Visual language is provisional. |
+
+
+## Phase 5 sidebar interactivity
+
+| Decision ID | Date | Decision | Rationale | Impact |
+|---|---|---|---|---|
+| DEC-v1.3.2-sidebar-interactivity | 2026-05-27 | Sidebar groups expand/collapse with localStorage persistence. Default: only active-route group expanded. User overrides persist. Control Plane sidebar remains flat single-level per v3 reference. | v11 shell reference shows expandable groups with carets. Interactivity improves navigation in a 18-group sidebar. | Operational App sidebar is interactive. Tenant Admin and Control Plane sidebars unchanged (flat). |
