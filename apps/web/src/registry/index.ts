@@ -12,6 +12,13 @@ export type { RouteEntry, NavGroup, BuildStatus, AppBoundary, TargetVersion, Wor
 export { operationalRoutes } from './routes';
 export { tenantAdminRoutes } from './tenant-admin-routes';
 export { controlPlaneRoutes } from './control-plane-routes';
+export {
+  TOP_NAV_WORKSPACES,
+  OPERATIONAL_NAV_GROUPS,
+  CONTROL_PLANE_NAV_ITEMS,
+  CONTROL_PLANE_TOP_NAV,
+} from './nav-groups';
+export type { NavGroup as SidebarNavGroup, NavSubItem } from './nav-groups';
 
 import { operationalRoutes } from './routes';
 import { tenantAdminRoutes } from './tenant-admin-routes';

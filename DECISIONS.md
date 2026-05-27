@@ -102,3 +102,10 @@
 | Decision ID | Date | Decision | Rationale | Impact |
 |---|---|---|---|---|
 | DEC-v1.3.2-design-language-remediation | 2026-05-27 | v1.3.2 amendment to Spec 02 captures the authoritative visual language from the v2.6 baseline shell references. | Diagnostic comparison revealed significant divergence between current implementation and the baseline shell HTML (wrong gold, missing fonts, missing brand lockup, wrong content background, undersized chrome, missing sidebar groups). Shell references are visual authority per Spec #56 doctrine. | Spec 02 implementation, Spec 01 sidebar topology, and Spec 05 Command Centre will be re-implemented to honour these requirements. 18 new EARS requirements appended to Spec 02. |
+
+
+## Phase 3 shell decisions
+
+| Decision ID | Date | Decision | Rationale | Impact |
+|---|---|---|---|---|
+| DEC-v1.3.2-tenant-admin-shell-pending-reference | 2026-05-27 | Tenant Admin inherits Operational App visual language until a dedicated reference HTML is produced. | Spec #47 states Tenant Admin uses "SDR Operational App shell frame with admin-specific page navigation." No separate Tenant Admin shell HTML exists in the baseline. | Tenant Admin layout uses navy chrome, gold accent, and light content area. Brand wordmark adds "· TENANT ADMIN" suffix. Visual language is provisional. |
