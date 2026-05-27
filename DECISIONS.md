@@ -96,3 +96,9 @@
 | DEC-spec43-runtime-binding | 2026-05-27 | Six runtime binding events defined as typed contracts. | Spec #32 §Runtime Binding requires priority, route, validation, closure-gate, reopening, and Fusion Map recalculation triggers. | RuntimeBindingTrigger interface with affected scope and audit ref. Mock-data scope; real engines come later. |
 | DEC-spec43-build-blocking | 2026-05-27 | Strategy Layer is now complete and unblocks case management, routing, validation/closure, reopening, and Fusion Map specs. | BUILD_SEQUENCE prerequisite chain item 7 satisfied. | Specs 06 (Case Management) and dependent features can now proceed. |
 | DEC-spec43-automation-boundary | 2026-05-27 | Automation boundary strategy explicitly forbids manual-case-creation and manual-lifecycle-override. | Doctrinal Assertion 1 (closed-loop case model) requires system-owned lifecycle. | Seed fixture enforces this constraint. |
+
+## v1.3.2 design language remediation
+
+| Decision ID | Date | Decision | Rationale | Impact |
+|---|---|---|---|---|
+| DEC-v1.3.2-design-language-remediation | 2026-05-27 | v1.3.2 amendment to Spec 02 captures the authoritative visual language from the v2.6 baseline shell references. | Diagnostic comparison revealed significant divergence between current implementation and the baseline shell HTML (wrong gold, missing fonts, missing brand lockup, wrong content background, undersized chrome, missing sidebar groups). Shell references are visual authority per Spec #56 doctrine. | Spec 02 implementation, Spec 01 sidebar topology, and Spec 05 Command Centre will be re-implemented to honour these requirements. 18 new EARS requirements appended to Spec 02. |

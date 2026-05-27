@@ -191,3 +191,92 @@ WHEN status, priority or risk is indicated by colour THE SYSTEM SHALL pair colou
 - Tasks can be staged without collapsing the full journey into an MVP.
 - Any blocked activity is explicit in tasks and build pack references.
 - The domain can be tested using synthetic fixtures before Phase 2.
+
+
+## v1.3.2 design language remediation requirements
+
+> These requirements capture the authoritative visual language from the v2.6 baseline shell references. They correct the design token and component implementation to match the actual baseline visual treatment.
+
+### Typography
+
+### v1.3.2 Requirement 1 — Bebas Neue display font
+
+WHEN the design system is initialised THE SYSTEM SHALL load Bebas Neue as the display font family for brand wordmark and page headings. [Source: both shell references]
+
+### v1.3.2 Requirement 2 — Inter body font
+
+WHEN the design system is initialised THE SYSTEM SHALL load Inter (weights 400, 500, 600, 700, 800) as the body font family for all UI text. [Source: both shell references]
+
+### v1.3.2 Requirement 3 — Dense base font size
+
+WHEN body text is rendered THE SYSTEM SHALL use a 13px base font size to honour the dense-but-legible discipline. [Source: both shell references]
+
+### Colour palette
+
+### v1.3.2 Requirement 4 — Navy chrome colour
+
+WHEN navy is applied to chrome surfaces THE SYSTEM SHALL use the exact hex #061936 for primary navy and #071f43 for navy variant. [Source: shell reference v11]
+
+### v1.3.2 Requirement 5 — Gold accent colour
+
+WHEN gold is applied as accent THE SYSTEM SHALL use the exact hex #ffd21f and never substitute amber, brass, or muted gold variants. [Source: both shell references]
+
+### v1.3.2 Requirement 6 — Operational App content background
+
+WHEN the Operational App content area is rendered THE SYSTEM SHALL use a light background (#fff page, #f2f5f9 panel) with ink text (#0e1d32). [Source: shell reference v11]
+
+### v1.3.2 Requirement 7 — Commercial Control Plane content background
+
+WHEN the Commercial Control Plane content area is rendered THE SYSTEM SHALL use a dark background (#0d0d0d) with light text (#f4f4f4). [Source: commercial control plane shell v3]
+
+### Chrome dimensions
+
+### v1.3.2 Requirement 8 — Top bar height
+
+WHEN the top bar is rendered THE SYSTEM SHALL be exactly 68px tall. [Source: both shell references]
+
+### v1.3.2 Requirement 9 — Sidebar width
+
+WHEN the sidebar is rendered THE SYSTEM SHALL be exactly 306px wide on standard viewports, reducing to 286px below 1450px viewport width. [Source: shell reference v11]
+
+### Top bar composition
+
+### v1.3.2 Requirement 10 — Brand wordmark
+
+WHEN the brand wordmark is rendered THE SYSTEM SHALL compose it as three Bebas Neue elements separated by a thin gold vertical pipe: SEIERTECH (cream/off-white #f4f1eb), pipe (gold #ffd21f), COMMANDER (gold), SDR (white). [Source: shell reference v11]
+
+### v1.3.2 Requirement 11 — Top navigation tabs
+
+WHEN top navigation tabs are rendered THE SYSTEM SHALL display them as horizontal tabs with a 3px gold border-bottom on the active tab and rgba(255,210,31,.055) tint background. [Source: shell reference v11]
+
+### v1.3.2 Requirement 12 — Global search input
+
+WHEN the global search input is rendered THE SYSTEM SHALL be 440px wide on standard viewports with a translucent white background (rgba(255,255,255,.075)) and 1px translucent border. [Source: shell reference v11]
+
+### Sidebar composition
+
+### v1.3.2 Requirement 13 — Sidebar gradient
+
+WHEN the sidebar is rendered THE SYSTEM SHALL display a vertical gradient from #06152d to #030e1e. [Source: shell reference v11]
+
+### v1.3.2 Requirement 14 — Sidebar navigation structure
+
+WHEN sidebar navigation is rendered THE SYSTEM SHALL present a two-level structure of expandable group headers with sub-items, sub-items indented with a vertical gold-tinted divider (rgba(255,210,31,.16)). [Source: shell reference v11]
+
+### v1.3.2 Requirement 15 — Sidebar scrollbar
+
+WHEN the sidebar scrollbar is rendered THE SYSTEM SHALL use a 6px width with a gold thumb (rgba(255,210,31,.55)) on a translucent track. [Source: shell reference v11]
+
+### Component patterns
+
+### v1.3.2 Requirement 16 — Page header
+
+WHEN the page header for an Operational App route is rendered THE SYSTEM SHALL include an uppercase grey breadcrumb eyebrow, a 22px h1 page title, and a right-aligned status tile with a green dot and "Last updated X" text on a white background with bottom border #dbe3ef. [Source: shell reference v11]
+
+### v1.3.2 Requirement 17 — Card component (Operational App)
+
+WHEN a card is rendered in the Operational App content area THE SYSTEM SHALL use a white background with 1px border #dbe3ef, 18px padding, uppercase 13px h3 titles with 0.06em letter-spacing, and mid-grey body text #68758b. [Source: shell reference v11]
+
+### v1.3.2 Requirement 18 — User identity display
+
+WHEN a user identity is displayed THE SYSTEM SHALL show a 34px avatar tile with gold-bordered initials in Bebas Neue, alongside the user's name (12px bold) and role (10px muted). [Source: shell reference v11]

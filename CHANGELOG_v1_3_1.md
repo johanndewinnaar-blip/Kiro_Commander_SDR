@@ -35,3 +35,21 @@ v1.3.1 closes the remaining lineage gaps identified by the v1.3.1 brief. It adds
 - Updated `DECISIONS.md`.
 - Updated `BUILD_SEQUENCE.md`.
 - Updated version markers in `README.md`, `CONVERSION_REPORT.md` and `PACK_MANIFEST.md`.
+
+
+## v1.3.2 amendment — Design Language Remediation
+
+**Date:** 2026-05-27  
+**Scope:** Spec 02 requirements amendment only. No implementation changes in this patch.
+
+Diagnostic comparison of the current Spec 02 implementation against the authoritative baseline shell references (`commander-sdr-shell-v11-admin-navigation.html` and `commander-commercial-control-plane-shell-v3-admin-navigation.html`) revealed significant visual language divergence.
+
+18 new EARS requirements appended to `.kiro/specs/02-design-system-ui-component-catalogue/requirements.md` covering:
+- Typography (Bebas Neue display, Inter body, 13px base)
+- Colour palette (exact navy #061936, gold #ffd21f, light content background for Operational App, dark for Control Plane)
+- Chrome dimensions (68px top bar, 306px sidebar)
+- Top bar composition (brand wordmark, navigation tabs, search input)
+- Sidebar composition (gradient, expandable groups, gold scrollbar)
+- Component patterns (page header, card, user identity)
+
+Phase 2 implementation will follow separately.
