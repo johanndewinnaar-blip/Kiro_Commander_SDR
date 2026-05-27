@@ -75,3 +75,44 @@ Per Spec #60 and Doctrinal Assertion 10:
 - Phase C: Case queue UI, case detail UI, P0 zero-day UI, case analytics UI
 - Phase D: Full lifecycle state machine, validation/closure/reopening logic
 - Phase E: Communication lifecycle, evidence packs, auto-healing
+
+
+## Phase B Plan — Strategy Consumption Logic
+
+### Strategy surfaces consumed by Case Management
+
+| # | Strategy Surface | Resolver Module | What it resolves |
+|---|-----------------|-----------------|------------------|
+| 1 | SLA Strategy | `case-sla-calculator.ts` | Per-case SLA window (responseHours, escalationCadence) based on priority |
+| 2 | Routing Strategy | `case-router.ts` | Team assignment via teamAffinity mapping + escalation path |
+| 3 | Prioritisation Weight Strategy | `case-prioritiser.ts` | Weight configuration for priority scoring (severity, exploitability, etc.) |
+| 4 | Validation Window Strategy | `case-validation-evaluator.ts` | Validation window hours, freshness hours, refresh cadence |
+| 5 | Closure Gate Strategy | `case-closure-evaluator.ts` | Named gates that must pass before system-owned closure |
+| 6 | Reopening Trigger Strategy | `case-reopening-evaluator.ts` | Named triggers that cause system-owned reopening evaluation |
+
+### Data flow
+
+```
+Strategy Policy (Spec 43 seed data)
+  → Strategy Resolver (reads active policy for surface type)
+    → Resolution Result (resolved | unresolved)
+      → Case Domain Operation (uses resolved values)
+```
+
+### Interfaces implemented
+
+- `resolveSla(case, strategies)` → `SlaResolution`
+- `resolveRouting(case, strategies)` → `RoutingResolution`
+- `resolvePriority(strategies)` → `PriorityResolution`
+- `resolveValidationWindow(strategies)` → `ValidationResolution`
+- `resolveClosureGates(strategies)` → `ClosureGateResolution`
+- `resolveReopeningTriggers(strategies)` → `ReopeningResolution`
+- `resolveAllStrategies(case, strategies)` → `FullStrategyResolution`
+
+### NOT in Phase B
+
+- Actual lifecycle state machine (Phase D)
+- UI consumption (Phase C)
+- Route registration (Phase C)
+- Communication lifecycle (Phase E)
+- Evidence packs (Phase E)
