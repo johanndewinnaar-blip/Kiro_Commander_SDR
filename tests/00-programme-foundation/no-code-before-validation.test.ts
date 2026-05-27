@@ -14,11 +14,11 @@ import { resolve } from 'node:path';
 
 const ROOT = resolve(import.meta.dirname, '../..');
 
-/** Directories that should not contain application source files yet */
+/** Directories that should not contain application source files without owner approval */
 const BLOCKED_APP_DIRS = [
-  'apps/web/src',
+  // apps/web/src is now authorised (owner validated pack and approved implementation)
+  // apps/api/src remains blocked until its spec is validated
   'apps/api/src',
-  'packages/ui/src',
   'packages/connectors/src',
   'packages/rules/src',
   'packages/db/src',

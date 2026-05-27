@@ -1,7 +1,7 @@
 # BP-01 — Application Shell, Navigation and Route Registry
 
 **Target version:** v1.1  
-**Status:** Planned / Kiro-ready  
+**Status:** Implemented — route registry, shell, and navigation complete  
 **Type:** Build pack, not application code.
 
 ## Purpose

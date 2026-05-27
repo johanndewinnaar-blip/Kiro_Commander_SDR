@@ -5,4 +5,9 @@ export default defineConfig({
     include: ['tests/**/*.test.ts'],
     globals: false,
   },
+  resolve: {
+    alias: {
+      '@': new URL('./apps/web/src', import.meta.url).pathname,
+    },
+  },
 });

@@ -37,3 +37,14 @@
 | DEC-spec00-planning-complete | 2026-05-27 | Spec 00 validation and planning tasks (1.1–1.4, 2.1–2.5) completed without code generation. | Tasks are documentation/planning only; no code is authorised before pack validation. Authority read order confirmed, scope-in/out aligned with BP-00, no prohibited dependencies introduced. | Planning artefact created at `.kiro/specs/00-programme-foundation/planning.md`. Implementation tasks (3.1–3.3) remain blocked. |
 | DEC-spec00-no-mock-data-needed | 2026-05-27 | This domain requires no synthetic data fixtures. | Programme Foundation consumes source documents as its "data" — all already present as markdown files. | No fixture files created for this domain. |
 | DEC-spec00-section3-blocked | 2026-05-27 | Tasks 3.1, 3.2, 3.3 remain blocked pending owner pack validation approval. | AGENTS.md and BP-00 both require owner approval before code generation. | No implementation code produced. |
+
+## Spec 01 execution decisions
+
+| Decision ID | Date | Decision | Rationale | Impact |
+|---|---|---|---|---|
+| DEC-spec01-owner-authorised | 2026-05-27 | Owner authorised application code for spec 01 (Application Shell, Navigation and Route Registry). | Owner explicitly directed: "Execute spec 01 end-to-end... Use the tech stack defined in tech.md (TypeScript, Next.js 15+, pnpm)." | Implementation proceeds with Next.js 15, TypeScript, pnpm. |
+| DEC-spec01-registry-driven | 2026-05-27 | Route registry implemented as TypeScript data structure driving all navigation. | Spec #56 requires registry-driven runtime. Shell HTML is reference only. | All routes, menus, and visibility derive from `apps/web/src/registry/`. |
+| DEC-spec01-three-boundary | 2026-05-27 | Three application boundaries implemented as separate route files. | Spec #47 and Commander doctrine require Operational App, Tenant Admin, and Commercial Control Plane as distinct surfaces. | Separate route files per boundary; no cross-boundary merging. |
+| DEC-spec01-six-workspaces | 2026-05-27 | All six workspaces from Master Technical Specification §8.1 represented in route registry. | v1.2 Requirements 1-6 mandate workspace presence. | Executive Posture, Drift Operations, Control & Architecture, Identity & Asset Intelligence, Assurance & Audit, Transformation & M&A all have routes. |
+| DEC-spec01-build-mode | 2026-05-27 | Build-mode visibility shows all committed routes with status badges. | Spec #56 §6 requires scaffold/build/stub routes visible in build mode. | `isRouteVisible()` function implements dual-mode logic. |
+| DEC-spec01-no-code-test-updated | 2026-05-27 | Updated spec 00 no-code-before-validation test to reflect owner authorisation of apps/web/src. | Owner validated pack and authorised implementation. The test's original constraint is satisfied. | `apps/web/src` removed from blocked directories; `apps/api/src` and others remain blocked. |
