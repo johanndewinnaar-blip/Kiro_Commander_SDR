@@ -21,7 +21,14 @@ export type { Asset, AssetClassification } from './asset';
 export type { Identity, IdentityClassification } from './identity';
 export type { Connector, ConnectorState } from './connector';
 export type { AuditEvent, AuditActor } from './audit-event';
-export type { Case, CaseType, CaseStatus } from './case';
+export type { Case, CaseType, CaseTypeExtended, LegacyCaseType, CaseStatus } from './case';
+export { CASE_TYPES } from './case';
+export type { RiskObject, RiskObjectType, TreatmentState } from './risk-object';
+export { RISK_OBJECT_TYPES } from './risk-object';
+export type { LifecycleActor, CaseTransition, TransitionRequest } from './case-lifecycle';
+export { ALLOWED_TRANSITIONS, isTransitionAllowed, getNextStates } from './case-lifecycle';
+export type { CaseStrategyBinding, StrategyPolicyRef } from './case-strategy-binding';
+export { CASE_STRATEGY_SURFACES } from './case-strategy-binding';
 export type {
   StrategySurfaceType,
   StrategyPolicy,

@@ -14,8 +14,8 @@ export interface Case extends CommonFields {
   entityType: 'case';
   /** Case reference number */
   caseRef: string;
-  /** Case type */
-  caseType: CaseType;
+  /** Case type (supports canonical 12 + legacy aliases for seed data) */
+  caseType: CaseTypeExtended;
   /** Case title */
   title: string;
   /** Current lifecycle state — system-owned transitions only */
@@ -41,15 +41,53 @@ export interface Case extends CommonFields {
   routingRationale: string;
 }
 
+/**
+ * Twelve named case types per v1.2 requirements.
+ * Source: Master Technical Specification §6.2; Spec #08 v2.6 addendum
+ */
 export type CaseType =
+  | 'drift'
+  | 'vulnerability'
+  | 'identity'
+  | 'exposure'
+  | 'coverage'
+  | 'tool-health'
+  | 'threat-intelligence-estate-match'
+  | 'external-attack-correlation'
+  | 'verdict-pattern'
+  | 'inverse-discovery-coverage-blindspot'
+  | 'policy-effectiveness'
+  | 'ooda-tempo-degradation';
+
+/** All twelve case types as a constant array */
+export const CASE_TYPES: CaseType[] = [
+  'drift',
+  'vulnerability',
+  'identity',
+  'exposure',
+  'coverage',
+  'tool-health',
+  'threat-intelligence-estate-match',
+  'external-attack-correlation',
+  'verdict-pattern',
+  'inverse-discovery-coverage-blindspot',
+  'policy-effectiveness',
+  'ooda-tempo-degradation',
+];
+
+/**
+ * Legacy case type aliases for backward compatibility with seed data.
+ * These map older specific types to the canonical 12.
+ */
+export type LegacyCaseType =
   | 'vulnerability-drift'
   | 'exposure-drift'
   | 'control-gap'
   | 'configuration-drift'
-  | 'verdict-pattern'
-  | 'policy-effectiveness'
-  | 'external-attack-correlation'
   | 'coverage-blindspot';
+
+/** Extended case type union including legacy aliases used in seed data */
+export type CaseTypeExtended = CaseType | LegacyCaseType;
 
 export type CaseStatus =
   | 'open'
