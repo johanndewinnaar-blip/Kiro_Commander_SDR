@@ -6,7 +6,11 @@ import { LIFECYCLE_STAGES } from '../../packages/ui/src/components/lifecycle-pip
 
 const ROOT = resolve(import.meta.dirname, '../..');
 const PAGE_PATH = resolve(ROOT, 'apps/web/src/app/cases/page.tsx');
+const CASE_ROW_PATH = resolve(ROOT, 'apps/web/src/components/expandable-case-row.tsx');
 const pageContent = readFileSync(PAGE_PATH, 'utf-8');
+const caseRowContent = existsSync(CASE_ROW_PATH) ? readFileSync(CASE_ROW_PATH, 'utf-8') : '';
+// Combined content: page delegates to CaseList/ExpandableCaseRow — check both for doctrinal compliance
+const combinedContent = pageContent + '\n' + caseRowContent;
 
 /**
  * Spec 06 Phase C1 — Case Queue Tests
@@ -56,30 +60,30 @@ describe('Case Queue — Lifecycle Pipeline (DS-1.0 §21 Req 29)', () => {
 
 describe('Case Queue — Priority (DS-1.0 §14.1 — never colour alone)', () => {
   it('uses primitivePriority for shape+colour+label', () => {
-    expect(pageContent).toContain('primitivePriority');
-    expect(pageContent).toContain('p.shape');
-    expect(pageContent).toContain('p.label');
-    expect(pageContent).toContain('p.color');
+    expect(combinedContent).toContain('primitivePriority');
+    expect(combinedContent).toContain('p.shape');
+    expect(combinedContent).toContain('p.label');
+    expect(combinedContent).toContain('p.color');
   });
 });
 
 describe('Case Queue — Surface Attribution (Assertion 10)', () => {
   it('displays surface attribution on every row', () => {
-    expect(pageContent).toContain('surfaceAttribution');
-    expect(pageContent).toContain('External');
-    expect(pageContent).toContain('Internal');
+    expect(combinedContent).toContain('surfaceAttribution');
+    expect(combinedContent).toContain('External');
+    expect(combinedContent).toContain('Internal');
   });
 });
 
 describe('Case Queue — Strategy Consumption (Constraint 9)', () => {
   it('uses resolveAllStrategies from Phase B resolvers', () => {
-    expect(pageContent).toContain('resolveAllStrategies');
-    expect(pageContent).toContain('seedStrategies');
+    expect(combinedContent).toContain('resolveAllStrategies');
+    expect(combinedContent).toContain('seedStrategies');
   });
 
   it('SLA hours come from strategy resolution (not hardcoded)', () => {
-    expect(pageContent).toContain("c.strategy.sla.status === 'resolved'");
-    expect(pageContent).toContain('c.strategy.sla.responseHours');
+    expect(combinedContent).toContain("strategy.sla.status === 'resolved'");
+    expect(combinedContent).toContain('strategy.sla.responseHours');
   });
 });
 
@@ -93,15 +97,15 @@ describe('Case Queue — No Manual Case Creation (Assertion 1)', () => {
 
 describe('Case Queue — Token Consumption', () => {
   it('uses componentTokens for dimensions', () => {
-    expect(pageContent).toContain('componentTokens.contentPadding');
-    expect(pageContent).toContain('componentTokens.tableRowHeight');
-    expect(pageContent).toContain('componentTokens.tableHeaderHeight');
+    expect(combinedContent).toContain('componentTokens.contentPadding');
+    expect(combinedContent).toContain('componentTokens.tableRowHeight');
+    expect(combinedContent).toContain('componentTokens.cardRadius');
   });
 
   it('uses primitiveTypeScale for font sizes', () => {
-    expect(pageContent).toContain('primitiveTypeScale.h1');
-    expect(pageContent).toContain('primitiveTypeScale.body');
-    expect(pageContent).toContain('primitiveTypeScale.caption');
+    expect(combinedContent).toContain('primitiveTypeScale.h1');
+    expect(combinedContent).toContain('primitiveTypeScale.body');
+    expect(combinedContent).toContain('primitiveTypeScale.caption');
   });
 });
 
