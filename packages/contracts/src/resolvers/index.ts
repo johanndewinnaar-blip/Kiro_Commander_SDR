@@ -13,3 +13,4 @@ export { resolveValidationWindow, type ValidationResolution } from './case-valid
 export { resolveClosureGates, type ClosureGateResolution } from './case-closure-evaluator';
 export { resolveReopeningTriggers, type ReopeningResolution } from './case-reopening-evaluator';
 export { resolveAllStrategies, type FullStrategyResolution } from './case-strategy-resolver';
+export { evaluateValidationWindow, type ValidationWindowState } from './validation-window-enforcer';
