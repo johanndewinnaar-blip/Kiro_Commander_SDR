@@ -25,8 +25,8 @@ export type { Case, CaseType, CaseTypeExtended, LegacyCaseType, CaseStatus } fro
 export { CASE_TYPES } from './case';
 export type { RiskObject, RiskObjectType, TreatmentState } from './risk-object';
 export { RISK_OBJECT_TYPES } from './risk-object';
-export type { LifecycleActor, CaseTransition, TransitionRequest } from './case-lifecycle';
-export { ALLOWED_TRANSITIONS, isTransitionAllowed, getNextStates } from './case-lifecycle';
+export type { LifecycleActor, CaseTransition, TransitionRequest, TransitionResult, CaseTransitionRecord, CaseLifecycleHistory } from './case-lifecycle';
+export { ALLOWED_TRANSITIONS, isTransitionAllowed, getNextStates, executeTransition, appendTransitionRecord, getCurrentStatusFromHistory } from './case-lifecycle';
 export type { CaseStrategyBinding, StrategyPolicyRef } from './case-strategy-binding';
 export { CASE_STRATEGY_SURFACES } from './case-strategy-binding';
 export type {
