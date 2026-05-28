@@ -587,3 +587,44 @@ Phase E1 (Evidence Pack Evaluator) is now unblocked. The evaluator will consume 
 
 **Commit:** (this session)  
 **Test count:** 634 passing (28 files), zero regressions from 622.
+
+
+## Build session close-out — 2026-05-28 (Spec 06 Phase D4-D5 + Phase E precursor)
+
+### Specs/phases completed this session
+
+| Spec | Phase | Commit | Description |
+|------|-------|--------|-------------|
+| 06 | D4 — Assignment & Routing Engine | `37b621b` | Full AssignmentEngine: team affinity, workload capacity, specialism match, anti-hoarding, rank weighting, reassignment (system-driven only), escalation timeout. All values from Spec 43 routing strategy. +54 tests. |
+| 06 | D5 — Lifecycle UI on Case Detail | `b617e43` | Lifecycle section on `/cases/:id`: pipeline with current state highlight, allowed next states (read-only), transition history, closure gate status, validation window status, assignment rationale + escalation path. +51 tests. |
+| 06 | Phase E planning pass | `bcf0616` | `docs/00_authority/PHASE_E_PROPOSAL.md` — proposed E1/E2/E3 scope, dependencies, risks, no-go rules. Awaiting owner confirmation. |
+| 43 | Evidence Sufficiency strategy surface | `8470c51` | New strategy surface `evidence-sufficiency` (surface #13). Configuration: minimumValidationRuns, validationFreshnessHours, minimumSourceDiversity, requiredEvidenceTypes, sufficiencyCheckCadenceHours. Phase E1 precursor — unblocks evidence evaluator. +12 tests. |
+
+### Total test count at close
+
+**634 tests passing** across 28 test files. Zero regressions.
+
+### Decisions recorded
+
+- Phase E scope requires owner confirmation (E1 evidence pack, E2 auto-healing, E3 communication thread)
+- Evidence sufficiency rules are strategy-driven (new Spec 43 surface) rather than hardcoded
+
+### Validation sweep performed
+
+- Working copy clean, branch synced with origin
+- All six pages return 200 (Command Centre, Cases, Case Detail, P0 War Room, Case Analytics, My Cases)
+- No orphaned artefacts, no recovery TODOs, no partially-written components
+- Legacy token files functioning as backward-compat exports
+- Two pre-existing server-log warnings documented (vega-canvas optional module, RSC Set serialization) — not new regressions
+
+### Open items for next session (priority order)
+
+1. **Spec 06 Phase E1** — Evidence Pack Evaluator (strategy surface now available; implement evaluator consuming `evidence-sufficiency` policy). Owner to confirm scope per PHASE_E_PROPOSAL.md.
+2. **Spec 06 Phase E2** — Auto-Healing Condition Evaluator.
+3. **Spec 06 Phase E3** — Communication Thread Model + read-only UI display.
+4. **RSC Set serialization warning** — pre-existing, non-blocking, but should be investigated for a permanent fix.
+5. **Other domain specs** per BUILD_SEQUENCE.md after Spec 06 Phase E completes.
+
+### Working copy status
+
+Working copy clean. Branch: main. HEAD `8470c51` matches origin/main.
