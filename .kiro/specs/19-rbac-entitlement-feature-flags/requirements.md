@@ -172,3 +172,8 @@ WHEN authority overlays are evaluated THE SYSTEM SHALL support Reporting authori
 ### v1.2 Requirement 5 — Internal Risk authority
 
 WHEN authority overlays are evaluated THE SYSTEM SHALL support Internal Risk authority and propagate it through route visibility, action permission and audit semantics. [Source: Master Technical Specification §9.2; Spec #19 v2.6]
+
+
+## Cross-reference — data-level case filtering
+
+> Spec 19 persona definitions must drive data-level case filtering in Spec 06, not just route-level visibility. When a persona is configured (e.g. Vulnerability Analyst), the case list surfaces in Spec 06 must filter to cases within that persona's domain affinity. This is captured as an explicit requirement in Spec 06 ("Persona-scoped case filtering") and decision DEC-case-visibility-persona-scoped. Build target: Gate 3 (v1.3), dependent on auth/user context + this spec + Spec 06 Phase D routing engine.

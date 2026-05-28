@@ -270,3 +270,15 @@ Working copy clean. Branch: main. HEAD `a8ed0c1` matches origin/main.
 - Fusion Map bespoke graph library decision still pending (DEC-ds1-fusion-map-library-deferred).
 - Tenant Admin reference HTML still pending (DEC-v1.3.2-tenant-admin-shell-pending-reference).
 - Next spec per BUILD_SEQUENCE.md after Spec 06 D/E completes.
+
+
+## Design gaps — identified, owned, deferred
+
+### Data-level persona-scoped case visibility
+
+**Identified during:** Spec 06 Phase C review.  
+**Gap:** Role-scoped case visibility (e.g. a Vulnerability Analyst sees only vulnerability-domain cases) was intended by doctrine but had no explicit EARS requirement and was not assigned to a specific phase. The data model supports it (caseType, team, owner, surfaceAttribution) and Spec 19 defines personas + route-level visibility, but data-level case filtering by persona was only assumed to "emerge" from the combination of specs — risking it never being built.  
+**Resolution:** Now captured as an explicit EARS requirement in Spec 06 ("Persona-scoped case filtering") + cross-reference in Spec 19 + decision DEC-case-visibility-persona-scoped.  
+**Prerequisites:** Authentication/user context system, Spec 19 persona model implemented, Spec 06 Phase D routing engine with team affinity.  
+**Build target:** Gate 3 (v1.3).  
+**Status:** Owned, deferred, explicitly tracked.

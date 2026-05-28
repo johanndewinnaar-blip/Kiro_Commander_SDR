@@ -130,3 +130,10 @@
 | DEC-ds1-fusion-map-library-deferred | 2026-05-28 | Bespoke graph library for Fusion Map (Cytoscape or react-force-graph) is deferred until the Fusion Map spec is reached. | Fusion Map requires network graph capabilities that Vega-Lite cannot provide. Library selection deferred to avoid premature commitment. | Fusion Map spec will make the final library choice. |
 | DEC-ds1-topbar-56px | 2026-05-28 | Top bar height is 56px (supersedes the v1.3.2 remediation's 68px from shell reference v11). | DS-1.0 §0 locked decision. Owner's new spec. | Implementation must update from 68px to 56px. |
 | DEC-ds1-sidebar-248px-collapsible | 2026-05-28 | Sidebar is 248px expanded, collapsible to 68px icon rail (supersedes the v1.3.2 remediation's 306px static). | DS-1.0 §0 locked decision. Owner's new spec. Collapsible sidebar improves workspace real estate. | Implementation must update from 306px static to 248px + 68px rail with hamburger toggle. |
+
+
+## Persona-scoped case visibility
+
+| Decision ID | Date | Decision | Rationale | Impact |
+|---|---|---|---|---|
+| DEC-case-visibility-persona-scoped | 2026-05-28 | Case list surfaces (Case Queue, My Cases, Case Analytics) are persona/domain-scoped. A user sees only cases relevant to their persona's domain affinity and team assignment, unless they hold Administrative or CISO authority overlay. | Identified as an unassigned design gap during Phase C review. The data model supports it (caseType, team, owner) and Spec 19 defines personas, but no explicit EARS requirement existed for data-level filtering. Without explicit capture, this risks never being built. | Dependent on: auth/user context system + Spec 19 (persona model) + Spec 06 Phase D (routing engine with team affinity). Build target: Gate 3 (v1.3). Cross-referenced in both Spec 06 and Spec 19 requirements. |

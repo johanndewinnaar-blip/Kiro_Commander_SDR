@@ -227,3 +227,14 @@ WHEN a Coverage Blindspot is detected via Inverse Discovery Loop THE SYSTEM SHAL
 
 WHEN OODA phase health degrades below threshold THE SYSTEM SHALL create an `ooda_phase_degradation` risk object and bind it to the OODA Tempo Degradation case. [Source: Master Technical Specification §6.3; Spec #58]
 
+
+
+## Data-level case visibility requirement (identified gap — deferred to Gate 3)
+
+### Requirement — Persona-scoped case filtering
+
+WHEN a user views any case list surface (Case Queue, My Cases, Case Analytics) THE SYSTEM SHALL filter displayed cases to those relevant to the user's persona, domain affinity, and team assignment as defined by Spec 19 RBAC personas and authority overlays, such that a Vulnerability Analyst sees vulnerability-domain cases, an Identity/Access Specialist sees identity-domain cases, and a Security Operations Manager sees all cases within their team scope. Cases outside the user's entitled domain and team affinity SHALL NOT appear unless the user holds Administrative or CISO authority overlay. [Source: Spec #19 Full RBAC Permission Matrix; Spec 06 Domain Requirement 14 (assignment by specialism/team affinity); Master Technical Specification §9.1]
+
+**Prerequisites:** Authentication/user context system, Spec 19 persona model implemented, Spec 06 Phase D routing engine with team affinity.  
+**Build target:** Gate 3 (v1.3).  
+**Cross-reference:** DEC-case-visibility-persona-scoped in DECISIONS.md.
