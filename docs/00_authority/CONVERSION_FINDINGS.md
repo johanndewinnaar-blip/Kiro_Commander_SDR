@@ -447,3 +447,28 @@ Added reusable prompt templates and expanded steering in the same session:
 
 **Commit:** `74e8d1a`  
 **Test count:** 462 passing (23 files), zero regressions (+2 new tests).
+
+
+## Spec 03 Deep Seeding Pass (2026-05-28)
+
+Expanded all seed fixture files to populate surfaces realistically.
+
+| File | Before | After |
+|------|--------|-------|
+| seed-cases.ts | 3 cases | 30 cases (all 12 canonical + 5 legacy types, P0–P4, mixed statuses) |
+| seed-assets.ts | 3 assets | 40 assets (9 classifications, mixed environments, 60/40 internal/external) |
+| seed-identities.ts | 3 identities | 25 identities (15 human, 6 service-account, 2 workload, 2 third-party) |
+| seed-events.ts (NEW) | — | 50 activity events across 24h (mixed severities and entity types) |
+| seed-strategies.ts | 2 routing entries | 17 routing entries (all case types covered) |
+
+**Routing strategy fix:** `teamAffinity` expanded from 2 case types to all 17 (12 canonical + 5 legacy). No resolver returns "unresolved" for any seed case.
+
+**Doctrinal compliance:** All cases system-created, all carry surface attribution, all priorities use shape+colour+label, strategy values consumed from resolvers (zero hardcoded SLA/routing/priority), no SOC write paths, no insider-risk paths.
+
+**Commit:** `cf49b7b`  
+**Test count:** 462 passing (23 files), zero regressions.
+
+### Open items for next session (priority order)
+
+1. **Case Queue "My Cases" expandable line-summary pattern** — own scoped feature.
+2. **Still deferred:** Spec 06 Phase D (lifecycle state machine), Phase E (comms/evidence/auto-healing); Fusion Map bespoke graph library; Tenant Admin reference HTML; other domain specs per BUILD_SEQUENCE.
