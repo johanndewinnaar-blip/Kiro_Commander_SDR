@@ -517,3 +517,34 @@ Expanded all seed fixture files to populate surfaces realistically.
 **Commit:** `19d3850`  
 **Test count:** 462 passing (23 files), zero regressions.  
 **Surfaces affected:** /cases (refactored), /cases/my (new), expandable-case-row (new component), case-list (new component).
+
+
+## Spec 06 Phase D — Lifecycle State Machine (2026-05-28, partial)
+
+### Sub-phases completed this session
+
+| Sub-Phase | Commit | Tests Added | Description |
+|-----------|--------|-------------|-------------|
+| D1 — Lifecycle Transition Engine | `3c32b8a` | +25 | `executeTransition()`, `TransitionResult`, `CaseTransitionRecord`, `CaseLifecycleHistory`, `appendTransitionRecord()`, `getCurrentStatusFromHistory()`. Full lifecycle walk and reopening validated. |
+| D2 — Validation Window Enforcement | `37bdbc2` | +12 | `evaluateValidationWindow()` consuming validation-window strategy. Window expiry, freshness lapse, cadence enforcement. Throws if strategy missing. |
+| D3 — Closure Gate & Reopening Trigger | `999da95` | +18 | `evaluateClosureGates()` and `evaluateReopeningTriggers()`. All gates/triggers from strategy. Throws if strategy missing. Strategy consumption proof tests. |
+
+### Test count at session close
+
+**517 tests passing** across 26 test files. Zero regressions.
+
+### Doctrinal compliance (D1–D3)
+
+- All transitions system-owned (actor must be 'system' or 'routing-engine')
+- No manual creation, closure, or status edit paths
+- All values consumed from Spec 43 strategy policies — zero hardcoded defaults
+- Missing strategy → throws error (never silently defaults)
+- Audit event generated on every transition
+- No UI work in D1–D3 (pure logic layers)
+
+### Open items for next session (priority order)
+
+1. **Spec 06 Phase D4** — Assignment & Routing Engine (largest sub-phase). All numeric/rule values from strategy. STOP and report if a needed value is not in strategy layer.
+2. **Spec 06 Phase D5** — Lifecycle UI on Case Detail (the only UI sub-phase in Phase D).
+3. **Spec 06 Phase E** — Communication/evidence/auto-healing (deferred beyond Phase D).
+4. **Other domain specs** per BUILD_SEQUENCE.
