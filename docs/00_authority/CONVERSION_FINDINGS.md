@@ -282,3 +282,53 @@ Working copy clean. Branch: main. HEAD `a8ed0c1` matches origin/main.
 **Prerequisites:** Authentication/user context system, Spec 19 persona model implemented, Spec 06 Phase D routing engine with team affinity.  
 **Build target:** Gate 3 (v1.3).  
 **Status:** Owned, deferred, explicitly tracked.
+
+
+## Build session — DS-1.0 implementation, Spec 06 Phase C, persona-scoping gap, tweaks pending
+
+### Design System (DS-1.0)
+
+- `DESIGN_SYSTEM.md`, `MOCKUP_INDEX.md`, and 8 high-fidelity PNG mockups committed as authoritative in `docs/06_ui_build_reference/` (commit `48e5377`). Equal in standing to the shell reference HTMLs.
+- Spec 02 amended with 47 DS-1.0 EARS requirements (commit `70fc8e0`).
+- 8 library/design decisions recorded: DEC-design-system-v1, DEC-ds1-vega-lite, DEC-ds1-lucide, DEC-ds1-shadcn-ui, DEC-ds1-jetbrains-mono, DEC-ds1-fusion-map-library-deferred, DEC-ds1-topbar-56px, DEC-ds1-sidebar-248px-collapsible.
+
+### DS-1.0 Implementation (all complete)
+
+| Phase | Commit | Scope |
+|-------|--------|-------|
+| Phase 1 — Tokenise | `4c1d799` | Three-layer token system (primitives, semantic, component) with exact pinned DS-1.0 values |
+| Phase 2a — Foundation | `ffe6488` | Standard/Mission mode system, collapsible sidebar (248px/68px rail), shell migrated to tokens, Lucide installed |
+| Phase 2b — Core data components | `fdd9f33` | KPI strip/tile, instrument gauge (Vega-Lite), ranked table with inline bar+trend, live activity feed |
+| Phase 2c — Signature components | `62fa8f4` | Strategic heading compass, closed-loop lifecycle pipeline, right-rail insight/action column |
+| Phase 3 — Command Centre | `a88f7d4` | Full DS-1.0 rebuild: KPI strip, gauges, live feed, Standard+Mission modes, matching command-centre-standard.png and command-centre-mission.png |
+
+### Spec 06 Phase C (Cases UI) — COMPLETE
+
+| Sub-phase | Commit | Surface |
+|-----------|--------|---------|
+| C1 — Case Queue | `170023e` | `/cases` — lifecycle pipeline, ranked table, strategy-driven SLA, priority shape+label, surface attribution |
+| C2 — Case Detail | `b836326` + `99420eb` | `/cases/:id` — sticky header, metadata, timeline, evidence pack, right-rail, responsive master-detail, strategy bindings |
+| C3a — P0 Zero-Day | `e848c61` | `/war-room/p0` — Emergency Command mode forced, P0 propagation, critical glow |
+| C3b — Case Analytics | `a8ed0c1` | `/cases/analytics` — 4 Vega-Lite chart specs (line, donut, gauge, bar), --data-* token colours, strategy-driven SLA compliance |
+
+All doctrinal assertions held: closed-loop case model, P0 propagation, SOC boundary, surface attribution, strategy-layer consumption, charts on --data-* tokens, both modes.
+
+### Gap captured
+
+- **Persona-scoped case visibility** identified as unassigned design gap during Phase C review. Now captured as explicit Spec 06 EARS requirement + DEC-case-visibility-persona-scoped + Spec 19 cross-reference. Deferred to Gate 3 (v1.3). Prerequisites: auth/user context + Spec 19 persona model + Spec 06 Phase D routing engine. Commit `6b959f3`.
+
+### Test count at session close
+
+**459 tests passing** across 23 test files.
+
+### Working copy status
+
+Working copy clean. Branch: main. HEAD `6b959f3` matches origin/main.
+
+### Open items for next session (priority order)
+
+1. **UI Tweak Pass A (token cosmetics):** sharp corners (--radius 0/2/2), darker Standard borders, crisp white menu text, h1 font → Inter Bold.
+2. **UI Tweak Pass B (layout/fixes):** logo/sidebar width alignment, breadcrumb shows path not title echo, home link (logo → Command Centre + gold home icon in collapsed rail), params.id React.use() fix, verify Vega-Lite charts render (vega-embed wiring).
+3. **Deeper seed data:** more cases/assets so surfaces aren't thin.
+4. **Case Queue "My Cases" expandable line-summary pattern** (Jira-style collapsed stubs → expand) — its own scoped feature.
+5. **Still deferred:** Spec 06 Phase D (lifecycle state machine), Phase E (comms/evidence/auto-healing); Fusion Map bespoke graph library; Tenant Admin reference HTML; other domain specs (Vulnerability, Identity, Architecture) per BUILD_SEQUENCE.
