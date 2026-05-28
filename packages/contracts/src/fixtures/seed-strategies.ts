@@ -87,7 +87,7 @@ export const seedStrategies: StrategyPolicy[] = [
     updatedAt: '2026-01-15T09:00:00.000Z',
     source: { ...SEED_SOURCE, sourceSystem: 'commander-strategy-engine' },
     surfaceType: 'routing',
-    policyVersion: '1.0.0',
+    policyVersion: '2.0.0',
     status: 'active',
     configuration: {
       teamAffinity: {
@@ -110,6 +110,25 @@ export const seedStrategies: StrategyPolicy[] = [
         'coverage-blindspot': 'Platform Engineering',
       },
       escalationPath: ['Team Lead', 'SOM', 'CISO'],
+      /** D4: Maximum active cases per analyst before overflow to next */
+      workloadMax: 15,
+      /** D4: Maximum cases of the same type per analyst (anti-hoarding) */
+      antiHoardingCap: 5,
+      /** D4: Hours before escalation timeout triggers reassignment */
+      escalationTimeoutHours: 48,
+      /** D4: Rank weighting — higher rank = lower assignment priority (load-balance juniors first) */
+      rankWeighting: { 'junior': 1.0, 'mid': 0.8, 'senior': 0.6, 'lead': 0.4 },
+      /** D4: Analyst specialism tags — maps analyst IDs to their specialism domains */
+      specialismTags: {
+        'analyst-001': { name: 'Alice Security-Analyst', team: 'Security Operations', rank: 'senior', specialisms: ['vulnerability', 'drift', 'exposure'] },
+        'analyst-002': { name: 'Bob Platform-Engineer', team: 'Platform Engineering', rank: 'mid', specialisms: ['coverage', 'tool-health', 'configuration-drift'] },
+        'analyst-003': { name: 'Carol Identity-Specialist', team: 'Identity & Access', rank: 'senior', specialisms: ['identity'] },
+        'analyst-004': { name: 'Dave Threat-Intel', team: 'Threat Intelligence', rank: 'mid', specialisms: ['threat-intelligence-estate-match', 'external-attack-correlation'] },
+        'analyst-005': { name: 'Eve Governance-Analyst', team: 'Governance & Risk', rank: 'junior', specialisms: ['policy-effectiveness'] },
+        'analyst-006': { name: 'Frank SecOps-Junior', team: 'Security Operations', rank: 'junior', specialisms: ['vulnerability', 'drift', 'verdict-pattern'] },
+        'analyst-007': { name: 'Grace Platform-Lead', team: 'Platform Engineering', rank: 'lead', specialisms: ['coverage', 'tool-health', 'inverse-discovery-coverage-blindspot'] },
+        'analyst-008': { name: 'Hank Leadership', team: 'Security Leadership', rank: 'lead', specialisms: ['ooda-tempo-degradation'] },
+      },
     },
     proposedBy: 'System (baseline)',
     proposedAt: '2026-01-10T00:00:00.000Z',

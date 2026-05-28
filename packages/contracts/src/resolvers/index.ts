@@ -2,6 +2,7 @@
  * Case Strategy Resolvers — Commander SDR
  *
  * Phase B: Strategy consumption logic.
+ * Phase D4: Assignment & Routing Engine.
  * Each resolver reads from Spec 43 strategy surfaces.
  * NO hardcoded values. Unresolved states are typed and explicit.
  */
@@ -16,3 +17,25 @@ export { resolveAllStrategies, type FullStrategyResolution } from './case-strate
 export { evaluateValidationWindow, type ValidationWindowState } from './validation-window-enforcer';
 export { evaluateClosureGates, type GateEvaluationInput, type ClosureGateResult } from './closure-gate-enforcer';
 export { evaluateReopeningTriggers, type ReopeningConditions, type ReopeningTriggerResult } from './reopening-trigger-enforcer';
+
+// Phase D4: Assignment & Routing Engine
+export {
+  assignCase,
+  reassignCase,
+  isEscalationTimeoutExceeded,
+  extractRoutingConfig,
+  hasCapacity,
+  loadFactor,
+  matchesSpecialism,
+  filterBySpecialism,
+  passesAntiHoarding,
+  assignmentScore,
+  type AssignmentResult,
+  type AssignmentAuditEvent,
+  type ReassignmentRequest,
+  type ReassignmentReason,
+  type WorkloadSnapshot,
+  type AnalystProfile,
+  type AnalystRank,
+  type RoutingStrategyConfig,
+} from './assignment-engine';
