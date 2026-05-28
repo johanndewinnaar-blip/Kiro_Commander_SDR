@@ -223,3 +223,50 @@ Spec 06 Phase B was diagnostically verified post-implementation. Resolver code c
 ### 8. Working copy status
 
 Working copy clean. Branch: main. HEAD matches origin/main.
+
+
+## Build session — DS-1.0 implementation + Spec 06 Phase C complete
+
+### Design System (DS-1.0)
+
+- `DESIGN_SYSTEM.md`, `MOCKUP_INDEX.md`, and 8 high-fidelity PNG mockups committed as authoritative in `docs/06_ui_build_reference/` (commit `48e5377`). Equal in standing to the shell reference HTMLs.
+- Spec 02 amended with 47 DS-1.0 EARS requirements capturing every pinned value, both workspace modes, three-layer token architecture, and all signature components (commit `70fc8e0`).
+- 8 library/design decisions recorded: DEC-design-system-v1, DEC-ds1-vega-lite, DEC-ds1-lucide, DEC-ds1-shadcn-ui, DEC-ds1-jetbrains-mono, DEC-ds1-fusion-map-library-deferred, DEC-ds1-topbar-56px, DEC-ds1-sidebar-248px-collapsible.
+
+### DS-1.0 Implementation Phases
+
+| Phase | Commit | Scope |
+|-------|--------|-------|
+| Phase 1 — Tokenise | `4c1d799` | Three-layer token system (primitives, semantic, component) with exact pinned DS-1.0 values |
+| Phase 2a — Foundation | `ffe6488` | Standard/Mission mode system, collapsible sidebar (248px/68px rail), shell migrated to tokens, Lucide installed |
+| Phase 2b — Core data components | `fdd9f33` | KPI strip/tile, instrument gauge (Vega-Lite), ranked table with inline bar+trend, live activity feed |
+| Phase 2c — Signature components | `62fa8f4` | Strategic heading compass, closed-loop lifecycle pipeline, right-rail insight/action column |
+| Phase 3 — Command Centre | `a88f7d4` | Full DS-1.0 rebuild: KPI strip, gauges, live feed, Standard+Mission modes, matching command-centre-standard.png and command-centre-mission.png |
+
+### Spec 06 Phase C (Cases UI) — COMPLETE
+
+| Sub-phase | Commit | Surface |
+|-----------|--------|---------|
+| C1 — Case Queue | `170023e` | `/cases` — lifecycle pipeline, ranked table, strategy-driven SLA, priority shape+label, surface attribution |
+| C2 — Case Detail | `b836326` + `99420eb` | `/cases/:id` — sticky header, metadata, timeline, evidence pack, right-rail (Phase 2c component), responsive master-detail, strategy bindings |
+| C3a — P0 Zero-Day | `e848c61` | `/war-room/p0` — Emergency Command mode forced, P0 propagation (reason, scope, owner, expiry, evidence), critical glow |
+| C3b — Case Analytics | `a8ed0c1` | `/cases/analytics` — 4 Vega-Lite chart specs (line, donut, gauge, bar), --data-* token colours, strategy-driven SLA compliance |
+
+All doctrinal assertions held throughout Phase C: closed-loop case model (no manual creation/edit/closure), P0 propagation, SOC boundary (read-only), surface attribution on all surfaces, strategy-layer consumption (zero hardcoded SLA/routing/priority/validation/closure/reopening values), charts on --data-* tokens only.
+
+### Test count at session close
+
+**459 tests passing** across 23 test files.
+
+### Working copy status
+
+Working copy clean. Branch: main. HEAD `a8ed0c1` matches origin/main.
+
+### Open items for next session
+
+- Verify Vega-Lite charts render at runtime (vega-embed wiring) on the Analytics page.
+- Spec 06 Phases D (full lifecycle state machine) and E (communication/evidence/auto-healing) still deferred.
+- Deferred design tweaks (owner to specify).
+- Fusion Map bespoke graph library decision still pending (DEC-ds1-fusion-map-library-deferred).
+- Tenant Admin reference HTML still pending (DEC-v1.3.2-tenant-admin-shell-pending-reference).
+- Next spec per BUILD_SEQUENCE.md after Spec 06 D/E completes.
