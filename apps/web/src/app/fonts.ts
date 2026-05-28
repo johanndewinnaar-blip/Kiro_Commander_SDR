@@ -10,16 +10,20 @@
 
 import { Inter, Bebas_Neue } from 'next/font/google';
 
-export const inter = Inter({
+const interFont = Inter({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700', '800'],
   variable: '--font-body',
   display: 'swap',
 });
 
-export const bebasNeue = Bebas_Neue({
+const bebasNeueFont = Bebas_Neue({
   subsets: ['latin'],
   weight: '400',
   variable: '--font-display',
   display: 'swap',
 });
+
+/** Plain string CSS variable class names — safe for RSC serialization */
+export const inter = { variable: interFont.variable };
+export const bebasNeue = { variable: bebasNeueFont.variable };

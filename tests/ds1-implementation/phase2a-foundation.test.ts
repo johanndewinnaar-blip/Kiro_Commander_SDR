@@ -106,3 +106,26 @@ describe('Lucide Installed', () => {
     expect(pkg.dependencies['lucide-react']).toBeDefined();
   });
 });
+
+describe('RSC Serialization Safety', () => {
+  it('fonts.ts exports only plain objects with string values (no Set leakage)', () => {
+    const content = readFileSync(resolve(ROOT, 'apps/web/src/app/fonts.ts'), 'utf-8');
+    // Font objects must be unwrapped to plain { variable: string } before export
+    // to prevent next/font internal Sets from crossing the RSC boundary
+    expect(content).toContain('export const inter = { variable:');
+    expect(content).toContain('export const bebasNeue = { variable:');
+    // Must NOT directly export the next/font object
+    expect(content).not.toMatch(/export const inter = Inter\(/);
+    expect(content).not.toMatch(/export const bebasNeue = Bebas_Neue\(/);
+  });
+
+  it('no Set constructor usage in source files that cross RSC boundary', () => {
+    // Server Components (layouts) must not pass Set objects to Client Components
+    const layoutContent = readFileSync(resolve(ROOT, 'apps/web/src/app/layout.tsx'), 'utf-8');
+    expect(layoutContent).not.toContain('new Set');
+    const cpLayout = readFileSync(resolve(ROOT, 'apps/web/src/app/control-plane/layout.tsx'), 'utf-8');
+    expect(cpLayout).not.toContain('new Set');
+    const taLayout = readFileSync(resolve(ROOT, 'apps/web/src/app/tenant-admin/layout.tsx'), 'utf-8');
+    expect(taLayout).not.toContain('new Set');
+  });
+});
