@@ -548,3 +548,42 @@ Expanded all seed fixture files to populate surfaces realistically.
 2. **Spec 06 Phase D5** — Lifecycle UI on Case Detail (the only UI sub-phase in Phase D).
 3. **Spec 06 Phase E** — Communication/evidence/auto-healing (deferred beyond Phase D).
 4. **Other domain specs** per BUILD_SEQUENCE.
+
+
+## Spec 43 Extension — Evidence Sufficiency Strategy Surface (Phase E1 Precursor)
+
+**Date:** 2026-05-28  
+**Purpose:** Unblock Spec 06 Phase E1 (Evidence Pack) by defining the strategy surface that the evidence sufficiency evaluator will consume.
+
+### Changes
+
+| File | Change |
+|------|--------|
+| `packages/contracts/src/entities/strategy.ts` | Added `'evidence-sufficiency'` to `StrategySurfaceType` union, `STRATEGY_SURFACE_TYPES` array (now 13), and `STRATEGY_SURFACE_LABELS` record |
+| `packages/contracts/src/fixtures/seed-strategies.ts` | Added seed policy #13: surfaceType `evidence-sufficiency`, version `1.0.0`, status `active` |
+| `tests/43-strategy-layer/strategy-layer.test.ts` | Updated count assertions (12→13), added 12 new tests for evidence-sufficiency surface |
+
+### Evidence Sufficiency Configuration Shape
+
+| Field | Type | Seed Value | Purpose |
+|-------|------|------------|---------|
+| `minimumValidationRuns` | number | 2 | Minimum validation runs before evidence is sufficient |
+| `validationFreshnessHours` | number | 24 | Maximum age of most recent validation |
+| `minimumSourceDiversity` | number | 2 | Minimum distinct connector sources |
+| `requiredEvidenceTypes` | string[] | `['validation', 'connector-import', 'remediation-confirmation']` | Evidence types that must all be present |
+| `sufficiencyCheckCadenceHours` | number | 6 | Re-evaluation cadence for pending evidence packs |
+
+### Doctrinal compliance
+
+- Strategy-driven values only (no hardcoded logic)
+- No new manual paths
+- No UI changes
+- Pure strategy layer extension
+- Consistent with existing surface patterns (validation-window, closure-gate, reopening-trigger)
+
+### Status
+
+Phase E1 (Evidence Pack Evaluator) is now unblocked. The evaluator will consume this strategy surface to determine evidence sufficiency without hardcoding any rules.
+
+**Commit:** (this session)  
+**Test count:** 634 passing (28 files), zero regressions from 622.

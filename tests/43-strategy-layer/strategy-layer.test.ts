@@ -21,8 +21,8 @@ import { allRoutes } from '../../apps/web/src/registry/index';
  */
 
 describe('Twelve Named Strategy Surfaces (Reqs 1-12)', () => {
-  it('defines exactly 12 strategy surface types', () => {
-    expect(STRATEGY_SURFACE_TYPES.length).toBe(12);
+  it('defines exactly 13 strategy surface types (12 baseline + evidence-sufficiency)', () => {
+    expect(STRATEGY_SURFACE_TYPES.length).toBe(13);
   });
 
   it('includes SLA Strategy (Req 1)', () => {
@@ -143,11 +143,11 @@ describe('Runtime Binding Events (Reqs 18-23)', () => {
 });
 
 describe('Seed Strategy Fixtures', () => {
-  it('has exactly 12 seed strategy policies (one per surface)', () => {
-    expect(seedStrategies.length).toBe(12);
+  it('has exactly 13 seed strategy policies (one per surface)', () => {
+    expect(seedStrategies.length).toBe(13);
   });
 
-  it('covers all 12 surface types', () => {
+  it('covers all 13 surface types', () => {
     const coveredSurfaces = seedStrategies.map((s) => s.surfaceType);
     for (const surface of STRATEGY_SURFACE_TYPES) {
       expect(coveredSurfaces, `Missing fixture for: ${surface}`).toContain(surface);
@@ -206,8 +206,91 @@ describe('Route Registry — Strategy Centre', () => {
 describe('Build-Blocking Gate (Req 24)', () => {
   it('strategy surfaces are defined before case management can ship', () => {
     // This test validates that the strategy layer exists as a prerequisite
-    expect(STRATEGY_SURFACE_TYPES.length).toBe(12);
+    expect(STRATEGY_SURFACE_TYPES.length).toBe(13);
     expect(RUNTIME_BINDING_EVENTS.length).toBe(6);
-    expect(seedStrategies.length).toBe(12);
+    expect(seedStrategies.length).toBe(13);
+  });
+});
+
+describe('Evidence Sufficiency Strategy Surface (Phase E1 Precursor)', () => {
+  it('includes evidence-sufficiency in STRATEGY_SURFACE_TYPES', () => {
+    expect(STRATEGY_SURFACE_TYPES).toContain('evidence-sufficiency');
+  });
+
+  it('has a label for evidence-sufficiency', () => {
+    expect(STRATEGY_SURFACE_LABELS['evidence-sufficiency']).toBe('Evidence Sufficiency Strategy');
+  });
+
+  it('seed fixture exists with surfaceType evidence-sufficiency', () => {
+    const policy = seedStrategies.find((s) => s.surfaceType === 'evidence-sufficiency');
+    expect(policy).toBeDefined();
+  });
+
+  it('seed fixture is active and version 1.0.0', () => {
+    const policy = seedStrategies.find((s) => s.surfaceType === 'evidence-sufficiency')!;
+    expect(policy.status).toBe('active');
+    expect(policy.policyVersion).toBe('1.0.0');
+  });
+
+  it('configuration contains minimumValidationRuns (number)', () => {
+    const policy = seedStrategies.find((s) => s.surfaceType === 'evidence-sufficiency')!;
+    const config = policy.configuration as Record<string, unknown>;
+    expect(typeof config.minimumValidationRuns).toBe('number');
+    expect(config.minimumValidationRuns).toBeGreaterThan(0);
+  });
+
+  it('configuration contains validationFreshnessHours (number)', () => {
+    const policy = seedStrategies.find((s) => s.surfaceType === 'evidence-sufficiency')!;
+    const config = policy.configuration as Record<string, unknown>;
+    expect(typeof config.validationFreshnessHours).toBe('number');
+    expect(config.validationFreshnessHours).toBeGreaterThan(0);
+  });
+
+  it('configuration contains minimumSourceDiversity (number)', () => {
+    const policy = seedStrategies.find((s) => s.surfaceType === 'evidence-sufficiency')!;
+    const config = policy.configuration as Record<string, unknown>;
+    expect(typeof config.minimumSourceDiversity).toBe('number');
+    expect(config.minimumSourceDiversity).toBeGreaterThan(0);
+  });
+
+  it('configuration contains requiredEvidenceTypes (array of strings)', () => {
+    const policy = seedStrategies.find((s) => s.surfaceType === 'evidence-sufficiency')!;
+    const config = policy.configuration as Record<string, unknown>;
+    expect(Array.isArray(config.requiredEvidenceTypes)).toBe(true);
+    const types = config.requiredEvidenceTypes as string[];
+    expect(types.length).toBeGreaterThan(0);
+    for (const t of types) {
+      expect(typeof t).toBe('string');
+    }
+  });
+
+  it('requiredEvidenceTypes includes validation, connector-import, remediation-confirmation', () => {
+    const policy = seedStrategies.find((s) => s.surfaceType === 'evidence-sufficiency')!;
+    const config = policy.configuration as { requiredEvidenceTypes: string[] };
+    expect(config.requiredEvidenceTypes).toContain('validation');
+    expect(config.requiredEvidenceTypes).toContain('connector-import');
+    expect(config.requiredEvidenceTypes).toContain('remediation-confirmation');
+  });
+
+  it('configuration contains sufficiencyCheckCadenceHours (number)', () => {
+    const policy = seedStrategies.find((s) => s.surfaceType === 'evidence-sufficiency')!;
+    const config = policy.configuration as Record<string, unknown>;
+    expect(typeof config.sufficiencyCheckCadenceHours).toBe('number');
+    expect(config.sufficiencyCheckCadenceHours).toBeGreaterThan(0);
+  });
+
+  it('is reachable via standard strategy resolution pattern (find by surfaceType + active status)', () => {
+    const found = seedStrategies.find(
+      (s) => s.surfaceType === 'evidence-sufficiency' && s.status === 'active',
+    );
+    expect(found).toBeDefined();
+    expect(found!.configuration).toBeDefined();
+    expect(found!.policyVersion).toBe('1.0.0');
+  });
+
+  it('has approval record (consistent with other baseline strategies)', () => {
+    const policy = seedStrategies.find((s) => s.surfaceType === 'evidence-sufficiency')!;
+    expect(policy.approval).not.toBeNull();
+    expect(policy.approval!.approvedBy).toBe('Tenant Admin');
   });
 });

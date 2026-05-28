@@ -287,4 +287,33 @@ export const seedStrategies: StrategyPolicy[] = [
     effectiveUntil: null,
     simulationRef: null,
   },
+  {
+    id: seedId('strategy', 13),
+    entityType: 'strategy-policy',
+    tenant: SEED_TENANT,
+    createdAt: '2026-01-10T00:00:00.000Z',
+    updatedAt: '2026-01-15T09:00:00.000Z',
+    source: { ...SEED_SOURCE, sourceSystem: 'commander-strategy-engine' },
+    surfaceType: 'evidence-sufficiency',
+    policyVersion: '1.0.0',
+    status: 'active',
+    configuration: {
+      /** Minimum number of validation runs required before evidence is sufficient */
+      minimumValidationRuns: 2,
+      /** Maximum age (hours) of the most recent validation for evidence to be considered fresh */
+      validationFreshnessHours: 24,
+      /** Minimum number of distinct connector sources contributing evidence */
+      minimumSourceDiversity: 2,
+      /** Evidence types that must all be present for sufficiency */
+      requiredEvidenceTypes: ['validation', 'connector-import', 'remediation-confirmation'],
+      /** How often (hours) a pending evidence pack is re-evaluated for sufficiency */
+      sufficiencyCheckCadenceHours: 6,
+    },
+    proposedBy: 'System (baseline)',
+    proposedAt: '2026-01-10T00:00:00.000Z',
+    approval: { approvedBy: 'Tenant Admin', approvedAt: '2026-01-10T00:00:00.000Z', condition: 'baseline-default', rationale: 'Initial evidence sufficiency rules for closed-loop case model' },
+    effectiveFrom: '2026-01-10T00:00:00.000Z',
+    effectiveUntil: null,
+    simulationRef: null,
+  },
 ];

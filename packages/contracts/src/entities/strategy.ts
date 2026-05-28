@@ -4,7 +4,7 @@
  * Source: Spec #32 Strategy Layer Runtime Surface Specification
  * v1.3.1 lineage closure: 24 EARS requirements
  *
- * Twelve named strategy surfaces:
+ * Thirteen named strategy surfaces:
  * 1. SLA Strategy
  * 2. Threshold Strategy
  * 3. Automation Boundary Strategy
@@ -17,11 +17,12 @@
  * 10. Validation Window Strategy
  * 11. Closure Gate Strategy
  * 12. Reopening Trigger Strategy
+ * 13. Evidence Sufficiency Strategy (Phase E1 precursor)
  */
 
 import type { CommonFields } from './common';
 
-/** The twelve named strategy surface types per Spec #32 */
+/** The thirteen named strategy surface types per Spec #32 + Phase E1 extension */
 export type StrategySurfaceType =
   | 'sla'
   | 'threshold'
@@ -34,9 +35,10 @@ export type StrategySurfaceType =
   | 'prioritisation-weight'
   | 'validation-window'
   | 'closure-gate'
-  | 'reopening-trigger';
+  | 'reopening-trigger'
+  | 'evidence-sufficiency';
 
-/** All twelve strategy surface types as a constant array */
+/** All thirteen strategy surface types as a constant array */
 export const STRATEGY_SURFACE_TYPES: StrategySurfaceType[] = [
   'sla',
   'threshold',
@@ -50,6 +52,7 @@ export const STRATEGY_SURFACE_TYPES: StrategySurfaceType[] = [
   'validation-window',
   'closure-gate',
   'reopening-trigger',
+  'evidence-sufficiency',
 ];
 
 /** Strategy surface labels for UI display */
@@ -66,6 +69,7 @@ export const STRATEGY_SURFACE_LABELS: Record<StrategySurfaceType, string> = {
   'validation-window': 'Validation Window Strategy',
   'closure-gate': 'Closure Gate Strategy',
   'reopening-trigger': 'Reopening Trigger Strategy',
+  'evidence-sufficiency': 'Evidence Sufficiency Strategy',
 };
 
 /** Strategy policy status */
