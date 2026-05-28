@@ -397,3 +397,37 @@ Added reusable prompt templates and expanded steering in the same session:
 1. **Deeper seed data:** more cases/assets so surfaces aren't thin.
 2. **Case Queue "My Cases" expandable line-summary pattern** (Jira-style collapsed stubs → expand) — own scoped feature.
 3. **Still deferred:** Spec 06 Phase D (lifecycle state machine), Phase E (comms/evidence/auto-healing); Fusion Map bespoke graph library; Tenant Admin reference HTML; other domain specs per BUILD_SEQUENCE.
+
+
+## Design tweaks — resolved (2026-05-28, Pass C)
+
+### UI Tweak Pass C — content, density, and type rhythm
+
+| Change | Method | Detail |
+|--------|--------|--------|
+| Duplicate gauge circles removed | Command Centre page | Three large circular gauges (Posture 72, SLA 94, Coverage 87) removed — KPI strip already carries these metrics. Layout reflows naturally. |
+| Type rhythm — h1 | Primitive token `h1: '24px'` | Bumped from 22px to 24px so page title dominates. |
+| Type rhythm — micro | Primitive token `micro: '11px'` | Bumped from 10px to 11px for better legibility on labels/timestamps. |
+| Type rhythm — KPI value | KPI tile component | 22px Inter SemiBold (was 18px Bold). Reduced visual dominance vs h1. |
+| Type rhythm — KPI label | KPI tile component | 11px uppercase, --text-muted. |
+| Type rhythm — KPI delta | KPI tile component | 11px, --text-muted. |
+| Type rhythm — sidebar text | Sidebar component | 12px (caption) — chrome subordinated to content. |
+| Type rhythm — card headers | Command Centre + live-feed | 11px uppercase, --text-muted, 0.06em tracking. |
+| Live Activity row separators | Live-feed component | 1px `--border-subtle` between each item. Applied at component level. |
+| Scrollable card lists | Component token `cardListMaxHeight: '360px'` | Live-feed container uses it; Recent Cases and Asset Summary cards get `maxHeight` + `overflowY: auto`. |
+| Recent Cases columns | Command Centre page | Added Updated (relative timestamp, 11px caption) and Status (uppercase badge) columns. |
+| Vega-Lite charts wired | `vega-embed@6.26.0` installed | New `VegaChart` component renders specs via vega-embed. Three of four charts on `/cases/analytics` now render as SVG (line, donut, bar). SLA gauge remains a numeric display. Charts were NOT rendering before — needed wiring. |
+
+**New component:** `apps/web/src/components/vega-chart.tsx` — wraps vega-embed for declarative Vega-Lite spec rendering.
+
+**Dependencies added:** `vega@5.30.0`, `vega-lite@5.21.0`, `vega-embed@6.26.0`.
+
+**Commit:** `b7e3156`  
+**Test count:** 460 passing (23 files), zero regressions (+1 net test from gauge→KPI replacement).  
+**Surfaces affected:** Command Centre (gauges removed, type rhythm, list patterns), Case Analytics (charts now render), Sidebar (12px text), all pages (h1 24px, micro 11px via tokens).
+
+### Open items for next session (priority order)
+
+1. **Deeper seed data:** more cases/assets so surfaces aren't thin.
+2. **Case Queue "My Cases" expandable line-summary pattern** (Jira-style collapsed stubs → expand) — own scoped feature.
+3. **Still deferred:** Spec 06 Phase D (lifecycle state machine), Phase E (comms/evidence/auto-healing); Fusion Map bespoke graph library; Tenant Admin reference HTML; other domain specs per BUILD_SEQUENCE.
