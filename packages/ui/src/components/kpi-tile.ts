@@ -46,21 +46,21 @@ export function getKpiTileStyles(mode: WorkspaceMode): KpiTileStyles {
       gap: '4px',
     },
     label: {
-      fontSize: primitiveTypeScale.caption,
+      fontSize: primitiveTypeScale.micro,
       color: tokens.text.muted,
       textTransform: 'uppercase',
       letterSpacing: '0.06em',
       fontFamily: primitiveFonts.body,
     },
     value: {
-      fontSize: primitiveTypeScale.h2,
-      fontWeight: '700',
+      fontSize: primitiveTypeScale.kpiValue,
+      fontWeight: '600',
       color: tokens.text.primary,
       fontFamily: mode === 'mission' ? primitiveFonts.mono : primitiveFonts.body,
     },
     delta: {
       fontSize: primitiveTypeScale.micro,
-      color: tokens.text.secondary,
+      color: tokens.text.muted,
       fontFamily: primitiveFonts.body,
     },
     arrow: {

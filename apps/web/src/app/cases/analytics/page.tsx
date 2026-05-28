@@ -6,6 +6,7 @@ import { componentTokens } from '../../../../../../packages/ui/src/tokens/compon
 import { primitiveFonts, primitiveTypeScale, primitiveLetterSpacing, primitiveSpacing, primitiveData } from '../../../../../../packages/ui/src/tokens/primitives';
 import { resolveAllStrategies } from '../../../../../../packages/contracts/src/resolvers/case-strategy-resolver';
 import { seedStrategies } from '../../../../../../packages/contracts/src/fixtures/seed-strategies';
+import { VegaChart } from '@/components/vega-chart';
 import type { WorkspaceMode } from '../../../../../../packages/ui/src/tokens/semantic';
 
 /**
@@ -138,25 +139,19 @@ export default function CaseAnalyticsPage() {
         {/* Case Volume Trend (line) — DS-1.0 §13 approved type: line (trend) */}
         <ChartCard title="Case Volume Trend" subtitle="Cases created over time" tokens={tokens} mode={mode}>
           {seedCases.length > 0 ? (
-            <pre style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, fontFamily: primitiveFonts.mono, overflow: 'auto', margin: 0 }}>
-              {JSON.stringify(volumeSpec.data.values, null, 2)}
-            </pre>
+            <VegaChart spec={volumeSpec} />
           ) : (
             <EmptyState tokens={tokens} />
           )}
-          <ChartMeta spec={volumeSpec} tokens={tokens} mode={mode} />
         </ChartCard>
 
         {/* Case Type Distribution (donut) — DS-1.0 §13 approved type: donut (composition, sparingly) */}
         <ChartCard title="Case Type Distribution" subtitle="Breakdown by case type" tokens={tokens} mode={mode}>
           {seedCases.length > 0 ? (
-            <pre style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, fontFamily: primitiveFonts.mono, overflow: 'auto', margin: 0 }}>
-              {JSON.stringify(typeSpec.data.values, null, 2)}
-            </pre>
+            <VegaChart spec={typeSpec} />
           ) : (
             <EmptyState tokens={tokens} />
           )}
-          <ChartMeta spec={typeSpec} tokens={tokens} mode={mode} />
         </ChartCard>
 
         {/* SLA Compliance (gauge) — DS-1.0 §13 approved type: gauge (single metric vs thresholds) */}
@@ -177,13 +172,10 @@ export default function CaseAnalyticsPage() {
         {/* Priority Distribution (bar) — DS-1.0 §13 approved type: bar (comparison) */}
         <ChartCard title="Priority Distribution" subtitle="Cases by priority level" tokens={tokens} mode={mode}>
           {seedCases.length > 0 ? (
-            <pre style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, fontFamily: primitiveFonts.mono, overflow: 'auto', margin: 0 }}>
-              {JSON.stringify(prioritySpec.data.values, null, 2)}
-            </pre>
+            <VegaChart spec={prioritySpec} />
           ) : (
             <EmptyState tokens={tokens} />
           )}
-          <ChartMeta spec={prioritySpec} tokens={tokens} mode={mode} />
         </ChartCard>
       </section>
 
@@ -191,7 +183,7 @@ export default function CaseAnalyticsPage() {
       <section style={{ padding: `0 ${componentTokens.contentPadding} ${componentTokens.contentPadding}` }}>
         <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, borderRadius: componentTokens.cardRadius, border: `1px solid ${tokens.border.subtle}` }}>
           <p style={{ margin: 0, color: tokens.text.muted, fontSize: primitiveTypeScale.caption }}>
-            Charts display Vega-Lite spec data from seed fixtures. Visual rendering requires vega-embed at runtime. Colour values reference --data-* tokens only (DS-1.0 §13).
+            Charts render Vega-Lite specs via vega-embed from seed fixtures. Colour values reference --data-* tokens only (DS-1.0 §13).
           </p>
         </div>
       </section>

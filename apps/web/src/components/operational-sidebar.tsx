@@ -140,7 +140,7 @@ export function OperationalSidebar() {
                   color: standardTokens.chrome.navText,
                   cursor: 'pointer',
                   fontFamily: primitiveFonts.body,
-                  fontSize: primitiveTypeScale.body,
+                  fontSize: primitiveTypeScale.caption,
                   textAlign: 'left',
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',
@@ -168,7 +168,7 @@ export function OperationalSidebar() {
                         alignItems: 'center',
                         padding: '8px 12px',
                         color: standardTokens.chrome.navText,
-                        fontSize: primitiveTypeScale.body,
+                        fontSize: primitiveTypeScale.caption,
                         textDecoration: 'none',
                       }}
                     >

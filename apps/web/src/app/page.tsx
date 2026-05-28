@@ -8,7 +8,6 @@ import { seedConnectors } from '../../../../packages/contracts/src/fixtures/seed
 import { componentTokens } from '../../../../packages/ui/src/tokens/components';
 import { primitiveBrand, primitiveFonts, primitiveTypeScale, primitiveLetterSpacing, primitiveSignal, primitiveSpacing, primitiveRadii } from '../../../../packages/ui/src/tokens/primitives';
 import { getKpiTileStyles, getTrendIndicator } from '../../../../packages/ui/src/components/kpi-tile';
-import { getGaugeStyles, getGaugeBand } from '../../../../packages/ui/src/components/instrument-gauge';
 import { getLiveFeedStyles, getSeverityColor } from '../../../../packages/ui/src/components/live-feed';
 
 /**
@@ -25,7 +24,6 @@ import { getLiveFeedStyles, getSeverityColor } from '../../../../packages/ui/src
 export default function CommandCentrePage() {
   const { mode, tokens } = useMode();
   const tileStyles = getKpiTileStyles(mode);
-  const gaugeStyles = getGaugeStyles(mode);
   const feedStyles = getLiveFeedStyles(mode);
 
   const p0Cases = seedCases.filter((c) => c.priority === 'P0');
@@ -34,11 +32,6 @@ export default function CommandCentrePage() {
   const totalIdentities = seedIdentities.length;
   const activeConnectors = seedConnectors.filter((c) => c.state === 'active').length;
   const errorConnectors = seedConnectors.filter((c) => c.state === 'error').length;
-
-  // Posture score for gauge (mock — derived from seed data)
-  const postureScore = 72;
-  const postureMax = 100;
-  const postureBand = getGaugeBand(postureScore, postureMax, { critical: 0.3, warning: 0.6, success: 1.0 });
 
   return (
     <div>
@@ -101,7 +94,7 @@ export default function CommandCentrePage() {
             { label: 'Identities', value: totalIdentities, trend: 'flat' as const },
             { label: 'Active Connectors', value: activeConnectors, trend: 'up' as const, delta: 1 },
             { label: 'Connector Errors', value: errorConnectors, trend: 'down' as const, delta: -1 },
-            { label: 'Posture Score', value: `${postureScore}%`, trend: 'up' as const, delta: 3 },
+            { label: 'Posture Score', value: '72%', trend: 'up' as const, delta: 3 },
             { label: 'SLA Compliance', value: '94%', trend: 'down' as const, delta: -2 },
             { label: 'Coverage', value: '87%', trend: 'up' as const, delta: 1 },
           ].map((kpi) => {
@@ -121,58 +114,34 @@ export default function CommandCentrePage() {
         </div>
       </section>
 
-      {/* Insight Row — DS-1.0 §8: summary KPIs + primary chart/gauge */}
-      <section style={{ padding: componentTokens.contentPadding, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: componentTokens.gridGap }}>
-        {/* Posture Gauge */}
-        <div style={{ ...gaugeStyles.container, margin: '0 auto' }}>
-          <span style={gaugeStyles.valueText}>{postureScore}</span>
-          <span style={gaugeStyles.labelText}>Posture Score</span>
-          <span style={{ fontSize: primitiveTypeScale.micro, color: postureBand.color, marginTop: '4px' }}>
-            {postureBand.label}
-          </span>
-        </div>
-
-        {/* SLA Gauge */}
-        <div style={{ ...gaugeStyles.container, margin: '0 auto' }}>
-          <span style={gaugeStyles.valueText}>94</span>
-          <span style={gaugeStyles.labelText}>SLA Compliance</span>
-          <span style={{ fontSize: primitiveTypeScale.micro, color: primitiveSignal.success, marginTop: '4px' }}>
-            Healthy
-          </span>
-        </div>
-
-        {/* Coverage Gauge */}
-        <div style={{ ...gaugeStyles.container, margin: '0 auto' }}>
-          <span style={gaugeStyles.valueText}>87</span>
-          <span style={gaugeStyles.labelText}>Coverage</span>
-          <span style={{ fontSize: primitiveTypeScale.micro, color: primitiveSignal.success, marginTop: '4px' }}>
-            Healthy
-          </span>
-        </div>
-      </section>
-
       {/* Content Grid — DS-1.0 §8: 12-column internal grid, default 3-col cards */}
       <section style={{ padding: `0 ${componentTokens.contentPadding} ${componentTokens.contentPadding}`, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: componentTokens.gridGap }}>
         {/* Recent Cases Card */}
-        <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, borderRadius: componentTokens.cardRadius, border: `1px solid ${tokens.border.subtle}` }}>
-          <h3 style={{ margin: `0 0 ${primitiveSpacing[3]}`, fontSize: primitiveTypeScale.h3, fontWeight: 600, color: tokens.text.primary, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Recent Cases</h3>
-          {seedCases.map((c) => (
-            <div key={c.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: `${primitiveSpacing[2]} 0`, borderBottom: `1px solid ${tokens.border.subtle}` }}>
-              <span style={{ fontSize: primitiveTypeScale.body, color: tokens.text.primary }}>{c.title.slice(0, 40)}…</span>
-              <span style={{ fontSize: primitiveTypeScale.micro, color: c.priority === 'P0' ? primitiveSignal.critical : tokens.text.muted, fontWeight: 700 }}>{c.priority}</span>
-            </div>
-          ))}
+        <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, borderRadius: componentTokens.cardRadius, border: `1px solid ${tokens.border.subtle}`, display: 'flex', flexDirection: 'column' }}>
+          <h3 style={{ margin: `0 0 ${componentTokens.cardHeaderMargin}`, fontSize: primitiveTypeScale.micro, fontWeight: 600, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Recent Cases</h3>
+          <div style={{ maxHeight: componentTokens.cardListMaxHeight, overflowY: 'auto', flex: 1 }}>
+            {seedCases.map((c) => (
+              <div key={c.id} style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[2], padding: `${primitiveSpacing[2]} 0`, borderBottom: `1px solid ${tokens.border.subtle}` }}>
+                <span style={{ fontSize: primitiveTypeScale.micro, color: c.priority === 'P0' ? primitiveSignal.critical : tokens.text.muted, fontWeight: 700, minWidth: '24px' }}>{c.priority}</span>
+                <span style={{ fontSize: primitiveTypeScale.body, color: tokens.text.primary, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.title}</span>
+                <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, whiteSpace: 'nowrap' }}>12m ago</span>
+                <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, textTransform: 'uppercase', fontWeight: 600 }}>{c.status}</span>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Asset Summary Card */}
-        <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, borderRadius: componentTokens.cardRadius, border: `1px solid ${tokens.border.subtle}` }}>
-          <h3 style={{ margin: `0 0 ${primitiveSpacing[3]}`, fontSize: primitiveTypeScale.h3, fontWeight: 600, color: tokens.text.primary, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Asset Summary</h3>
-          {seedAssets.map((a) => (
-            <div key={a.id} style={{ display: 'flex', justifyContent: 'space-between', padding: `${primitiveSpacing[2]} 0`, borderBottom: `1px solid ${tokens.border.subtle}` }}>
-              <span style={{ fontSize: primitiveTypeScale.body, color: tokens.text.primary }}>{a.name}</span>
-              <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted }}>{a.classification}</span>
-            </div>
-          ))}
+        <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, borderRadius: componentTokens.cardRadius, border: `1px solid ${tokens.border.subtle}`, display: 'flex', flexDirection: 'column' }}>
+          <h3 style={{ margin: `0 0 ${componentTokens.cardHeaderMargin}`, fontSize: primitiveTypeScale.micro, fontWeight: 600, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Asset Summary</h3>
+          <div style={{ maxHeight: componentTokens.cardListMaxHeight, overflowY: 'auto', flex: 1 }}>
+            {seedAssets.map((a) => (
+              <div key={a.id} style={{ display: 'flex', justifyContent: 'space-between', padding: `${primitiveSpacing[2]} 0`, borderBottom: `1px solid ${tokens.border.subtle}` }}>
+                <span style={{ fontSize: primitiveTypeScale.body, color: tokens.text.primary }}>{a.name}</span>
+                <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted }}>{a.classification}</span>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Live Activity Feed */}
@@ -198,7 +167,7 @@ export default function CommandCentrePage() {
       {/* Data Source Status */}
       <section style={{ padding: `0 ${componentTokens.contentPadding} ${componentTokens.contentPadding}` }}>
         <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, borderRadius: componentTokens.cardRadius, border: `1px solid ${tokens.border.subtle}` }}>
-          <h3 style={{ margin: `0 0 ${primitiveSpacing[2]}`, fontSize: primitiveTypeScale.h3, fontWeight: 600, color: tokens.text.primary, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Data Source Status</h3>
+          <h3 style={{ margin: `0 0 ${primitiveSpacing[2]}`, fontSize: primitiveTypeScale.micro, fontWeight: 600, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Data Source Status</h3>
           <p style={{ margin: 0, color: tokens.text.secondary, lineHeight: '1.45', fontSize: primitiveTypeScale.body }}>
             Displaying seed/mock data. Real connector integration requires Phase 2 approval. Scaffold metrics will populate as domain specs are implemented.
           </p>

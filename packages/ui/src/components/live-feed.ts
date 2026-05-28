@@ -7,7 +7,7 @@
  * Source: DESIGN_SYSTEM.md §21; mockup: command-centre-mission.png, case-handling-dashboard.png
  */
 
-import { primitiveTypeScale, primitiveFonts, primitiveSignal, primitiveSpacing } from '../tokens/primitives';
+import { primitiveTypeScale, primitiveFonts, primitiveSignal, primitiveSpacing, primitiveRadii } from '../tokens/primitives';
 import { componentTokens } from '../tokens/components';
 import type { WorkspaceMode } from '../tokens/semantic';
 import { getSemanticTokens } from '../tokens/semantic';
@@ -43,14 +43,14 @@ export function getLiveFeedStyles(mode: WorkspaceMode): LiveFeedStyles {
       background: tokens.surface.elevated,
       border: `1px solid ${tokens.border.subtle}`,
       borderRadius: componentTokens.cardRadius,
-      maxHeight: '320px',
+      maxHeight: componentTokens.cardListMaxHeight,
       display: 'flex',
       flexDirection: 'column',
     },
     header: {
-      fontSize: primitiveTypeScale.h3,
+      fontSize: primitiveTypeScale.micro,
       fontWeight: '600',
-      color: tokens.text.primary,
+      color: tokens.text.muted,
       marginBottom: primitiveSpacing[3],
       textTransform: 'uppercase',
       letterSpacing: '0.06em',
@@ -61,18 +61,18 @@ export function getLiveFeedStyles(mode: WorkspaceMode): LiveFeedStyles {
       overflowY: 'auto',
       display: 'flex',
       flexDirection: 'column',
-      gap: primitiveSpacing[2],
     },
     item: {
       display: 'flex',
       alignItems: 'flex-start',
       gap: primitiveSpacing[2],
-      padding: `${primitiveSpacing[1]} 0`,
+      padding: `${primitiveSpacing[2]} 0`,
+      borderBottom: `1px solid ${tokens.border.subtle}`,
     },
     dot: {
       width: '8px',
       height: '8px',
-      borderRadius: '50%',
+      borderRadius: primitiveRadii.full,
       marginTop: '4px',
       flexShrink: '0',
     },

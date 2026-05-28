@@ -26,6 +26,7 @@ export const componentTokens = {
   searchWidth: '440px',
   avatarSize: '32px',
   cardHeaderMargin: primitiveSpacing[3], // 12px — consistent card header bottom margin
+  cardListMaxHeight: '360px',           // max-height for scrollable card lists
 } as const;
 
 export type ComponentTokens = typeof componentTokens;

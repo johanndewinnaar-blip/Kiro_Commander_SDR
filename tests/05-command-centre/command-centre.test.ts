@@ -18,8 +18,7 @@ const pageContent = readFileSync(PAGE_PATH, 'utf-8');
  * - Route registration
  * - DS-1.0 workspace structure (Header → KPI strip → Insight Row → Content Grid)
  * - Both Standard and Mission modes supported (useMode)
- * - KPI strip with 8 tiles
- * - Instrument gauges in insight row
+ * - KPI strip with 8 tiles (carries posture/SLA/coverage metrics)
  * - P0 banner with emergency styling
  * - Live activity feed
  * - Seed data consumption only
@@ -66,17 +65,17 @@ describe('Command Centre — KPI Strip (DS-1.0 §21 Req 26)', () => {
   });
 });
 
-describe('Command Centre — Instrument Gauges (DS-1.0 §21 Req 27)', () => {
-  it('renders gauges in insight row', () => {
-    expect(pageContent).toContain('getGaugeStyles');
-    expect(pageContent).toContain('getGaugeBand');
+describe('Command Centre — KPI Strip carries posture metrics (gauges removed)', () => {
+  it('KPI strip includes Posture Score metric', () => {
     expect(pageContent).toContain('Posture Score');
   });
 
-  it('gauge shows value + label (never colour alone)', () => {
-    expect(pageContent).toContain('gaugeStyles.valueText');
-    expect(pageContent).toContain('gaugeStyles.labelText');
-    expect(pageContent).toContain('postureBand.label');
+  it('KPI strip includes SLA Compliance metric', () => {
+    expect(pageContent).toContain('SLA Compliance');
+  });
+
+  it('KPI strip includes Coverage metric', () => {
+    expect(pageContent).toContain('Coverage');
   });
 });
 

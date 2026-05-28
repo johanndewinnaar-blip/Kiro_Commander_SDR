@@ -113,12 +113,13 @@ export const primitiveFonts = {
 export const primitiveTypeScale = {
   displayLg: '24px',
   display: '22px',
-  h1: '22px',
+  h1: '24px',
   h2: '18px',
   h3: '14px',
   body: '13px',
   caption: '12px',
-  micro: '10px',
+  micro: '11px',
+  kpiValue: '22px',
 } as const;
 
 export const primitiveLetterSpacing = {
