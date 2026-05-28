@@ -116,3 +116,17 @@
 | Decision ID | Date | Decision | Rationale | Impact |
 |---|---|---|---|---|
 | DEC-v1.3.2-sidebar-interactivity | 2026-05-27 | Sidebar groups expand/collapse with localStorage persistence. Default: only active-route group expanded. User overrides persist. Control Plane sidebar remains flat single-level per v3 reference. | v11 shell reference shows expandable groups with carets. Interactivity improves navigation in a 18-group sidebar. | Operational App sidebar is interactive. Tenant Admin and Control Plane sidebars unchanged (flat). |
+
+
+## DS-1.0 design system decisions
+
+| Decision ID | Date | Decision | Rationale | Impact |
+|---|---|---|---|---|
+| DEC-design-system-v1 | 2026-05-28 | DESIGN_SYSTEM.md and the 8 mockups in docs/06_ui_build_reference/ are now authoritative, equal in standing to the shell reference HTMLs. DS-1.0 supersedes the v1.3.2 design remediation values where they conflict. | Owner produced a complete, pinned design system specification with high-fidelity mockups. Every value is resolved — nothing left to improvise. | All implementation must build to DS-1.0 exactly. Prior hardcoded values (14px, 18px, 26px, 28px, 68px top bar, 306px sidebar) are superseded. |
+| DEC-ds1-vega-lite | 2026-05-28 | Vega-Lite is the primary charting library for Commander SDR. | Free/BSD licence, grammar-of-graphics approach suitable for heavy analytical use. Owner's considered choice. | All charts use Vega-Lite. ECharts permitted only where Vega-Lite genuinely cannot. Literal hex never in chart specs — reference --data-* tokens only. |
+| DEC-ds1-lucide | 2026-05-28 | Lucide is the single icon library for Commander SDR. | Outline, monochrome, token-coloured. Consistent visual language. | No mixing icon libraries. Lucide only. Sizes: 16px inline, 20px nav, 24px feature. |
+| DEC-ds1-shadcn-ui | 2026-05-28 | shadcn/ui primitives are the component base, restyled with Commander tokens. | Accessible, composable, unstyled primitives that can be fully themed. | Bespoke components reserved for signature surfaces only (Command Centre, Fusion Map, P0 War Room). |
+| DEC-ds1-jetbrains-mono | 2026-05-28 | JetBrains Mono is the monospace font for telemetry, IDs, hashes, and all numeric values in Mission mode. | Tabular figures, clear distinction from body text, established developer font. | Mandatory for numeric KPI values in Mission mode. Used for CVE IDs, asset IDs, hashes throughout. |
+| DEC-ds1-fusion-map-library-deferred | 2026-05-28 | Bespoke graph library for Fusion Map (Cytoscape or react-force-graph) is deferred until the Fusion Map spec is reached. | Fusion Map requires network graph capabilities that Vega-Lite cannot provide. Library selection deferred to avoid premature commitment. | Fusion Map spec will make the final library choice. |
+| DEC-ds1-topbar-56px | 2026-05-28 | Top bar height is 56px (supersedes the v1.3.2 remediation's 68px from shell reference v11). | DS-1.0 §0 locked decision. Owner's new spec. | Implementation must update from 68px to 56px. |
+| DEC-ds1-sidebar-248px-collapsible | 2026-05-28 | Sidebar is 248px expanded, collapsible to 68px icon rail (supersedes the v1.3.2 remediation's 306px static). | DS-1.0 §0 locked decision. Owner's new spec. Collapsible sidebar improves workspace real estate. | Implementation must update from 306px static to 248px + 68px rail with hamburger toggle. |
