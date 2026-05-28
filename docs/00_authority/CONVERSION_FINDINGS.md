@@ -332,3 +332,41 @@ Working copy clean. Branch: main. HEAD `6b959f3` matches origin/main.
 3. **Deeper seed data:** more cases/assets so surfaces aren't thin.
 4. **Case Queue "My Cases" expandable line-summary pattern** (Jira-style collapsed stubs → expand) — its own scoped feature.
 5. **Still deferred:** Spec 06 Phase D (lifecycle state machine), Phase E (comms/evidence/auto-healing); Fusion Map bespoke graph library; Tenant Admin reference HTML; other domain specs (Vulnerability, Identity, Architecture) per BUILD_SEQUENCE.
+
+
+## Design tweaks — resolved (2026-05-28)
+
+### UI Tweak Pass A — token cosmetics
+
+| Change | Token layer | Before | After |
+|--------|-------------|--------|-------|
+| Sharp corners | Primitive | sm=4px, md=8px, lg=12px | sm=0px, md=2px, lg=2px |
+| Standard-mode card borders (darker) | Semantic | default=neutral-200, subtle=neutral-100 | default=neutral-300 (#c2cede), subtle=neutral-200 (#dbe3ef) |
+| Crisp white nav text | Semantic (new `chrome.navText`) | rgba(220,235,255,0.82) / rgba(185,210,238,0.72) / rgba(255,255,255,0.7) | #ffffff (both modes) |
+| Active nav text | Semantic (new `chrome.navTextActive`) | #fff / gold mix | gold (#ffd21f) |
+| Page-title h1 font | Component usage | Bebas Neue (display) | Inter Bold 700 (body) |
+
+Mission-mode borders unchanged. Bebas Neue retained for brand wordmarks and EMERGENCY COMMAND label only. `--radius-full` retained for avatars/pills.
+
+**Propagation method:** All changes at primitive/semantic token level. Zero per-page patching of values. Components consuming `componentTokens.cardRadius`, `tokens.border.default`, `tokens.border.subtle`, and the new `chrome.navText`/`chrome.navTextActive` tokens inherit automatically.
+
+**Commit:** `d3ba46d`  
+**Test count:** 459 passing (23 files), zero regressions.  
+**Surfaces affected:** Command Centre, Case Queue, Case Detail, Case Analytics, P0 War Room, Sidebar, Top Bar.
+
+### Prompt library and execution-discipline steering
+
+Added reusable prompt templates and expanded steering in the same session:
+
+- `docs/00_authority/prompts/` — 5 templates (SESSION_START, PHASE_RUNNER, TWEAK_PASS, SUB_PHASING, VERIFY_AND_CLOSE) + README.
+- `.kiro/steering/execution-discipline.md` — standing rules for tokens, testing, context-limit, UI verification, agent mode, commit discipline.
+- `docs/00_authority/DAILY_OPERATING_LOOP.md` — standard session workflow with template cross-references.
+
+**Commit:** `10468a4`
+
+### Open items for next session (priority order)
+
+1. **UI Tweak Pass B (layout/fixes):** logo/sidebar width alignment, breadcrumb shows path not title echo, home link (logo → Command Centre + gold home icon in collapsed rail), params.id React.use() fix, verify Vega-Lite charts render (vega-embed wiring).
+2. **Deeper seed data:** more cases/assets so surfaces aren't thin.
+3. **Case Queue "My Cases" expandable line-summary pattern** (Jira-style collapsed stubs → expand) — own scoped feature.
+4. **Still deferred:** Spec 06 Phase D (lifecycle state machine), Phase E (comms/evidence/auto-healing); Fusion Map bespoke graph library; Tenant Admin reference HTML; other domain specs per BUILD_SEQUENCE.
