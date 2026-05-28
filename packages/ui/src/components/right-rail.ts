@@ -46,7 +46,7 @@ export function getRightRailStyles(mode: WorkspaceMode): RightRailStyles {
     section: {
       padding: componentTokens.cardPadding,
       background: tokens.surface.secondary,
-      borderRadius: '8px',
+      borderRadius: componentTokens.cardRadius,
       border: `1px solid ${tokens.border.subtle}`,
     },
     sectionTitle: {

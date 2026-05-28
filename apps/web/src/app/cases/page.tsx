@@ -3,7 +3,7 @@
 import { useMode } from '@/context/mode-context';
 import { seedCases } from '../../../../../packages/contracts/src/fixtures/seed-cases';
 import { componentTokens } from '../../../../../packages/ui/src/tokens/components';
-import { primitiveBrand, primitiveFonts, primitiveTypeScale, primitiveLetterSpacing, primitiveSignal, primitiveSpacing } from '../../../../../packages/ui/src/tokens/primitives';
+import { primitiveBrand, primitiveFonts, primitiveTypeScale, primitiveLetterSpacing, primitiveSignal, primitiveSpacing, primitiveRadii } from '../../../../../packages/ui/src/tokens/primitives';
 import { primitivePriority } from '../../../../../packages/ui/src/tokens/primitives';
 import { LIFECYCLE_STAGES } from '../../../../../packages/ui/src/components/lifecycle-pipeline';
 import { resolveAllStrategies } from '../../../../../packages/contracts/src/resolvers/case-strategy-resolver';
@@ -64,8 +64,8 @@ export default function CaseQueuePage() {
           <small style={{ color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.display, fontSize: primitiveTypeScale.micro }}>Cases › Queue</small>
           <h1 style={{ margin: '4px 0 0', fontSize: primitiveTypeScale.h1, fontWeight: 700, color: tokens.text.primary, fontFamily: primitiveFonts.body, lineHeight: '1.2' }}>Case Queue</h1>
         </div>
-        <div style={{ border: `1px solid ${tokens.border.default}`, height: componentTokens.buttonHeightEmphasis, display: 'flex', alignItems: 'center', padding: `0 ${primitiveSpacing[3]}`, background: tokens.surface.secondary, borderRadius: '4px' }}>
-          <span style={{ width: '7px', height: '7px', background: primitiveSignal.success, display: 'inline-block', marginRight: primitiveSpacing[2], borderRadius: '50%' }} />
+        <div style={{ border: `1px solid ${tokens.border.default}`, height: componentTokens.buttonHeightEmphasis, display: 'flex', alignItems: 'center', padding: `0 ${primitiveSpacing[3]}`, background: tokens.surface.secondary, borderRadius: primitiveRadii.md }}>
+          <span style={{ width: '7px', height: '7px', background: primitiveSignal.success, display: 'inline-block', marginRight: primitiveSpacing[2], borderRadius: primitiveRadii.full }} />
           <span style={{ fontSize: primitiveTypeScale.body, color: tokens.text.secondary }}>{seedCases.length} cases</span>
         </div>
       </section>
@@ -131,7 +131,7 @@ export default function CaseQueuePage() {
                     {c.sla.breached && <span style={{ marginLeft: '4px', color: primitiveSignal.critical }}>BREACH</span>}
                   </td>
                   <td style={{ padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}` }}>
-                    <span style={{ fontSize: primitiveTypeScale.micro, padding: '2px 6px', border: c.surfaceAttribution === 'external_attack_surface' ? `1px solid ${primitiveBrand.gold}` : `1px solid ${tokens.border.default}`, borderRadius: '4px', color: c.surfaceAttribution === 'external_attack_surface' ? primitiveBrand.gold : tokens.text.muted }}>
+                    <span style={{ fontSize: primitiveTypeScale.micro, padding: '2px 6px', border: c.surfaceAttribution === 'external_attack_surface' ? `1px solid ${primitiveBrand.gold}` : `1px solid ${tokens.border.default}`, borderRadius: primitiveRadii.md, color: c.surfaceAttribution === 'external_attack_surface' ? primitiveBrand.gold : tokens.text.muted }}>
                       {c.surfaceAttribution === 'external_attack_surface' ? 'External' : 'Internal'}
                     </span>
                   </td>

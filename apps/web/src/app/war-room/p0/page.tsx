@@ -3,7 +3,7 @@
 import { useMode } from '@/context/mode-context';
 import { seedCases } from '../../../../../../packages/contracts/src/fixtures/seed-cases';
 import { componentTokens } from '../../../../../../packages/ui/src/tokens/components';
-import { primitiveBrand, primitiveFonts, primitiveTypeScale, primitiveLetterSpacing, primitiveSignal, primitiveSpacing, primitiveGlow, primitiveHud } from '../../../../../../packages/ui/src/tokens/primitives';
+import { primitiveBrand, primitiveFonts, primitiveTypeScale, primitiveLetterSpacing, primitiveSignal, primitiveSpacing, primitiveGlow, primitiveHud, primitiveRadii } from '../../../../../../packages/ui/src/tokens/primitives';
 import { primitivePriority } from '../../../../../../packages/ui/src/tokens/primitives';
 import { resolveAllStrategies } from '../../../../../../packages/contracts/src/resolvers/case-strategy-resolver';
 import { seedStrategies } from '../../../../../../packages/contracts/src/fixtures/seed-strategies';
@@ -86,7 +86,7 @@ export default function P0WarRoomPage() {
                 <span style={{ color: primitiveSignal.critical, fontWeight: 700, fontSize: primitiveTypeScale.body }}>{primitivePriority.p0.shape} {primitivePriority.p0.label}</span>
                 <span style={{ color: surface.textSecondary, fontSize: primitiveTypeScale.caption, fontFamily: primitiveFonts.mono }}>{c.caseRef}</span>
               </div>
-              <span style={{ fontSize: primitiveTypeScale.micro, padding: '2px 6px', border: `1px solid ${primitiveBrand.gold}`, borderRadius: '4px', color: primitiveBrand.gold }}>
+              <span style={{ fontSize: primitiveTypeScale.micro, padding: '2px 6px', border: `1px solid ${primitiveBrand.gold}`, borderRadius: primitiveRadii.md, color: primitiveBrand.gold }}>
                 {c.surfaceAttribution === 'external_attack_surface' ? 'External' : 'Internal'}
               </span>
             </div>
@@ -103,7 +103,7 @@ export default function P0WarRoomPage() {
             </div>
 
             {/* Routing rationale */}
-            <div style={{ marginTop: primitiveSpacing[3], padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, background: surface.panel, borderRadius: '4px', border: `1px solid ${surface.lineSubtle}` }}>
+            <div style={{ marginTop: primitiveSpacing[3], padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, background: surface.panel, borderRadius: primitiveRadii.md, border: `1px solid ${surface.lineSubtle}` }}>
               <span style={{ fontSize: primitiveTypeScale.caption, color: surface.textMuted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Routing Rationale</span>
               <p style={{ margin: `${primitiveSpacing[1]} 0 0`, fontSize: primitiveTypeScale.body, color: surface.textSecondary, lineHeight: '1.45' }}>{c.routingRationale}</p>
             </div>

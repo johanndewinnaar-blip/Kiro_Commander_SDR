@@ -1,10 +1,11 @@
 'use client';
 
+import { use } from 'react';
 import { useMode } from '@/context/mode-context';
 import { seedCases } from '../../../../../../packages/contracts/src/fixtures/seed-cases';
 import { seedAssets } from '../../../../../../packages/contracts/src/fixtures/seed-assets';
 import { componentTokens } from '../../../../../../packages/ui/src/tokens/components';
-import { primitiveBrand, primitiveFonts, primitiveTypeScale, primitiveLetterSpacing, primitiveSignal, primitiveSpacing } from '../../../../../../packages/ui/src/tokens/primitives';
+import { primitiveBrand, primitiveFonts, primitiveTypeScale, primitiveLetterSpacing, primitiveSignal, primitiveSpacing, primitiveRadii } from '../../../../../../packages/ui/src/tokens/primitives';
 import { primitivePriority } from '../../../../../../packages/ui/src/tokens/primitives';
 import { resolveAllStrategies } from '../../../../../../packages/contracts/src/resolvers/case-strategy-resolver';
 import { seedStrategies } from '../../../../../../packages/contracts/src/fixtures/seed-strategies';
@@ -27,12 +28,13 @@ import { getRightRailStyles } from '../../../../../../packages/ui/src/components
  * - Surface attribution preserved (Assertion 10)
  */
 
-export default function CaseDetailPage({ params }: { params: { id: string } }) {
+export default function CaseDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const { mode, tokens } = useMode();
   const railStyles = getRightRailStyles(mode);
 
   // Find the case from seed data
-  const caseRecord = seedCases.find((c) => c.id === params.id) ?? seedCases[0];
+  const caseRecord = seedCases.find((c) => c.id === id) ?? seedCases[0];
   const strategy = resolveAllStrategies(caseRecord, seedStrategies);
   const p = primitivePriority[caseRecord.priority.toLowerCase() as keyof typeof primitivePriority];
 
@@ -74,14 +76,14 @@ export default function CaseDetailPage({ params }: { params: { id: string } }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[2] }}>
               <span style={{ color: p.color, fontWeight: 700, fontSize: primitiveTypeScale.body }}>{p.shape} {p.label}</span>
               <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.muted }}>{caseRecord.caseRef}</span>
-              <span style={{ fontSize: primitiveTypeScale.micro, padding: '2px 6px', border: caseRecord.surfaceAttribution === 'external_attack_surface' ? `1px solid ${primitiveBrand.gold}` : `1px solid ${tokens.border.default}`, borderRadius: '4px', color: caseRecord.surfaceAttribution === 'external_attack_surface' ? primitiveBrand.gold : tokens.text.muted }}>
+              <span style={{ fontSize: primitiveTypeScale.micro, padding: '2px 6px', border: caseRecord.surfaceAttribution === 'external_attack_surface' ? `1px solid ${primitiveBrand.gold}` : `1px solid ${tokens.border.default}`, borderRadius: primitiveRadii.md, color: caseRecord.surfaceAttribution === 'external_attack_surface' ? primitiveBrand.gold : tokens.text.muted }}>
                 {caseRecord.surfaceAttribution === 'external_attack_surface' ? 'External' : 'Internal'}
               </span>
             </div>
             <h1 style={{ margin: '4px 0 0', fontSize: primitiveTypeScale.h2, fontWeight: 700, color: tokens.text.primary, fontFamily: primitiveFonts.body }}>{caseRecord.title}</h1>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[3] }}>
-            <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.muted, padding: `${primitiveSpacing[1]} ${primitiveSpacing[3]}`, border: `1px solid ${tokens.border.default}`, borderRadius: '4px' }}>{caseRecord.status}</span>
+            <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.muted, padding: `${primitiveSpacing[1]} ${primitiveSpacing[3]}`, border: `1px solid ${tokens.border.default}`, borderRadius: primitiveRadii.md }}>{caseRecord.status}</span>
           </div>
         </section>
 

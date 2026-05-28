@@ -54,13 +54,13 @@ describe('Collapsible Sidebar', () => {
   it('operational-sidebar.tsx exists and contains collapse logic', () => {
     const content = readFileSync(resolve(ROOT, 'apps/web/src/components/operational-sidebar.tsx'), 'utf-8');
     expect(content).toContain('collapsed');
-    expect(content).toContain('toggleCollapse');
+    expect(content).toContain('toggleCollapsed');
     expect(content).toContain(componentTokens.sidebarRail);
     expect(content).toContain(componentTokens.sidebarWidth);
   });
 
   it('sidebar persists collapse state in localStorage', () => {
-    const content = readFileSync(resolve(ROOT, 'apps/web/src/components/operational-sidebar.tsx'), 'utf-8');
+    const content = readFileSync(resolve(ROOT, 'apps/web/src/context/sidebar-context.tsx'), 'utf-8');
     expect(content).toContain('commander-sdr.sidebar.collapsed');
   });
 });

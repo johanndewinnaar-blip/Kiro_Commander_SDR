@@ -8,7 +8,7 @@
  * Source: DESIGN_SYSTEM.md §12, §21; mockup: command-centre-standard.png, ciso-dashboard.png
  */
 
-import { primitiveTypeScale, primitiveFonts, primitiveSignal, primitiveSpacing } from '../tokens/primitives';
+import { primitiveTypeScale, primitiveFonts, primitiveSignal, primitiveSpacing, primitiveRadii } from '../tokens/primitives';
 import { componentTokens } from '../tokens/components';
 import type { WorkspaceMode } from '../tokens/semantic';
 import { getSemanticTokens } from '../tokens/semantic';
@@ -75,12 +75,12 @@ export function getRankedTableStyles(mode: WorkspaceMode): RankedTableStyles {
       width: '100%',
       height: '6px',
       background: tokens.border.subtle,
-      borderRadius: '3px',
+      borderRadius: primitiveRadii.full,
       overflow: 'hidden',
     },
     bar: {
       height: '100%',
-      borderRadius: '3px',
+      borderRadius: primitiveRadii.full,
       transition: 'width 250ms linear',
     },
     valueCell: {

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { componentTokens } from '../../../../packages/ui/src/tokens/components';
 import { primitiveBrand, primitiveFonts, primitiveTypeScale, primitiveLetterSpacing, primitiveMotion } from '../../../../packages/ui/src/tokens/primitives';
 import { standardTokens } from '../../../../packages/ui/src/tokens/semantic';
+import { useSidebarCollapsed } from '@/context/sidebar-context';
 import { OPERATIONAL_NAV_GROUPS } from '@/registry/nav-groups';
 
 /**
@@ -22,11 +23,10 @@ import { OPERATIONAL_NAV_GROUPS } from '@/registry/nav-groups';
  */
 
 const STORAGE_PREFIX = 'commander-sdr.sidebar.';
-const COLLAPSE_KEY = 'commander-sdr.sidebar.collapsed';
 const DEFAULT_EXPANDED_GROUP = 'case-management';
 
 export function OperationalSidebar() {
-  const [collapsed, setCollapsed] = useState(false);
+  const { collapsed, toggleCollapsed } = useSidebarCollapsed();
   const [expansionState, setExpansionState] = useState<Record<string, boolean>>(() => {
     const state: Record<string, boolean> = {};
     for (const group of OPERATIONAL_NAV_GROUPS) {
@@ -36,8 +36,6 @@ export function OperationalSidebar() {
   });
 
   useEffect(() => {
-    const storedCollapse = localStorage.getItem(COLLAPSE_KEY);
-    if (storedCollapse !== null) setCollapsed(storedCollapse === 'true');
     const stored: Record<string, boolean> = {};
     for (const group of OPERATIONAL_NAV_GROUPS) {
       const val = localStorage.getItem(`${STORAGE_PREFIX}${group.id}.expanded`);
@@ -45,14 +43,6 @@ export function OperationalSidebar() {
     }
     if (Object.keys(stored).length > 0) setExpansionState((prev) => ({ ...prev, ...stored }));
   }, []);
-
-  function toggleCollapse() {
-    setCollapsed((prev) => {
-      const next = !prev;
-      localStorage.setItem(COLLAPSE_KEY, String(next));
-      return next;
-    });
-  }
 
   function toggleGroup(groupId: string) {
     setExpansionState((prev) => {
@@ -85,7 +75,7 @@ export function OperationalSidebar() {
       {/* Hamburger toggle */}
       <button
         type="button"
-        onClick={toggleCollapse}
+        onClick={toggleCollapsed}
         aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         style={{
           height: componentTokens.itemHeight,
@@ -104,6 +94,26 @@ export function OperationalSidebar() {
       >
         ☰
       </button>
+
+      {/* Home link — visible in collapsed rail as gold home icon */}
+      {collapsed && (
+        <a
+          href="/"
+          aria-label="Command Centre (Home)"
+          style={{
+            height: componentTokens.itemHeight,
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: primitiveBrand.gold,
+            textDecoration: 'none',
+            fontSize: '18px',
+          }}
+        >
+          ⌂
+        </a>
+      )}
 
       {/* Nav groups */}
       <div style={{ padding: collapsed ? '4px' : '12px', overflowY: 'auto', flex: 1 }} className="sidebar-scroll">

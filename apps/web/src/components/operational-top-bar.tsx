@@ -1,8 +1,9 @@
 'use client';
 
 import { useMode } from '@/context/mode-context';
+import { useSidebarCollapsed } from '@/context/sidebar-context';
 import { componentTokens } from '../../../../packages/ui/src/tokens/components';
-import { primitiveBrand, primitiveFonts, primitiveTypeScale, primitiveLetterSpacing } from '../../../../packages/ui/src/tokens/primitives';
+import { primitiveBrand, primitiveFonts, primitiveTypeScale, primitiveLetterSpacing, primitiveMotion } from '../../../../packages/ui/src/tokens/primitives';
 import { standardTokens } from '../../../../packages/ui/src/tokens/semantic';
 import { TOP_NAV_WORKSPACES } from '@/registry/nav-groups';
 
@@ -17,6 +18,8 @@ import { TOP_NAV_WORKSPACES } from '@/registry/nav-groups';
  */
 export function OperationalTopBar() {
   const { mode, toggleMode } = useMode();
+  const { collapsed } = useSidebarCollapsed();
+  const brandWidth = collapsed ? componentTokens.sidebarRail : componentTokens.sidebarWidth;
 
   return (
     <header
@@ -34,24 +37,38 @@ export function OperationalTopBar() {
         borderBottom: `1px solid rgba(255,210,31,0.24)`,
       }}
     >
-      {/* Brand area */}
-      <div
+      {/* Brand area — width tied to sidebar state */}
+      <a
+        href="/"
         style={{
-          width: componentTokens.sidebarWidth,
+          width: brandWidth,
           height: '100%',
           display: 'flex',
           alignItems: 'center',
-          padding: `0 ${componentTokens.cardPadding}`,
+          padding: collapsed ? '0' : `0 ${componentTokens.cardPadding}`,
+          justifyContent: collapsed ? 'center' : 'flex-start',
           borderRight: '1px solid rgba(255,255,255,0.14)',
           gap: '8px',
           background: `linear-gradient(155deg, ${primitiveBrand.navy2}, ${primitiveBrand.navy})`,
+          textDecoration: 'none',
+          transition: `width ${primitiveMotion.standard} ${primitiveMotion.easeDefault}`,
+          overflow: 'hidden',
+          whiteSpace: 'nowrap',
         }}
+        aria-label="Commander SDR — Home"
       >
-        <span style={{ fontFamily: primitiveFonts.display, fontSize: primitiveTypeScale.display, letterSpacing: primitiveLetterSpacing.displayWide, color: primitiveBrand.cream }}>SEIERTECH</span>
-        <span style={{ height: '23px', width: '1px', background: primitiveBrand.gold }} />
-        <span style={{ fontFamily: primitiveFonts.display, fontSize: primitiveTypeScale.display, letterSpacing: primitiveLetterSpacing.display, color: primitiveBrand.gold }}>COMMANDER</span>
-        <span style={{ fontFamily: primitiveFonts.display, fontSize: primitiveTypeScale.display, letterSpacing: primitiveLetterSpacing.display, color: '#ffffff' }}>SDR</span>
-      </div>
+        {!collapsed && (
+          <>
+            <span style={{ fontFamily: primitiveFonts.display, fontSize: primitiveTypeScale.display, letterSpacing: primitiveLetterSpacing.displayWide, color: primitiveBrand.cream }}>SEIERTECH</span>
+            <span style={{ height: '23px', width: '1px', background: primitiveBrand.gold, flexShrink: 0 }} />
+            <span style={{ fontFamily: primitiveFonts.display, fontSize: primitiveTypeScale.display, letterSpacing: primitiveLetterSpacing.display, color: primitiveBrand.gold }}>COMMANDER</span>
+            <span style={{ fontFamily: primitiveFonts.display, fontSize: primitiveTypeScale.display, letterSpacing: primitiveLetterSpacing.display, color: '#ffffff' }}>SDR</span>
+          </>
+        )}
+        {collapsed && (
+          <span style={{ color: primitiveBrand.gold, fontSize: '20px' }}>⌂</span>
+        )}
+      </a>
 
       {/* Top nav tabs */}
       <nav style={{ display: 'flex', height: '100%', alignItems: 'stretch' }}>

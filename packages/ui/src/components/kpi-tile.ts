@@ -39,7 +39,7 @@ export function getKpiTileStyles(mode: WorkspaceMode): KpiTileStyles {
       minWidth: '120px',
       padding: componentTokens.cardPadding,
       background: tokens.surface.elevated,
-      borderRadius: '8px',
+      borderRadius: componentTokens.cardRadius,
       border: `1px solid ${tokens.border.subtle}`,
       display: 'flex',
       flexDirection: 'column',

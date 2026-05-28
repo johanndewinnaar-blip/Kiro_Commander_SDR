@@ -6,7 +6,7 @@ import { seedAssets } from '../../../../packages/contracts/src/fixtures/seed-ass
 import { seedIdentities } from '../../../../packages/contracts/src/fixtures/seed-identities';
 import { seedConnectors } from '../../../../packages/contracts/src/fixtures/seed-connectors';
 import { componentTokens } from '../../../../packages/ui/src/tokens/components';
-import { primitiveBrand, primitiveFonts, primitiveTypeScale, primitiveLetterSpacing, primitiveSignal, primitiveSpacing } from '../../../../packages/ui/src/tokens/primitives';
+import { primitiveBrand, primitiveFonts, primitiveTypeScale, primitiveLetterSpacing, primitiveSignal, primitiveSpacing, primitiveRadii } from '../../../../packages/ui/src/tokens/primitives';
 import { getKpiTileStyles, getTrendIndicator } from '../../../../packages/ui/src/components/kpi-tile';
 import { getGaugeStyles, getGaugeBand } from '../../../../packages/ui/src/components/instrument-gauge';
 import { getLiveFeedStyles, getSeverityColor } from '../../../../packages/ui/src/components/live-feed';
@@ -51,7 +51,7 @@ export default function CommandCentrePage() {
             padding: `${primitiveSpacing[3]} ${componentTokens.contentPadding}`,
             background: mode === 'mission' ? 'rgba(217,45,32,0.12)' : 'rgba(217,45,32,0.06)',
             border: `1px solid ${primitiveSignal.critical}`,
-            borderRadius: '0',
+            borderRadius: primitiveRadii.sm,
             display: 'flex',
             alignItems: 'center',
             gap: primitiveSpacing[3],
@@ -86,8 +86,8 @@ export default function CommandCentrePage() {
             Command Centre
           </h1>
         </div>
-        <div style={{ border: `1px solid ${tokens.border.default}`, height: componentTokens.buttonHeightEmphasis, display: 'flex', alignItems: 'center', padding: `0 ${primitiveSpacing[3]}`, background: tokens.surface.secondary, borderRadius: '4px' }}>
-          <span style={{ width: '7px', height: '7px', background: primitiveSignal.success, display: 'inline-block', marginRight: primitiveSpacing[2], borderRadius: '50%' }} />
+        <div style={{ border: `1px solid ${tokens.border.default}`, height: componentTokens.buttonHeightEmphasis, display: 'flex', alignItems: 'center', padding: `0 ${primitiveSpacing[3]}`, background: tokens.surface.secondary, borderRadius: primitiveRadii.md }}>
+          <span style={{ width: '7px', height: '7px', background: primitiveSignal.success, display: 'inline-block', marginRight: primitiveSpacing[2], borderRadius: primitiveRadii.full }} />
           <span style={{ fontSize: primitiveTypeScale.body, color: tokens.text.secondary }}>Last updated 5 min ago</span>
         </div>
       </section>
