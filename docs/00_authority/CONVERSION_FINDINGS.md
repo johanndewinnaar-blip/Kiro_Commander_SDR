@@ -431,3 +431,19 @@ Added reusable prompt templates and expanded steering in the same session:
 1. **Deeper seed data:** more cases/assets so surfaces aren't thin.
 2. **Case Queue "My Cases" expandable line-summary pattern** (Jira-style collapsed stubs → expand) — own scoped feature.
 3. **Still deferred:** Spec 06 Phase D (lifecycle state machine), Phase E (comms/evidence/auto-healing); Fusion Map bespoke graph library; Tenant Admin reference HTML; other domain specs per BUILD_SEQUENCE.
+
+
+## Bugfix — RSC Set serialization error (2026-05-28)
+
+**Error:** "Only plain objects can be passed to Client Components from Server Components. Set objects are not supported."
+
+**Root cause:** `next/font/google` returns font objects with internal Set properties (used for subset tracking). When the root layout (a Server Component) imported these objects and accessed `.variable`, the RSC serializer encountered the internal Sets during payload generation.
+
+**Fix:** In `apps/web/src/app/fonts.ts`, the `Inter()` and `Bebas_Neue()` font objects are now unwrapped to plain `{ variable: string }` objects before export. Only the CSS variable class name string crosses the RSC boundary — never the full font object.
+
+**Verification:** All five pages (Command Centre, Cases, Case Detail, P0 War Room, Case Analytics) compiled and served with 200 status, no Set serialization errors in server output.
+
+**Regression test:** Added 2 tests in `phase2a-foundation.test.ts` under "RSC Serialization Safety" — verifies fonts.ts exports plain objects and no Server Component layouts use `new Set`.
+
+**Commit:** `74e8d1a`  
+**Test count:** 462 passing (23 files), zero regressions (+2 new tests).
