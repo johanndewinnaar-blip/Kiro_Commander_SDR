@@ -370,3 +370,30 @@ Added reusable prompt templates and expanded steering in the same session:
 2. **Deeper seed data:** more cases/assets so surfaces aren't thin.
 3. **Case Queue "My Cases" expandable line-summary pattern** (Jira-style collapsed stubs → expand) — own scoped feature.
 4. **Still deferred:** Spec 06 Phase D (lifecycle state machine), Phase E (comms/evidence/auto-healing); Fusion Map bespoke graph library; Tenant Admin reference HTML; other domain specs per BUILD_SEQUENCE.
+
+
+## Design tweaks — resolved (2026-05-28, Pass B)
+
+### UI Tweak Pass B — structural alignment and layout
+
+| Change | Scope | Method |
+|--------|-------|--------|
+| Radius hunt | All hardcoded `borderRadius` values eliminated | Replaced with `primitiveRadii.md`, `primitiveRadii.sm`, `primitiveRadii.full`, or `componentTokens.cardRadius`. Zero hardcoded radius literals remain. |
+| Logo/sidebar width alignment | Top-bar brand zone width tied to sidebar state | Brand zone uses `useSidebarCollapsed()` context; collapses to `sidebarRail` (68px) when sidebar collapses. Single vertical edge shared. |
+| Sidebar collapse gap fix | Main content reflows on collapse | Shell `marginLeft` now dynamic via shared `SidebarProvider` context with CSS transition. No black gap at any screen width. |
+| Home link | Brand wordmark links to `/` | Top-bar brand zone is now an `<a href="/">`. Collapsed rail shows gold ⌂ home icon. Both states link home. |
+| Grid alignment | 12-column grid system | `componentTokens.gridColumns = 12` added. Content grids use `repeat(3, 1fr)` (4-col spans) with consistent `gridGap` and `contentPadding` — column edges align between KPI strip and content cards. |
+| Card header consistency | Standardized card header margin | `componentTokens.cardHeaderMargin` (12px) added. All card headers use same padding, type scale, and baseline. |
+| params.id Next.js 15 fix | `cases/[id]/page.tsx` | Params unwrapped with `React.use(params)` — resolves console warning. No behaviour change. |
+
+**New shared context:** `apps/web/src/context/sidebar-context.tsx` — `SidebarProvider` wraps the app in root layout. Both sidebar and shell consume `useSidebarCollapsed()` for synchronized width.
+
+**Commit:** `4daec15`  
+**Test count:** 459 passing (23 files), zero regressions.  
+**Surfaces affected:** All pages (shell reflow), Command Centre, Case Queue, Case Detail, Case Analytics, P0 War Room, Sidebar, Top Bar.
+
+### Open items for next session (priority order)
+
+1. **Deeper seed data:** more cases/assets so surfaces aren't thin.
+2. **Case Queue "My Cases" expandable line-summary pattern** (Jira-style collapsed stubs → expand) — own scoped feature.
+3. **Still deferred:** Spec 06 Phase D (lifecycle state machine), Phase E (comms/evidence/auto-healing); Fusion Map bespoke graph library; Tenant Admin reference HTML; other domain specs per BUILD_SEQUENCE.
