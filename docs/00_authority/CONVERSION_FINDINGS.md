@@ -472,3 +472,22 @@ Expanded all seed fixture files to populate surfaces realistically.
 
 1. **Case Queue "My Cases" expandable line-summary pattern** — own scoped feature.
 2. **Still deferred:** Spec 06 Phase D (lifecycle state machine), Phase E (comms/evidence/auto-healing); Fusion Map bespoke graph library; Tenant Admin reference HTML; other domain specs per BUILD_SEQUENCE.
+
+
+## Bugfix — RSC Set serialization error recurrence (2026-05-28)
+
+**Error:** "Only plain objects can be passed to Client Components from Server Components. Set objects are not supported." (reappeared after deep seeding pass)
+
+**Root cause:** The earlier fix (commit `74e8d1a`) unwrapped font objects to `{ variable: string }` in a separate `fonts.ts` module. However, `next/font/google` creates internal Set objects during module evaluation regardless of what's exported. When the layout imported from `fonts.ts`, the module was evaluated in the RSC context and the internal Sets leaked into the serialization pipeline.
+
+**Fix:** Eliminated the separate `fonts.ts` module entirely. Font declarations (`Inter()`, `Bebas_Neue()`) are now inline in `layout.tsx` — the standard Next.js 15 pattern. This ensures `next/font` is handled by Next.js's built-in font optimization pipeline rather than going through generic module serialization.
+
+**Files changed:**
+- `apps/web/src/app/layout.tsx` — fonts declared inline, removed import from `./fonts`
+- `apps/web/src/app/fonts.ts` — deleted
+- `tests/ds1-implementation/phase2a-foundation.test.ts` — RSC safety test updated to verify inline font pattern
+
+**Verification:** All pages compile and serve with 200 status, no Set errors in server output.
+
+**Commit:** `e54e5d7`  
+**Test count:** 462 passing (23 files), zero regressions.
