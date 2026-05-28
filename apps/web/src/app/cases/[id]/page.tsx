@@ -8,6 +8,7 @@ import { primitiveBrand, primitiveFonts, primitiveTypeScale, primitiveLetterSpac
 import { primitivePriority } from '../../../../../../packages/ui/src/tokens/primitives';
 import { resolveAllStrategies } from '../../../../../../packages/contracts/src/resolvers/case-strategy-resolver';
 import { seedStrategies } from '../../../../../../packages/contracts/src/fixtures/seed-strategies';
+import { getRightRailStyles } from '../../../../../../packages/ui/src/components/right-rail';
 
 /**
  * Case Detail — Commander SDR (DS-1.0, Spec 06 Phase C2)
@@ -16,6 +17,7 @@ import { seedStrategies } from '../../../../../../packages/contracts/src/fixture
  * Mockup: case-handling-dashboard.png (detail pane)
  * DS-1.0 §5: Master-detail on wide (>1400px), full-page on narrow
  * DS-1.0 §8: Workspace structure with right-rail
+ * DS-1.0 §21 Req 32: Right-rail insight/action column
  *
  * Doctrinal constraints:
  * - No manual status edit buttons (Assertion 1)
@@ -27,6 +29,7 @@ import { seedStrategies } from '../../../../../../packages/contracts/src/fixture
 
 export default function CaseDetailPage({ params }: { params: { id: string } }) {
   const { mode, tokens } = useMode();
+  const railStyles = getRightRailStyles(mode);
 
   // Find the case from seed data
   const caseRecord = seedCases.find((c) => c.id === params.id) ?? seedCases[0];
@@ -36,10 +39,29 @@ export default function CaseDetailPage({ params }: { params: { id: string } }) {
   // Related entities
   const relatedAssets = seedAssets.filter((a) => caseRecord.relatedEntities.includes(a.id));
 
+  // Mock timeline events (audit trail — system-owned actions only)
+  const timelineEvents = [
+    { timestamp: caseRecord.createdAt, action: 'Case created by routing engine', actor: 'system' },
+    { timestamp: caseRecord.updatedAt, action: `Assigned to ${caseRecord.owner}`, actor: 'routing-engine' },
+    ...(caseRecord.status === 'in-progress' ? [{ timestamp: caseRecord.updatedAt, action: 'Investigation started', actor: caseRecord.owner }] : []),
+  ];
+
+  // Mock evidence pack (source signals bound to case)
+  const evidencePack = [
+    { id: 'ev-1', type: 'Source Signal', source: caseRecord.source.sourceSystem, timestamp: caseRecord.source.sourceTimestamp },
+    { id: 'ev-2', type: 'Connector Import', source: caseRecord.source.connectorId, timestamp: caseRecord.source.sourceTimestamp },
+  ];
+
   return (
-    <div style={{ display: 'flex', gap: componentTokens.gridGap, height: '100%' }}>
-      {/* Main content — case detail */}
-      <div style={{ flex: 1, overflow: 'auto' }}>
+    <div style={{
+      display: 'flex',
+      gap: componentTokens.gridGap,
+      height: '100%',
+      /* DS-1.0 §5: Master-detail on wide (>1400px), stacks on narrow via CSS */
+      flexWrap: 'wrap',
+    }}>
+      {/* Main content — case detail (flex: 1, min-width ensures it takes full width on narrow) */}
+      <div style={{ flex: 1, minWidth: '0', overflow: 'auto' }}>
         {/* Sticky Case Header — Spec 02 v1.3 Req 5 */}
         <section style={{
           position: 'sticky', top: 0, zIndex: 5,
@@ -65,12 +87,12 @@ export default function CaseDetailPage({ params }: { params: { id: string } }) {
 
         {/* Metadata Panel */}
         <section style={{ padding: componentTokens.contentPadding, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: componentTokens.gridGap }}>
-          <MetadataCard label="Owner" value={caseRecord.owner} tokens={tokens} mode={mode} />
-          <MetadataCard label="Team" value={caseRecord.team} tokens={tokens} mode={mode} />
-          <MetadataCard label="Case Type" value={caseRecord.caseType} tokens={tokens} mode={mode} />
-          <MetadataCard label="SLA Target" value={strategy.sla.status === 'resolved' ? `${strategy.sla.responseHours}h` : 'Unresolved'} tokens={tokens} mode={mode} />
-          <MetadataCard label="SLA Breached" value={caseRecord.sla.breached ? 'YES' : 'No'} tokens={tokens} mode={mode} isAlert={caseRecord.sla.breached} />
-          <MetadataCard label="Surface" value={caseRecord.surfaceAttribution === 'external_attack_surface' ? 'External Attack Surface' : 'Internal Attack Surface'} tokens={tokens} mode={mode} />
+          <MetadataCard label="Owner" value={caseRecord.owner} tokens={tokens} />
+          <MetadataCard label="Team" value={caseRecord.team} tokens={tokens} />
+          <MetadataCard label="Case Type" value={caseRecord.caseType} tokens={tokens} />
+          <MetadataCard label="SLA Target" value={strategy.sla.status === 'resolved' ? `${strategy.sla.responseHours}h` : 'Unresolved'} tokens={tokens} />
+          <MetadataCard label="SLA Breached" value={caseRecord.sla.breached ? 'YES' : 'No'} tokens={tokens} isAlert={caseRecord.sla.breached} />
+          <MetadataCard label="Surface" value={caseRecord.surfaceAttribution === 'external_attack_surface' ? 'External Attack Surface' : 'Internal Attack Surface'} tokens={tokens} />
         </section>
 
         {/* Routing Rationale — from strategy resolver, NOT hardcoded (Constraint 9) */}
@@ -83,6 +105,43 @@ export default function CaseDetailPage({ params }: { params: { id: string } }) {
                 Strategy: routed to {strategy.routing.team} via {strategy.routing.sourcePolicy?.id}
               </p>
             )}
+          </div>
+        </section>
+
+        {/* Timeline / Audit Trail — chronological system-owned events */}
+        <section style={{ padding: `0 ${componentTokens.contentPadding} ${componentTokens.contentPadding}` }}>
+          <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, borderRadius: componentTokens.cardRadius, border: `1px solid ${tokens.border.subtle}` }}>
+            <h3 style={{ margin: `0 0 ${primitiveSpacing[3]}`, fontSize: primitiveTypeScale.h3, fontWeight: 600, color: tokens.text.primary, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Timeline</h3>
+            {timelineEvents.map((event, i) => (
+              <div key={i} style={{ display: 'flex', gap: primitiveSpacing[3], padding: `${primitiveSpacing[2]} 0`, borderBottom: i < timelineEvents.length - 1 ? `1px solid ${tokens.border.subtle}` : 'none' }}>
+                <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, fontFamily: primitiveFonts.mono, minWidth: '140px', whiteSpace: 'nowrap' }}>
+                  {new Date(event.timestamp).toLocaleString('en-GB', { dateStyle: 'short', timeStyle: 'short' })}
+                </span>
+                <span style={{ fontSize: primitiveTypeScale.body, color: tokens.text.secondary }}>{event.action}</span>
+                <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, marginLeft: 'auto' }}>{event.actor}</span>
+              </div>
+            ))}
+            <p style={{ margin: `${primitiveSpacing[3]} 0 0`, color: tokens.text.muted, fontSize: primitiveTypeScale.caption, fontFamily: primitiveFonts.mono }}>
+              Audit ref: {caseRecord.auditTrailRef}
+            </p>
+          </div>
+        </section>
+
+        {/* Evidence Pack — source signals and connector imports bound to case */}
+        <section style={{ padding: `0 ${componentTokens.contentPadding} ${componentTokens.contentPadding}` }}>
+          <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, borderRadius: componentTokens.cardRadius, border: `1px solid ${tokens.border.subtle}` }}>
+            <h3 style={{ margin: `0 0 ${primitiveSpacing[3]}`, fontSize: primitiveTypeScale.h3, fontWeight: 600, color: tokens.text.primary, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Evidence Pack</h3>
+            {evidencePack.map((ev) => (
+              <div key={ev.id} style={{ display: 'flex', justifyContent: 'space-between', padding: `${primitiveSpacing[2]} 0`, borderBottom: `1px solid ${tokens.border.subtle}` }}>
+                <div>
+                  <span style={{ fontSize: primitiveTypeScale.body, color: tokens.text.primary }}>{ev.type}</span>
+                  <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.muted, marginLeft: primitiveSpacing[2], fontFamily: primitiveFonts.mono }}>{ev.source}</span>
+                </div>
+                <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, fontFamily: primitiveFonts.mono }}>
+                  {new Date(ev.timestamp).toLocaleString('en-GB', { dateStyle: 'short', timeStyle: 'short' })}
+                </span>
+              </div>
+            ))}
           </div>
         </section>
 
@@ -113,46 +172,40 @@ export default function CaseDetailPage({ params }: { params: { id: string } }) {
             </div>
           </section>
         )}
-
-        {/* Audit Trail Reference */}
-        <section style={{ padding: `0 ${componentTokens.contentPadding} ${componentTokens.contentPadding}` }}>
-          <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, borderRadius: componentTokens.cardRadius, border: `1px solid ${tokens.border.subtle}` }}>
-            <h3 style={{ margin: `0 0 ${primitiveSpacing[2]}`, fontSize: primitiveTypeScale.h3, fontWeight: 600, color: tokens.text.primary, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Audit Trail</h3>
-            <p style={{ margin: 0, color: tokens.text.muted, fontSize: primitiveTypeScale.caption, fontFamily: primitiveFonts.mono }}>{caseRecord.auditTrailRef}</p>
-          </div>
-        </section>
       </div>
 
-      {/* Right Rail — DS-1.0 §21 Req 32 */}
+      {/* Right Rail — DS-1.0 §21 Req 32, using Phase 2c right-rail component styles */}
       <aside style={{
-        width: '320px', minWidth: '320px',
-        borderLeft: `1px solid ${tokens.border.default}`,
-        background: tokens.surface.elevated,
-        padding: componentTokens.contentPadding,
-        display: 'flex', flexDirection: 'column', gap: componentTokens.gridGap,
-        overflow: 'auto',
+        ...railStyles.container,
+        /* DS-1.0 §5: On narrow (<1400px), right-rail collapses — flexWrap on parent handles this */
+        flexBasis: '320px',
+        flexShrink: 0,
+        flexGrow: 0,
       }}>
-        <RailSection title="Case Actions" tokens={tokens}>
-          <p style={{ margin: 0, color: tokens.text.muted, fontSize: primitiveTypeScale.caption }}>
+        <div style={railStyles.section}>
+          <h4 style={railStyles.sectionTitle}>Case Actions</h4>
+          <p style={{ ...railStyles.sectionContent, margin: 0 }}>
             System-owned lifecycle. Actions are determined by the routing engine and strategy layer.
           </p>
-        </RailSection>
-        <RailSection title="Recommended Next" tokens={tokens}>
-          <p style={{ margin: 0, color: tokens.text.secondary, fontSize: primitiveTypeScale.body }}>
+        </div>
+        <div style={railStyles.section}>
+          <h4 style={railStyles.sectionTitle}>Recommended Next</h4>
+          <p style={{ ...railStyles.sectionContent, margin: 0 }}>
             {caseRecord.status === 'open' ? 'Awaiting routing engine assignment.' : 'Investigation in progress.'}
           </p>
-        </RailSection>
-        <RailSection title="Source Signal" tokens={tokens}>
+        </div>
+        <div style={railStyles.section}>
+          <h4 style={railStyles.sectionTitle}>Source Signal</h4>
           <p style={{ margin: 0, color: tokens.text.muted, fontSize: primitiveTypeScale.caption, fontFamily: primitiveFonts.mono }}>
             {caseRecord.source.sourceSystem}
           </p>
-        </RailSection>
+        </div>
       </aside>
     </div>
   );
 }
 
-function MetadataCard({ label, value, tokens, mode, isAlert }: { label: string; value: string; tokens: any; mode: string; isAlert?: boolean }) {
+function MetadataCard({ label, value, tokens, isAlert }: { label: string; value: string; tokens: any; isAlert?: boolean }) {
   return (
     <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, borderRadius: componentTokens.cardRadius, border: `1px solid ${tokens.border.subtle}` }}>
       <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow, display: 'block', marginBottom: '4px' }}>{label}</span>
@@ -166,15 +219,6 @@ function StrategyLine({ label, value, tokens }: { label: string; value: string; 
     <div>
       <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.muted, display: 'block' }}>{label}</span>
       <span style={{ fontSize: primitiveTypeScale.body, color: tokens.text.secondary }}>{value}</span>
-    </div>
-  );
-}
-
-function RailSection({ title, tokens, children }: { title: string; tokens: any; children: React.ReactNode }) {
-  return (
-    <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.secondary, borderRadius: componentTokens.cardRadius, border: `1px solid ${tokens.border.subtle}` }}>
-      <h4 style={{ margin: `0 0 ${primitiveSpacing[2]}`, fontSize: primitiveTypeScale.h3, fontWeight: 600, color: tokens.text.primary, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>{title}</h4>
-      {children}
     </div>
   );
 }

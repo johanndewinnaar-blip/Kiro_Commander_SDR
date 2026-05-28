@@ -85,7 +85,13 @@ describe('Case Detail — Strategy Consumption (Constraint 9)', () => {
 describe('Case Detail — Right Rail (DS-1.0 §21 Req 32)', () => {
   it('has a right rail aside element', () => {
     expect(pageContent).toContain('<aside');
-    expect(pageContent).toContain("width: '320px'");
+  });
+
+  it('imports and uses getRightRailStyles from Phase 2c component', () => {
+    expect(pageContent).toContain('getRightRailStyles');
+    expect(pageContent).toContain('railStyles.container');
+    expect(pageContent).toContain('railStyles.section');
+    expect(pageContent).toContain('railStyles.sectionTitle');
   });
 
   it('right rail contains Case Actions section', () => {
@@ -131,6 +137,35 @@ describe('Case Detail — Token Consumption', () => {
 describe('Case Detail — Audit Trail', () => {
   it('displays audit trail reference', () => {
     expect(pageContent).toContain('auditTrailRef');
-    expect(pageContent).toContain('Audit Trail');
+    expect(pageContent).toContain('Audit ref:');
+  });
+
+  it('has a Timeline section with chronological events', () => {
+    expect(pageContent).toContain('Timeline');
+    expect(pageContent).toContain('timelineEvents');
+    expect(pageContent).toContain('event.timestamp');
+    expect(pageContent).toContain('event.action');
+  });
+});
+
+describe('Case Detail — Evidence Pack', () => {
+  it('has an Evidence Pack section', () => {
+    expect(pageContent).toContain('Evidence Pack');
+    expect(pageContent).toContain('evidencePack');
+  });
+
+  it('evidence shows source signal and connector import', () => {
+    expect(pageContent).toContain('Source Signal');
+    expect(pageContent).toContain('Connector Import');
+  });
+});
+
+describe('Case Detail — Responsive Layout (DS-1.0 §5)', () => {
+  it('uses flexWrap for master-detail collapse on narrow screens', () => {
+    expect(pageContent).toContain("flexWrap: 'wrap'");
+  });
+
+  it('right rail uses flexBasis for responsive sizing', () => {
+    expect(pageContent).toContain("flexBasis: '320px'");
   });
 });
