@@ -10,6 +10,12 @@ import { primitivePriority } from '../../../../../../packages/ui/src/tokens/prim
 import { resolveAllStrategies } from '../../../../../../packages/contracts/src/resolvers/case-strategy-resolver';
 import { seedStrategies } from '../../../../../../packages/contracts/src/fixtures/seed-strategies';
 import { getRightRailStyles } from '../../../../../../packages/ui/src/components/right-rail';
+import { LIFECYCLE_STAGES } from '../../../../../../packages/ui/src/components/lifecycle-pipeline';
+import { getNextStates } from '../../../../../../packages/contracts/src/entities/case-lifecycle';
+import { evaluateValidationWindow } from '../../../../../../packages/contracts/src/resolvers/validation-window-enforcer';
+import { evaluateClosureGates } from '../../../../../../packages/contracts/src/resolvers/closure-gate-enforcer';
+import { assignCase, extractRoutingConfig } from '../../../../../../packages/contracts/src/resolvers/assignment-engine';
+import type { CaseStatus } from '../../../../../../packages/contracts/src/entities/case';
 
 /**
  * Case Detail — Commander SDR (DS-1.0, Spec 06 Phase C2)
@@ -109,6 +115,9 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
             )}
           </div>
         </section>
+
+        {/* ─── Phase D5: Lifecycle Section ─────────────────────────────────── */}
+        <LifecycleSection caseRecord={caseRecord} tokens={tokens} mode={mode} />
 
         {/* Timeline / Audit Trail — chronological system-owned events */}
         <section style={{ padding: `0 ${componentTokens.contentPadding} ${componentTokens.contentPadding}` }}>
@@ -222,5 +231,218 @@ function StrategyLine({ label, value, tokens }: { label: string; value: string; 
       <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.muted, display: 'block' }}>{label}</span>
       <span style={{ fontSize: primitiveTypeScale.body, color: tokens.text.secondary }}>{value}</span>
     </div>
+  );
+}
+
+// ─── Phase D5: Lifecycle Section Component ───────────────────────────────────
+
+/**
+ * Lifecycle Section — Phase D5
+ *
+ * Displays:
+ * 1. Lifecycle pipeline with current state highlighted (gold ring)
+ * 2. Allowed next states (read-only, no action buttons)
+ * 3. Transition history timeline (from → to, actor, reason, timestamp, audit ref)
+ * 4. Closure gate status (for awaiting-closure cases)
+ * 5. Validation window status (for awaiting-validation cases)
+ * 6. Assignment rationale and escalation path (from D4)
+ *
+ * Doctrinal constraints:
+ * - Read-only display only. No manual transition/closure/reopening buttons.
+ * - All values from D1-D4 evaluators and Spec 43 strategies.
+ * - Both modes via semantic tokens.
+ */
+
+/** Map CaseStatus to LIFECYCLE_STAGES display name */
+const STATUS_TO_STAGE: Record<CaseStatus, string> = {
+  'open': 'New',
+  'in-progress': 'Investigating',
+  'awaiting-validation': 'Validation',
+  'awaiting-closure': 'Closure',
+  'closed': 'Closure',
+  'reopened': 'Triage',
+};
+
+function LifecycleSection({ caseRecord, tokens, mode }: { caseRecord: any; tokens: any; mode: string }) {
+  const currentStage = STATUS_TO_STAGE[caseRecord.status as CaseStatus] ?? 'New';
+  const allowedNext = getNextStates(caseRecord.status as CaseStatus);
+
+  // Transition history (mock — system-owned transitions only)
+  const transitionHistory = [
+    { from: 'open', to: 'in-progress', actor: 'routing-engine', reason: 'Case assigned via routing strategy', timestamp: caseRecord.createdAt, auditRef: `audit-${caseRecord.id}-001` },
+    ...(caseRecord.status !== 'open' && caseRecord.status !== 'in-progress' ? [
+      { from: 'in-progress', to: caseRecord.status, actor: 'system', reason: 'Lifecycle progression', timestamp: caseRecord.updatedAt, auditRef: `audit-${caseRecord.id}-002` },
+    ] : []),
+  ];
+
+  // Validation window state (for awaiting-validation cases)
+  let validationState: ReturnType<typeof evaluateValidationWindow> | null = null;
+  if (caseRecord.status === 'awaiting-validation') {
+    try {
+      validationState = evaluateValidationWindow(
+        caseRecord.updatedAt,
+        caseRecord.updatedAt,
+        seedStrategies,
+      );
+    } catch { /* strategy missing — display nothing */ }
+  }
+
+  // Closure gate state (for awaiting-closure cases)
+  let closureGateState: ReturnType<typeof evaluateClosureGates> | null = null;
+  if (caseRecord.status === 'awaiting-closure') {
+    try {
+      closureGateState = evaluateClosureGates(
+        { remediationVerified: true, validationPassed: true, hasActiveDrift: false, slaBreached: caseRecord.sla.breached },
+        seedStrategies,
+      );
+    } catch { /* strategy missing — display nothing */ }
+  }
+
+  // Assignment rationale from D4
+  let assignmentInfo: { escalationPath: string[]; routingRationale: string } | null = null;
+  try {
+    const { config } = extractRoutingConfig(seedStrategies);
+    assignmentInfo = {
+      escalationPath: config.escalationPath,
+      routingRationale: caseRecord.routingRationale,
+    };
+  } catch { /* strategy missing */ }
+
+  return (
+    <section data-testid="lifecycle-section" style={{ padding: `0 ${componentTokens.contentPadding} ${componentTokens.contentPadding}` }}>
+      <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, borderRadius: componentTokens.cardRadius, border: `1px solid ${tokens.border.subtle}` }}>
+        <h3 style={{ margin: `0 0 ${primitiveSpacing[3]}`, fontSize: primitiveTypeScale.h3, fontWeight: 600, color: tokens.text.primary, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Lifecycle</h3>
+
+        {/* 1. Lifecycle Pipeline — current state highlighted */}
+        <div data-testid="lifecycle-pipeline" style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[2], overflowX: 'auto', marginBottom: primitiveSpacing[4] }}>
+          {LIFECYCLE_STAGES.map((stage, i) => {
+            const isCurrentStage = stage === currentStage;
+            return (
+              <div key={stage} style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[2] }}>
+                <div style={{
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px',
+                  padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, borderRadius: componentTokens.cardRadius,
+                  border: isCurrentStage ? `2px solid ${primitiveBrand.gold}` : `2px solid ${tokens.border.subtle}`,
+                  background: tokens.surface.secondary, minWidth: '80px',
+                  boxShadow: isCurrentStage && mode === 'mission' ? '0 0 8px rgba(255,210,31,0.35)' : 'none',
+                }}>
+                  <span style={{ fontSize: primitiveTypeScale.micro, color: isCurrentStage ? primitiveBrand.gold : tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow, textAlign: 'center', whiteSpace: 'nowrap', fontWeight: isCurrentStage ? 700 : 400 }}>{stage}</span>
+                </div>
+                {i < LIFECYCLE_STAGES.length - 1 && (
+                  <div style={{ width: primitiveSpacing[4], height: '2px', background: tokens.border.default, flexShrink: 0 }} />
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* 2. Allowed Next States — read-only, no action buttons */}
+        <div data-testid="allowed-next-states" style={{ marginBottom: primitiveSpacing[4] }}>
+          <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow, display: 'block', marginBottom: primitiveSpacing[2] }}>Allowed Next States (system-owned)</span>
+          <div style={{ display: 'flex', gap: primitiveSpacing[2], flexWrap: 'wrap' }}>
+            {allowedNext.length > 0 ? allowedNext.map((state) => (
+              <span key={state} style={{ fontSize: primitiveTypeScale.body, color: tokens.text.secondary, padding: `${primitiveSpacing[1]} ${primitiveSpacing[3]}`, border: `1px solid ${tokens.border.default}`, borderRadius: primitiveRadii.md }}>{state}</span>
+            )) : (
+              <span style={{ fontSize: primitiveTypeScale.body, color: tokens.text.muted }}>No transitions available (terminal state)</span>
+            )}
+          </div>
+        </div>
+
+        {/* 3. Validation Window Status (awaiting-validation only) */}
+        {validationState && (
+          <div data-testid="validation-window-status" style={{ marginBottom: primitiveSpacing[4], padding: componentTokens.cardPadding, background: tokens.surface.primary, borderRadius: componentTokens.cardRadius, border: `1px solid ${tokens.border.subtle}` }}>
+            <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow, display: 'block', marginBottom: primitiveSpacing[2] }}>Validation Window</span>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: primitiveSpacing[3] }}>
+              <div>
+                <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, display: 'block' }}>Window</span>
+                <span style={{ fontSize: primitiveTypeScale.body, color: validationState.withinWindow ? primitiveSignal.success : primitiveSignal.critical, fontWeight: 600 }}>
+                  {validationState.withinWindow ? `${validationState.windowHoursRemaining.toFixed(0)}h remaining` : 'Expired'}
+                </span>
+              </div>
+              <div>
+                <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, display: 'block' }}>Evidence</span>
+                <span style={{ fontSize: primitiveTypeScale.body, color: validationState.evidenceFresh ? primitiveSignal.success : primitiveSignal.warning, fontWeight: 600 }}>
+                  {validationState.evidenceFresh ? 'Fresh' : 'Stale'}
+                </span>
+              </div>
+              <div>
+                <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, display: 'block' }}>Refresh</span>
+                <span style={{ fontSize: primitiveTypeScale.body, color: validationState.refreshDue ? primitiveSignal.warning : tokens.text.secondary, fontWeight: 600 }}>
+                  {validationState.refreshDue ? 'Due' : 'Current'}
+                </span>
+              </div>
+            </div>
+            <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, display: 'block', marginTop: primitiveSpacing[2], fontFamily: primitiveFonts.mono }}>
+              Policy: {validationState.strategyRef.policyId} v{validationState.strategyRef.policyVersion}
+            </span>
+          </div>
+        )}
+
+        {/* 4. Closure Gate Status (awaiting-closure only) */}
+        {closureGateState && (
+          <div data-testid="closure-gate-status" style={{ marginBottom: primitiveSpacing[4], padding: componentTokens.cardPadding, background: tokens.surface.primary, borderRadius: componentTokens.cardRadius, border: `1px solid ${tokens.border.subtle}` }}>
+            <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow, display: 'block', marginBottom: primitiveSpacing[2] }}>Closure Gates</span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: primitiveSpacing[2] }}>
+              {closureGateState.gateResults.map((gate) => (
+                <div key={gate.gate} style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[2] }}>
+                  <span style={{ width: '8px', height: '8px', borderRadius: primitiveRadii.full, background: gate.passed ? primitiveSignal.success : primitiveSignal.critical, display: 'inline-block', flexShrink: 0 }} />
+                  <span style={{ fontSize: primitiveTypeScale.body, color: tokens.text.secondary }}>{gate.gate}</span>
+                  <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, marginLeft: 'auto' }}>{gate.reason}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{ marginTop: primitiveSpacing[2], display: 'flex', alignItems: 'center', gap: primitiveSpacing[2] }}>
+              <span style={{ fontSize: primitiveTypeScale.caption, fontWeight: 600, color: closureGateState.allGatesPass ? primitiveSignal.success : primitiveSignal.warning }}>
+                {closureGateState.allGatesPass ? '✓ All gates pass — eligible for closure' : '⚠ Gates pending — not eligible for closure'}
+              </span>
+            </div>
+            <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, display: 'block', marginTop: primitiveSpacing[2], fontFamily: primitiveFonts.mono }}>
+              Policy: {closureGateState.strategyRef.policyId} v{closureGateState.strategyRef.policyVersion}
+            </span>
+          </div>
+        )}
+
+        {/* 5. Assignment Rationale and Escalation Path (D4) */}
+        {assignmentInfo && (
+          <div data-testid="assignment-rationale" style={{ marginBottom: primitiveSpacing[4] }}>
+            <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow, display: 'block', marginBottom: primitiveSpacing[2] }}>Assignment</span>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: primitiveSpacing[3] }}>
+              <div>
+                <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, display: 'block' }}>Owner</span>
+                <span style={{ fontSize: primitiveTypeScale.body, color: tokens.text.primary, fontWeight: 600 }}>{caseRecord.owner}</span>
+              </div>
+              <div>
+                <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, display: 'block' }}>Team</span>
+                <span style={{ fontSize: primitiveTypeScale.body, color: tokens.text.primary, fontWeight: 600 }}>{caseRecord.team}</span>
+              </div>
+            </div>
+            <div style={{ marginTop: primitiveSpacing[2] }}>
+              <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, display: 'block' }}>Escalation Path</span>
+              <span style={{ fontSize: primitiveTypeScale.body, color: tokens.text.secondary }}>{assignmentInfo.escalationPath.join(' → ')}</span>
+            </div>
+          </div>
+        )}
+
+        {/* 6. Transition History Timeline */}
+        <div data-testid="transition-history">
+          <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow, display: 'block', marginBottom: primitiveSpacing[2] }}>Transition History</span>
+          {transitionHistory.map((txn, i) => (
+            <div key={i} style={{ display: 'flex', gap: primitiveSpacing[3], padding: `${primitiveSpacing[2]} 0`, borderBottom: i < transitionHistory.length - 1 ? `1px solid ${tokens.border.subtle}` : 'none', alignItems: 'baseline' }}>
+              <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, fontFamily: primitiveFonts.mono, minWidth: '140px', whiteSpace: 'nowrap' }}>
+                {new Date(txn.timestamp).toLocaleString('en-GB', { dateStyle: 'short', timeStyle: 'short' })}
+              </span>
+              <span style={{ fontSize: primitiveTypeScale.body, color: tokens.text.secondary }}>
+                <span style={{ color: tokens.text.muted }}>{txn.from}</span> → <span style={{ fontWeight: 600, color: tokens.text.primary }}>{txn.to}</span>
+              </span>
+              <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted }}>{txn.actor}</span>
+              <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, marginLeft: 'auto', fontFamily: primitiveFonts.mono }}>{txn.auditRef}</span>
+            </div>
+          ))}
+          {transitionHistory.length === 0 && (
+            <span style={{ fontSize: primitiveTypeScale.body, color: tokens.text.muted }}>No transitions recorded yet.</span>
+          )}
+        </div>
+      </div>
+    </section>
   );
 }
