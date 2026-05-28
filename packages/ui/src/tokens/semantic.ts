@@ -26,8 +26,8 @@ export function getSemanticTokens(mode: WorkspaceMode) {
       muted: mode === 'standard' ? primitiveNeutral[400] : primitiveHud.text2,
     },
     border: {
-      default: mode === 'standard' ? primitiveNeutral[200] : primitiveHud.line2,
-      subtle: mode === 'standard' ? primitiveNeutral[100] : primitiveHud.line,
+      default: mode === 'standard' ? primitiveNeutral[300] : primitiveHud.line2,
+      subtle: mode === 'standard' ? primitiveNeutral[200] : primitiveHud.line,
     },
     action: {
       primary: primitiveBrand.gold,
@@ -41,6 +41,10 @@ export function getSemanticTokens(mode: WorkspaceMode) {
       neutral: primitiveSignal.neutral,
     },
     data: primitiveData,
+    chrome: {
+      navText: '#ffffff',
+      navTextActive: primitiveBrand.gold,
+    },
   } as const;
 }
 

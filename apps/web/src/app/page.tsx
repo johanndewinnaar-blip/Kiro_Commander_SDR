@@ -82,7 +82,7 @@ export default function CommandCentrePage() {
           <small style={{ color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.display, fontSize: primitiveTypeScale.micro }}>
             Command Centre › Security Posture Overview
           </small>
-          <h1 style={{ margin: '4px 0 0', fontSize: primitiveTypeScale.h1, fontWeight: 700, color: tokens.text.primary, fontFamily: primitiveFonts.display, lineHeight: '1.2' }}>
+          <h1 style={{ margin: '4px 0 0', fontSize: primitiveTypeScale.h1, fontWeight: 700, color: tokens.text.primary, fontFamily: primitiveFonts.body, lineHeight: '1.2' }}>
             Command Centre
           </h1>
         </div>

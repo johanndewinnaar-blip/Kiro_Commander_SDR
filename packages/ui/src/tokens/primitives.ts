@@ -22,9 +22,9 @@ export const primitiveSpacing = {
 
 // === §2.2 Radius ===
 export const primitiveRadii = {
-  sm: '4px',
-  md: '8px',
-  lg: '12px',
+  sm: '0px',
+  md: '2px',
+  lg: '2px',
   full: '9999px',
 } as const;
 

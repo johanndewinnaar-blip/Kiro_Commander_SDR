@@ -3,6 +3,7 @@
 import { useMode } from '@/context/mode-context';
 import { componentTokens } from '../../../../packages/ui/src/tokens/components';
 import { primitiveBrand, primitiveFonts, primitiveTypeScale, primitiveLetterSpacing } from '../../../../packages/ui/src/tokens/primitives';
+import { standardTokens } from '../../../../packages/ui/src/tokens/semantic';
 import { TOP_NAV_WORKSPACES } from '@/registry/nav-groups';
 
 /**
@@ -29,7 +30,7 @@ export function OperationalTopBar() {
         background: primitiveBrand.navy,
         display: 'flex',
         alignItems: 'center',
-        color: '#fff',
+        color: standardTokens.chrome.navText,
         borderBottom: `1px solid rgba(255,210,31,0.24)`,
       }}
     >
@@ -63,7 +64,7 @@ export function OperationalTopBar() {
               alignItems: 'center',
               padding: `0 ${componentTokens.cardPadding}`,
               borderBottom: i === 0 ? `3px solid ${primitiveBrand.gold}` : '3px solid transparent',
-              color: i === 0 ? '#fff' : 'rgba(255,255,255,0.7)',
+              color: i === 0 ? standardTokens.chrome.navTextActive : standardTokens.chrome.navText,
               background: i === 0 ? 'rgba(255,210,31,0.055)' : 'transparent',
               fontWeight: 600,
               fontSize: primitiveTypeScale.body,
@@ -88,7 +89,7 @@ export function OperationalTopBar() {
           type="button"
           onClick={toggleMode}
           aria-label={`Switch to ${mode === 'standard' ? 'Mission' : 'Standard'} mode`}
-          style={{ height: componentTokens.buttonHeight, padding: '0 12px', border: '1px solid rgba(255,255,255,0.16)', background: mode === 'mission' ? 'rgba(255,210,31,0.08)' : 'transparent', color: mode === 'mission' ? primitiveBrand.gold : 'rgba(255,255,255,0.7)', cursor: 'pointer', fontFamily: primitiveFonts.body, fontSize: primitiveTypeScale.micro, fontWeight: 700, letterSpacing: primitiveLetterSpacing.eyebrow }}
+          style={{ height: componentTokens.buttonHeight, padding: '0 12px', border: '1px solid rgba(255,255,255,0.16)', background: mode === 'mission' ? 'rgba(255,210,31,0.08)' : 'transparent', color: mode === 'mission' ? standardTokens.chrome.navTextActive : standardTokens.chrome.navText, cursor: 'pointer', fontFamily: primitiveFonts.body, fontSize: primitiveTypeScale.micro, fontWeight: 700, letterSpacing: primitiveLetterSpacing.eyebrow }}
         >
           {mode === 'standard' ? 'STANDARD' : 'MISSION'}
         </button>

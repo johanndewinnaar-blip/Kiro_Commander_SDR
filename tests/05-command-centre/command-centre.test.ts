@@ -118,7 +118,7 @@ describe('Command Centre — Token Consumption (Zero Hardcoded)', () => {
   });
 
   it('uses primitiveFonts for font families', () => {
-    expect(pageContent).toContain('primitiveFonts.display');
+    expect(pageContent).toContain('primitiveFonts.body');
   });
 
   it('does not contain hardcoded pixel values for layout', () => {

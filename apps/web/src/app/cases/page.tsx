@@ -62,7 +62,7 @@ export default function CaseQueuePage() {
       <section style={{ height: '76px', background: tokens.surface.secondary, borderBottom: `1px solid ${tokens.border.default}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: `0 ${componentTokens.contentPadding}` }}>
         <div>
           <small style={{ color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.display, fontSize: primitiveTypeScale.micro }}>Cases › Queue</small>
-          <h1 style={{ margin: '4px 0 0', fontSize: primitiveTypeScale.h1, fontWeight: 700, color: tokens.text.primary, fontFamily: primitiveFonts.display, lineHeight: '1.2' }}>Case Queue</h1>
+          <h1 style={{ margin: '4px 0 0', fontSize: primitiveTypeScale.h1, fontWeight: 700, color: tokens.text.primary, fontFamily: primitiveFonts.body, lineHeight: '1.2' }}>Case Queue</h1>
         </div>
         <div style={{ border: `1px solid ${tokens.border.default}`, height: componentTokens.buttonHeightEmphasis, display: 'flex', alignItems: 'center', padding: `0 ${primitiveSpacing[3]}`, background: tokens.surface.secondary, borderRadius: '4px' }}>
           <span style={{ width: '7px', height: '7px', background: primitiveSignal.success, display: 'inline-block', marginRight: primitiveSpacing[2], borderRadius: '50%' }} />

@@ -42,7 +42,7 @@ export function getLiveFeedStyles(mode: WorkspaceMode): LiveFeedStyles {
       padding: componentTokens.cardPadding,
       background: tokens.surface.elevated,
       border: `1px solid ${tokens.border.subtle}`,
-      borderRadius: '8px',
+      borderRadius: componentTokens.cardRadius,
       maxHeight: '320px',
       display: 'flex',
       flexDirection: 'column',

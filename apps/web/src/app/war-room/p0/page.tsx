@@ -65,7 +65,7 @@ export default function P0WarRoomPage() {
       {/* Page Header */}
       <section style={{ marginBottom: componentTokens.gridGap }}>
         <small style={{ color: surface.textMuted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.display, fontSize: primitiveTypeScale.micro }}>War Room › P0 Zero-Day</small>
-        <h1 style={{ margin: '4px 0 0', fontSize: primitiveTypeScale.h1, fontWeight: 700, color: surface.text, fontFamily: primitiveFonts.display }}>P0 War Room</h1>
+        <h1 style={{ margin: '4px 0 0', fontSize: primitiveTypeScale.h1, fontWeight: 700, color: surface.text, fontFamily: primitiveFonts.body }}>P0 War Room</h1>
       </section>
 
       {/* P0 Cases — each with full propagation: reason, scope, owner, expiry/review, evidence */}

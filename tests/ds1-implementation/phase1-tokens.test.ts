@@ -41,10 +41,10 @@ describe('Primitive Tokens — §2.1 Spacing (8px grid)', () => {
 });
 
 describe('Primitive Tokens — §2.2 Radius', () => {
-  it('sm=4px, md=8px, lg=12px, full=9999px', () => {
-    expect(primitiveRadii.sm).toBe('4px');
-    expect(primitiveRadii.md).toBe('8px');
-    expect(primitiveRadii.lg).toBe('12px');
+  it('sm=0px, md=2px, lg=2px, full=9999px', () => {
+    expect(primitiveRadii.sm).toBe('0px');
+    expect(primitiveRadii.md).toBe('2px');
+    expect(primitiveRadii.lg).toBe('2px');
     expect(primitiveRadii.full).toBe('9999px');
   });
 });
@@ -163,7 +163,7 @@ describe('Component Tokens — §4 Pinned dimensions', () => {
   it('sidebar=248px', () => expect(componentTokens.sidebarWidth).toBe('248px'));
   it('sidebar-rail=68px', () => expect(componentTokens.sidebarRail).toBe('68px'));
   it('card-padding=16px', () => expect(componentTokens.cardPadding).toBe('16px'));
-  it('card-radius=8px', () => expect(componentTokens.cardRadius).toBe('8px'));
+  it('card-radius=2px', () => expect(componentTokens.cardRadius).toBe('2px'));
   it('grid-gap=16px', () => expect(componentTokens.gridGap).toBe('16px'));
   it('content-padding=24px', () => expect(componentTokens.contentPadding).toBe('24px'));
   it('table-row=36px', () => expect(componentTokens.tableRowHeight).toBe('36px'));

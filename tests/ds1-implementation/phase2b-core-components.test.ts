@@ -144,7 +144,7 @@ describe('Live Activity Feed', () => {
   it('renders with correct container styles', () => {
     const styles = getLiveFeedStyles('standard');
     expect(styles.container.padding).toBe(componentTokens.cardPadding);
-    expect(styles.container.borderRadius).toBe('8px');
+    expect(styles.container.borderRadius).toBe(componentTokens.cardRadius);
   });
 
   it('timestamp uses mono font', () => {

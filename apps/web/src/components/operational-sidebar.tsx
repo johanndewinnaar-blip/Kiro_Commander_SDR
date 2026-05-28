@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { componentTokens } from '../../../../packages/ui/src/tokens/components';
 import { primitiveBrand, primitiveFonts, primitiveTypeScale, primitiveLetterSpacing, primitiveMotion } from '../../../../packages/ui/src/tokens/primitives';
+import { standardTokens } from '../../../../packages/ui/src/tokens/semantic';
 import { OPERATIONAL_NAV_GROUPS } from '@/registry/nav-groups';
 
 /**
@@ -73,7 +74,7 @@ export function OperationalSidebar() {
         width: sidebarWidth,
         background: `linear-gradient(180deg, ${primitiveBrand.navy2}, #030e1e)`,
         borderRight: '1px solid rgba(255,255,255,0.10)',
-        color: '#dcecff',
+        color: standardTokens.chrome.navText,
         display: 'flex',
         flexDirection: 'column',
         transition: `width ${primitiveMotion.standard} ${primitiveMotion.easeDefault}`,
@@ -126,7 +127,7 @@ export function OperationalSidebar() {
                   gap: '4px',
                   padding: collapsed ? '0 0 0 24px' : '8px 12px',
                   fontWeight: 700,
-                  color: 'rgba(220,235,255,0.82)',
+                  color: standardTokens.chrome.navText,
                   cursor: 'pointer',
                   fontFamily: primitiveFonts.body,
                   fontSize: primitiveTypeScale.body,
@@ -156,7 +157,7 @@ export function OperationalSidebar() {
                         display: 'flex',
                         alignItems: 'center',
                         padding: '8px 12px',
-                        color: 'rgba(185,210,238,0.72)',
+                        color: standardTokens.chrome.navText,
                         fontSize: primitiveTypeScale.body,
                         textDecoration: 'none',
                       }}

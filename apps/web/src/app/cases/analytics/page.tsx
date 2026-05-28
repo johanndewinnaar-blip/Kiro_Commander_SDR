@@ -128,7 +128,7 @@ export default function CaseAnalyticsPage() {
       <section style={{ height: '76px', background: tokens.surface.secondary, borderBottom: `1px solid ${tokens.border.default}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: `0 ${componentTokens.contentPadding}` }}>
         <div>
           <small style={{ color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.display, fontSize: primitiveTypeScale.micro }}>Cases › Analytics</small>
-          <h1 style={{ margin: '4px 0 0', fontSize: primitiveTypeScale.h1, fontWeight: 700, color: tokens.text.primary, fontFamily: primitiveFonts.display, lineHeight: '1.2' }}>Case Analytics</h1>
+          <h1 style={{ margin: '4px 0 0', fontSize: primitiveTypeScale.h1, fontWeight: 700, color: tokens.text.primary, fontFamily: primitiveFonts.body, lineHeight: '1.2' }}>Case Analytics</h1>
         </div>
       </section>
 
