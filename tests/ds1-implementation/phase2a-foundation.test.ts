@@ -108,15 +108,16 @@ describe('Lucide Installed', () => {
 });
 
 describe('RSC Serialization Safety', () => {
-  it('fonts.ts exports only plain objects with string values (no Set leakage)', () => {
-    const content = readFileSync(resolve(ROOT, 'apps/web/src/app/fonts.ts'), 'utf-8');
-    // Font objects must be unwrapped to plain { variable: string } before export
-    // to prevent next/font internal Sets from crossing the RSC boundary
-    expect(content).toContain('export const inter = { variable:');
-    expect(content).toContain('export const bebasNeue = { variable:');
-    // Must NOT directly export the next/font object
-    expect(content).not.toMatch(/export const inter = Inter\(/);
-    expect(content).not.toMatch(/export const bebasNeue = Bebas_Neue\(/);
+  it('fonts are declared inline in layout.tsx (not imported from separate module)', () => {
+    const content = readFileSync(resolve(ROOT, 'apps/web/src/app/layout.tsx'), 'utf-8');
+    // Fonts must be declared in the same file as the layout to avoid
+    // next/font internal Sets leaking across the RSC module boundary
+    expect(content).toContain("Inter({");
+    expect(content).toContain("Bebas_Neue({");
+    expect(content).toContain("variable: '--font-body'");
+    expect(content).toContain("variable: '--font-display'");
+    // Must NOT import fonts from a separate module
+    expect(content).not.toContain("from './fonts'");
   });
 
   it('no Set constructor usage in source files that cross RSC boundary', () => {

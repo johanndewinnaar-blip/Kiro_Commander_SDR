@@ -1,8 +1,22 @@
 import type { Metadata } from 'next';
-import { inter, bebasNeue } from './fonts';
+import { Inter, Bebas_Neue } from 'next/font/google';
 import { Shell } from '@/components/shell';
 import { ModeProvider } from '@/context/mode-context';
 import { SidebarProvider } from '@/context/sidebar-context';
+
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800'],
+  variable: '--font-body',
+  display: 'swap',
+});
+
+const bebasNeue = Bebas_Neue({
+  subsets: ['latin'],
+  weight: '400',
+  variable: '--font-display',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'Commander SDR',
@@ -12,7 +26,8 @@ export const metadata: Metadata = {
 /**
  * Root Layout — Commander SDR Operational App (DS-1.0)
  *
- * Loads fonts (Bebas Neue, Inter) via next/font/google.
+ * Fonts declared inline (not imported from separate module) to avoid
+ * next/font internal Set objects leaking across the RSC boundary.
  * Wraps in SidebarProvider for shared collapse state.
  * Wraps in ModeProvider for Standard/Mission mode system.
  * Wraps in Shell for persistent chrome.
