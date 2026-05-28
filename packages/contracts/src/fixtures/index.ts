@@ -12,3 +12,5 @@ export { seedCases } from './seed-cases';
 export { seedConnectors } from './seed-connectors';
 export { seedStrategies } from './seed-strategies';
 export { seedRiskObjects } from './seed-risk-objects';
+export { seedEvents } from './seed-events';
+export type { SeedEvent } from './seed-events';

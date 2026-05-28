@@ -75,7 +75,7 @@ describe('Routing Resolver', () => {
   });
 
   it('returns unresolved for unknown case type', () => {
-    const result = resolveRouting({ caseType: 'ooda-tempo-degradation' }, seedStrategies);
+    const result = resolveRouting({ caseType: 'nonexistent-case-type' as any }, seedStrategies);
     expect(result.status).toBe('unresolved');
     expect(result.team).toBeNull();
   });
@@ -151,7 +151,7 @@ describe('Reopening Trigger Resolver', () => {
 });
 
 describe('Full Strategy Resolution (all 6 surfaces)', () => {
-  it('resolves all 6 strategies for seed case 1 (P1 vulnerability-drift)', () => {
+  it('resolves all 6 strategies for seed case 1 (P0 external-attack-correlation)', () => {
     const c = seedCases[0];
     const result = resolveAllStrategies(c, seedStrategies);
     expect(result.sla.status).toBe('resolved');
@@ -162,11 +162,11 @@ describe('Full Strategy Resolution (all 6 surfaces)', () => {
     expect(result.reopening.status).toBe('resolved');
   });
 
-  it('resolves all 6 strategies for seed case 3 (P0 external-attack-correlation)', () => {
+  it('resolves all 6 strategies for seed case 3 (P1 vulnerability-drift)', () => {
     const c = seedCases[2];
     const result = resolveAllStrategies(c, seedStrategies);
     expect(result.sla.status).toBe('resolved');
-    expect(result.sla.responseHours).toBe(4); // P0 SLA from strategy
+    expect(result.sla.responseHours).toBe(24); // P1 SLA from strategy
     expect(result.priority.status).toBe('resolved');
     expect(result.validation.status).toBe('resolved');
     expect(result.closureGates.status).toBe('resolved');
