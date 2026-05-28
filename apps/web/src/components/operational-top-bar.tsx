@@ -1,21 +1,22 @@
-import { colors } from '../../../../packages/ui/src/tokens/colors';
-import { chrome } from '../../../../packages/ui/src/tokens/spacing';
-import { typography } from '../../../../packages/ui/src/tokens/typography';
+'use client';
+
+import { useMode } from '@/context/mode-context';
+import { componentTokens } from '../../../../packages/ui/src/tokens/components';
+import { primitiveBrand, primitiveFonts, primitiveTypeScale, primitiveLetterSpacing } from '../../../../packages/ui/src/tokens/primitives';
 import { TOP_NAV_WORKSPACES } from '@/registry/nav-groups';
 
 /**
- * Operational App Top Bar — Commander SDR (v1.3.2 Remediated)
+ * Operational App Top Bar — Commander SDR (DS-1.0)
  *
- * v1.3.2 Requirements 8, 10, 11, 12, 18:
- * - 68px tall (Req 8)
- * - BrandWordmark: SEIERTECH | COMMANDER SDR (Req 10)
- * - TopNavTabs: 7 workspaces with gold active (Req 11)
- * - GlobalSearch: 440px translucent (Req 12)
- * - UserAvatar: 34px gold initials (Req 18)
+ * DS-1.0 §6: 56px, navy chrome both modes.
+ * Structure: Left (Hamburger + Logo), Centre (Search), Right (AI, Mode toggle, Notifications, User).
+ * Brand: SEIERTECH (cream) | gold pipe | COMMANDER (gold) | SDR (white) in Bebas Neue.
  *
- * Source: shell reference v11
+ * Source: DESIGN_SYSTEM.md §6
  */
 export function OperationalTopBar() {
+  const { mode, toggleMode } = useMode();
+
   return (
     <header
       style={{
@@ -24,40 +25,34 @@ export function OperationalTopBar() {
         top: 0,
         left: 0,
         right: 0,
-        height: chrome.topBarHeight,
-        background: colors.navy.primary,
+        height: componentTokens.topbarHeight,
+        background: primitiveBrand.navy,
         display: 'flex',
         alignItems: 'center',
         color: '#fff',
-        borderBottom: `1px solid ${colors.gold.subtle}`,
+        borderBottom: `1px solid rgba(255,210,31,0.24)`,
       }}
     >
-      {/* Brand area — v1.3.2 Req 10 */}
+      {/* Brand area */}
       <div
         style={{
-          width: chrome.sidebarWidth,
+          width: componentTokens.sidebarWidth,
           height: '100%',
           display: 'flex',
           alignItems: 'center',
-          padding: '0 18px',
-          borderRight: `1px solid ${colors.chrome.lineDark}`,
-          gap: '10px',
-          background: `linear-gradient(155deg, ${colors.navy.variant}, ${colors.navy.primary})`,
+          padding: `0 ${componentTokens.cardPadding}`,
+          borderRight: '1px solid rgba(255,255,255,0.14)',
+          gap: '8px',
+          background: `linear-gradient(155deg, ${primitiveBrand.navy2}, ${primitiveBrand.navy})`,
         }}
       >
-        <span style={{ fontFamily: typography.fontFamily.display, fontSize: typography.fontSize.brandSm, letterSpacing: typography.letterSpacing.displayWide, color: colors.brand.seiertech }}>
-          SEIERTECH
-        </span>
-        <span style={{ height: '23px', width: '1px', background: colors.brand.pipe }} />
-        <span style={{ fontFamily: typography.fontFamily.display, fontSize: typography.fontSize.brandLg, letterSpacing: typography.letterSpacing.display, color: colors.brand.commander }}>
-          COMMANDER
-        </span>
-        <span style={{ fontFamily: typography.fontFamily.display, fontSize: typography.fontSize.brandLg, letterSpacing: typography.letterSpacing.display, color: colors.brand.sdr }}>
-          SDR
-        </span>
+        <span style={{ fontFamily: primitiveFonts.display, fontSize: primitiveTypeScale.display, letterSpacing: primitiveLetterSpacing.displayWide, color: primitiveBrand.cream }}>SEIERTECH</span>
+        <span style={{ height: '23px', width: '1px', background: primitiveBrand.gold }} />
+        <span style={{ fontFamily: primitiveFonts.display, fontSize: primitiveTypeScale.display, letterSpacing: primitiveLetterSpacing.display, color: primitiveBrand.gold }}>COMMANDER</span>
+        <span style={{ fontFamily: primitiveFonts.display, fontSize: primitiveTypeScale.display, letterSpacing: primitiveLetterSpacing.display, color: '#ffffff' }}>SDR</span>
       </div>
 
-      {/* Top nav tabs — v1.3.2 Req 11 */}
+      {/* Top nav tabs */}
       <nav style={{ display: 'flex', height: '100%', alignItems: 'stretch' }}>
         {TOP_NAV_WORKSPACES.map((ws, i) => (
           <a
@@ -66,12 +61,12 @@ export function OperationalTopBar() {
             style={{
               display: 'flex',
               alignItems: 'center',
-              padding: '0 16px',
-              borderBottom: i === 0 ? `3px solid ${colors.gold.primary}` : '3px solid transparent',
-              color: i === 0 ? '#fff' : colors.chrome.textMuted,
-              background: i === 0 ? colors.gold.tint : 'transparent',
+              padding: `0 ${componentTokens.cardPadding}`,
+              borderBottom: i === 0 ? `3px solid ${primitiveBrand.gold}` : '3px solid transparent',
+              color: i === 0 ? '#fff' : 'rgba(255,255,255,0.7)',
+              background: i === 0 ? 'rgba(255,210,31,0.055)' : 'transparent',
               fontWeight: 600,
-              fontSize: typography.fontSize.base,
+              fontSize: primitiveTypeScale.body,
               textDecoration: 'none',
             }}
           >
@@ -81,28 +76,28 @@ export function OperationalTopBar() {
       </nav>
 
       {/* Tools area */}
-      <div style={{ marginLeft: 'auto', height: '100%', display: 'flex', alignItems: 'center', gap: '10px', padding: '0 16px', borderLeft: `1px solid ${colors.chrome.lineDark}` }}>
-        {/* Global search — v1.3.2 Req 12 */}
-        <label style={{ width: chrome.searchWidth, height: chrome.iconSize, border: `1px solid ${colors.chrome.searchBorder}`, display: 'flex', alignItems: 'center', padding: '0 12px', background: colors.chrome.searchBg }}>
-          <input
-            placeholder="Search cases, assets, CVEs, identities, rules…"
-            aria-label="Global search"
-            style={{ width: '100%', border: 0, background: 'transparent', color: '#fff', outline: 'none', fontFamily: typography.fontFamily.body, fontSize: typography.fontSize.base }}
-          />
+      <div style={{ marginLeft: 'auto', height: '100%', display: 'flex', alignItems: 'center', gap: '12px', padding: `0 ${componentTokens.cardPadding}`, borderLeft: '1px solid rgba(255,255,255,0.14)' }}>
+        {/* Search */}
+        <label style={{ width: componentTokens.searchWidth, height: componentTokens.inputHeight, border: '1px solid rgba(255,255,255,0.24)', display: 'flex', alignItems: 'center', padding: '0 12px', background: 'rgba(255,255,255,0.075)' }}>
+          <input placeholder="Search cases, assets, CVEs, identities, rules…" aria-label="Global search" style={{ width: '100%', border: 0, background: 'transparent', color: '#fff', outline: 'none', fontFamily: primitiveFonts.body, fontSize: primitiveTypeScale.body }} />
         </label>
         {/* Commander AI button */}
-        <a style={{ height: chrome.iconSize, border: `1px solid ${colors.gold.border}`, color: colors.navy.primary, background: '#fff', fontWeight: 800, padding: '0 14px', display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
-          Commander AI
-        </a>
-        {/* Icons */}
-        <span style={{ height: chrome.iconSize, width: chrome.iconSize, border: `1px solid rgba(255,255,255,.16)`, display: 'grid', placeItems: 'center', color: '#9ab0c8' }}>●</span>
-        <span style={{ height: chrome.iconSize, width: chrome.iconSize, border: `1px solid rgba(255,255,255,.16)`, display: 'grid', placeItems: 'center', color: '#9ab0c8' }}>⚙</span>
-        {/* User avatar — v1.3.2 Req 18 */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '9px', borderLeft: `1px solid ${colors.chrome.lineDark}`, paddingLeft: '12px' }}>
-          <div style={{ width: chrome.avatarSize, height: chrome.avatarSize, border: '1px solid rgba(255,255,255,.2)', display: 'grid', placeItems: 'center', color: colors.gold.primary, fontFamily: typography.fontFamily.display }}>JS</div>
+        <a style={{ height: componentTokens.inputHeight, border: `1px solid rgba(255,210,31,0.75)`, color: primitiveBrand.navy, background: '#fff', fontWeight: 800, padding: '0 12px', display: 'flex', alignItems: 'center', textDecoration: 'none', fontSize: primitiveTypeScale.body }}>Commander AI</a>
+        {/* Mode toggle */}
+        <button
+          type="button"
+          onClick={toggleMode}
+          aria-label={`Switch to ${mode === 'standard' ? 'Mission' : 'Standard'} mode`}
+          style={{ height: componentTokens.buttonHeight, padding: '0 12px', border: '1px solid rgba(255,255,255,0.16)', background: mode === 'mission' ? 'rgba(255,210,31,0.08)' : 'transparent', color: mode === 'mission' ? primitiveBrand.gold : 'rgba(255,255,255,0.7)', cursor: 'pointer', fontFamily: primitiveFonts.body, fontSize: primitiveTypeScale.micro, fontWeight: 700, letterSpacing: primitiveLetterSpacing.eyebrow }}
+        >
+          {mode === 'standard' ? 'STANDARD' : 'MISSION'}
+        </button>
+        {/* User avatar */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', borderLeft: '1px solid rgba(255,255,255,0.14)', paddingLeft: '12px' }}>
+          <div style={{ width: componentTokens.avatarSize, height: componentTokens.avatarSize, border: '1px solid rgba(255,255,255,0.2)', display: 'grid', placeItems: 'center', color: primitiveBrand.gold, fontFamily: primitiveFonts.display, fontSize: '14px' }}>JS</div>
           <div>
-            <b style={{ display: 'block', fontSize: typography.fontSize.sm }}>Jane Smith</b>
-            <span style={{ display: 'block', fontSize: typography.fontSize.xs, color: '#8ca6c2' }}>Analyst</span>
+            <b style={{ display: 'block', fontSize: primitiveTypeScale.caption }}>Jane Smith</b>
+            <span style={{ display: 'block', fontSize: primitiveTypeScale.micro, color: '#8ca6c2' }}>Analyst</span>
           </div>
         </div>
       </div>

@@ -1,179 +1,163 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { colors } from '../../../../packages/ui/src/tokens/colors';
-import { chrome } from '../../../../packages/ui/src/tokens/spacing';
-import { typography } from '../../../../packages/ui/src/tokens/typography';
+import { componentTokens } from '../../../../packages/ui/src/tokens/components';
+import { primitiveBrand, primitiveFonts, primitiveTypeScale, primitiveLetterSpacing, primitiveMotion } from '../../../../packages/ui/src/tokens/primitives';
 import { OPERATIONAL_NAV_GROUPS } from '@/registry/nav-groups';
 
 /**
- * Operational App Sidebar — Commander SDR (v1.3.2 Phase 5)
+ * Operational App Sidebar — Commander SDR (DS-1.0)
  *
- * v1.3.2 Requirements 9, 13, 14, 15:
- * - 306px wide (Req 9)
- * - Vertical gradient #06152d to #030e1e (Req 13)
- * - Two-level expandable groups with gold divider (Req 14)
- * - 6px gold scrollbar (Req 15)
+ * DS-1.0 §7: 248px expanded / 68px icon rail. Collapsible via hamburger.
+ * - Item height 36px, padding 8px 12px, icon 20px
+ * - Active item: gold-tinted background + gold left border
+ * - Custom gold scrollbar (6px, rgba(255,210,31,0.55) thumb)
+ * - Hierarchical groups, expand/collapse persisted per user
+ * - Icons required (Lucide). Labels in expanded; tooltips in rail (200ms delay)
+ * - Chrome is navy gradient both modes
+ * - Transition 180ms ease-out
  *
- * Phase 5 additions:
- * - Interactive expand/collapse per group
- * - localStorage persistence per group
- * - Default: only first group ("case-management") expanded
- * - Keyboard accessible (Enter/Space)
- * - ARIA: aria-expanded on group headers
- *
- * Source: shell reference v11
- * 18 navigation groups per v11 reference.
+ * Source: DESIGN_SYSTEM.md §7
  */
 
-const STORAGE_KEY_PREFIX = 'commander-sdr.sidebar.';
+const STORAGE_PREFIX = 'commander-sdr.sidebar.';
+const COLLAPSE_KEY = 'commander-sdr.sidebar.collapsed';
 const DEFAULT_EXPANDED_GROUP = 'case-management';
 
-function getStorageKey(groupId: string): string {
-  return `${STORAGE_KEY_PREFIX}${groupId}.expanded`;
-}
-
-function getDefaultExpansionState(): Record<string, boolean> {
-  const state: Record<string, boolean> = {};
-  for (const group of OPERATIONAL_NAV_GROUPS) {
-    state[group.id] = group.id === DEFAULT_EXPANDED_GROUP;
-  }
-  return state;
-}
-
 export function OperationalSidebar() {
-  const [expansionState, setExpansionState] = useState<Record<string, boolean>>(getDefaultExpansionState);
-  const [hydrated, setHydrated] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
+  const [expansionState, setExpansionState] = useState<Record<string, boolean>>(() => {
+    const state: Record<string, boolean> = {};
+    for (const group of OPERATIONAL_NAV_GROUPS) {
+      state[group.id] = group.id === DEFAULT_EXPANDED_GROUP;
+    }
+    return state;
+  });
 
-  // Hydrate from localStorage after mount to avoid SSR mismatch
   useEffect(() => {
+    const storedCollapse = localStorage.getItem(COLLAPSE_KEY);
+    if (storedCollapse !== null) setCollapsed(storedCollapse === 'true');
     const stored: Record<string, boolean> = {};
     for (const group of OPERATIONAL_NAV_GROUPS) {
-      const key = getStorageKey(group.id);
-      const value = localStorage.getItem(key);
-      if (value !== null) {
-        stored[group.id] = value === 'true';
-      }
+      const val = localStorage.getItem(`${STORAGE_PREFIX}${group.id}.expanded`);
+      if (val !== null) stored[group.id] = val === 'true';
     }
-    if (Object.keys(stored).length > 0) {
-      setExpansionState((prev) => ({ ...prev, ...stored }));
-    }
-    setHydrated(true);
+    if (Object.keys(stored).length > 0) setExpansionState((prev) => ({ ...prev, ...stored }));
   }, []);
 
-  function toggleGroup(groupId: string) {
-    setExpansionState((prev) => {
-      const next = { ...prev, [groupId]: !prev[groupId] };
-      localStorage.setItem(getStorageKey(groupId), String(next[groupId]));
+  function toggleCollapse() {
+    setCollapsed((prev) => {
+      const next = !prev;
+      localStorage.setItem(COLLAPSE_KEY, String(next));
       return next;
     });
   }
 
-  function handleKeyDown(e: React.KeyboardEvent, groupId: string) {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      toggleGroup(groupId);
-    }
+  function toggleGroup(groupId: string) {
+    setExpansionState((prev) => {
+      const next = { ...prev, [groupId]: !prev[groupId] };
+      localStorage.setItem(`${STORAGE_PREFIX}${groupId}.expanded`, String(next[groupId]));
+      return next;
+    });
   }
+
+  const sidebarWidth = collapsed ? componentTokens.sidebarRail : componentTokens.sidebarWidth;
 
   return (
     <aside
       style={{
         position: 'fixed',
-        top: chrome.topBarHeight,
+        top: componentTokens.topbarHeight,
         bottom: 0,
         left: 0,
-        width: chrome.sidebarWidth,
-        background: `linear-gradient(180deg, ${colors.navy.sidebar}, ${colors.navy.sidebarEnd})`,
-        borderRight: '1px solid #0b1e38',
+        width: sidebarWidth,
+        background: `linear-gradient(180deg, ${primitiveBrand.navy2}, #030e1e)`,
+        borderRight: '1px solid rgba(255,255,255,0.10)',
         color: '#dcecff',
         display: 'flex',
         flexDirection: 'column',
+        transition: `width ${primitiveMotion.standard} ${primitiveMotion.easeDefault}`,
+        overflow: 'hidden',
       }}
       aria-label="Primary navigation"
     >
-      <div
+      {/* Hamburger toggle */}
+      <button
+        type="button"
+        onClick={toggleCollapse}
+        aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         style={{
-          padding: '12px',
-          overflowY: 'auto',
-          flex: 1,
+          height: componentTokens.itemHeight,
+          width: '100%',
+          border: 'none',
+          background: 'transparent',
+          color: primitiveBrand.gold,
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: collapsed ? 'center' : 'flex-start',
+          padding: collapsed ? '0' : '0 12px',
+          fontSize: '20px',
+          fontFamily: primitiveFonts.body,
         }}
-        className="sidebar-scroll"
       >
+        ☰
+      </button>
+
+      {/* Nav groups */}
+      <div style={{ padding: collapsed ? '4px' : '12px', overflowY: 'auto', flex: 1 }} className="sidebar-scroll">
         {OPERATIONAL_NAV_GROUPS.map((group) => {
           const isExpanded = expansionState[group.id] ?? false;
           return (
-            <div key={group.id} style={{ marginBottom: '7px' }}>
-              {/* Group header — interactive */}
+            <div key={group.id} style={{ marginBottom: collapsed ? '4px' : '4px' }}>
               <button
                 type="button"
-                onClick={() => toggleGroup(group.id)}
-                onKeyDown={(e) => handleKeyDown(e, group.id)}
-                aria-expanded={isExpanded}
+                onClick={() => !collapsed && toggleGroup(group.id)}
+                onKeyDown={(e) => { if ((e.key === 'Enter' || e.key === ' ') && !collapsed) { e.preventDefault(); toggleGroup(group.id); } }}
+                aria-expanded={collapsed ? undefined : isExpanded}
+                title={collapsed ? group.label : undefined}
                 style={{
                   width: '100%',
-                  height: chrome.groupHeaderHeight,
-                  border: '1px solid transparent',
+                  height: componentTokens.itemHeight,
+                  border: 'none',
                   background: 'transparent',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '8px',
-                  padding: '0 10px',
+                  gap: '4px',
+                  padding: collapsed ? '0 0 0 24px' : '8px 12px',
                   fontWeight: 700,
-                  color: colors.chrome.textHeading,
+                  color: 'rgba(220,235,255,0.82)',
                   cursor: 'pointer',
-                  fontFamily: 'inherit',
-                  fontSize: 'inherit',
+                  fontFamily: primitiveFonts.body,
+                  fontSize: primitiveTypeScale.body,
                   textAlign: 'left',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
                 }}
               >
-                {group.label}
-                {group.badge && (
-                  <span
-                    style={{
-                      fontSize: '8px',
-                      letterSpacing: typography.letterSpacing.badge,
-                      border: `1px solid ${colors.gold.badge}`,
-                      color: colors.gold.primary,
-                      padding: '2px 4px',
-                      marginLeft: '6px',
-                    }}
-                  >
-                    {group.badge}
-                  </span>
+                {!collapsed && (
+                  <>
+                    <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis' }}>{group.label}</span>
+                    {group.badge && (
+                      <span style={{ fontSize: primitiveTypeScale.micro, letterSpacing: primitiveLetterSpacing.eyebrow, border: '1px solid rgba(255,210,31,0.4)', color: primitiveBrand.gold, padding: '2px 4px' }}>{group.badge}</span>
+                    )}
+                    <span style={{ color: primitiveBrand.gold, transition: `transform ${primitiveMotion.standard} ${primitiveMotion.easeDefault}`, transform: isExpanded ? 'rotate(0deg)' : 'rotate(-90deg)', display: 'inline-block' }}>⌄</span>
+                  </>
                 )}
-                <span
-                  style={{
-                    marginLeft: 'auto',
-                    color: colors.gold.primary,
-                    transition: 'transform 150ms ease',
-                    transform: isExpanded ? 'rotate(0deg)' : 'rotate(-90deg)',
-                    display: 'inline-block',
-                  }}
-                >
-                  ⌄
-                </span>
               </button>
-              {/* Sub-items with gold divider — v1.3.2 Req 14 */}
-              {isExpanded && (
-                <div
-                  style={{
-                    marginLeft: '13px',
-                    padding: '4px 0 7px 18px',
-                    borderLeft: `1px solid ${colors.gold.divider}`,
-                  }}
-                >
+              {!collapsed && isExpanded && (
+                <div style={{ marginLeft: '12px', padding: '4px 0 4px 12px', borderLeft: '1px solid rgba(255,210,31,0.16)' }}>
                   {group.subItems.map((item) => (
                     <a
                       key={item.path}
                       href={item.path}
                       style={{
-                        height: chrome.subItemHeight,
+                        height: componentTokens.itemHeight,
                         display: 'flex',
                         alignItems: 'center',
-                        padding: '0 8px',
-                        color: colors.chrome.textSubtle,
-                        fontSize: typography.fontSize.sidebarSub,
+                        padding: '8px 12px',
+                        color: 'rgba(185,210,238,0.72)',
+                        fontSize: primitiveTypeScale.body,
                         textDecoration: 'none',
                       }}
                     >

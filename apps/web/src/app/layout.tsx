@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { inter, bebasNeue } from './fonts';
 import { Shell } from '@/components/shell';
+import { ModeProvider } from '@/context/mode-context';
 
 export const metadata: Metadata = {
   title: 'Commander SDR',
@@ -8,13 +9,13 @@ export const metadata: Metadata = {
 };
 
 /**
- * Root Layout — Commander SDR Operational App
+ * Root Layout — Commander SDR Operational App (DS-1.0)
  *
- * Wraps all pages in the Operational App shell (v1.3.2 remediated).
- * Loads Bebas Neue (display) and Inter (body) fonts via next/font/google.
+ * Loads fonts (Bebas Neue, Inter) via next/font/google.
+ * Wraps in ModeProvider for Standard/Mission mode system.
+ * Wraps in Shell for persistent chrome.
  *
- * Source: Spec #45 Application Shell Boundary
- * Visual: shell reference v11
+ * Source: DESIGN_SYSTEM.md §5, §6, §9
  */
 export default function RootLayout({
   children,
@@ -24,9 +25,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${bebasNeue.variable}`}>
       <body style={{ margin: 0, fontFamily: "var(--font-body, 'Inter', system-ui, sans-serif)", fontSize: '13px' }}>
-        <Shell>
-          {children}
-        </Shell>
+        <ModeProvider>
+          <Shell>
+            {children}
+          </Shell>
+        </ModeProvider>
       </body>
     </html>
   );

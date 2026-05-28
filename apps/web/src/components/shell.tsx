@@ -1,32 +1,38 @@
+'use client';
+
 import { OperationalSidebar } from './operational-sidebar';
 import { OperationalTopBar } from './operational-top-bar';
-import { colors } from '../../../../packages/ui/src/tokens/colors';
-import { chrome } from '../../../../packages/ui/src/tokens/spacing';
+import { useMode } from '@/context/mode-context';
+import { componentTokens } from '../../../../packages/ui/src/tokens/components';
 
 /**
- * Operational App Shell — Commander SDR (v1.3.2 Remediated)
+ * Operational App Shell — Commander SDR (DS-1.0)
  *
- * v11 shell reference visual language:
- * - Navy chrome (#061936 top bar, gradient sidebar)
- * - 68px top bar with gold underline
- * - 306px sidebar with gradient and gold scrollbar
- * - Light content area (#f2f5f9 page background)
+ * DS-1.0 §5 Global Layout:
+ * - TopBar: fixed, 56px, navy chrome both modes
+ * - Sidebar: fixed, 248px / 68px rail, navy chrome both modes
+ * - Workspace: scrollable, mode-driven surface
  *
- * Source: docs/06_ui_build_reference/commander-sdr-shell-v11-admin-navigation.html
+ * Shell chrome is ALWAYS navy/dark regardless of workspace mode (DS-1.0 §3).
+ * Mode toggle changes the workspace, not the shell.
+ *
+ * Source: DESIGN_SYSTEM.md §5, §3
  */
 export function Shell({ children }: { children: React.ReactNode }) {
+  const { tokens } = useMode();
+
   return (
-    <div style={{ display: 'flex', height: '100vh', background: colors.operational.page }}>
+    <div style={{ display: 'flex', height: '100vh', background: tokens.surface.primary }}>
       <OperationalSidebar />
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', marginLeft: chrome.sidebarWidth }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', marginLeft: componentTokens.sidebarWidth }}>
         <OperationalTopBar />
         <main
           style={{
             flex: 1,
             overflow: 'auto',
-            padding: '26px',
-            background: colors.operational.panel,
-            marginTop: chrome.topBarHeight,
+            padding: componentTokens.contentPadding,
+            marginTop: componentTokens.topbarHeight,
+            background: tokens.surface.secondary,
           }}
         >
           {children}
