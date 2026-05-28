@@ -1,156 +1,206 @@
+'use client';
+
+import { useMode } from '@/context/mode-context';
 import { seedCases } from '../../../../packages/contracts/src/fixtures/seed-cases';
 import { seedAssets } from '../../../../packages/contracts/src/fixtures/seed-assets';
 import { seedIdentities } from '../../../../packages/contracts/src/fixtures/seed-identities';
 import { seedConnectors } from '../../../../packages/contracts/src/fixtures/seed-connectors';
-import { colors } from '../../../../packages/ui/src/tokens/colors';
-import { chrome } from '../../../../packages/ui/src/tokens/spacing';
-import { typography } from '../../../../packages/ui/src/tokens/typography';
-import { allRoutes } from '@/registry';
+import { componentTokens } from '../../../../packages/ui/src/tokens/components';
+import { primitiveBrand, primitiveFonts, primitiveTypeScale, primitiveLetterSpacing, primitiveSignal, primitiveSpacing } from '../../../../packages/ui/src/tokens/primitives';
+import { getKpiTileStyles, getTrendIndicator } from '../../../../packages/ui/src/components/kpi-tile';
+import { getGaugeStyles, getGaugeBand } from '../../../../packages/ui/src/components/instrument-gauge';
+import { getLiveFeedStyles, getSeverityColor } from '../../../../packages/ui/src/components/live-feed';
 
 /**
- * Command Centre — Primary Landing Surface (v1.3.2 Phase 4)
+ * Command Centre — Primary Landing Surface (DS-1.0 Phase 3)
  *
  * Source: Spec 05, Route Registry (path: /)
- * Visual: shell reference v11 — Command Centre section
- * Status: BUILD (v1.1)
+ * Mockups: command-centre-standard.png (Standard mode), command-centre-mission.png (Mission mode)
+ * DS-1.0 §8 Workspace structure: Header → Insight Row (KPIs + gauge) → Content Grid → Detail
+ *
  * Boundary: Operational App
- *
- * Domain Requirements:
- * 1. Present posture, cases, vulnerabilities, exposures, assets, identity,
- *    control coverage and tool health at a glance.
- * 2. Card clicks route to registered domain pages.
- * 3. Label mock/scaffold status on derived metrics.
- * 4. Surface P0 prominently.
- * 5. Commander AI grounded explanation tied to visible data.
- * 6. Show source gaps and next validation steps.
- *
- * v1.3.2 Requirements:
- * - PageHeader: uppercase grey eyebrow, 22px h1, StatusTile (Req 16)
- * - OperationalCard: white bg, #dbe3ef border, 18px padding, uppercase h3 (Req 17)
+ * Status: BUILD (v1.1)
  */
 
-/** Metric card data */
-interface MetricCardData {
-  title: string;
-  value: string | number;
-  status: 'BUILD' | 'SCAFFOLD';
-  routePath: string;
-}
+export default function CommandCentrePage() {
+  const { mode, tokens } = useMode();
+  const tileStyles = getKpiTileStyles(mode);
+  const gaugeStyles = getGaugeStyles(mode);
+  const feedStyles = getLiveFeedStyles(mode);
 
-function getMetricCards(): MetricCardData[] {
+  const p0Cases = seedCases.filter((c) => c.priority === 'P0');
   const openCases = seedCases.filter((c) => c.status === 'open' || c.status === 'in-progress');
   const totalAssets = seedAssets.length;
   const totalIdentities = seedIdentities.length;
   const activeConnectors = seedConnectors.filter((c) => c.state === 'active').length;
   const errorConnectors = seedConnectors.filter((c) => c.state === 'error').length;
 
-  return [
-    { title: 'Open Cases', value: openCases.length, status: 'BUILD', routePath: '/cases' },
-    { title: 'Total Assets', value: totalAssets, status: 'BUILD', routePath: '/assets' },
-    { title: 'Identities', value: totalIdentities, status: 'BUILD', routePath: '/identity' },
-    { title: 'Active Connectors', value: activeConnectors, status: 'BUILD', routePath: '/tool-health/connectors' },
-    { title: 'Connector Errors', value: errorConnectors, status: 'BUILD', routePath: '/tool-health/connectors' },
-    { title: 'Vulnerabilities', value: '—', status: 'SCAFFOLD', routePath: '/vulnerabilities' },
-    { title: 'Exposures', value: '—', status: 'SCAFFOLD', routePath: '/exposure' },
-    { title: 'Control Coverage', value: '—', status: 'SCAFFOLD', routePath: '/controls' },
-  ];
-}
-
-export default function CommandCentrePage() {
-  const p0Cases = seedCases.filter((c) => c.priority === 'P0');
-  const metrics = getMetricCards();
+  // Posture score for gauge (mock — derived from seed data)
+  const postureScore = 72;
+  const postureMax = 100;
+  const postureBand = getGaugeBand(postureScore, postureMax, { critical: 0.3, warning: 0.6, success: 1.0 });
 
   return (
     <div>
-      {/* P0 Banner — Domain Req 4: Surface P0 prominently */}
+      {/* P0 Banner — DS-1.0 §14.1: Emergency Command treatment */}
       {p0Cases.length > 0 && (
         <div
           role="alert"
           aria-label="P0 zero-day condition active"
           style={{
-            padding: '12px 28px',
-            background: colors.intensity.emergency.background,
-            border: `1px solid ${colors.priority.p0}`,
+            padding: `${primitiveSpacing[3]} ${componentTokens.contentPadding}`,
+            background: mode === 'mission' ? 'rgba(217,45,32,0.12)' : 'rgba(217,45,32,0.06)',
+            border: `1px solid ${primitiveSignal.critical}`,
+            borderRadius: '0',
             display: 'flex',
             alignItems: 'center',
-            gap: '12px',
-            marginBottom: '0',
+            gap: primitiveSpacing[3],
           }}
         >
-          <span style={{ color: colors.priority.p0, fontWeight: 700, fontSize: typography.fontSize.base }}>
+          <span style={{ color: primitiveSignal.critical, fontWeight: 700, fontSize: primitiveTypeScale.body }}>
             ◆ P0 ACTIVE
           </span>
-          <span style={{ color: colors.intensity.emergency.text, fontSize: typography.fontSize.base }}>
+          <span style={{ color: tokens.text.primary, fontSize: primitiveTypeScale.body }}>
             {p0Cases[0].title}
           </span>
         </div>
       )}
 
-      {/* PageHeader — v1.3.2 Req 16 */}
+      {/* Page Header — DS-1.0 §12 Page header component */}
       <section
         style={{
-          height: chrome.pageHeaderHeight,
-          background: colors.operational.panel,
-          borderBottom: `1px solid ${colors.operational.line}`,
+          height: '76px',
+          background: tokens.surface.secondary,
+          borderBottom: `1px solid ${tokens.border.default}`,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '0 28px',
+          padding: `0 ${componentTokens.contentPadding}`,
         }}
       >
         <div>
-          <small style={{ color: colors.operational.eyebrow, textTransform: 'uppercase', letterSpacing: typography.letterSpacing.display, fontSize: typography.fontSize.xs }}>
-            Command Centre › v2.5 shell reference
+          <small style={{ color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.display, fontSize: primitiveTypeScale.micro }}>
+            Command Centre › Security Posture Overview
           </small>
-          <h1 style={{ margin: '5px 0 0', fontSize: typography.fontSize.h1, fontWeight: typography.fontWeight.bold, color: colors.operational.ink }}>
+          <h1 style={{ margin: '4px 0 0', fontSize: primitiveTypeScale.h1, fontWeight: 700, color: tokens.text.primary, fontFamily: primitiveFonts.display, lineHeight: '1.2' }}>
             Command Centre
           </h1>
         </div>
-        {/* StatusTile — green dot + last updated */}
-        <div style={{ border: `1px solid ${colors.operational.line}`, height: '44px', display: 'flex', alignItems: 'center', padding: '0 13px', background: colors.operational.panel }}>
-          <span style={{ width: '7px', height: '7px', background: colors.status.live, display: 'inline-block', marginRight: '8px', borderRadius: '50%' }} />
-          Last updated 5 min ago
+        <div style={{ border: `1px solid ${tokens.border.default}`, height: componentTokens.buttonHeightEmphasis, display: 'flex', alignItems: 'center', padding: `0 ${primitiveSpacing[3]}`, background: tokens.surface.secondary, borderRadius: '4px' }}>
+          <span style={{ width: '7px', height: '7px', background: primitiveSignal.success, display: 'inline-block', marginRight: primitiveSpacing[2], borderRadius: '50%' }} />
+          <span style={{ fontSize: primitiveTypeScale.body, color: tokens.text.secondary }}>Last updated 5 min ago</span>
         </div>
       </section>
 
-      {/* Metric Grid — 4-column, OperationalCard style (v1.3.2 Req 17) */}
-      <section style={{ padding: '26px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '14px' }}>
-          {metrics.map((card) => (
-            <a
-              key={card.title}
-              href={card.routePath}
-              style={{
-                border: `1px solid ${colors.operational.line}`,
-                padding: '18px',
-                background: colors.operational.panel,
-                minHeight: '110px',
-                textDecoration: 'none',
-                display: 'block',
-              }}
-            >
-              <h3 style={{ margin: '0 0 10px', fontSize: typography.fontSize.base, textTransform: 'uppercase', letterSpacing: typography.letterSpacing.eyebrow, fontWeight: typography.fontWeight.bold, color: colors.operational.ink }}>
-                {card.title}
-              </h3>
-              <p style={{ margin: '0 0 8px', fontSize: '1.5rem', fontWeight: 700, color: card.value === '—' ? colors.operational.muted : colors.operational.ink }}>
-                {card.value}
-              </p>
-              {/* Status badge */}
-              <span style={{ fontSize: '8px', letterSpacing: typography.letterSpacing.badge, padding: '2px 6px', background: card.status === 'BUILD' ? colors.status.build : colors.status.scaffold, color: card.status === 'BUILD' ? colors.operational.ink : '#fff' }}>
-                {card.status}
-              </span>
-            </a>
+      {/* KPI Strip — DS-1.0 §21 Req 26: 8-10 metric tiles under page header */}
+      <section style={{ padding: `${componentTokens.cardPadding} ${componentTokens.contentPadding}`, borderBottom: `1px solid ${tokens.border.subtle}` }}>
+        <div style={{ display: 'flex', gap: componentTokens.gridGap, overflowX: 'auto' }}>
+          {[
+            { label: 'Open Cases', value: openCases.length, trend: 'up' as const, delta: 2 },
+            { label: 'Total Assets', value: totalAssets, trend: 'flat' as const },
+            { label: 'Identities', value: totalIdentities, trend: 'flat' as const },
+            { label: 'Active Connectors', value: activeConnectors, trend: 'up' as const, delta: 1 },
+            { label: 'Connector Errors', value: errorConnectors, trend: 'down' as const, delta: -1 },
+            { label: 'Posture Score', value: `${postureScore}%`, trend: 'up' as const, delta: 3 },
+            { label: 'SLA Compliance', value: '94%', trend: 'down' as const, delta: -2 },
+            { label: 'Coverage', value: '87%', trend: 'up' as const, delta: 1 },
+          ].map((kpi) => {
+            const trend = getTrendIndicator(kpi.trend, kpi.label !== 'Connector Errors');
+            return (
+              <div key={kpi.label} style={tileStyles.container}>
+                <span style={tileStyles.label}>{kpi.label}</span>
+                <span style={tileStyles.value}>{kpi.value}</span>
+                {kpi.delta !== undefined && (
+                  <span style={{ ...tileStyles.delta, color: trend.color }}>
+                    {trend.arrow} {kpi.delta > 0 ? '+' : ''}{kpi.delta} vs 24h
+                  </span>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Insight Row — DS-1.0 §8: summary KPIs + primary chart/gauge */}
+      <section style={{ padding: componentTokens.contentPadding, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: componentTokens.gridGap }}>
+        {/* Posture Gauge */}
+        <div style={{ ...gaugeStyles.container, margin: '0 auto' }}>
+          <span style={gaugeStyles.valueText}>{postureScore}</span>
+          <span style={gaugeStyles.labelText}>Posture Score</span>
+          <span style={{ fontSize: primitiveTypeScale.micro, color: postureBand.color, marginTop: '4px' }}>
+            {postureBand.label}
+          </span>
+        </div>
+
+        {/* SLA Gauge */}
+        <div style={{ ...gaugeStyles.container, margin: '0 auto' }}>
+          <span style={gaugeStyles.valueText}>94</span>
+          <span style={gaugeStyles.labelText}>SLA Compliance</span>
+          <span style={{ fontSize: primitiveTypeScale.micro, color: primitiveSignal.success, marginTop: '4px' }}>
+            Healthy
+          </span>
+        </div>
+
+        {/* Coverage Gauge */}
+        <div style={{ ...gaugeStyles.container, margin: '0 auto' }}>
+          <span style={gaugeStyles.valueText}>87</span>
+          <span style={gaugeStyles.labelText}>Coverage</span>
+          <span style={{ fontSize: primitiveTypeScale.micro, color: primitiveSignal.success, marginTop: '4px' }}>
+            Healthy
+          </span>
+        </div>
+      </section>
+
+      {/* Content Grid — DS-1.0 §8: 12-column internal grid, default 3-col cards */}
+      <section style={{ padding: `0 ${componentTokens.contentPadding} ${componentTokens.contentPadding}`, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: componentTokens.gridGap }}>
+        {/* Recent Cases Card */}
+        <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, borderRadius: componentTokens.cardRadius, border: `1px solid ${tokens.border.subtle}` }}>
+          <h3 style={{ margin: `0 0 ${primitiveSpacing[3]}`, fontSize: primitiveTypeScale.h3, fontWeight: 600, color: tokens.text.primary, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Recent Cases</h3>
+          {seedCases.map((c) => (
+            <div key={c.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: `${primitiveSpacing[2]} 0`, borderBottom: `1px solid ${tokens.border.subtle}` }}>
+              <span style={{ fontSize: primitiveTypeScale.body, color: tokens.text.primary }}>{c.title.slice(0, 40)}…</span>
+              <span style={{ fontSize: primitiveTypeScale.micro, color: c.priority === 'P0' ? primitiveSignal.critical : tokens.text.muted, fontWeight: 700 }}>{c.priority}</span>
+            </div>
           ))}
         </div>
 
-        {/* Data Source Status — Domain Req 6 */}
-        <div style={{ marginTop: '14px', border: `1px solid ${colors.operational.line}`, padding: '18px', background: colors.operational.panel }}>
-          <h3 style={{ margin: '0 0 10px', fontSize: typography.fontSize.base, textTransform: 'uppercase', letterSpacing: typography.letterSpacing.eyebrow, fontWeight: typography.fontWeight.bold, color: colors.operational.ink }}>
-            Data Source Status
-          </h3>
-          <p style={{ margin: 0, color: colors.operational.muted, lineHeight: typography.lineHeight.normal }}>
-            Displaying seed/mock data. Real connector integration requires Phase 2 approval.
-            Scaffold metrics will populate as domain specs are implemented.
+        {/* Asset Summary Card */}
+        <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, borderRadius: componentTokens.cardRadius, border: `1px solid ${tokens.border.subtle}` }}>
+          <h3 style={{ margin: `0 0 ${primitiveSpacing[3]}`, fontSize: primitiveTypeScale.h3, fontWeight: 600, color: tokens.text.primary, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Asset Summary</h3>
+          {seedAssets.map((a) => (
+            <div key={a.id} style={{ display: 'flex', justifyContent: 'space-between', padding: `${primitiveSpacing[2]} 0`, borderBottom: `1px solid ${tokens.border.subtle}` }}>
+              <span style={{ fontSize: primitiveTypeScale.body, color: tokens.text.primary }}>{a.name}</span>
+              <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted }}>{a.classification}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Live Activity Feed */}
+        <div style={feedStyles.container}>
+          <h3 style={feedStyles.header}>Live Activity</h3>
+          <div style={feedStyles.list}>
+            {[
+              { id: '1', timestamp: '14:32', severity: 'critical' as const, message: 'P0 case escalated to CISO', entityRef: 'CASE-2026-0003' },
+              { id: '2', timestamp: '14:28', severity: 'warning' as const, message: 'SLA breach approaching on CASE-2026-0001', entityRef: 'CASE-2026-0001' },
+              { id: '3', timestamp: '14:15', severity: 'info' as const, message: 'Connector sync completed', entityRef: 'connector-0001' },
+              { id: '4', timestamp: '14:02', severity: 'success' as const, message: 'Validation passed for asset PROD-WEB-01', entityRef: 'asset-0001' },
+            ].map((event) => (
+              <div key={event.id} style={feedStyles.item}>
+                <span style={{ ...feedStyles.dot, background: getSeverityColor(event.severity) }} />
+                <span style={feedStyles.timestamp}>{event.timestamp}</span>
+                <span style={feedStyles.message}>{event.message}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Data Source Status */}
+      <section style={{ padding: `0 ${componentTokens.contentPadding} ${componentTokens.contentPadding}` }}>
+        <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, borderRadius: componentTokens.cardRadius, border: `1px solid ${tokens.border.subtle}` }}>
+          <h3 style={{ margin: `0 0 ${primitiveSpacing[2]}`, fontSize: primitiveTypeScale.h3, fontWeight: 600, color: tokens.text.primary, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Data Source Status</h3>
+          <p style={{ margin: 0, color: tokens.text.secondary, lineHeight: '1.45', fontSize: primitiveTypeScale.body }}>
+            Displaying seed/mock data. Real connector integration requires Phase 2 approval. Scaffold metrics will populate as domain specs are implemented.
           </p>
         </div>
       </section>
