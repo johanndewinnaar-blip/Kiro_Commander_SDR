@@ -491,3 +491,29 @@ Expanded all seed fixture files to populate surfaces realistically.
 
 **Commit:** `e54e5d7`  
 **Test count:** 462 passing (23 files), zero regressions.
+
+
+## Spec 06 — My Cases expandable list pattern (2026-05-28)
+
+### Deliverables
+
+| Component | Path | Description |
+|-----------|------|-------------|
+| ExpandableCaseRow | `apps/web/src/components/expandable-case-row.tsx` | Collapsed: priority (shape+colour+label), caseRef, title, owner, team, SLA, age, surface chip, status. Expanded: routing rationale, 5-col metadata grid, "Open full detail →" link. Keyboard accessible (Enter/Space/Esc), ARIA compliant, 180ms transitions. |
+| CaseList | `apps/web/src/components/case-list.tsx` | Accordion wrapper (single-expand default, multiExpand prop). Scrollable `calc(100vh - 240px)`. |
+| /cases/my | `apps/web/src/app/cases/my/page.tsx` | Filtered view for current user. Placeholder `CURRENT_USER = 'Alice Security-Analyst'` with TODO for Spec 19 auth (DEC-case-visibility-persona-scoped). |
+| /cases refactored | `apps/web/src/app/cases/page.tsx` | Static table replaced with CaseList component. Lifecycle pipeline and header preserved. |
+
+### Doctrinal compliance
+
+- No manual case creation/edit/closure buttons (Assertion 1)
+- Priority shown via shape + colour + label (never colour alone)
+- Surface attribution visible on every row
+- Routing rationale from strategy resolver (never hardcoded)
+- SLA values consumed from Spec 43 resolvers
+- SOC boundary: read-only display only
+- Both Standard and Mission modes via semantic tokens
+
+**Commit:** `19d3850`  
+**Test count:** 462 passing (23 files), zero regressions.  
+**Surfaces affected:** /cases (refactored), /cases/my (new), expandable-case-row (new component), case-list (new component).
