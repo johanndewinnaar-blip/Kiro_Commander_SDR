@@ -683,3 +683,60 @@ Manual scorecard reasoning applies during the interim until the scorecard runner
 | (d) | Scorecard runner package implementation (`packages/perf-scorecard/`) |
 | (e) | Hook 05 wiring to invoke the runner programmatically |
 | (f) | First baseline scorecard against current state |
+
+
+## Session close-out — 2026-05-28 (Performance Doctrine PD-1.0 landing)
+
+### Work completed this session
+
+| Item | Commit | Description |
+|------|--------|-------------|
+| Performance Doctrine PD-1.0 | `d56d8b6` | Constitution, four layer strategies, Test and Tolerance Framework, always-on steering, Hook 05, PERF_AUDIT template, updated PHASE_RUNNER/TWEAK_PASS/VERIFY_AND_CLOSE |
+
+### Files committed (15 total)
+
+- 10 new authority/steering/hook files (see "Performance Doctrine PD-1.0 — established" entry above for full list)
+- 3 existing templates updated (PHASE_RUNNER, TWEAK_PASS, VERIFY_AND_CLOSE)
+- DECISIONS.md updated (DEC-performance-doctrine-pd-1-0)
+- CONVERSION_FINDINGS.md updated
+
+### Session scorecard (interim manual reasoning per TTF-1.0 §14)
+
+```
+Session scorecard:
+  Application Layer: N/A
+  Database Layer:    N/A
+  Data Layer:        N/A
+  Infrastructure:    N/A
+
+Overall product band: N/A (documentation-only session)
+Red units: 0
+Net change from previous session: No change — doctrine documents only
+```
+
+No application code, schema, data layer, or infrastructure was modified. Hook 05 §10 applies: documentation tasks cannot fail runtime measurements.
+
+### Total test count at close
+
+**634 tests passing** across 28 test files. Zero regressions.
+
+### Decisions recorded
+
+- DEC-performance-doctrine-pd-1-0 — Performance Doctrine established as third doctrinal pillar
+
+### Open items for next session (priority order)
+
+1. **First baseline Application Layer scorecard** — run PERF_AUDIT.md (application-only) with working build environment. Requires `pnpm build` + Lighthouse CLI. Produces the baseline against which all future commits are measured.
+2. **Spec 06 Phase E1** — Evidence Pack Evaluator (strategy surface `evidence-sufficiency` now available from previous session). Owner to confirm scope per PHASE_E_PROPOSAL.md.
+3. **Spec 06 Phase E2** — Auto-Healing Condition Evaluator.
+4. **Spec 06 Phase E3** — Communication Thread Model + read-only UI display.
+5. **Spec 02 amendment** — Application Layer EARS requirements from ALS-1.0 (deferred follow-up item (a) from PD-1.0 landing).
+6. **New Spec 16** — Database + Data Layer EARS requirements (deferred item (b)).
+7. **New Spec 18** — Infrastructure Layer EARS requirements (deferred item (c)).
+8. **Scorecard runner package** — `packages/perf-scorecard/` implementation (deferred item (d)).
+9. **Hook 05 wiring** — connect Hook 05 to invoke the runner programmatically (deferred item (e)).
+10. **RSC Set serialization warning** — pre-existing, non-blocking, investigate for permanent fix.
+
+### Working copy status
+
+Working copy clean. Branch: main. HEAD `d56d8b6` matches origin/main.
