@@ -628,3 +628,58 @@ Phase E1 (Evidence Pack Evaluator) is now unblocked. The evaluator will consume 
 ### Working copy status
 
 Working copy clean. Branch: main. HEAD `8470c51` matches origin/main.
+
+
+## Performance Doctrine PD-1.0 — established (2026-05-28)
+
+Performance Doctrine PD-1.0 established as the third doctrinal pillar of Commander, alongside functional doctrine and design doctrine.
+
+### Files committed
+
+Ten new authority files:
+
+| # | Path | Purpose |
+|---|------|---------|
+| 1 | `docs/00_authority/PERFORMANCE_DOCTRINE.md` | Constitution — tier model, four-layer separation, four-band scorecard, scoring formulas, workload-class separation principle |
+| 2 | `docs/00_authority/APPLICATION_LAYER_STRATEGY.md` | Application Layer detail — route classes, bundle caps, LCP/FID/CLS targets, render budgets |
+| 3 | `docs/00_authority/DATABASE_LAYER_STRATEGY.md` | Database Layer detail — workload classes, index coverage, query budgets, connection pooling |
+| 4 | `docs/00_authority/DATA_LAYER_STRATEGY.md` | Data Layer detail — ingestion throughput, pipeline latency, freshness targets |
+| 5 | `docs/00_authority/INFRASTRUCTURE_LAYER_STRATEGY.md` | Infrastructure Layer detail — availability, cost efficiency, scaling response |
+| 6 | `docs/00_authority/TEST_AND_TOLERANCE_FRAMEWORK.md` | Measurement engineering — tolerance bands, scoring formulas, deferred unit handling |
+| 7 | `docs/00_authority/prompts/PERF_AUDIT.md` | Full performance audit prompt template |
+| 8 | `docs/00_authority/prompts/TEMPLATE_UPDATES.md` | Specification of template additions (consumed and applied) |
+| 9 | `.kiro/steering/performance-discipline.md` | Always-on steering (inclusion: always) — standing rules for every task |
+| 10 | `.kiro/hooks/05-performance-compliance.kiro.hook` | Hook 05 — postTaskExecution enforcement, refuses Red regressions |
+
+Three existing templates updated:
+
+| Template | Section added |
+|----------|--------------|
+| `docs/00_authority/prompts/PHASE_RUNNER.md` | "Performance scorecard reporting" — pre-phase capture, standing rules, closing report format, hard refusal |
+| `docs/00_authority/prompts/TWEAK_PASS.md` | "Performance scorecard reporting" — pre-pass capture, token-level discipline, per-surface impact format, hard refusal |
+| `docs/00_authority/prompts/VERIFY_AND_CLOSE.md` | "Run full performance scorecard" step — full four-layer audit, CONVERSION_FINDINGS scorecard format, refusal condition |
+
+### Decision recorded
+
+`DEC-performance-doctrine-pd-1-0` in `DECISIONS.md`.
+
+### Enforcement chain
+
+- **Always-on steering:** `.kiro/steering/performance-discipline.md` auto-loaded every session.
+- **Hook 05:** fires `postTaskExecution`, invokes scorecard reasoning, refuses new Red units.
+- **Template integration:** PHASE_RUNNER, TWEAK_PASS, and VERIFY_AND_CLOSE all require scorecard impact reporting.
+
+### Interim discipline
+
+Manual scorecard reasoning applies during the interim until the scorecard runner package is implemented. The discipline is live; the automation is deferred.
+
+### Deferred follow-up work
+
+| Item | Description |
+|------|-------------|
+| (a) | Spec 02 amendment with Application Layer EARS requirements |
+| (b) | New Spec 16 with Database + Data Layer EARS requirements |
+| (c) | New Spec 18 with Infrastructure Layer EARS requirements |
+| (d) | Scorecard runner package implementation (`packages/perf-scorecard/`) |
+| (e) | Hook 05 wiring to invoke the runner programmatically |
+| (f) | First baseline scorecard against current state |
