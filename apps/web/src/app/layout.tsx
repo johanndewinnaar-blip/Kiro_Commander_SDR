@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter, Bebas_Neue } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import { Shell } from '@/components/shell';
 import { ModeProvider } from '@/context/mode-context';
 import { SidebarProvider } from '@/context/sidebar-context';
@@ -8,13 +8,6 @@ const inter = Inter({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700', '800'],
   variable: '--font-body',
-  display: 'swap',
-});
-
-const bebasNeue = Bebas_Neue({
-  subsets: ['latin'],
-  weight: '400',
-  variable: '--font-display',
   display: 'swap',
 });
 
@@ -40,8 +33,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${bebasNeue.variable}`}>
-      <body style={{ margin: 0, fontFamily: "var(--font-body, 'Inter', system-ui, sans-serif)", fontSize: '14px' }}>
+    <html lang="en" className={inter.variable}>
+      <body style={{ margin: 0, fontFamily: "'Inter', system-ui, sans-serif", fontSize: '14px', lineHeight: '1.4285714286' }}>
         <SidebarProvider>
           <ModeProvider>
             <Shell>

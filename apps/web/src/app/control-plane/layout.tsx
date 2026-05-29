@@ -41,7 +41,8 @@ export default function ControlPlaneLayout({ children }: { children: React.React
                 border: i === 0 ? `1px solid ${colors.gold.activeBorder}` : '1px solid transparent',
                 background: i === 0 ? colors.gold.activeBackground : 'transparent',
                 padding: '0 10px',
-                fontWeight: 800,
+                fontWeight: 700,
+                fontSize: '12px',
                 color: i === 0 ? '#fff' : '#ddd',
                 marginBottom: '7px',
               }}
@@ -76,8 +77,8 @@ export default function ControlPlaneLayout({ children }: { children: React.React
         >
           {/* Brand — COMMANDER COMMERCIAL CONTROL */}
           <div style={{ width: '330px', height: '100%', display: 'flex', alignItems: 'center', padding: '0 18px', borderRight: `1px solid ${colors.controlPlane.line}`, gap: '10px' }}>
-            <span style={{ fontFamily: typography.fontFamily.display, letterSpacing: typography.letterSpacing.displayWide, fontSize: '22px', color: colors.gold.primary }}>COMMANDER</span>
-            <span style={{ fontFamily: typography.fontFamily.display, letterSpacing: typography.letterSpacing.displayWide, fontSize: '22px', color: '#fff' }}>COMMERCIAL CONTROL</span>
+            <span style={{ fontFamily: typography.fontFamily.body, letterSpacing: typography.letterSpacing.displayWide, fontSize: '22px', fontWeight: 700, color: colors.gold.primary }}>COMMANDER</span>
+            <span style={{ fontFamily: typography.fontFamily.body, letterSpacing: typography.letterSpacing.displayWide, fontSize: '22px', fontWeight: 700, color: '#fff' }}>COMMERCIAL CONTROL</span>
           </div>
           {/* Top nav tabs */}
           <nav style={{ display: 'flex', height: '100%' }}>
@@ -91,7 +92,8 @@ export default function ControlPlaneLayout({ children }: { children: React.React
                   padding: '0 16px',
                   color: i === 0 ? '#fff' : '#bdbdbd',
                   borderBottom: i === 0 ? `3px solid ${colors.gold.primary}` : '3px solid transparent',
-                  fontWeight: 700,
+                  fontWeight: 600,
+                  fontSize: '14px',
                   textDecoration: 'none',
                 }}
               >
@@ -102,21 +104,21 @@ export default function ControlPlaneLayout({ children }: { children: React.React
           {/* Tools */}
           <div style={{ marginLeft: 'auto', display: 'flex', gap: '10px', alignItems: 'center', padding: '0 16px' }}>
             <label style={{ width: chrome.searchWidth, height: chrome.iconSize, border: `1px solid #333`, background: '#151515', padding: '0 12px', display: 'flex', alignItems: 'center' }}>
-              <input placeholder="Search customers, tenants, licences, features, rules…" style={{ width: '100%', height: '100%', background: 'transparent', border: 0, color: '#fff', outline: 'none' }} />
+              <input placeholder="Search customers, tenants, licences, features, rules…" style={{ width: '100%', height: '100%', background: 'transparent', border: 0, color: '#fff', outline: 'none', fontSize: '14px' }} />
             </label>
             {/* INTERNAL badge */}
-            <div style={{ border: '1px solid #5c2626', color: '#ffb4b4', padding: '9px 12px', fontWeight: 800 }}>INTERNAL</div>
-            <div style={{ borderLeft: `1px solid #333`, paddingLeft: '12px', color: '#ccc' }}>Operator</div>
+            <div style={{ border: '1px solid #5c2626', color: '#ffb4b4', padding: '9px 12px', fontWeight: 700, fontSize: '12px' }}>INTERNAL</div>
+            <div style={{ borderLeft: `1px solid #333`, paddingLeft: '12px', color: '#ccc', fontSize: '14px' }}>Operator</div>
           </div>
         </header>
 
         {/* Page header */}
         <section style={{ height: chrome.pageHeaderHeight, background: colors.controlPlane.panel, borderBottom: `1px solid ${colors.controlPlane.line}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 28px', marginTop: chrome.topBarHeight }}>
           <div>
-            <small style={{ color: colors.controlPlane.muted, textTransform: 'uppercase', letterSpacing: typography.letterSpacing.display }}>Commander Commercial Control Plane › v2.5 shell reference</small>
-            <h1 style={{ margin: '4px 0 0', color: colors.controlPlane.text }}>Command Overview</h1>
+            <small style={{ color: colors.controlPlane.muted, textTransform: 'uppercase', letterSpacing: typography.letterSpacing.eyebrow, fontSize: '11px' }}>Commander Commercial Control Plane › v2.5 shell reference</small>
+            <h1 style={{ margin: '4px 0 0', color: colors.controlPlane.text, fontSize: '24px', fontWeight: 700, lineHeight: '1.2' }}>Command Overview</h1>
           </div>
-          <div style={{ border: '1px solid #5c2626', color: '#ffb4b4', padding: '9px 12px', fontWeight: 800 }}>PROD ACTIONS REQUIRE APPROVAL</div>
+          <div style={{ border: '1px solid #5c2626', color: '#ffb4b4', padding: '9px 12px', fontWeight: 700, fontSize: '12px' }}>PROD ACTIONS REQUIRE APPROVAL</div>
         </section>
 
         {/* Content */}

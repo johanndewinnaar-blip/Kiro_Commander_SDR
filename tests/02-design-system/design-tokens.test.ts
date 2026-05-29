@@ -19,8 +19,8 @@ import { getCommanderAIButtonStyles } from '../../packages/ui/src/components/com
  */
 
 describe('v1.3.2 Req 1-3 — Typography', () => {
-  it('Req 1: Bebas Neue is the display font family', () => {
-    expect(typography.fontFamily.display).toContain('Bebas Neue');
+  it('Req 1: Inter is the single application font family (single-font system)', () => {
+    expect(typography.fontFamily.display).toContain('Inter');
   });
 
   it('Req 2: Inter is the body font family', () => {
@@ -87,11 +87,11 @@ describe('v1.3.2 Req 10 — BrandWordmark', () => {
     expect(styles).toBeDefined();
   });
 
-  it('uses Bebas Neue for all brand elements', () => {
+  it('uses Inter for all brand elements (single-font system)', () => {
     const styles = getBrandWordmarkStyles();
-    expect(styles.seiertech.fontFamily).toContain('Bebas Neue');
-    expect(styles.commander.fontFamily).toContain('Bebas Neue');
-    expect(styles.sdr.fontFamily).toContain('Bebas Neue');
+    expect(styles.seiertech.fontFamily).toContain('Inter');
+    expect(styles.commander.fontFamily).toContain('Inter');
+    expect(styles.sdr.fontFamily).toContain('Inter');
   });
 
   it('SEIERTECH is cream #f4f1eb', () => {
@@ -241,10 +241,10 @@ describe('v1.3.2 Req 18 — UserAvatar', () => {
     expect(styles.avatar.height).toBe('34px');
   });
 
-  it('avatar uses gold colour and Bebas Neue', () => {
+  it('avatar uses gold colour and Inter font (single-font system)', () => {
     const styles = getUserAvatarStyles();
     expect(styles.avatar.color).toBe('#ffd21f');
-    expect(styles.avatar.fontFamily).toContain('Bebas Neue');
+    expect(styles.avatar.fontFamily).toContain('Inter');
   });
 
   it('name is 12px bold', () => {

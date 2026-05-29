@@ -47,6 +47,7 @@ export default function TenantAdminLayout({ children }: { children: React.ReactN
                 padding: '0 10px',
                 color: colors.chrome.textHeading,
                 fontWeight: 700,
+                fontSize: '12px',
                 textDecoration: 'none',
                 marginBottom: '4px',
               }}
@@ -76,10 +77,10 @@ export default function TenantAdminLayout({ children }: { children: React.ReactN
           }}
         >
           <div style={{ width: chrome.sidebarWidth, height: '100%', display: 'flex', alignItems: 'center', padding: '0 18px', borderRight: `1px solid ${colors.chrome.lineDark}`, gap: '10px', background: `linear-gradient(155deg, ${colors.navy.variant}, ${colors.navy.primary})` }}>
-            <span style={{ fontFamily: typography.fontFamily.display, fontSize: typography.fontSize.brandSm, letterSpacing: typography.letterSpacing.displayWide, color: colors.brand.seiertech }}>SEIERTECH</span>
+            <span style={{ fontFamily: typography.fontFamily.body, fontSize: typography.fontSize.brandSm, letterSpacing: typography.letterSpacing.displayWide, fontWeight: 700, color: colors.brand.seiertech }}>SEIERTECH</span>
             <span style={{ height: '23px', width: '1px', background: colors.brand.pipe }} />
-            <span style={{ fontFamily: typography.fontFamily.display, fontSize: typography.fontSize.brandLg, letterSpacing: typography.letterSpacing.display, color: colors.brand.commander }}>COMMANDER</span>
-            <span style={{ fontFamily: typography.fontFamily.display, fontSize: typography.fontSize.brandLg, letterSpacing: typography.letterSpacing.display, color: colors.brand.sdr }}>SDR</span>
+            <span style={{ fontFamily: typography.fontFamily.body, fontSize: typography.fontSize.brandLg, letterSpacing: typography.letterSpacing.display, fontWeight: 700, color: colors.brand.commander }}>COMMANDER</span>
+            <span style={{ fontFamily: typography.fontFamily.body, fontSize: typography.fontSize.brandLg, letterSpacing: typography.letterSpacing.display, fontWeight: 700, color: colors.brand.sdr }}>SDR</span>
             <span style={{ fontSize: primitiveTypeScale.micro, color: colors.gold.primary, marginLeft: '4px' }}>· TENANT ADMIN</span>
           </div>
           <div style={{ marginLeft: 'auto', padding: '0 16px', fontSize: typography.fontSize.base, color: '#8ca6c2' }}>

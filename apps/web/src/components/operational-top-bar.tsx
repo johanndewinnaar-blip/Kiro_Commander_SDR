@@ -59,10 +59,10 @@ export function OperationalTopBar() {
       >
         {!collapsed && (
           <>
-            <span style={{ fontFamily: primitiveFonts.display, fontSize: primitiveTypeScale.display, letterSpacing: primitiveLetterSpacing.displayWide, color: primitiveBrand.cream }}>SEIERTECH</span>
+            <span style={{ fontFamily: primitiveFonts.body, fontSize: primitiveTypeScale.display, letterSpacing: primitiveLetterSpacing.displayWide, fontWeight: 700, color: primitiveBrand.cream }}>SEIERTECH</span>
             <span style={{ height: '23px', width: '1px', background: primitiveBrand.gold, flexShrink: 0 }} />
-            <span style={{ fontFamily: primitiveFonts.display, fontSize: primitiveTypeScale.display, letterSpacing: primitiveLetterSpacing.display, color: primitiveBrand.gold }}>COMMANDER</span>
-            <span style={{ fontFamily: primitiveFonts.display, fontSize: primitiveTypeScale.display, letterSpacing: primitiveLetterSpacing.display, color: '#ffffff' }}>SDR</span>
+            <span style={{ fontFamily: primitiveFonts.body, fontSize: primitiveTypeScale.display, letterSpacing: primitiveLetterSpacing.display, fontWeight: 700, color: primitiveBrand.gold }}>COMMANDER</span>
+            <span style={{ fontFamily: primitiveFonts.body, fontSize: primitiveTypeScale.display, letterSpacing: primitiveLetterSpacing.display, fontWeight: 700, color: '#ffffff' }}>SDR</span>
           </>
         )}
         {collapsed && (
@@ -112,7 +112,7 @@ export function OperationalTopBar() {
         </button>
         {/* User avatar */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', borderLeft: '1px solid rgba(255,255,255,0.14)', paddingLeft: '12px' }}>
-          <div style={{ width: componentTokens.avatarSize, height: componentTokens.avatarSize, border: '1px solid rgba(255,255,255,0.2)', display: 'grid', placeItems: 'center', color: primitiveBrand.gold, fontFamily: primitiveFonts.display, fontSize: primitiveTypeScale.body }}>JS</div>
+          <div style={{ width: componentTokens.avatarSize, height: componentTokens.avatarSize, border: '1px solid rgba(255,255,255,0.2)', display: 'grid', placeItems: 'center', color: primitiveBrand.gold, fontFamily: primitiveFonts.body, fontSize: primitiveTypeScale.caption, fontWeight: 700 }}>JS</div>
           <div>
             <b style={{ display: 'block', fontSize: primitiveTypeScale.caption }}>Jane Smith</b>
             <span style={{ display: 'block', fontSize: primitiveTypeScale.micro, color: '#8ca6c2' }}>Analyst</span>

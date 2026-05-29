@@ -23,6 +23,7 @@ export {
   primitiveTypeScale,
   primitiveLetterSpacing,
   primitiveLineHeight,
+  primitiveFontWeight,
   primitivePriority,
   primitiveOoda,
   primitiveConnectorClass,

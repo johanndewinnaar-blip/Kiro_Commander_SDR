@@ -37,9 +37,9 @@ describe('KPI Tile', () => {
     expect(styles.value.fontFamily).toContain('Inter');
   });
 
-  it('Mission mode: value uses mono font (DS-1.0 §12)', () => {
+  it('Mission mode: value uses Inter font (single-font system)', () => {
     const styles = getKpiTileStyles('mission');
-    expect(styles.value.fontFamily).toContain('JetBrains Mono');
+    expect(styles.value.fontFamily).toContain('Inter');
   });
 
   it('label is uppercase with 0.06em tracking', () => {
@@ -68,9 +68,9 @@ describe('Instrument Gauge', () => {
     expect(styles.container.boxShadow).not.toBe('none');
   });
 
-  it('value text uses mono font', () => {
+  it('value text uses Inter font (single-font system)', () => {
     const styles = getGaugeStyles('standard');
-    expect(styles.valueText.fontFamily).toContain('JetBrains Mono');
+    expect(styles.valueText.fontFamily).toContain('Inter');
   });
 
   it('label text is uppercase with 0.06em tracking', () => {
@@ -117,9 +117,9 @@ describe('Ranked Table', () => {
     expect(styles.headerRow.height).toBe(componentTokens.tableHeaderHeight);
   });
 
-  it('Mission mode: value cell uses mono font', () => {
+  it('Mission mode: value cell uses Inter font (single-font system)', () => {
     const styles = getRankedTableStyles('mission');
-    expect(styles.valueCell.fontFamily).toContain('JetBrains Mono');
+    expect(styles.valueCell.fontFamily).toContain('Inter');
   });
 
   it('Standard mode: value cell uses body font', () => {
@@ -147,9 +147,9 @@ describe('Live Activity Feed', () => {
     expect(styles.container.borderRadius).toBe(componentTokens.cardRadius);
   });
 
-  it('timestamp uses mono font', () => {
+  it('timestamp uses Inter font (single-font system)', () => {
     const styles = getLiveFeedStyles('standard');
-    expect(styles.timestamp.fontFamily).toContain('JetBrains Mono');
+    expect(styles.timestamp.fontFamily).toContain('Inter');
   });
 
   it('header is uppercase with 0.06em tracking', () => {

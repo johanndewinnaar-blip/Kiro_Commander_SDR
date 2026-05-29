@@ -102,40 +102,63 @@ export const primitiveMotion = {
   easeData: 'linear',
 } as const;
 
-// === §2.10 Fonts ===
+// === §2.10 Fonts — single-font Inter system ===
+// All application text uses Inter. Font weight carries semantic meaning.
+// The display/mono aliases resolve to Inter for backward compatibility.
 export const primitiveFonts = {
-  display: "'Bebas Neue', Impact, sans-serif",
+  /** Primary application font — Inter for all UI text */
   body: "'Inter', system-ui, sans-serif",
-  mono: "'JetBrains Mono', ui-monospace, monospace",
+  /** Logo/wordmark text — Inter (logo will be replaced by image asset) */
+  display: "'Inter', system-ui, sans-serif",
+  /** Technical/code-style text — Inter (mono alias for backward compat) */
+  mono: "'Inter', system-ui, sans-serif",
 } as const;
 
 // === §2.11 Type scale ===
 export const primitiveTypeScale = {
-  displayLg: '24px',
-  display: '22px',
+  // Heading scale
   h1: '24px',
   h2: '20px',
   h3: '16px',
   h4: '14px',
   h5: '12px',
   h6: '10px',
+  // Content scale
   large: '18px',
   body: '14px',
   caption: '12px',
   micro: '11px',
+  // Metric display
   kpiValue: '24px',
+  heroKpiValue: '28px',
+  // Legacy aliases (resolve to new scale values)
+  displayLg: '24px',  // → h1
+  display: '22px',    // kept for brand wordmark sizing only
 } as const;
 
 export const primitiveLetterSpacing = {
-  display: '0.09em',
-  displayWide: '0.11em',
-  eyebrow: '0.06em',
+  normal: '0',
+  display: '0.09em',    // brand wordmark only
+  displayWide: '0.11em', // brand wordmark only
+  eyebrow: '0.06em',    // uppercase micro labels / badges
+  badge: '0.08em',      // compact badge text
 } as const;
 
 export const primitiveLineHeight = {
-  body: '1.43',
-  heading: '1.2',
-  denseTable: '1.3',
+  body: '1.4285714286',  // 10/7 — body and prose text
+  heading: '1.2',        // headings
+  denseTable: '1.3',     // dense operational tables
+  kpi: '1.1',            // KPI metric values
+  prose: '1.4285714286', // long-form prose content
+} as const;
+
+// === §2.12 Font weights ===
+export const primitiveFontWeight = {
+  normal: 400,     // body text, paragraphs, normal labels
+  medium: 500,     // navigation items, metadata values, secondary emphasis
+  semibold: 600,   // card titles, section headings, tabs, buttons, table headers
+  bold: 700,       // page headings, major headings, sidebar group headers
+  extrabold: 800,  // Commander AI / control-plane strong emphasis only
 } as const;
 
 // === §14.1 Priority scale ===

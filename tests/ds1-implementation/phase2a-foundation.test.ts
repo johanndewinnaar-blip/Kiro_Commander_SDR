@@ -113,9 +113,10 @@ describe('RSC Serialization Safety', () => {
     // Fonts must be declared in the same file as the layout to avoid
     // next/font internal Sets leaking across the RSC module boundary
     expect(content).toContain("Inter({");
-    expect(content).toContain("Bebas_Neue({");
     expect(content).toContain("variable: '--font-body'");
-    expect(content).toContain("variable: '--font-display'");
+    // Single-font system: Bebas Neue removed, only Inter loaded
+    expect(content).not.toContain("Bebas_Neue");
+    expect(content).not.toContain("Bebas Neue");
     // Must NOT import fonts from a separate module
     expect(content).not.toContain("from './fonts'");
   });

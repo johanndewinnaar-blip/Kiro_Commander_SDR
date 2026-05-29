@@ -26,9 +26,9 @@ describe('Strategic Heading Compass', () => {
     expect(styles.container.boxShadow).toContain(primitiveGlow.radius);
   });
 
-  it('heading text uses mono font', () => {
+  it('heading text uses Inter font (single-font system)', () => {
     const styles = getCompassStyles('standard');
-    expect(styles.headingText.fontFamily).toContain('JetBrains Mono');
+    expect(styles.headingText.fontFamily).toContain('Inter');
   });
 
   it('cardinal text uses gold colour', () => {
@@ -76,9 +76,9 @@ describe('Closed-Loop Lifecycle Pipeline', () => {
     expect(styles.stageActive.boxShadow).toContain('rgba(255,210,31');
   });
 
-  it('stage count uses mono font in Mission mode', () => {
+  it('stage count uses Inter font in Mission mode (single-font system)', () => {
     const styles = getPipelineStyles('mission');
-    expect(styles.stageCount.fontFamily).toContain('JetBrains Mono');
+    expect(styles.stageCount.fontFamily).toContain('Inter');
   });
 
   it('stage label is uppercase with 0.06em tracking', () => {

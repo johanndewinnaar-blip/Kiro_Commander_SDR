@@ -111,10 +111,10 @@ describe('Primitive Tokens — §2.9 Motion', () => {
 });
 
 describe('Primitive Tokens — §2.10 Fonts', () => {
-  it('display=Bebas Neue, body=Inter, mono=JetBrains Mono', () => {
-    expect(primitiveFonts.display).toContain('Bebas Neue');
+  it('single-font Inter system: display, body, and mono all resolve to Inter', () => {
+    expect(primitiveFonts.display).toContain('Inter');
     expect(primitiveFonts.body).toContain('Inter');
-    expect(primitiveFonts.mono).toContain('JetBrains Mono');
+    expect(primitiveFonts.mono).toContain('Inter');
   });
 });
 
