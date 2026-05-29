@@ -1,6 +1,7 @@
 import { colors } from '../../../../../packages/ui/src/tokens/colors';
 import { chrome } from '../../../../../packages/ui/src/tokens/spacing';
 import { typography } from '../../../../../packages/ui/src/tokens/typography';
+import { primitiveTypeScale } from '../../../../../packages/ui/src/tokens/primitives';
 import { tenantAdminRoutes } from '../../registry/tenant-admin-routes';
 
 /**
@@ -79,7 +80,7 @@ export default function TenantAdminLayout({ children }: { children: React.ReactN
             <span style={{ height: '23px', width: '1px', background: colors.brand.pipe }} />
             <span style={{ fontFamily: typography.fontFamily.display, fontSize: typography.fontSize.brandLg, letterSpacing: typography.letterSpacing.display, color: colors.brand.commander }}>COMMANDER</span>
             <span style={{ fontFamily: typography.fontFamily.display, fontSize: typography.fontSize.brandLg, letterSpacing: typography.letterSpacing.display, color: colors.brand.sdr }}>SDR</span>
-            <span style={{ fontSize: '11px', color: colors.gold.primary, marginLeft: '4px' }}>· TENANT ADMIN</span>
+            <span style={{ fontSize: primitiveTypeScale.micro, color: colors.gold.primary, marginLeft: '4px' }}>· TENANT ADMIN</span>
           </div>
           <div style={{ marginLeft: 'auto', padding: '0 16px', fontSize: typography.fontSize.base, color: '#8ca6c2' }}>
             Tenant Administration

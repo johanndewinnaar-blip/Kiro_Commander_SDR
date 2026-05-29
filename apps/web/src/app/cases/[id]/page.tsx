@@ -107,7 +107,7 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
         <section style={{ padding: `0 ${componentTokens.contentPadding} ${componentTokens.contentPadding}` }}>
           <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, borderRadius: componentTokens.cardRadius, border: `1px solid ${tokens.border.subtle}` }}>
             <h3 style={{ margin: `0 0 ${primitiveSpacing[2]}`, fontSize: primitiveTypeScale.h3, fontWeight: 600, color: tokens.text.primary, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Routing Rationale</h3>
-            <p style={{ margin: 0, color: tokens.text.secondary, fontSize: primitiveTypeScale.body, lineHeight: '1.45' }}>{caseRecord.routingRationale}</p>
+            <p style={{ margin: 0, color: tokens.text.secondary, fontSize: primitiveTypeScale.body, lineHeight: '1.43' }}>{caseRecord.routingRationale}</p>
             {strategy.routing.status === 'resolved' && (
               <p style={{ margin: `${primitiveSpacing[2]} 0 0`, color: tokens.text.muted, fontSize: primitiveTypeScale.caption }}>
                 Strategy: routed to {strategy.routing.team} via {strategy.routing.sourcePolicy?.id}

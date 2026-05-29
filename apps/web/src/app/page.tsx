@@ -168,7 +168,7 @@ export default function CommandCentrePage() {
       <section style={{ padding: `0 ${componentTokens.contentPadding} ${componentTokens.contentPadding}` }}>
         <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, borderRadius: componentTokens.cardRadius, border: `1px solid ${tokens.border.subtle}` }}>
           <h3 style={{ margin: `0 0 ${primitiveSpacing[2]}`, fontSize: primitiveTypeScale.micro, fontWeight: 600, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Data Source Status</h3>
-          <p style={{ margin: 0, color: tokens.text.secondary, lineHeight: '1.45', fontSize: primitiveTypeScale.body }}>
+          <p style={{ margin: 0, color: tokens.text.secondary, lineHeight: '1.43', fontSize: primitiveTypeScale.body }}>
             Displaying seed/mock data. Real connector integration requires Phase 2 approval. Scaffold metrics will populate as domain specs are implemented.
           </p>
         </div>

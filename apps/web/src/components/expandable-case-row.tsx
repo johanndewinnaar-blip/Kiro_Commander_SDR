@@ -164,7 +164,7 @@ export function ExpandableCaseRow({ case: caseRecord, expanded, onToggle, tokens
           }}>
             Routing Rationale
           </span>
-          <p style={{ margin: 0, fontSize: primitiveTypeScale.body, color: tokens.text.secondary, lineHeight: '1.45' }}>
+          <p style={{ margin: 0, fontSize: primitiveTypeScale.body, color: tokens.text.secondary, lineHeight: '1.43' }}>
             {caseRecord.routingRationale}
           </p>
         </div>

@@ -87,7 +87,7 @@ export function getLiveFeedStyles(mode: WorkspaceMode): LiveFeedStyles {
       fontSize: primitiveTypeScale.body,
       color: tokens.text.secondary,
       fontFamily: primitiveFonts.body,
-      lineHeight: '1.45',
+      lineHeight: '1.43',
     },
     entityRef: {
       fontSize: primitiveTypeScale.caption,

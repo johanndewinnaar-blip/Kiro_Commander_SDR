@@ -62,7 +62,7 @@ export function getRightRailStyles(mode: WorkspaceMode): RightRailStyles {
       fontSize: primitiveTypeScale.body,
       color: tokens.text.secondary,
       fontFamily: primitiveFonts.body,
-      lineHeight: '1.45',
+      lineHeight: '1.43',
     },
   };
 }

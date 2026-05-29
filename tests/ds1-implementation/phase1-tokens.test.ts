@@ -119,11 +119,11 @@ describe('Primitive Tokens — §2.10 Fonts', () => {
 });
 
 describe('Primitive Tokens — §2.11 Type scale', () => {
-  it('body=13px, h1=24px, h2=18px, h3=14px', () => {
-    expect(primitiveTypeScale.body).toBe('13px');
+  it('body=14px, h1=24px, h2=20px, h3=16px', () => {
+    expect(primitiveTypeScale.body).toBe('14px');
     expect(primitiveTypeScale.h1).toBe('24px');
-    expect(primitiveTypeScale.h2).toBe('18px');
-    expect(primitiveTypeScale.h3).toBe('14px');
+    expect(primitiveTypeScale.h2).toBe('20px');
+    expect(primitiveTypeScale.h3).toBe('16px');
     expect(primitiveTypeScale.micro).toBe('11px');
   });
 });

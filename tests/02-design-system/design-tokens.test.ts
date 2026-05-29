@@ -27,8 +27,8 @@ describe('v1.3.2 Req 1-3 — Typography', () => {
     expect(typography.fontFamily.body).toContain('Inter');
   });
 
-  it('Req 3: 13px base font size', () => {
-    expect(typography.fontSize.base).toBe('13px');
+  it('Req 3: 14px base font size', () => {
+    expect(typography.fontSize.base).toBe('14px');
   });
 });
 
@@ -182,9 +182,9 @@ describe('v1.3.2 Req 16 — PageHeader', () => {
     expect(styles.container.borderBottom).toContain('#dbe3ef');
   });
 
-  it('title is 22px', () => {
+  it('title is 24px', () => {
     const styles = getPageHeaderStyles();
-    expect(styles.title.fontSize).toBe('22px');
+    expect(styles.title.fontSize).toBe('24px');
   });
 
   it('eyebrow is uppercase with 0.09em tracking', () => {
@@ -216,10 +216,10 @@ describe('v1.3.2 Req 17 — OperationalCard', () => {
     expect(styles.card.padding).toBe('18px');
   });
 
-  it('title is uppercase 13px with 0.06em tracking', () => {
+  it('title is uppercase 14px with 0.06em tracking', () => {
     const styles = getOperationalCardStyles();
     expect(styles.title.textTransform).toBe('uppercase');
-    expect(styles.title.fontSize).toBe('13px');
+    expect(styles.title.fontSize).toBe('14px');
     expect(styles.title.letterSpacing).toBe('0.06em');
   });
 

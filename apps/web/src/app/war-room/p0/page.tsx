@@ -105,7 +105,7 @@ export default function P0WarRoomPage() {
             {/* Routing rationale */}
             <div style={{ marginTop: primitiveSpacing[3], padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, background: surface.panel, borderRadius: primitiveRadii.md, border: `1px solid ${surface.lineSubtle}` }}>
               <span style={{ fontSize: primitiveTypeScale.caption, color: surface.textMuted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Routing Rationale</span>
-              <p style={{ margin: `${primitiveSpacing[1]} 0 0`, fontSize: primitiveTypeScale.body, color: surface.textSecondary, lineHeight: '1.45' }}>{c.routingRationale}</p>
+              <p style={{ margin: `${primitiveSpacing[1]} 0 0`, fontSize: primitiveTypeScale.body, color: surface.textSecondary, lineHeight: '1.43' }}>{c.routingRationale}</p>
             </div>
           </div>
         );

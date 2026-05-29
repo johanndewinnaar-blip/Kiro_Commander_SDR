@@ -112,7 +112,7 @@ export function OperationalTopBar() {
         </button>
         {/* User avatar */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', borderLeft: '1px solid rgba(255,255,255,0.14)', paddingLeft: '12px' }}>
-          <div style={{ width: componentTokens.avatarSize, height: componentTokens.avatarSize, border: '1px solid rgba(255,255,255,0.2)', display: 'grid', placeItems: 'center', color: primitiveBrand.gold, fontFamily: primitiveFonts.display, fontSize: '14px' }}>JS</div>
+          <div style={{ width: componentTokens.avatarSize, height: componentTokens.avatarSize, border: '1px solid rgba(255,255,255,0.2)', display: 'grid', placeItems: 'center', color: primitiveBrand.gold, fontFamily: primitiveFonts.display, fontSize: primitiveTypeScale.body }}>JS</div>
           <div>
             <b style={{ display: 'block', fontSize: primitiveTypeScale.caption }}>Jane Smith</b>
             <span style={{ display: 'block', fontSize: primitiveTypeScale.micro, color: '#8ca6c2' }}>Analyst</span>

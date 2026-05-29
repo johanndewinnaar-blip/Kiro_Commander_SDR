@@ -114,12 +114,16 @@ export const primitiveTypeScale = {
   displayLg: '24px',
   display: '22px',
   h1: '24px',
-  h2: '18px',
-  h3: '14px',
-  body: '13px',
+  h2: '20px',
+  h3: '16px',
+  h4: '14px',
+  h5: '12px',
+  h6: '10px',
+  large: '18px',
+  body: '14px',
   caption: '12px',
   micro: '11px',
-  kpiValue: '22px',
+  kpiValue: '24px',
 } as const;
 
 export const primitiveLetterSpacing = {
@@ -129,7 +133,7 @@ export const primitiveLetterSpacing = {
 } as const;
 
 export const primitiveLineHeight = {
-  body: '1.45',
+  body: '1.43',
   heading: '1.2',
   denseTable: '1.3',
 } as const;

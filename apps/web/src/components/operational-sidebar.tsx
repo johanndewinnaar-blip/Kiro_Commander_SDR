@@ -108,7 +108,7 @@ export function OperationalSidebar() {
             justifyContent: 'center',
             color: primitiveBrand.gold,
             textDecoration: 'none',
-            fontSize: '18px',
+            fontSize: primitiveTypeScale.large,
           }}
         >
           ⌂

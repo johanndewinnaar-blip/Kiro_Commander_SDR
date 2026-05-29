@@ -25,14 +25,16 @@ export const typography = {
     sidebarSub: '11.4px',
     /** 12px — user name, secondary labels */
     sm: '12px',
-    /** 13px — base body text (v1.3.2 Req 3) */
-    base: '13px',
-    /** 14px — primary content */
-    md: '14px',
+    /** 14px — base body text (typography baseline update) */
+    base: '14px',
+    /** 16px — primary content / h3 */
+    md: '16px',
+    /** 18px — large text / h2 */
+    lg: '18px',
     /** 21px — brand wordmark SEIERTECH */
     brandSm: '21px',
-    /** 22px — page heading h1 (v1.3.2 Req 16) */
-    h1: '22px',
+    /** 24px — page heading h1 (typography baseline update) */
+    h1: '24px',
     /** 23px — brand wordmark COMMANDER/SDR */
     brandLg: '23px',
   },
@@ -47,7 +49,7 @@ export const typography = {
 
   lineHeight: {
     tight: '1.25',
-    normal: '1.45',
+    normal: '1.43',
     relaxed: '1.75',
   },
 
