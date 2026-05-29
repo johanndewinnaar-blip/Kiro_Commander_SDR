@@ -740,3 +740,125 @@ No application code, schema, data layer, or infrastructure was modified. Hook 05
 ### Working copy status
 
 Working copy clean. Branch: main. HEAD `d56d8b6` matches origin/main.
+
+
+## Build session 2026-05-29 — Performance Audit baseline + build fix + full scorecard
+
+### 1. Performance Audit baseline completed
+
+First Application Layer Scorecard generated against commit `54e553d`:
+- 14 static units assessed: 5 Green (36%), 5 Amber (36%), 5 Red (36%)
+- 48+ units were measurement-blocked due to production build failure
+- Scorecard persisted to `docs/00_authority/scorecards/2026-05-28T1740-main-54e553d.md`
+- Build viability: FAIL (build failure + 5 Red static analysis units)
+
+### 2. Production build blocker resolved (commit `6dd5f91`)
+
+Three fixes applied in sequence:
+- Deleted duplicate `apps/web/pnpm-lock.yaml` and `apps/web/pnpm-workspace.yaml`
+- Created root `pnpm-workspace.yaml` declaring `apps/*` and `packages/*`
+- Added `outputFileTracingRoot` and webpack `canvas` fallback/external to `next.config.ts`
+- `pnpm install` from root resolved 5 workspace projects (310 packages, 120 added)
+- All 10 routes building successfully: 8 static, 1 dynamic, 1 not-found
+
+Build output:
+```
+Route (app)                              Size     First Load JS
+┌ ○ /                                    4.27 kB  145 kB
+├ ○ /cases                               2.81 kB  144 kB
+├ ƒ /cases/[id]                          4.93 kB  148 kB
+├ ○ /cases/analytics                     286 kB   426 kB
+├ ○ /cases/my                            2.35 kB  143 kB
+├ ○ /control-plane                       133 B    133 kB
+├ ○ /tenant-admin                        133 B    133 kB
+└ ○ /war-room/p0                         1.57 kB  142 kB
++ First Load JS shared by all            133 kB
+```
+
+### 3. Full scorecard rerun with Lighthouse (post-fix)
+
+Lighthouse CLI run against all 8 routes (desktop preset, headless Chrome, single run per route):
+
+| Route | Class | Score | LCP | TBT | Band |
+|-------|-------|-------|-----|-----|------|
+| `/` | B | 100 | 727ms | 46ms | Green |
+| `/cases` | B | 93 | 843ms | 210ms | Yellow/Amber |
+| `/cases/my` | B | 100 | 638ms | 29ms | Green |
+| `/cases/[id]` | B/E | 97 | 744ms | 130ms | Green |
+| `/cases/analytics` | C | 99 | 867ms | 84ms | Green |
+| `/war-room/p0` | A | 100 | 621ms | 33ms | Green |
+| `/control-plane` | D | 100 | 597ms | 55ms | Green |
+| `/tenant-admin` | D | 100 | 659ms | 51ms | Green |
+
+Summary:
+- Green units jumped from 5 (36%) to 37 (77%)
+- Overall band improved from **Red** to **Amber**
+- All routes score 93–100 on Lighthouse Performance
+- P0 War Room scored perfect 100 with 621ms LCP (target <800ms)
+- 5 Red units remain (all static analysis / code architecture, not runtime failures)
+- Scorecard persisted to `docs/00_authority/scorecards/2026-05-29T1715-main-6dd5f91.md`
+- Build viability: FLAG (Red units present but runtime metrics strong)
+
+### 4. Hook 05 (Performance Compliance)
+
+`.kiro/hooks/05-performance-compliance.kiro.hook` — fires `postTaskExecution`:
+- Detects affected layers from task changes
+- Invokes scorecard reasoning (manual interim until runner built)
+- Refuses tasks that introduce new Red units or regressions past tolerance
+- Reports in canonical scorecard format (PASS/FLAG/FAIL)
+
+### 5. Five Red units documented as deferred remediation
+
+| # | Unit | Score | Remediation |
+|---|------|-------|-------------|
+| 1 | RSC by default (0% routes use Server Components) | 0% | Lift mode context to layout; make pages RSC |
+| 2 | Hardcoded hex values (28+ occurrences) | 0% | Token migration pass for control-plane, tenant-admin |
+| 3 | Hardcoded rgba values (25+ occurrences) | 0% | Add semantic tokens for chrome borders/glows |
+| 4 | React.memo discipline (0% memoised) | 0% | Memoisation pass on expensive components |
+| 5 | Vega-embed static import | 0% | Convert to dynamic import |
+
+All five are pre-existing technical debt predating the Performance Doctrine. They are not regressions — they are the baseline from which improvement is measured.
+
+### 6. UI & Design System Inventory
+
+Complete inventory generated at `docs/ui-design-inventory.md` (680 lines) covering typography, colours, components, layout, icons, spacing, tokens, and 11 inconsistencies flagged.
+
+### 7. Total test count at close
+
+**634 tests passing** across 28 test files. Zero regressions.
+
+### 8. Session scorecard (interim manual reasoning)
+
+```
+Session scorecard:
+  Application Layer: Amber (77% Green, 5 Red static units)
+  Database Layer:    N/A (not audited)
+  Data Layer:        N/A (not audited)
+  Infrastructure:    N/A (not audited)
+
+Overall product band: Amber
+Red units: 5 (all static analysis — RSC, tokens, memo, vega import)
+Net change from previous session: Red → Amber (+41 percentage points Green)
+```
+
+### 9. Key commits this session
+
+| Commit | Description |
+|--------|-------------|
+| `54e553d` | Session close-out: PD-1.0 landing |
+| `8945f3a` | First baseline Application Layer scorecard |
+| `6dd5f91` | Fix production build: workspace + config |
+| `7a08d05` | Full scorecard with Lighthouse (77% Green) |
+| `d0cd3d1` | UI & Design System inventory |
+
+### 10. Open items for next session (priority order)
+
+1. **Remediate 5 Red static-analysis units** — token migration, RSC refactor, memoisation, dynamic import
+2. **Spec 06 Phase E1** — Evidence Pack Evaluator
+3. **Spec 02 amendment** — Application Layer EARS from ALS-1.0
+4. **Scorecard runner package** — `packages/perf-scorecard/` implementation
+5. **Lighthouse CI integration** — automate 3-run median per route in CI
+
+### Working copy status
+
+Working copy clean. Branch: main. HEAD `d0cd3d1` matches origin/main.
