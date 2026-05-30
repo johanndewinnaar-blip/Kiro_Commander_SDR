@@ -10,10 +10,10 @@
 
 ## Current Scores
 
-**Last Run:** Not yet executed  
-**Commit:** N/A  
-**Date:** N/A  
-**Scope:** N/A  
+**Last Run:** 2026-05-30  
+**Commit:** 2b32822  
+**Date:** 2026-05-30  
+**Scope:** Spec 00 (Programme Foundation)  
 
 ### Layer Scores
 
@@ -22,6 +22,7 @@
 | Application Layer | N/A | N/A | N/A | N/A |
 | Token Conformance | N/A | N/A | N/A | N/A |
 | Design Contract | N/A | N/A | N/A | N/A |
+| Architectural Rules | Green | 100% | +0% | N/A (first run) |
 | Data Layer | N/A | N/A | N/A | N/A |
 | Database Layer | N/A | N/A | N/A | N/A |
 | Infrastructure Layer | N/A | N/A | N/A | N/A |
@@ -59,9 +60,9 @@
 | DOC-006 | Surface Attribution | N/A | N/A |
 | DOC-007 | Connector Classes A/B/C/D | N/A | N/A |
 | DOC-008 | Verdict Semantics | N/A | N/A |
-| ARCH-001 | Local-First Development | N/A | N/A |
-| ARCH-002 | No Real Vendor APIs | N/A | N/A |
-| ARCH-003 | No n8n/Custom Powers | N/A | N/A |
+| ARCH-001 | Local-First Development | 100% | ✅ PASS |
+| ARCH-002 | No Real Vendor APIs | 100% | ✅ PASS |
+| ARCH-003 | No n8n/Custom Powers | 100% | ✅ PASS |
 | ARCH-004 | Postgres Family Portability | N/A | N/A |
 | DEC-001 | PageContainer Exceptions | N/A | N/A |
 | DEC-002 | Command Centre Deferred | N/A | N/A |
@@ -90,12 +91,38 @@ All subsequent runs are measured against this baseline to track improvement or r
 - Application Layer: Amber (baseline established)
 - Token Conformance: Green (baseline established)
 - Design Contract: Amber (baseline established)
+- Architectural Rules: Not measured
 - Data Layer: Not yet measured
 - Database Layer: Not yet measured
 - Infrastructure Layer: Not yet measured
 - Auth Layer: Not yet measured
 
 **Notes:** Baseline scorecard established. All subsequent runs measured against this.
+
+---
+
+### Run 2: Spec 00 Test (2b32822)
+
+**Date:** 2026-05-30  
+**Commit:** 2b32822  
+**Scope:** Spec 00 (Programme Foundation)  
+
+**Layer Scores:**
+- Application Layer: N/A (no application code in spec 00)
+- Token Conformance: N/A (no token usage in spec 00)
+- Design Contract: N/A (no UI components in spec 00)
+- Architectural Rules: Green (100% pass rate) [NEW]
+- Data Layer: N/A
+- Database Layer: N/A
+- Infrastructure Layer: N/A
+- Auth Layer: N/A
+
+**Assertions Tested:**
+- ARCH-001 (Local-First): ✅ PASS
+- ARCH-002 (No Real Vendor APIs): ✅ PASS
+- ARCH-003 (No n8n/Custom Powers): ✅ PASS
+
+**Notes:** First pipeline run. Spec 00 is documentation/planning only. All applicable architectural assertions pass.
 
 ---
 
@@ -192,4 +219,5 @@ show audit scores design-contract
 
 **Last Updated:** 2026-05-30  
 **Next Pipeline Run:** TBD  
-**Baseline Commit:** 54e553d
+**Baseline Commit:** 54e553d  
+**Latest Run:** 2026-05-30 (2b32822) - Spec 00
