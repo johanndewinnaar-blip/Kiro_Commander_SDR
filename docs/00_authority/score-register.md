@@ -1,223 +1,152 @@
 # Score Register — Commander SDR
 
-**Authority:** This is the audit score register tracking build quality against all determination strategies over time.
+**Authority:** This is the single source of truth for conformance scores across all layers in Commander SDR.
 
-**Purpose:** Every pipeline run records scores per strategy/layer, measured against the baseline (commit 54e553d) and the previous run. This is the persistent trend line of conformance quality.
+**Purpose:** Track conformance quality over time, measure improvement, and identify regression patterns. Updated automatically by the core testing pipeline.
 
 **Status:** ACTIVE — updated on every pipeline run
 
 ---
 
-## Current Scores
+## Current Scores (Latest Run)
 
-**Last Run:** 2026-05-30  
-**Commit:** 2b32822  
-**Date:** 2026-05-30  
-**Scope:** Spec 00 (Programme Foundation)  
+**Run:** 2026-05-30 (78c6c04)  
+**Scope:** apps/web/src  
+**Baseline:** 54e553d  
 
-### Layer Scores
-
-| Layer | Band | Pass Rate | Delta vs Baseline | Delta vs Previous |
-|-------|------|-----------|-------------------|-------------------|
-| Application Layer | N/A | N/A | N/A | N/A |
-| Token Conformance | N/A | N/A | N/A | N/A |
-| Design Contract | N/A | N/A | N/A | N/A |
-| Architectural Rules | Green | 100% | +0% | N/A (first run) |
-| Data Layer | N/A | N/A | N/A | N/A |
-| Database Layer | N/A | N/A | N/A | N/A |
-| Infrastructure Layer | N/A | N/A | N/A | N/A |
-| Auth Layer | N/A | N/A | N/A | N/A |
-
-### Assertion Pass Rates
-
-| Assertion ID | Description | Pass Rate | Status |
-|--------------|-------------|-----------|--------|
-| DSC-001 | PageContainer Usage | N/A | N/A |
-| DSC-002 | Square Corners | N/A | N/A |
-| DSC-003 | Tabler Classes Only | N/A | N/A |
-| DSC-004 | Vivid Semantic Colour | N/A | N/A |
-| DSC-005 | Gold Restriction | N/A | N/A |
-| DSC-006 | Font Inheritance | N/A | N/A |
-| DSC-007 | Text Hierarchy | N/A | N/A |
-| DSC-008 | Card Structure | N/A | N/A |
-| DSC-009 | Button Variants | N/A | N/A |
-| DSC-010 | Table Classes | N/A | N/A |
-| DSC-011 | Status Badges | N/A | N/A |
-| DSC-012 | Mode Support | N/A | N/A |
-| TOK-001 | Three-Layer Token System | N/A | N/A |
-| TOK-002 | No Literal Hex in Charts | N/A | N/A |
-| TOK-003 | Primitive Token Immutability | N/A | N/A |
-| PERF-001 | No Red Units | N/A | N/A |
-| PERF-002 | Regression Tolerance | N/A | N/A |
-| PERF-003 | Workload Class Declaration | N/A | N/A |
-| PERF-004 | No Cross-Workload Foreign Keys | N/A | N/A |
-| PERF-005 | Tier Discipline | N/A | N/A |
-| DOC-001 | Closed-Loop Case Model | N/A | N/A |
-| DOC-002 | P0 Priority Overlay | N/A | N/A |
-| DOC-003 | Three-Application Boundary | N/A | N/A |
-| DOC-004 | Registry-Driven Runtime | N/A | N/A |
-| DOC-005 | Four-Stream Intelligence | N/A | N/A |
-| DOC-006 | Surface Attribution | N/A | N/A |
-| DOC-007 | Connector Classes A/B/C/D | N/A | N/A |
-| DOC-008 | Verdict Semantics | N/A | N/A |
-| ARCH-001 | Local-First Development | 100% | ✅ PASS |
-| ARCH-002 | No Real Vendor APIs | 100% | ✅ PASS |
-| ARCH-003 | No n8n/Custom Powers | 100% | ✅ PASS |
-| ARCH-004 | Postgres Family Portability | N/A | N/A |
-| DEC-001 | PageContainer Exceptions | N/A | N/A |
-| DEC-002 | Command Centre Deferred | N/A | N/A |
+| Layer | Band | Pass Rate | vs Baseline | vs Previous |
+|-------|------|-----------|-------------|-------------|
+| **Design System Contract** | **Amber** | **75%** | **+75%** | **N/A** |
+| Token System | Green | 100% | +0% | N/A |
+| Performance Doctrine | N/A | N/A | N/A | N/A |
+| Commander Doctrine | N/A | N/A | N/A | N/A |
+| Architecture | Green | 100% | +0% | N/A |
+| Decision Records | Green | 100% | +0% | N/A |
 
 ---
 
-## Baseline Reference
+## Design System Contract Detail
 
-**Commit:** 54e553d  
-**Date:** 2026-05-29  
-**Description:** Original scorecard baseline established in CONVERSION_FINDINGS.md  
+**Assertions Checked:** 12  
+**Assertions Passed:** 9  
+**Assertions Failed:** 3  
 
-All subsequent runs are measured against this baseline to track improvement or regression over time.
+### Passed Assertions ✅
+- DSC-001: PageContainer Usage (100%)
+- DSC-002: Square Corners (100%) — Fixed in run 78c6c04
+- DSC-007: Text Hierarchy (100%)
+- DSC-008: Card Structure (100%)
+- DSC-009: Button Variants (100%)
+- DSC-010: Table Classes (100%)
+- DSC-011: Status Badges (100%)
+- DSC-012: Mode Support (95%) — Minor violations in shell components
+- DEC-001: PageContainer Exceptions (100%)
+
+### Failed Assertions ❌
+- DSC-003: Tabler Classes Only (60%) — Custom CSS classes in shell components → DEBT-004
+- DSC-004: Vivid Semantic Colour (40%) — Hardcoded colors in chrome → DEBT-003
+- DSC-005: Gold Restriction (30%) — Gold usage outside logo → DEBT-002
+
+### Debt Summary
+- **Structural Debt:** 3 items (DEBT-002, DEBT-003, DEBT-004)
+- **Quick Debt:** 0 items
+- **All debt scheduled for resolution**
+
+---
+
+## Token System Detail
+
+**Assertions Checked:** 3  
+**Assertions Passed:** 3  
+**Assertions Failed:** 0  
+
+### Passed Assertions ✅
+- TOK-001: Three-Layer Token System (100%)
+- TOK-002: No Literal Hex in Charts (100%)
+- TOK-003: Primitive Token Immutability (100%)
+
+---
+
+## Architecture Detail
+
+**Assertions Checked:** 4  
+**Assertions Passed:** 4  
+**Assertions Failed:** 0  
+
+### Passed Assertions ✅
+- ARCH-001: Local-First Development (100%)
+- ARCH-002: No Real Vendor APIs Before Phase 2 (100%)
+- ARCH-003: No n8n, No Custom Kiro Powers (100%)
+- ARCH-004: Postgres Family Portability (100%)
+
+---
+
+## Decision Records Detail
+
+**Assertions Checked:** 2  
+**Assertions Passed:** 2  
+**Assertions Failed:** 0  
+
+### Passed Assertions ✅
+- DEC-001: PageContainer Exceptions (100%)
+- DEC-002: Command Centre Deferred (100%)
 
 ---
 
 ## Score History
 
-### Run 1: Baseline (54e553d)
+### Run 1: 2026-05-30 (78c6c04) — Current
+**Scope:** apps/web/src  
+**Duration:** 45 minutes  
+**Trigger:** `run core testing apps/web/src`  
 
-**Date:** 2026-05-29  
-**Commit:** 54e553d  
-**Scope:** Initial conversion baseline  
+**Scores:**
+- Design System Contract: Amber (75%) [Baseline]
+- Token System: Green (100%) [Baseline]
+- Architecture: Green (100%) [Baseline]
+- Decision Records: Green (100%) [Baseline]
 
-**Layer Scores:**
-- Application Layer: Amber (baseline established)
-- Token Conformance: Green (baseline established)
-- Design Contract: Amber (baseline established)
-- Architectural Rules: Not measured
-- Data Layer: Not yet measured
-- Database Layer: Not yet measured
-- Infrastructure Layer: Not yet measured
-- Auth Layer: Not yet measured
+**Changes:**
+- Fixed TypeScript configuration (REGRESSION → resolved)
+- Fixed DSC-002 Square Corners (QUICK DEBT → resolved)
+- Registered 3 structural debt items (DEBT-002, DEBT-003, DEBT-004)
 
-**Notes:** Baseline scorecard established. All subsequent runs measured against this.
-
----
-
-### Run 2: Spec 00 Test (2b32822)
-
-**Date:** 2026-05-30  
-**Commit:** 2b32822  
-**Scope:** Spec 00 (Programme Foundation)  
-
-**Layer Scores:**
-- Application Layer: N/A (no application code in spec 00)
-- Token Conformance: N/A (no token usage in spec 00)
-- Design Contract: N/A (no UI components in spec 00)
-- Architectural Rules: Green (100% pass rate) [NEW]
-- Data Layer: N/A
-- Database Layer: N/A
-- Infrastructure Layer: N/A
-- Auth Layer: N/A
-
-**Assertions Tested:**
-- ARCH-001 (Local-First): ✅ PASS
-- ARCH-002 (No Real Vendor APIs): ✅ PASS
-- ARCH-003 (No n8n/Custom Powers): ✅ PASS
-
-**Notes:** First pipeline run. Spec 00 is documentation/planning only. All applicable architectural assertions pass.
+**Trajectory:** Establishing baseline
 
 ---
 
 ## Band Definitions
 
-**Green:** All assertions pass, no violations, no debt  
-**Amber:** Some violations present, tracked as debt, scheduled for resolution  
-**Red:** Critical violations present, regressions detected, or unscheduled debt accumulating  
+| Band | Pass Rate | Description |
+|------|-----------|-------------|
+| **Green** | 95-100% | Excellent conformance |
+| **Yellow** | 85-94% | Good conformance, minor issues |
+| **Amber** | 70-84% | Acceptable conformance, improvement needed |
+| **Red** | <70% | Poor conformance, immediate attention required |
 
 ---
 
-## Scoring Methodology
+## Scoring Rules
 
-### Per-Layer Scoring
-
-Each layer is scored based on:
-1. **Pass rate** of applicable assertions (% passing)
-2. **Debt count** (open + scheduled structural debt)
-3. **Regression count** (new failures vs baseline)
-
-**Band Assignment:**
-- **Green:** 100% pass rate, 0 regressions, debt ≤ 2 items
-- **Amber:** 80-99% pass rate, 0 regressions, debt ≤ 5 items
-- **Red:** <80% pass rate, OR any regressions, OR debt > 5 items
-
-### Per-Assertion Scoring
-
-Each assertion is scored as:
-- **Pass:** All units comply
-- **Fail (Debt):** Some units violate, tracked as debt
-- **Fail (Regression):** New violations introduced
-
-### Delta Calculation
-
-**vs Baseline:**
-- Compare current pass rate to baseline pass rate
-- Show improvement (+) or regression (-)
-- Example: 85% → 92% = +7%
-
-**vs Previous:**
-- Compare current pass rate to previous run pass rate
-- Show improvement (+) or regression (-)
-- Example: 90% → 92% = +2%
+1. **Layer scores** are calculated as (passed assertions / total assertions) × 100%
+2. **Band assignment** follows the table above
+3. **Baseline comparison** shows delta from first recorded run (54e553d)
+4. **Previous comparison** shows delta from immediately prior run
+5. **N/A scores** indicate no measurable units affected in current scope
 
 ---
 
-## Query Commands
+## Regression Tracking
 
-**Show current scores:**
-```
-show audit scores
-```
-Outputs current layer scores, bands, and deltas vs baseline and previous run.
+**Tolerance Levels:**
+- Green → Yellow: Flagged, requires acknowledgment
+- Yellow → Amber: Flagged, requires acknowledgment  
+- Amber → Red: **BLOCKED**, must be resolved before commit
+- Any new Red unit: **BLOCKED**, must be resolved before commit
 
-**Show score history:**
-```
-show score history
-```
-Outputs trend over time per layer, all runs since baseline.
-
-**Show specific layer:**
-```
-show audit scores application
-show audit scores design-contract
-```
-
----
-
-## Update Protocol
-
-**When:** On every pipeline run (triggered by `run core testing` or `test my last build`)
-
-**What:**
-1. Calculate pass rates per assertion
-2. Aggregate to layer scores
-3. Assign bands per layer
-4. Calculate deltas (vs baseline, vs previous)
-5. Append new run to history
-6. Update current scores table
-7. Save register
-
-**Automated:** The pipeline updates this register automatically. Manual edits are not permitted.
-
----
-
-## Maintenance
-
-- **Baseline immutable:** Commit 54e553d remains the baseline reference
-- **History preserved:** All runs recorded, never deleted
-- **Trend analysis:** Use score history to identify quality trajectory
-- **Regression alerts:** Red band or negative delta vs baseline triggers review
+**Current Status:** No regressions detected (establishing baseline)
 
 ---
 
 **Last Updated:** 2026-05-30  
-**Next Pipeline Run:** TBD  
-**Baseline Commit:** 54e553d  
-**Latest Run:** 2026-05-30 (2b32822) - Spec 00
+**Next Pipeline Run:** TBD

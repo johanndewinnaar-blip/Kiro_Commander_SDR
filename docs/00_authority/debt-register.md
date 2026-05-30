@@ -13,9 +13,9 @@
 | Status | Count |
 |--------|-------|
 | Open | 0 |
-| Scheduled | 1 |
+| Scheduled | 4 |
 | Resolved | 0 |
-| **Total** | **1** |
+| **Total** | **4** |
 
 ---
 
@@ -29,6 +29,42 @@
 **Description:** Bebas Neue display font override instead of inherited Inter. Control Plane v3 shell uses old font system.  
 **Scope of Fix:** Control Plane shell Tabler conversion — convert layout.tsx to Tabler, remove Bebas Neue font import and override, inherit Inter globally from root layout. Part of larger v3 shell migration.  
 **Scheduled Resolution:** Control Plane Tabler conversion spec (deferred until Operational App baseline complete)  
+**Status:** Scheduled  
+**Date Logged:** 2026-05-30  
+**Last Checked:** 2026-05-30  
+
+### DEBT-002: Gold Usage Outside Logo
+
+**File:** Multiple files (war-room/p0/page.tsx, cases/[id]/page.tsx, operational-sidebar.tsx, operational-top-bar.tsx, expandable-case-row.tsx)  
+**Violated Assertion:** DSC-005 (Gold Restriction)  
+**Debt Type:** Structural  
+**Description:** Gold color (primitiveBrand.gold, #ffd21f) used for surface attribution badges, lifecycle indicators, navigation elements, and UI chrome outside of COMMANDER logo wordmark.  
+**Scope of Fix:** Design system token migration — replace gold usage with appropriate semantic tokens for data visualization (--data-* tokens for charts/status), neutral tokens for chrome, and preserve gold only in COMMANDER logo. Requires design review of surface attribution visual treatment.  
+**Scheduled Resolution:** Design System Token Migration spec (Spec 02 follow-up)  
+**Status:** Scheduled  
+**Date Logged:** 2026-05-30  
+**Last Checked:** 2026-05-30  
+
+### DEBT-003: Hardcoded Color Values
+
+**File:** Multiple files (sidebar/index.tsx, operational-sidebar.tsx, operational-top-bar.tsx, header/index.tsx, tenant-admin/layout.tsx, control-plane/layout.tsx)  
+**Violated Assertion:** DSC-004 (Vivid Semantic Colour), DSC-012 (Mode Support)  
+**Debt Type:** Structural  
+**Description:** Hardcoded hex colors (#ffffff, #8ca6c2, #040a11, etc.) in chrome elements instead of Tabler CSS variables. Breaks dark/light mode compatibility and violates semantic color doctrine.  
+**Scope of Fix:** Chrome token migration — replace all hardcoded colors with Tabler CSS variables (var(--tblr-body-color), var(--tblr-border-color), etc.). Ensure light/dark mode compatibility. Part of shell Tabler conversion.  
+**Scheduled Resolution:** Shell Tabler Conversion spec (includes sidebar, header, layout components)  
+**Status:** Scheduled  
+**Date Logged:** 2026-05-30  
+**Last Checked:** 2026-05-30  
+
+### DEBT-004: Custom CSS Classes in Components
+
+**File:** Multiple files (sidebar/index.tsx, operational-sidebar.tsx, page-container.tsx)  
+**Violated Assertion:** DSC-003 (Tabler Classes Only)  
+**Debt Type:** Structural  
+**Description:** Custom CSS classes (cmdr-sidebar, cmdr-brand, cmdr-rail-item, etc.) instead of Tabler structural classes. Part of v3 shell system that predates Tabler adoption.  
+**Scope of Fix:** Component Tabler migration — convert custom CSS classes to Tabler equivalents (navbar, nav-link, card, etc.), remove custom stylesheets, use Tabler component patterns. Preserve visual design through Tabler customization.  
+**Scheduled Resolution:** Shell Tabler Conversion spec (comprehensive component migration)  
 **Status:** Scheduled  
 **Date Logged:** 2026-05-30  
 **Last Checked:** 2026-05-30  
