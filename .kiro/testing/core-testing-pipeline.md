@@ -4,6 +4,38 @@
 
 **Authority:** This pipeline is the single enforcement mechanism for the conformance registry. It runs per unit (spec, file, or commit) in sequence with auto-fix and halt rules.
 
+**Execution Mode:** CONTINUOUS RUN-THROUGH. Once invoked, processes entire scope start-to-finish without pausing. A HALT stops a unit, not the run. Fire-and-walk-away behavior.
+
+**Durable Records:** Every run updates three records:
+1. **Run Output Log** (`docs/00_authority/test-runs/[date]-[commit].md`) — Per-unit results, full detail
+2. **Score Register** (`docs/00_authority/score-register.md`) — Audit scores per layer, deltas vs baseline
+3. **Debt Register** (`docs/00_authority/debt-register.md`) — Outstanding debt with scope and schedule
+
+---
+
+## Pre-Run: Initialization
+
+**Before processing any units:**
+
+1. **Load Baseline Reference**
+   - Baseline commit: 54e553d
+   - Load baseline scores from score register
+
+2. **Run Debt Closure Loop**
+   - Load debt register
+   - Re-check all Open/Scheduled debt items
+   - Mark Resolved if violations cleared
+   - Update Last Checked dates
+   - Save updated register
+
+3. **Initialize Run Log**
+   - Create run log file: `docs/00_authority/test-runs/[YYYY-MM-DD]-[commit-short].md`
+   - Record: date, commit, scope, start time
+
+4. **Initialize Score Tracking**
+   - Prepare score accumulators per layer
+   - Prepare assertion pass/fail counters
+
 ---
 
 ## Pipeline Stages (Per Unit)
@@ -180,20 +212,22 @@ When QUICK DEBT fails to auto-fix in 4 attempts, it reveals the fix is not as si
 
 ### Stage 4: Halt and Flag
 
-**What:** Stop processing when 4 fix attempts exhausted without success.
+**What:** Stop processing THIS UNIT when 4 fix attempts exhausted without success.
+
+**CRITICAL:** A HALT stops the unit, NOT the run. The pipeline logs the halt, flags for review, and CONTINUES to the next unit. Never abort the sweep.
 
 **Actions:**
-1. Do NOT commit
-2. Generate detailed report:
+1. Do NOT commit this unit
+2. Log halt to run output log:
    - Unit identifier (spec, file, commit)
    - Functional failures remaining
    - Conformance failures remaining
    - Fix attempts made (what was tried)
    - Recommended human actions
-3. Flag for human review
-4. Exit pipeline for this unit
+3. Flag unit for human review
+4. **CONTINUE to next unit** (do not stop the run)
 
-**Report Format:**
+**Halt Report Format (in run log):**
 ```
 HALT: Unit [unit-id] failed after 4 fix attempts
 
@@ -217,6 +251,8 @@ Recommended Actions:
 
 Status: HALTED — requires human review
 ```
+
+**After Logging:** Proceed to next unit in scope. The run continues.
 
 ---
 
@@ -243,6 +279,121 @@ Status: HALTED — requires human review
 3. Proceed to next unit
 
 **Rule:** NEVER commit red functional or regression conformance failures. Debt is tracked and allowed to proceed.
+
+**After Commit:** Log to run output, update score tracking, proceed to next unit.
+
+---
+
+## Post-Run: Consolidation
+
+**After processing all units in scope:**
+
+### 1. Finalize Run Output Log
+
+Write to `docs/00_authority/test-runs/[date]-[commit].md`:
+
+```markdown
+# Test Run: [date] ([commit])
+
+**Scope:** [scope description]  
+**Start:** [timestamp]  
+**End:** [timestamp]  
+**Duration:** [duration]
+
+## Summary
+
+**Units Processed:** [total]  
+**Passed:** [count]  
+**Halted:** [count]  
+
+**Fixes Applied:** [total]  
+**Debt Resolved:** [count]  
+**Debt Registered:** [count]  
+
+**Commits Made:** [count]
+
+## Per-Unit Results
+
+[Full detail for each unit processed]
+
+## Halted Units (Require Human Review)
+
+[List of halted units with reasons]
+
+## Debt Activity
+
+**Resolved:**
+- DEBT-XXX: [description]
+- DEBT-YYY: [description]
+
+**Registered:**
+- DEBT-ZZZ: [file] - [assertion] - [scope of fix]
+
+## Score Deltas
+
+[Layer-by-layer score changes vs baseline and previous run]
+
+---
+
+**Records Updated:**
+- Run Log: docs/00_authority/test-runs/[date]-[commit].md
+- Score Register: docs/00_authority/score-register.md
+- Debt Register: docs/00_authority/debt-register.md
+```
+
+### 2. Update Score Register
+
+Calculate and write to `docs/00_authority/score-register.md`:
+
+**Per-Layer Scores:**
+- Pass rate (% of assertions passing)
+- Band (Green/Amber/Red)
+- Delta vs baseline (54e553d)
+- Delta vs previous run
+
+**Per-Assertion Pass Rates:**
+- Each assertion: pass/fail/debt status
+- Pass rate across all units
+
+**Append to History:**
+- New run entry with date, commit, scores, deltas
+
+### 3. Save Updated Debt Register
+
+Already updated during run (closure loop + new registrations). Final save with updated counts.
+
+### 4. Output Consolidated Summary
+
+**To console/chat:**
+```
+Core Testing Pipeline Complete
+
+Scope: [scope description]
+Duration: [duration]
+
+Units: [total] | Passed: [count] | Halted: [count]
+Fixes: [count] | Debt Resolved: [count] | Debt Registered: [count]
+Commits: [count]
+
+Score Deltas (vs Baseline):
+- Application Layer: [band] ([delta])
+- Token Conformance: [band] ([delta])
+- Design Contract: [band] ([delta])
+- [other layers as applicable]
+
+Halted Units (require review):
+- [unit 1]: [reason]
+- [unit 2]: [reason]
+
+Records Updated:
+- Run Log: docs/00_authority/test-runs/[date]-[commit].md
+- Score Register: docs/00_authority/score-register.md
+- Debt Register: docs/00_authority/debt-register.md
+
+Next: Review halted units or proceed to next package.
+```
+
+**No Interactive Prompts:** The summary is informational only. No pauses, no permission requests.
 
 ---
 
@@ -414,19 +565,25 @@ Committed: [yes | no]
 
 ## Rules Summary
 
-1. ✅ Build the command capability only. Do NOT run any testing now.
-2. ✅ Never commit red functional or regression conformance failures — halt and flag instead.
-3. ✅ Debt never blocks commit — it's tracked in the register and allowed to proceed.
-4. ✅ Auto-fix respects the 4-attempt halt for regressions and functional failures.
-5. ✅ Quick debt that fails to auto-fix in 4 attempts is downgraded to structural and registered (not halted).
-6. ✅ Structural debt is never auto-fixed — it goes straight to the register with scope and scheduled resolution.
-7. ✅ The conformance registry is the single source of what "conformant" means.
-8. ✅ The debt register is the single source of tracked debt.
-9. ✅ Debt closure loop runs on every pipeline invocation — resolved items are marked automatically.
-10. ✅ Adding a future standard means adding a registry assertion, not rewriting the pipeline.
-11. ✅ Distinguish regressions from debt in reporting and handling.
-12. ✅ Resolve pre-existing debt ONE SPEC AT A TIME, bounded by 4-attempt halt for quick debt only.
-13. ✅ Create missing scorecards mid-run from Application Layer pattern.
+1. ✅ CONTINUOUS RUN-THROUGH: Once invoked, processes entire scope without pausing. No interactive prompts mid-run.
+2. ✅ HALT stops a unit, NOT the run. Log halt, flag for review, continue to next unit.
+3. ✅ Never commit red functional or regression conformance failures — halt unit and continue run.
+4. ✅ Debt never blocks commit — it's tracked in the register and allowed to proceed.
+5. ✅ Auto-fix respects the 4-attempt halt for regressions and functional failures per unit.
+6. ✅ Quick debt that fails to auto-fix in 4 attempts is downgraded to structural and registered (not halted).
+7. ✅ Structural debt is never auto-fixed — it goes straight to the register with scope and scheduled resolution.
+8. ✅ The conformance registry is the single source of what "conformant" means.
+9. ✅ The debt register is the single source of tracked debt.
+10. ✅ The score register is the single source of audit scores over time.
+11. ✅ Debt closure loop runs on every pipeline invocation — resolved items are marked automatically.
+12. ✅ Score register updated on every run — tracks deltas vs baseline (54e553d) and previous run.
+13. ✅ Run output log created on every run — durable record of what happened.
+14. ✅ Three records updated every run: run log, score register, debt register.
+15. ✅ Fire-and-walk-away: invoke, come back to complete records and consolidated summary.
+16. ✅ Adding a future standard means adding a registry assertion, not rewriting the pipeline.
+17. ✅ Distinguish regressions from debt in reporting and handling.
+18. ✅ Resolve pre-existing debt ONE SPEC AT A TIME, bounded by 4-attempt halt for quick debt only.
+19. ✅ Create missing scorecards mid-run from Application Layer pattern.
 
 ---
 
@@ -435,4 +592,6 @@ Committed: [yes | no]
 **Related Documents:**
 - `.kiro/testing/conformance-registry.md` — What to check
 - `docs/00_authority/debt-register.md` — Tracked debt
+- `docs/00_authority/score-register.md` — Audit scores over time
+- `docs/00_authority/test-runs/` — Run output logs
 - `.kiro/steering/core-testing-commands.md` — How to invoke

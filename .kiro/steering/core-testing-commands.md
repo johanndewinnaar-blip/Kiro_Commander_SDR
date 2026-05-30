@@ -65,7 +65,137 @@ Kiro: Testing files from last commit (3 files)...
 
 ---
 
-### Command 3: "show debt register [scope]"
+### Command 3: "show audit scores [scope]"
+
+**Purpose:** Query the score register to see current audit scores per strategy/layer.
+
+**Scope Options:**
+- **No scope:** `show audit scores` (show all layers)
+- **Layer:** `show audit scores application` (filter by layer: application/token/design-contract/data/database/infrastructure/auth)
+
+**What Happens:**
+1. Kiro loads the score register: `docs/00_authority/score-register.md`
+2. Filters to requested layer (if specified)
+3. Outputs formatted report with:
+   - Current scores per layer
+   - Band (Green/Amber/Red)
+   - Pass rate
+   - Delta vs baseline (54e553d)
+   - Delta vs previous run
+   - Per-assertion pass rates (if layer specified)
+
+**Examples:**
+```
+You: show audit scores
+Kiro: Audit Scores (Current)
+      
+      Application Layer: Amber (85% pass rate)
+        vs Baseline: +5%
+        vs Previous: +2%
+      
+      Token Conformance: Green (100% pass rate)
+        vs Baseline: +0%
+        vs Previous: +0%
+      
+      Design Contract: Amber (88% pass rate)
+        vs Baseline: +8%
+        vs Previous: +3%
+      
+      [other layers]
+```
+
+```
+You: show audit scores design-contract
+Kiro: Design Contract Conformance
+      Band: Amber | Pass Rate: 88%
+      Delta vs Baseline: +8% | Delta vs Previous: +3%
+      
+      Per-Assertion:
+      - DSC-001 (PageContainer): 95% pass
+      - DSC-002 (Square Corners): 100% pass
+      - DSC-003 (Tabler Classes): 90% pass
+      [...]
+```
+
+**Use Case:** Check current conformance quality, track improvement over time, identify weak areas.
+
+---
+
+### Command 4: "show score history [layer]"
+
+**Purpose:** Query the score register to see trend over time.
+
+**Scope Options:**
+- **No scope:** `show score history` (show all layers over time)
+- **Layer:** `show score history application` (filter by layer)
+
+**What Happens:**
+1. Kiro loads the score register history
+2. Filters to requested layer (if specified)
+3. Outputs chronological trend with:
+   - Date, commit, scope for each run
+   - Scores per layer per run
+   - Deltas between runs
+   - Overall trajectory (improving/stable/regressing)
+
+**Example:**
+```
+You: show score history
+Kiro: Score History (All Layers)
+      
+      Run 1: 2026-05-29 (54e553d) — Baseline
+        Application: Amber (80%)
+        Token: Green (100%)
+        Design: Amber (80%)
+      
+      Run 2: 2026-05-30 (7d6ad7a)
+        Application: Amber (85%) [+5%]
+        Token: Green (100%) [+0%]
+        Design: Amber (88%) [+8%]
+      
+      Trajectory: Improving (+4.3% average)
+```
+
+**Use Case:** Track quality trajectory, validate that conformance is improving, identify regression patterns.
+
+---
+
+### Command 5: "show last test run"
+
+**Purpose:** Query the most recent run output log.
+
+**What Happens:**
+1. Kiro finds the most recent file in `docs/00_authority/test-runs/`
+2. Outputs the run summary:
+   - Date, commit, scope
+   - Units passed/halted
+   - Fixes applied, debt resolved/registered
+   - Score deltas
+   - Halted units requiring review
+
+**Example:**
+```
+You: show last test run
+Kiro: Last Test Run: 2026-05-30 (7d6ad7a)
+      
+      Scope: specs 00-05
+      Duration: 12m 34s
+      
+      Units: 25 | Passed: 23 | Halted: 2
+      Fixes: 8 | Debt Resolved: 3 | Debt Registered: 2
+      
+      Halted Units:
+      - spec-03/task-5: TypeScript errors after 4 fix attempts
+      - spec-04/task-2: Conformance regression (DSC-006)
+      
+      Full log: docs/00_authority/test-runs/2026-05-30-7d6ad7a.md
+```
+
+**Use Case:** Quick check of what happened in the last run, identify what needs human review.
+
+---
+
+### Command 6: "show debt register [scope]"
 
 **Purpose:** Query the tracked debt register to see all open, scheduled, and resolved conformance debt.
 
@@ -117,43 +247,49 @@ Kiro: Debt Register (filtered: control-plane)
       Logged: 2026-05-30 | Last Checked: 2026-05-30
 ```
 
-```
-You: show debt register DSC-006
-Kiro: Debt Register (filtered: DSC-006)
-      [lists all font inheritance violations]
-```
-
 **Use Case:** Check what debt exists, what work will resolve it, and what's scheduled vs. unscheduled. Use before planning new work to see if it will close existing debt items.
 
 ---
 
 ## Pipeline Execution (Commands 1 & 2)
 
-Commands 1 and 2 invoke the IDENTICAL pipeline:
+Commands 1 and 2 invoke the IDENTICAL pipeline with CONTINUOUS RUN-THROUGH behavior:
 
-1. **Debt Closure Loop** — re-check open/scheduled debt items, mark resolved if clear
-2. **Functional Checks** — build, tests, types, lint
-3. **Conformance Checks** — all assertions in conformance registry
-4. **Debt Typing** — classify failures as Regression / Quick Debt / Structural Debt
-5. **Auto-Fix** — attempt to resolve regressions and quick debt (up to 4 attempts)
-6. **Register Debt** — log structural debt and failed quick debt to register
-7. **Re-Check** — re-run after each fix
-8. **Commit** — when functional and conformance are green (or debt is registered)
-9. **Halt** — after 4 failed fix attempts for regressions/functional failures
+**Pre-Run:**
+1. **Load baseline** (commit 54e553d)
+2. **Debt closure loop** — re-check open/scheduled debt, mark resolved if clear
+3. **Initialize run log** — create `docs/00_authority/test-runs/[date]-[commit].md`
+4. **Initialize score tracking** — prepare accumulators per layer
 
-**Rules:**
-- Never commit red functional or regression conformance failures
-- Debt never blocks commit — it's tracked in the register
-- Auto-fix respects 4-attempt halt for regressions and functional failures
-- Quick debt that fails to auto-fix in 4 attempts is downgraded to structural and registered (not halted)
-- Structural debt goes straight to register (never auto-fixed)
-- Pre-existing debt resolved ONE SPEC AT A TIME
-- Regressions vs debt distinguished in reporting
-- Missing scorecards created mid-run
-- Debt closure loop runs on every invocation
+**Per-Unit Processing:**
+5. **Functional checks** — build, tests, types, lint
+6. **Conformance checks** — all assertions in conformance registry
+7. **Debt typing** — classify failures as Regression / Quick Debt / Structural Debt
+8. **Auto-fix** — attempt to resolve regressions and quick debt (up to 4 attempts per unit)
+9. **Register debt** — log structural debt and failed quick debt to register
+10. **Commit** — when functional and conformance are green (or debt is registered)
+11. **Halt** — after 4 failed fix attempts for regressions/functional failures, log halt and **CONTINUE to next unit**
+
+**Post-Run:**
+12. **Finalize run log** — write full per-unit results, summary, halted units
+13. **Update score register** — calculate scores per layer, deltas vs baseline and previous
+14. **Save debt register** — final save with updated counts
+15. **Output consolidated summary** — units passed/halted, fixes, debt, score deltas, record locations
+
+**CRITICAL RULES:**
+- **CONTINUOUS:** No pauses, no permission requests mid-run. Fire-and-walk-away.
+- **HALT stops unit, NOT run:** Log halt, flag for review, continue to next unit.
+- **Never abort sweep:** Process entire scope start-to-finish.
+- **Three records updated:** Run log, score register, debt register.
+- **Regressions block unit:** Never commit a regression. Halt unit and continue run.
+- **Debt never blocks:** Tracked in register, allowed to proceed.
+- **Quick debt gets 4 attempts:** If fails, downgrade to structural and register (not halt).
+- **Structural debt never auto-fixed:** Goes straight to register with scope.
 
 **Full Pipeline Documentation:** `.kiro/testing/core-testing-pipeline.md`  
-**Debt Register:** `docs/00_authority/debt-register.md`
+**Debt Register:** `docs/00_authority/debt-register.md`  
+**Score Register:** `docs/00_authority/score-register.md`  
+**Run Logs:** `docs/00_authority/test-runs/`
 
 ---
 
@@ -268,12 +404,24 @@ Halted Units (require human review):
 **Pipeline:** READY — documented in `.kiro/testing/core-testing-pipeline.md`  
 **Registry:** ACTIVE — documented in `.kiro/testing/conformance-registry.md`  
 **Debt Register:** ACTIVE — documented in `docs/00_authority/debt-register.md`  
+**Score Register:** ACTIVE — documented in `docs/00_authority/score-register.md`  
+**Run Logs:** Directory created at `docs/00_authority/test-runs/`  
 **Scorecards:** TEMPLATE READY — `.kiro/testing/scorecard-template.md`
 
 **Commands Available:**
-1. `run core testing [scope]` — Run pipeline on specified scope
-2. `test my last build` — Run pipeline on last commit's changes
-3. `show debt register [scope]` — Query tracked debt
+1. `run core testing [scope]` — Continuous run on specified scope
+2. `test my last build` — Continuous run on last commit's changes
+3. `show audit scores [layer]` — Current scores per layer with deltas
+4. `show score history [layer]` — Trend over time per layer
+5. `show last test run` — Most recent run output log
+6. `show debt register [scope]` — Query tracked debt
+
+**Execution Mode:** CONTINUOUS RUN-THROUGH. Fire-and-walk-away. No pauses mid-run.
+
+**Durable Records:** Every run updates three records:
+- Run log: `docs/00_authority/test-runs/[date]-[commit].md`
+- Score register: `docs/00_authority/score-register.md`
+- Debt register: `docs/00_authority/debt-register.md`
 
 **Next Step:** When you're ready to test, invoke one of the trigger commands above. Recommended first use: `test my last build`.
 
