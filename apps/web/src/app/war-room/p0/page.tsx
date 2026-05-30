@@ -47,7 +47,10 @@ export default function P0WarRoomPage() {
   }));
 
   return (
-    <div style={{ background: surface.bg, minHeight: '100%', padding: componentTokens.contentPadding, color: surface.text }}>
+    <div style={{ background: surface.bg, minHeight: '100%', color: surface.text }}>
+      {/* container-xl aligns content horizontally with the rest of the app while
+          preserving the full-bleed dark emergency background (DS-1.0 §9.3). */}
+      <div className="container-xl" style={{ paddingTop: componentTokens.contentPadding, paddingBottom: componentTokens.contentPadding }}>
       {/* Emergency Command Banner */}
       <div style={{
         padding: `${primitiveSpacing[3]} ${componentTokens.contentPadding}`,
@@ -116,6 +119,7 @@ export default function P0WarRoomPage() {
           <p style={{ color: surface.textMuted, fontSize: primitiveTypeScale.body }}>No active P0 conditions. War Room is clear.</p>
         </div>
       )}
+      </div>
     </div>
   );
 }

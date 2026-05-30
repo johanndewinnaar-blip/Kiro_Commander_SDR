@@ -14,6 +14,13 @@ import { getSemanticTokens, type WorkspaceMode } from '../../../../packages/ui/s
  * - State persisted per user in localStorage
  *
  * Source: DESIGN_SYSTEM.md §9, §3
+ *
+ * Hydration strategy:
+ * - Server and first client render always use mode='standard'.
+ * - After mount, useEffect reads localStorage and updates if stored value differs.
+ * - This ensures server HTML and initial client HTML are identical, eliminating
+ *   the hydration mismatch caused by localStorage being unavailable on the server.
+ * - ThemeRoot observes mode changes and updates data-bs-theme on <html> after mount.
  */
 
 interface ModeContextValue {
@@ -27,19 +34,36 @@ const ModeContext = createContext<ModeContextValue | null>(null);
 const STORAGE_KEY = 'commander-sdr.workspace-mode';
 
 export function ModeProvider({ children }: { children: ReactNode }) {
+  // Default: standard. Server and first client render must agree.
   const [mode, setMode] = useState<WorkspaceMode>('standard');
+  const [mounted, setMounted] = useState(false);
 
+  // Step 1: mark as mounted (no-op on server)
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored === 'mission' || stored === 'standard') {
-      setMode(stored);
-    }
+    setMounted(true);
   }, []);
+
+  // Step 2: after mount, sync from localStorage
+  useEffect(() => {
+    if (!mounted) return;
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored === 'mission' || stored === 'standard') {
+        setMode(stored);
+      }
+    } catch {
+      // localStorage unavailable — keep default (standard)
+    }
+  }, [mounted]);
 
   function toggleMode() {
     setMode((prev) => {
       const next = prev === 'standard' ? 'mission' : 'standard';
-      localStorage.setItem(STORAGE_KEY, next);
+      try {
+        localStorage.setItem(STORAGE_KEY, next);
+      } catch {
+        // localStorage unavailable — state still updates in memory
+      }
       return next;
     });
   }

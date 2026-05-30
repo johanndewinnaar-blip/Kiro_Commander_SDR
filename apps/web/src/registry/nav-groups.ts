@@ -27,12 +27,11 @@ export interface NavGroup {
 /** Top navigation workspace tabs per v11 shell reference */
 export const TOP_NAV_WORKSPACES = [
   { label: 'Command Centre', path: '/' },
-  { label: 'Cases', path: '/cases' },
   { label: 'Fusion Map', path: '/fusion-map' },
   { label: 'Vulnerabilities', path: '/vulnerabilities' },
   { label: 'Identity', path: '/identity' },
   { label: 'Architecture', path: '/architecture' },
-  { label: 'CISO Dashboard', path: '/ciso' },
+  { label: 'CISO', path: '/ciso' },
 ] as const;
 
 /** 19 sidebar navigation groups per v11 shell reference */

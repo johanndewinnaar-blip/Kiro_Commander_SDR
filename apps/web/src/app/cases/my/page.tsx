@@ -1,10 +1,8 @@
 'use client';
 
-import { useMode } from '@/context/mode-context';
 import { seedCases } from '../../../../../../packages/contracts/src/fixtures/seed-cases';
-import { componentTokens } from '../../../../../../packages/ui/src/tokens/components';
-import { primitiveFonts, primitiveTypeScale, primitiveLetterSpacing, primitiveSpacing } from '../../../../../../packages/ui/src/tokens/primitives';
 import { CaseList } from '../../../components/case-list';
+import { PageContainer } from '@/components/page-container';
 
 /**
  * My Cases — Commander SDR (Spec 06 Case Management)
@@ -23,8 +21,6 @@ import { CaseList } from '../../../components/case-list';
 const CURRENT_USER = 'Alice Security-Analyst';
 
 export default function MyCasesPage() {
-  const { tokens } = useMode();
-
   // Filter cases owned by the current user
   const myCases = seedCases.filter((c) => c.owner === CURRENT_USER);
 
@@ -37,52 +33,20 @@ export default function MyCasesPage() {
   });
 
   return (
-    <div>
-      {/* Page Header */}
-      <section style={{
-        height: '76px',
-        background: tokens.surface.secondary,
-        borderBottom: `1px solid ${tokens.border.default}`,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: `0 ${componentTokens.contentPadding}`,
-      }}>
-        <div>
-          <small style={{
-            color: tokens.text.muted,
-            textTransform: 'uppercase',
-            letterSpacing: primitiveLetterSpacing.display,
-            fontSize: primitiveTypeScale.micro,
-          }}>
-            Cases › My Cases
-          </small>
-          <h1 style={{
-            margin: '4px 0 0',
-            fontSize: primitiveTypeScale.h1,
-            fontWeight: 700,
-            color: tokens.text.primary,
-            fontFamily: primitiveFonts.body,
-            lineHeight: '1.2',
-          }}>
-            My Cases
-          </h1>
+    <PageContainer
+      pretitle="Cases › My Cases"
+      title="My Cases"
+      headerActions={
+        <span className="badge bg-blue-lt">
+          {sortedCases.length} case{sortedCases.length !== 1 ? 's' : ''} · {CURRENT_USER}
+        </span>
+      }
+    >
+      <div className="card">
+        <div className="card-body p-0">
+          <CaseList cases={sortedCases} />
         </div>
-        <div style={{
-          fontSize: primitiveTypeScale.caption,
-          color: tokens.text.muted,
-          padding: `${primitiveSpacing[1]} ${primitiveSpacing[3]}`,
-          border: `1px solid ${tokens.border.default}`,
-          borderRadius: '2px',
-        }}>
-          {sortedCases.length} case{sortedCases.length !== 1 ? 's' : ''} assigned to {CURRENT_USER}
-        </div>
-      </section>
-
-      {/* Case List */}
-      <section style={{ padding: componentTokens.contentPadding }}>
-        <CaseList cases={sortedCases} />
-      </section>
-    </div>
+      </div>
+    </PageContainer>
   );
 }

@@ -2,10 +2,10 @@
 
 import { useMode } from '@/context/mode-context';
 import { seedCases } from '../../../../../packages/contracts/src/fixtures/seed-cases';
-import { componentTokens } from '../../../../../packages/ui/src/tokens/components';
 import { primitiveBrand, primitiveFonts, primitiveTypeScale, primitiveLetterSpacing, primitiveSignal, primitiveSpacing, primitiveRadii } from '../../../../../packages/ui/src/tokens/primitives';
 import { LIFECYCLE_STAGES } from '../../../../../packages/ui/src/components/lifecycle-pipeline';
 import { CaseList } from '../../components/case-list';
+import { PageContainer } from '@/components/page-container';
 
 /**
  * Case Queue — Commander SDR (DS-1.0, Spec 06 Phase C1)
@@ -19,12 +19,40 @@ import { CaseList } from '../../components/case-list';
  * - Surface attribution on every row (Assertion 10)
  * - Priority: shape + colour + label (never colour alone) (§14.1)
  * - SLA from strategy resolvers (Constraint 9)
+ *
+ * Tabler PoC: structural markup converted to Tabler CSS classes.
+ * Data logic, hooks, sorting and CaseList are unchanged.
  */
+
+/** Map case status → Tabler badge colour class */
+function statusBadgeClass(status: string): string {
+  const map: Record<string, string> = {
+    'open':               'bg-blue',
+    'in-progress':        'bg-yellow',
+    'awaiting-validation':'bg-orange',
+    'awaiting-closure':   'bg-purple',
+    'closed':             'bg-secondary',
+    'reopened':           'bg-red',
+  };
+  return map[status] ?? 'bg-secondary';
+}
+
+/** Map priority → Tabler status-dot colour class */
+function priorityDotClass(priority: string): string {
+  const map: Record<string, string> = {
+    P0: 'status-dot-animated bg-red',
+    P1: 'bg-orange',
+    P2: 'bg-yellow',
+    P3: 'bg-blue',
+    P4: 'bg-secondary',
+  };
+  return map[priority] ?? 'bg-secondary';
+}
 
 export default function CaseQueuePage() {
   const { mode, tokens } = useMode();
 
-  // Sort by priority (P0 first) then by age (oldest first)
+  // Sort by priority (P0 first) then by age (oldest first) — unchanged
   const sortedCases = [...seedCases].sort((a, b) => {
     const priorityOrder: Record<string, number> = { P0: 0, P1: 1, P2: 2, P3: 3, P4: 4 };
     const pDiff = (priorityOrder[a.priority] ?? 4) - (priorityOrder[b.priority] ?? 4);
@@ -32,7 +60,7 @@ export default function CaseQueuePage() {
     return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
   });
 
-  // Lifecycle stage counts for pipeline
+  // Lifecycle stage counts for pipeline — unchanged
   const stageCounts: Record<string, number> = {};
   for (const stage of LIFECYCLE_STAGES) stageCounts[stage] = 0;
   for (const c of seedCases) {
@@ -49,50 +77,67 @@ export default function CaseQueuePage() {
   }
 
   return (
-    <div>
-      {/* Page Header */}
-      <section style={{ height: '76px', background: tokens.surface.secondary, borderBottom: `1px solid ${tokens.border.default}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: `0 ${componentTokens.contentPadding}` }}>
-        <div>
-          <small style={{ color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.display, fontSize: primitiveTypeScale.micro }}>Cases › Queue</small>
-          <h1 style={{ margin: '4px 0 0', fontSize: primitiveTypeScale.h1, fontWeight: 700, color: tokens.text.primary, fontFamily: primitiveFonts.body, lineHeight: '1.2' }}>Case Queue</h1>
-        </div>
-        <div style={{ border: `1px solid ${tokens.border.default}`, height: componentTokens.buttonHeightEmphasis, display: 'flex', alignItems: 'center', padding: `0 ${primitiveSpacing[3]}`, background: tokens.surface.secondary, borderRadius: primitiveRadii.md }}>
-          <span style={{ width: '7px', height: '7px', background: primitiveSignal.success, display: 'inline-block', marginRight: primitiveSpacing[2], borderRadius: primitiveRadii.full }} />
-          <span style={{ fontSize: primitiveTypeScale.body, color: tokens.text.secondary }}>{seedCases.length} cases</span>
-        </div>
-      </section>
+    <PageContainer
+      pretitle="Cases › Queue"
+      title="Case Queue"
+      headerActions={
+        <span className="badge bg-green-lt">
+          <span className="status-dot bg-green me-1" style={{ display: 'inline-block' }} />
+          {seedCases.length} cases
+        </span>
+      }
+    >
 
-      {/* Lifecycle Pipeline — DS-1.0 §21 Req 29 */}
-      <section style={{ padding: `${componentTokens.cardPadding} ${componentTokens.contentPadding}`, borderBottom: `1px solid ${tokens.border.subtle}` }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[2], overflowX: 'auto' }}>
-          {LIFECYCLE_STAGES.map((stage, i) => {
-            const count = stageCounts[stage] ?? 0;
-            const isActive = count > 0;
-            return (
-              <div key={stage} style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[2] }}>
-                <div style={{
-                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px',
-                  padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, borderRadius: componentTokens.cardRadius,
-                  border: isActive ? `2px solid ${primitiveBrand.gold}` : `2px solid ${tokens.border.subtle}`,
-                  background: tokens.surface.elevated, minWidth: '80px',
-                  boxShadow: isActive && mode === 'mission' ? '0 0 8px rgba(255,210,31,0.35)' : 'none',
-                }}>
-                  <span style={{ fontSize: primitiveTypeScale.h3, fontWeight: 700, color: tokens.text.primary, fontFamily: mode === 'mission' ? primitiveFonts.mono : primitiveFonts.body }}>{count}</span>
-                  <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow, textAlign: 'center', whiteSpace: 'nowrap' }}>{stage}</span>
+          {/* ── Lifecycle Stage Metric Row ── */}
+          <div className="row row-deck row-cards mb-3">
+            {LIFECYCLE_STAGES.map((stage) => {
+              const count = stageCounts[stage] ?? 0;
+              const isActive = count > 0;
+              return (
+                <div key={stage} className="col-sm-6 col-lg-2">
+                  <div className={`card${isActive ? ' border-warning' : ''}`}>
+                    <div className="card-body p-3 text-center">
+                      <div
+                        className="h1 mb-1"
+                        style={{
+                          color: isActive ? primitiveBrand.gold : tokens.text.muted,
+                          fontFamily: mode === 'mission' ? primitiveFonts.mono : primitiveFonts.body,
+                        }}
+                      >
+                        {count}
+                      </div>
+                      <div
+                        className="text-uppercase text-muted"
+                        style={{
+                          fontSize: primitiveTypeScale.micro,
+                          letterSpacing: primitiveLetterSpacing.eyebrow,
+                        }}
+                      >
+                        {stage}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                {i < LIFECYCLE_STAGES.length - 1 && (
-                  <div style={{ width: primitiveSpacing[4], height: '2px', background: tokens.border.default, flexShrink: 0 }} />
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </section>
+              );
+            })}
+          </div>
 
-      {/* Case List — expandable row pattern (Spec 06 refactor) */}
-      <section style={{ padding: componentTokens.contentPadding }}>
-        <CaseList cases={sortedCases} />
-      </section>
-    </div>
+          {/* ── Case List Card ── */}
+          <div className="card">
+            <div className="card-header">
+              <h3 className="card-title">Active Cases</h3>
+              <div className="card-options">
+                <span className="text-muted" style={{ fontSize: primitiveTypeScale.body }}>
+                  Sorted by priority · oldest first
+                </span>
+              </div>
+            </div>
+            <div className="card-body p-0">
+              {/* CaseList — expandable row pattern (Spec 06 refactor) — data logic unchanged */}
+              <CaseList cases={sortedCases} />
+            </div>
+          </div>
+
+    </PageContainer>
   );
 }

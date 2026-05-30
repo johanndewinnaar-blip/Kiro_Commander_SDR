@@ -6,6 +6,11 @@ import { typography } from '../../../../../packages/ui/src/tokens/typography';
  *
  * Source: commander-commercial-control-plane-shell-v3-admin-navigation.html
  * Boundary: control-plane (internal Seiertech application)
+ *
+ * NOTE: This page renders inside control-plane/layout.tsx, which provides the
+ * Control Plane's own dark/gold chrome AND its page-header. It does NOT use the
+ * operational PageContainer (DEC-pagecontainer-shared-standard) yet — the full
+ * Tabler conversion of the Control Plane shell is a separate scoped pass.
  */
 export default function ControlPlaneOverviewPage() {
   return (

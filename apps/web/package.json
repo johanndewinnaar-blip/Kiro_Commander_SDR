@@ -10,16 +10,16 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@tabler/core": "^1.4.0",
+    "apexcharts": "^5.13.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.16.0",
     "next": "^15.3.0",
     "react": "^19.1.0",
+    "react-apexcharts": "^2.1.0",
     "react-dom": "^19.1.0",
-    "tailwind-merge": "^3.6.0",
-    "vega": "5.30.0",
-    "vega-embed": "6.26.0",
-    "vega-lite": "5.21.0"
+    "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
