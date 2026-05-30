@@ -46,7 +46,6 @@ export function CaseList({ cases, multiExpand = false }: CaseListProps) {
         maxHeight: 'calc(100vh - 240px)',
         overflowY: 'auto',
         border: `1px solid ${tokens.border.subtle}`,
-        borderRadius: componentTokens.cardRadius,
         background: tokens.surface.secondary,
       }}
     >

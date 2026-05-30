@@ -78,7 +78,7 @@ export default function CaseAnalyticsPage() {
 
       {/* Data note */}
       <section style={{ paddingTop: componentTokens.gridGap }}>
-        <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, borderRadius: componentTokens.cardRadius, border: `1px solid ${tokens.border.subtle}` }}>
+        <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, border: `1px solid ${tokens.border.subtle}` }}>
           <p style={{ margin: 0, color: tokens.text.muted, fontSize: primitiveTypeScale.caption }}>
             Charts will be rebuilt with ApexCharts. Colour values reference --data-* tokens only (DS-1.0 §13).
           </p>
@@ -99,8 +99,7 @@ function PlaceholderChart({ tokens, chartType }: { tokens: any; chartType: strin
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      border: `1px dashed ${tokens.border.subtle}`,
-      borderRadius: componentTokens.cardRadius
+      border: `1px dashed ${tokens.border.subtle}`
     }}>
       {chartType} chart placeholder — ApexCharts implementation pending
     </div>
@@ -109,7 +108,7 @@ function PlaceholderChart({ tokens, chartType }: { tokens: any; chartType: strin
 
 function ChartCard({ title, subtitle, tokens, mode, children }: { title: string; subtitle: string; tokens: any; mode: WorkspaceMode; children: React.ReactNode }) {
   return (
-    <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, borderRadius: componentTokens.cardRadius, border: `1px solid ${tokens.border.subtle}`, display: 'flex', flexDirection: 'column', gap: primitiveSpacing[3] }}>
+    <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, border: `1px solid ${tokens.border.subtle}`, display: 'flex', flexDirection: 'column', gap: primitiveSpacing[3] }}>
       <div>
         <h3 style={{ margin: 0, fontSize: primitiveTypeScale.h3, fontWeight: 600, color: tokens.text.primary, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>{title}</h3>
         <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted }}>{subtitle}</span>

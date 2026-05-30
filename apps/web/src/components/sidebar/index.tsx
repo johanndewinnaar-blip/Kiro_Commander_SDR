@@ -43,7 +43,6 @@ const SIDEBAR_STYLES = `
   .cmdr-sidebar-menu::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); }
   .cmdr-sidebar-menu::-webkit-scrollbar-thumb {
     background: rgba(255,255,255,0.28);
-    border-radius: 2px;
   }
   .cmdr-sidebar-menu::-webkit-scrollbar-thumb:hover {
     background: rgba(255,255,255,0.5);
@@ -139,7 +138,6 @@ const SIDEBAR_STYLES = `
     color: rgba(255,255,255,0.35);
     border: 1px solid rgba(255,255,255,0.15);
     padding: 1px 4px;
-    border-radius: 2px;
     line-height: 1.4;
   }
 
@@ -260,7 +258,6 @@ const SIDEBAR_STYLES = `
     font-weight: 500;
     white-space: nowrap;
     padding: 4px 8px;
-    border-radius: 3px;
     border: 1px solid rgba(255,255,255,0.12);
     pointer-events: none;
     opacity: 0;

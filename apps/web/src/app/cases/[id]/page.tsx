@@ -82,14 +82,14 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
             <div style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[2] }}>
               <span style={{ color: p.color, fontWeight: 700, fontSize: primitiveTypeScale.body }}>{p.shape} {p.label}</span>
               <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.muted }}>{caseRecord.caseRef}</span>
-              <span style={{ fontSize: primitiveTypeScale.micro, padding: '2px 6px', border: caseRecord.surfaceAttribution === 'external_attack_surface' ? `1px solid ${primitiveBrand.gold}` : `1px solid ${tokens.border.default}`, borderRadius: primitiveRadii.md, color: caseRecord.surfaceAttribution === 'external_attack_surface' ? primitiveBrand.gold : tokens.text.muted }}>
+              <span style={{ fontSize: primitiveTypeScale.micro, padding: '2px 6px', border: caseRecord.surfaceAttribution === 'external_attack_surface' ? `1px solid ${primitiveBrand.gold}` : `1px solid ${tokens.border.default}`, color: caseRecord.surfaceAttribution === 'external_attack_surface' ? primitiveBrand.gold : tokens.text.muted }}>
                 {caseRecord.surfaceAttribution === 'external_attack_surface' ? 'External' : 'Internal'}
               </span>
             </div>
             <h1 style={{ margin: '4px 0 0', fontSize: primitiveTypeScale.h2, fontWeight: 700, color: tokens.text.primary, fontFamily: primitiveFonts.body }}>{caseRecord.title}</h1>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[3] }}>
-            <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.muted, padding: `${primitiveSpacing[1]} ${primitiveSpacing[3]}`, border: `1px solid ${tokens.border.default}`, borderRadius: primitiveRadii.md }}>{caseRecord.status}</span>
+            <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.muted, padding: `${primitiveSpacing[1]} ${primitiveSpacing[3]}`, border: `1px solid ${tokens.border.default}` }}>{caseRecord.status}</span>
           </div>
         </section>
 
@@ -105,7 +105,7 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
 
         {/* Routing Rationale — from strategy resolver, NOT hardcoded (Constraint 9) */}
         <section style={{ padding: `0 ${componentTokens.contentPadding} ${componentTokens.contentPadding}` }}>
-          <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, borderRadius: componentTokens.cardRadius, border: `1px solid ${tokens.border.subtle}` }}>
+          <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, border: `1px solid ${tokens.border.subtle}` }}>
             <h3 style={{ margin: `0 0 ${primitiveSpacing[2]}`, fontSize: primitiveTypeScale.h3, fontWeight: 600, color: tokens.text.primary, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Routing Rationale</h3>
             <p style={{ margin: 0, color: tokens.text.secondary, fontSize: primitiveTypeScale.body, lineHeight: '1.43' }}>{caseRecord.routingRationale}</p>
             {strategy.routing.status === 'resolved' && (
@@ -121,7 +121,7 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
 
         {/* Timeline / Audit Trail — chronological system-owned events */}
         <section style={{ padding: `0 ${componentTokens.contentPadding} ${componentTokens.contentPadding}` }}>
-          <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, borderRadius: componentTokens.cardRadius, border: `1px solid ${tokens.border.subtle}` }}>
+          <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, border: `1px solid ${tokens.border.subtle}` }}>
             <h3 style={{ margin: `0 0 ${primitiveSpacing[3]}`, fontSize: primitiveTypeScale.h3, fontWeight: 600, color: tokens.text.primary, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Timeline</h3>
             {timelineEvents.map((event, i) => (
               <div key={i} style={{ display: 'flex', gap: primitiveSpacing[3], padding: `${primitiveSpacing[2]} 0`, borderBottom: i < timelineEvents.length - 1 ? `1px solid ${tokens.border.subtle}` : 'none' }}>
@@ -140,7 +140,7 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
 
         {/* Evidence Pack — source signals and connector imports bound to case */}
         <section style={{ padding: `0 ${componentTokens.contentPadding} ${componentTokens.contentPadding}` }}>
-          <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, borderRadius: componentTokens.cardRadius, border: `1px solid ${tokens.border.subtle}` }}>
+          <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, border: `1px solid ${tokens.border.subtle}` }}>
             <h3 style={{ margin: `0 0 ${primitiveSpacing[3]}`, fontSize: primitiveTypeScale.h3, fontWeight: 600, color: tokens.text.primary, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Evidence Pack</h3>
             {evidencePack.map((ev) => (
               <div key={ev.id} style={{ display: 'flex', justifyContent: 'space-between', padding: `${primitiveSpacing[2]} 0`, borderBottom: `1px solid ${tokens.border.subtle}` }}>
@@ -158,7 +158,7 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
 
         {/* Strategy Resolution Summary */}
         <section style={{ padding: `0 ${componentTokens.contentPadding} ${componentTokens.contentPadding}` }}>
-          <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, borderRadius: componentTokens.cardRadius, border: `1px solid ${tokens.border.subtle}` }}>
+          <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, border: `1px solid ${tokens.border.subtle}` }}>
             <h3 style={{ margin: `0 0 ${primitiveSpacing[2]}`, fontSize: primitiveTypeScale.h3, fontWeight: 600, color: tokens.text.primary, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Strategy Bindings</h3>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: primitiveSpacing[3], fontSize: primitiveTypeScale.body }}>
               <StrategyLine label="Closure Gates" value={strategy.closureGates.status === 'resolved' ? strategy.closureGates.gates!.join(', ') : 'Unresolved'} tokens={tokens} />
@@ -172,7 +172,7 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
         {/* Related Entities */}
         {relatedAssets.length > 0 && (
           <section style={{ padding: `0 ${componentTokens.contentPadding} ${componentTokens.contentPadding}` }}>
-            <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, borderRadius: componentTokens.cardRadius, border: `1px solid ${tokens.border.subtle}` }}>
+            <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, border: `1px solid ${tokens.border.subtle}` }}>
               <h3 style={{ margin: `0 0 ${primitiveSpacing[2]}`, fontSize: primitiveTypeScale.h3, fontWeight: 600, color: tokens.text.primary, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Related Entities</h3>
               {relatedAssets.map((a) => (
                 <div key={a.id} style={{ display: 'flex', justifyContent: 'space-between', padding: `${primitiveSpacing[2]} 0`, borderBottom: `1px solid ${tokens.border.subtle}` }}>
@@ -218,7 +218,7 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
 
 function MetadataCard({ label, value, tokens, isAlert }: { label: string; value: string; tokens: any; isAlert?: boolean }) {
   return (
-    <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, borderRadius: componentTokens.cardRadius, border: `1px solid ${tokens.border.subtle}` }}>
+    <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, border: `1px solid ${tokens.border.subtle}` }}>
       <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow, display: 'block', marginBottom: '4px' }}>{label}</span>
       <span style={{ fontSize: primitiveTypeScale.body, fontWeight: 600, color: isAlert ? primitiveSignal.critical : tokens.text.primary }}>{value}</span>
     </div>
@@ -310,7 +310,7 @@ function LifecycleSection({ caseRecord, tokens, mode }: { caseRecord: any; token
 
   return (
     <section data-testid="lifecycle-section" style={{ padding: `0 ${componentTokens.contentPadding} ${componentTokens.contentPadding}` }}>
-      <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, borderRadius: componentTokens.cardRadius, border: `1px solid ${tokens.border.subtle}` }}>
+      <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, border: `1px solid ${tokens.border.subtle}` }}>
         <h3 style={{ margin: `0 0 ${primitiveSpacing[3]}`, fontSize: primitiveTypeScale.h3, fontWeight: 600, color: tokens.text.primary, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Lifecycle</h3>
 
         {/* 1. Lifecycle Pipeline — current state highlighted */}
@@ -321,7 +321,7 @@ function LifecycleSection({ caseRecord, tokens, mode }: { caseRecord: any; token
               <div key={stage} style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[2] }}>
                 <div style={{
                   display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px',
-                  padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, borderRadius: componentTokens.cardRadius,
+                  padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`,
                   border: isCurrentStage ? `2px solid ${primitiveBrand.gold}` : `2px solid ${tokens.border.subtle}`,
                   background: tokens.surface.secondary, minWidth: '80px',
                   boxShadow: isCurrentStage && mode === 'mission' ? '0 0 8px rgba(255,210,31,0.35)' : 'none',
@@ -341,7 +341,7 @@ function LifecycleSection({ caseRecord, tokens, mode }: { caseRecord: any; token
           <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow, display: 'block', marginBottom: primitiveSpacing[2] }}>Allowed Next States (system-owned)</span>
           <div style={{ display: 'flex', gap: primitiveSpacing[2], flexWrap: 'wrap' }}>
             {allowedNext.length > 0 ? allowedNext.map((state) => (
-              <span key={state} style={{ fontSize: primitiveTypeScale.body, color: tokens.text.secondary, padding: `${primitiveSpacing[1]} ${primitiveSpacing[3]}`, border: `1px solid ${tokens.border.default}`, borderRadius: primitiveRadii.md }}>{state}</span>
+              <span key={state} style={{ fontSize: primitiveTypeScale.body, color: tokens.text.secondary, padding: `${primitiveSpacing[1]} ${primitiveSpacing[3]}`, border: `1px solid ${tokens.border.default}` }}>{state}</span>
             )) : (
               <span style={{ fontSize: primitiveTypeScale.body, color: tokens.text.muted }}>No transitions available (terminal state)</span>
             )}
@@ -350,7 +350,7 @@ function LifecycleSection({ caseRecord, tokens, mode }: { caseRecord: any; token
 
         {/* 3. Validation Window Status (awaiting-validation only) */}
         {validationState && (
-          <div data-testid="validation-window-status" style={{ marginBottom: primitiveSpacing[4], padding: componentTokens.cardPadding, background: tokens.surface.primary, borderRadius: componentTokens.cardRadius, border: `1px solid ${tokens.border.subtle}` }}>
+          <div data-testid="validation-window-status" style={{ marginBottom: primitiveSpacing[4], padding: componentTokens.cardPadding, background: tokens.surface.primary, border: `1px solid ${tokens.border.subtle}` }}>
             <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow, display: 'block', marginBottom: primitiveSpacing[2] }}>Validation Window</span>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: primitiveSpacing[3] }}>
               <div>
@@ -380,12 +380,12 @@ function LifecycleSection({ caseRecord, tokens, mode }: { caseRecord: any; token
 
         {/* 4. Closure Gate Status (awaiting-closure only) */}
         {closureGateState && (
-          <div data-testid="closure-gate-status" style={{ marginBottom: primitiveSpacing[4], padding: componentTokens.cardPadding, background: tokens.surface.primary, borderRadius: componentTokens.cardRadius, border: `1px solid ${tokens.border.subtle}` }}>
+          <div data-testid="closure-gate-status" style={{ marginBottom: primitiveSpacing[4], padding: componentTokens.cardPadding, background: tokens.surface.primary, border: `1px solid ${tokens.border.subtle}` }}>
             <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow, display: 'block', marginBottom: primitiveSpacing[2] }}>Closure Gates</span>
             <div style={{ display: 'flex', flexDirection: 'column', gap: primitiveSpacing[2] }}>
               {closureGateState.gateResults.map((gate) => (
                 <div key={gate.gate} style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[2] }}>
-                  <span style={{ width: '8px', height: '8px', borderRadius: primitiveRadii.full, background: gate.passed ? primitiveSignal.success : primitiveSignal.critical, display: 'inline-block', flexShrink: 0 }} />
+                  <span style={{ width: '8px', height: '8px', background: gate.passed ? primitiveSignal.success : primitiveSignal.critical, display: 'inline-block', flexShrink: 0 }} />
                   <span style={{ fontSize: primitiveTypeScale.body, color: tokens.text.secondary }}>{gate.gate}</span>
                   <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, marginLeft: 'auto' }}>{gate.reason}</span>
                 </div>

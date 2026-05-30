@@ -9,5 +9,15 @@
     ".": "./src/index.ts",
     "./tokens": "./src/tokens/index.ts",
     "./components": "./src/components/index.ts"
+  },
+  "dependencies": {
+    "lucide-react": "^1.16.0",
+    "react": "^19.1.0"
+  },
+  "peerDependencies": {
+    "react": "^19.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.0"
   }
 }

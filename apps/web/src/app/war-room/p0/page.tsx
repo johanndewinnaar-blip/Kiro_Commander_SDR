@@ -56,7 +56,6 @@ export default function P0WarRoomPage() {
         padding: `${primitiveSpacing[3]} ${componentTokens.contentPadding}`,
         background: 'rgba(217,45,32,0.15)',
         border: `2px solid ${primitiveSignal.critical}`,
-        borderRadius: componentTokens.cardRadius,
         marginBottom: componentTokens.gridGap,
         display: 'flex', alignItems: 'center', gap: primitiveSpacing[3],
         boxShadow: `0 0 ${primitiveGlow.radius} rgba(217,45,32,${primitiveGlow.intensity})`,
@@ -79,7 +78,6 @@ export default function P0WarRoomPage() {
             padding: componentTokens.cardPadding,
             background: surface.elevated,
             border: `1px solid ${primitiveSignal.critical}`,
-            borderRadius: componentTokens.cardRadius,
             marginBottom: componentTokens.gridGap,
             boxShadow: `0 0 ${primitiveGlow.radius} rgba(217,45,32,${primitiveGlow.intensity})`,
           }}>
@@ -89,7 +87,7 @@ export default function P0WarRoomPage() {
                 <span style={{ color: primitiveSignal.critical, fontWeight: 700, fontSize: primitiveTypeScale.body }}>{primitivePriority.p0.shape} {primitivePriority.p0.label}</span>
                 <span style={{ color: surface.textSecondary, fontSize: primitiveTypeScale.caption, fontFamily: primitiveFonts.mono }}>{c.caseRef}</span>
               </div>
-              <span style={{ fontSize: primitiveTypeScale.micro, padding: '2px 6px', border: `1px solid ${primitiveBrand.gold}`, borderRadius: primitiveRadii.md, color: primitiveBrand.gold }}>
+              <span style={{ fontSize: primitiveTypeScale.micro, padding: '2px 6px', border: `1px solid ${primitiveBrand.gold}`, color: primitiveBrand.gold }}>
                 {c.surfaceAttribution === 'external_attack_surface' ? 'External' : 'Internal'}
               </span>
             </div>
@@ -106,7 +104,7 @@ export default function P0WarRoomPage() {
             </div>
 
             {/* Routing rationale */}
-            <div style={{ marginTop: primitiveSpacing[3], padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, background: surface.panel, borderRadius: primitiveRadii.md, border: `1px solid ${surface.lineSubtle}` }}>
+            <div style={{ marginTop: primitiveSpacing[3], padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, background: surface.panel, border: `1px solid ${surface.lineSubtle}` }}>
               <span style={{ fontSize: primitiveTypeScale.caption, color: surface.textMuted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Routing Rationale</span>
               <p style={{ margin: `${primitiveSpacing[1]} 0 0`, fontSize: primitiveTypeScale.body, color: surface.textSecondary, lineHeight: '1.43' }}>{c.routingRationale}</p>
             </div>
@@ -115,7 +113,7 @@ export default function P0WarRoomPage() {
       })}
 
       {p0Cases.length === 0 && (
-        <div style={{ padding: componentTokens.cardPadding, background: surface.panel, borderRadius: componentTokens.cardRadius, border: `1px solid ${surface.line}`, textAlign: 'center' }}>
+        <div style={{ padding: componentTokens.cardPadding, background: surface.panel, border: `1px solid ${surface.line}`, textAlign: 'center' }}>
           <p style={{ color: surface.textMuted, fontSize: primitiveTypeScale.body }}>No active P0 conditions. War Room is clear.</p>
         </div>
       )}

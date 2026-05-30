@@ -271,7 +271,6 @@ function NotificationBell({ service = mockNotificationService }: { service?: Not
             lineHeight: '15px',
             fontSize: '0.5625rem',
             color: '#ffffff',
-            borderRadius: '9999px',
           }}
         >
           {count > 99 ? '99+' : count}
@@ -308,7 +307,7 @@ function UserProfileBlock({ user = MOCK_USER }: { user?: UserProfile }) {
         <img
           src={user.avatarUrl}
           alt={displayName}
-          style={{ width: '28px', height: '28px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
+          style={{ width: '28px', height: '28px', objectFit: 'cover', flexShrink: 0 }}
         />
       ) : (
         <span

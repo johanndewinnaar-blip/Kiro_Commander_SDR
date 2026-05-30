@@ -14,8 +14,30 @@
     "declarationMap": true,
     "sourceMap": true,
     "outDir": "dist",
-    "rootDir": "."
+    "rootDir": ".",
+    "jsx": "preserve",
+    "lib": ["dom", "dom.iterable", "es6"],
+    "allowJs": true,
+    "incremental": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["apps/web/src/*"]
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
-  "include": ["tests/**/*.ts", "packages/**/*.ts", "apps/**/*.ts", "apps/**/*.tsx"],
+  "include": [
+    "tests/**/*.ts", 
+    "packages/**/*.ts", 
+    "apps/**/*.ts", 
+    "apps/**/*.tsx",
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
   "exclude": ["node_modules", "dist"]
 }

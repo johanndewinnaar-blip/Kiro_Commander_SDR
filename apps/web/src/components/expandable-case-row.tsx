@@ -117,7 +117,6 @@ export function ExpandableCaseRow({ case: caseRecord, expanded, onToggle, tokens
           fontSize: primitiveTypeScale.micro,
           padding: '2px 6px',
           border: caseRecord.surfaceAttribution === 'external_attack_surface' ? `1px solid ${primitiveBrand.gold}` : `1px solid ${tokens.border.default}`,
-          borderRadius: primitiveRadii.md,
           color: caseRecord.surfaceAttribution === 'external_attack_surface' ? primitiveBrand.gold : tokens.text.muted,
           whiteSpace: 'nowrap',
         }}>
