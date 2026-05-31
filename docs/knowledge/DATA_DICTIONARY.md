@@ -47,7 +47,7 @@
 | `coverage.hasBackup` | boolean | integration-derived | FUTURE | Phase 2 connector integration | Backup coverage |
 | `criticality` | number (1-5) | seeded | AVAILABLE | — | Business criticality |
 | `tags` | string[] | seeded | AVAILABLE | — | Tags for grouping |
-| `source` | SourceMetadata | seeded | AVAILABLE | — | Provenance (connectorId, importRunId, rawPayloadRef, sourceSystem, sourceTimestamp) |
+| `source` | SourceMetadata | seeded | AVAILABLE | — | Provenance (connectorId, importRunId, sourceSystem, sourceTimestamp). Contract↔schema aligned per Spec #05 §11.3. |
 | `createdAt` | string (ISO 8601) | system-calculated | AVAILABLE | — | Record creation timestamp |
 | `updatedAt` | string (ISO 8601) | system-calculated | AVAILABLE | — | Record update timestamp |
 
@@ -83,7 +83,7 @@
 | `relatedEntities` | string[] | system-calculated | AVAILABLE | — | Related entity IDs |
 | `auditTrailRef` | string | system-calculated | AVAILABLE | — | Audit trail reference |
 | `routingRationale` | string | system-calculated | AVAILABLE | — | Routing rationale from routing engine |
-| `source` | SourceMetadata | system-calculated | AVAILABLE | — | Provenance |
+| `source` | SourceMetadata | system-calculated | AVAILABLE | — | Provenance. Contract↔schema aligned per Spec #05 §11.3 (rawPayloadRef removed). |
 | `createdAt` | string (ISO 8601) | system-calculated | AVAILABLE | — | Record creation timestamp |
 | `updatedAt` | string (ISO 8601) | system-calculated | AVAILABLE | — | Record update timestamp |
 
@@ -128,7 +128,7 @@
 | `surfaceAttribution` | SurfaceAttribution | seeded | AVAILABLE | — | internal_attack_surface or external_attack_surface |
 | `associatedAssets` | string[] | integration-derived | FUTURE | Phase 2 connector integration | Associated asset IDs |
 | `status` | string | seeded | AVAILABLE | — | active, suspended, disabled, orphaned |
-| `source` | SourceMetadata | seeded | AVAILABLE | — | Provenance |
+| `source` | SourceMetadata | seeded | AVAILABLE | — | Provenance. Contract↔schema aligned per Spec #05 §11.3 (rawPayloadRef removed). |
 | `createdAt` | string (ISO 8601) | system-calculated | AVAILABLE | — | Record creation timestamp |
 | `updatedAt` | string (ISO 8601) | system-calculated | AVAILABLE | — | Record update timestamp |
 
@@ -141,9 +141,9 @@
 **Source:** Spec #29 Universal Risk Object and Case Binding  
 **Coverage:** Partial (Spec #29 base spec read)  
 **Contract:** `packages/contracts/src/entities/risk-object.ts`  
-**DB Schema:** ❌ NOT FOUND in `packages/db/src/schema/`  
+**DB Schema:** `packages/db/src/schema/risk-objects.ts` ✅  
 **Fixture:** `packages/contracts/src/fixtures/seed-risk-objects.ts` ✅  
-**Status:** AVAILABLE (fixture exists) — **DIVERGENCE: contract exists, db schema missing**
+**Status:** AVAILABLE (fixture exists, db schema created)
 
 | Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
 |-------|------|----------------------|--------------|---------------------|-------|
@@ -157,11 +157,11 @@
 | `owner` | string | seeded | AVAILABLE | — | Owner responsible for treatment |
 | `treatmentState` | TreatmentState | seeded | AVAILABLE | — | open, mitigated, accepted, transferred |
 | `expiryOrReviewTrigger` | string | seeded | AVAILABLE | — | Expiry or review trigger condition |
-| `source` | SourceMetadata | seeded | AVAILABLE | — | Provenance |
+| `source` | SourceMetadata | seeded | AVAILABLE | — | Provenance. Contract↔schema aligned per Spec #05 §11.3 (rawPayloadRef removed). |
 | `createdAt` | string (ISO 8601) | system-calculated | AVAILABLE | — | Record creation timestamp |
 | `updatedAt` | string (ISO 8601) | system-calculated | AVAILABLE | — | Record update timestamp |
 
-**DB Schema Reconciliation:** ❌ **DIVERGENCE** — Contract exists, DB schema missing. Propose ARCH-DEBT entry.
+**DB Schema Reconciliation:** ✅ Contract and schema aligned. DB schema flattens `tenant` to `tenantId` reference and `source` to individual columns (standard pattern).
 
 ---
 
@@ -187,7 +187,7 @@
 | `lastRunAt` | string \| null | workflow-derived | AVAILABLE | — | Last successful run timestamp |
 | `lastRunStatus` | string | workflow-derived | AVAILABLE | — | success, partial, failed, never-run |
 | `mappingPackVersion` | string | seeded | AVAILABLE | — | Mapping pack version |
-| `source` | SourceMetadata | seeded | AVAILABLE | — | Provenance |
+| `source` | SourceMetadata | seeded | AVAILABLE | — | Provenance. Contract↔schema aligned per Spec #05 §11.3 (rawPayloadRef removed). |
 | `createdAt` | string (ISO 8601) | system-calculated | AVAILABLE | — | Record creation timestamp |
 | `updatedAt` | string (ISO 8601) | system-calculated | AVAILABLE | — | Record update timestamp |
 
@@ -219,7 +219,7 @@
 | `effectiveFrom` | string \| null | workflow-derived | AVAILABLE | — | Effective from timestamp |
 | `effectiveUntil` | string \| null | workflow-derived | AVAILABLE | — | Effective until timestamp |
 | `simulationRef` | string \| null | workflow-derived | FUTURE | Missing resolver: strategy-simulator.ts | Simulation result reference |
-| `source` | SourceMetadata | seeded | AVAILABLE | — | Provenance |
+| `source` | SourceMetadata | seeded | AVAILABLE | — | Provenance. Contract↔schema aligned per Spec #05 §11.3 (rawPayloadRef removed). |
 | `createdAt` | string (ISO 8601) | system-calculated | AVAILABLE | — | Record creation timestamp |
 | `updatedAt` | string (ISO 8601) | system-calculated | AVAILABLE | — | Record update timestamp |
 
@@ -252,7 +252,7 @@
 | `newState` | Record<string, unknown> \| null | system-calculated | AVAILABLE | — | New state (if applicable) |
 | `rationale` | string | system-calculated | AVAILABLE | — | Machine-readable rationale |
 | `immutable` | true | system-calculated | AVAILABLE | — | Immutable audit record flag |
-| `source` | SourceMetadata | system-calculated | AVAILABLE | — | Provenance |
+| `source` | SourceMetadata | system-calculated | AVAILABLE | — | Provenance. Contract↔schema aligned per Spec #05 §11.3 (rawPayloadRef removed). |
 | `createdAt` | string (ISO 8601) | system-calculated | AVAILABLE | — | Record creation timestamp |
 
 **DB Schema Reconciliation:** ✅ Contract and schema aligned. DB schema flattens `actor` and `entityRef` to individual columns.
@@ -315,7 +315,7 @@
 
 ### 10. Common Fields (Shared)
 
-**Source:** Spec #05 §6.4.1 Common Fields  
+**Source:** Spec #05 §6.4.1 Common Fields, §11.3 Provenance  
 **Coverage:** Partial (Spec #05 initial portion read)  
 **Contract:** `packages/contracts/src/entities/common.ts`  
 **DB Schema:** `packages/db/src/schema/common.ts` (enums only)  
@@ -331,11 +331,22 @@
 | `tenant.tenantName` | string | seeded | AVAILABLE | Tenant name |
 | `source.connectorId` | string | seeded or system-calculated | AVAILABLE | Connector that produced this record |
 | `source.importRunId` | string | seeded or system-calculated | AVAILABLE | Import run identifier |
-| `source.rawPayloadRef` | string | seeded or system-calculated | AVAILABLE | Raw source payload reference (not the payload itself) |
 | `source.sourceSystem` | string | seeded or system-calculated | AVAILABLE | Source system identifier |
 | `source.sourceTimestamp` | string (ISO 8601) | seeded or system-calculated | AVAILABLE | Timestamp of source extraction |
 | `createdAt` | string (ISO 8601) | system-calculated | AVAILABLE | When this record was created in Commander |
 | `updatedAt` | string (ISO 8601) | system-calculated | AVAILABLE | When this record was last updated |
+
+**Raw Payload Reference — Resolved (Unit 0, 2026-05-31):**
+
+`rawPayloadRef` has been **removed from `SourceMetadata`** in `packages/contracts/src/entities/common.ts` (ARCH-DEBT-033 resolved). Per Spec #05 §11.3, the canonical provenance set does not include `raw_payload_ref` — it belongs to the raw-ingestion store (§11.2). The contract now matches the DB schemas (which never carried the field) and Spec #05 §11.3. Lineage to raw vendor payloads is preserved at the architecture level via the raw-ingestion store's `normalised_entity_refs` (Phase 2 deliverable).
+
+**Authority citation (updated 2026-05-31):** `SourceMetadata` interface doc comment now cites both `v1.3 Req 12` and `Spec #05 §11.3` (previously only `v1.3 Req 12`).
+
+**Stale test reference (flagged 2026-05-31):** Two test files still reference `rawPayloadRef` in source objects — these are stale after the contract removal:
+- `tests/06-case-management/phase-d2-validation-window.test.ts` (line ~163)
+- `tests/06-case-management/phase-d3-closure-reopening.test.ts` (lines ~181, ~377)
+
+These are code-conformance debt items (contract field removed, test fixtures not updated). Route to `docs/00_authority/debt-register.md` per core-testing-commands.md pipeline.
 
 **Enums Defined:**
 
@@ -362,7 +373,7 @@
 1. Asset ✅
 2. Case ✅
 3. Identity ✅
-4. Risk Object ✅ (contract + fixture, db schema missing)
+4. Risk Object ✅
 5. Connector ✅
 6. Strategy Policy ✅ (contract + fixture, db schema missing)
 7. Audit Event ✅
@@ -398,24 +409,26 @@
 
 ### Contract vs DB Schema Reconciliation
 
-**Aligned (7):**
+**Aligned (8):**
 - Asset ✅
 - Case ✅
 - Identity ✅
+- Risk Object ✅
 - Connector ✅
 - Audit Event ✅
 - Common Fields ✅
 - Case Lifecycle (transitions in audit events) ✅
 
-**Divergences (3):**
-1. **Risk Object** — Contract + fixture exist, DB schema missing
-2. **Strategy Policy** — Contract + fixture exist, DB schema missing
-3. **Case Strategy Binding** — Contract exists, DB schema + fixture missing
+**Divergences (2):**
+1. **Strategy Policy** — Contract + fixture exist, DB schema missing
+2. **Case Strategy Binding** — Contract exists, DB schema + fixture missing
 
 **Proposed Architectural Debt Entries:**
-- ARCH-DEBT-030: Risk Object DB schema missing (contract + fixture exist)
 - ARCH-DEBT-031: Strategy Policy DB schema missing (contract + fixture exist)
 - ARCH-DEBT-032: Case Strategy Binding incomplete (contract exists, db schema + fixture missing)
+
+**Resolved Architectural Debt:**
+- ARCH-DEBT-030: Risk Object DB schema missing (contract + fixture exist) — ✅ RESOLVED (Unit 1)
 
 ---
 
@@ -429,5 +442,5 @@
 
 ---
 
-**Last Updated:** 2026-05-31  
+**Last Updated:** 2026-05-31 (SourceMetadata rawPayloadRef removal confirmed, authority citation updated)  
 **Snapshot Commit:** (to be recorded after commit)

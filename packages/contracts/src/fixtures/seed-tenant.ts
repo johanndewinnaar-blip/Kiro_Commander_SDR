@@ -15,7 +15,6 @@ export const SEED_TENANT: TenantContext = {
 export const SEED_SOURCE: SourceMetadata = {
   connectorId: 'connector-mock-001',
   importRunId: 'run-seed-001',
-  rawPayloadRef: 'fixtures/raw/seed-payload-001.json',
   sourceSystem: 'commander-seed-generator',
   sourceTimestamp: '2026-01-15T09:00:00.000Z',
 };

@@ -17,14 +17,12 @@ export interface TenantContext {
   tenantName: string;
 }
 
-/** Source metadata — provenance tracking (v1.3 Req 12) */
+/** Source metadata — provenance tracking (v1.3 Req 12, Spec #05 §11.3) */
 export interface SourceMetadata {
   /** Connector that produced this record */
   connectorId: string;
   /** Import run identifier */
   importRunId: string;
-  /** Raw source payload reference (not the payload itself) */
-  rawPayloadRef: string;
   /** Source system identifier */
   sourceSystem: string;
   /** Timestamp of source extraction */

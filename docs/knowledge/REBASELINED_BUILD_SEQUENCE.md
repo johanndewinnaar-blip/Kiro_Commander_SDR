@@ -69,37 +69,37 @@ A unit is **READY** iff every dependency unit is **DONE** and every mapped chain
 
 Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readiness State Machine above.
 
-**READY (1):** Unit 0 (common.ts foundation correction).
+**READY (3):** Unit 1 (Risk Object DB Schema), Unit 2 (Strategy Policy DB Schema), Unit 4 (Connector Layer Foundation).
 
-**DONE (0):** none. (Unit 1 schema is built on disk but not yet committed; it remains BLOCKED until both its commit lands and Unit 0 resolves ARCH-DEBT-033.)
+**DONE (1):** Unit 0 (common.ts foundation correction — ARCH-DEBT-033 RESOLVED).
 
-**BLOCKED (49):** Units 1–49. Foundational Units 1–22, 38, 40, 43 are blocked on the chain (Unit 0 and/or each other). All 27 Team 2 units (23–37, 39, 41–42, 44–49) are additionally blocked by ARCH-006 (USE_CASE_SCHEDULE.md + PAGE_INVENTORY.md absent).
+**BLOCKED (46):** Units 3, 5–49. Unit 3 blocked on Unit 2. Units 5+ blocked on their dependency chains. All 27 Team 2 units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006.
 
 | Unit | Tag | Status | Blocked by |
 |---|---|---|---|
-| 0 Foundation Correction (common.ts) | Foundational | **READY** | — |
-| 1 Risk Object DB Schema | Foundational | BLOCKED | Unit 0 (ARCH-DEBT-033 OPEN) |
-| 2 Strategy Policy DB Schema | Foundational | BLOCKED | Unit 0 (ARCH-DEBT-033 OPEN); ARCH-DEBT-031 is self-resolving |
-| 3 Case Strategy Binding Schema + Fixture | Foundational | BLOCKED | Unit 0; Unit 2; ARCH-DEBT-032 is self-resolving |
-| 4 Connector Layer Foundation | Foundational | BLOCKED | Unit 0 |
-| 5 Normalisation Layer | Foundational | BLOCKED | Unit 0; Unit 4 |
-| 6 Strategy Layer Runtime (build-blocking) | Foundational | BLOCKED | Unit 0; Unit 2; Unit 3 |
-| 7 Case Lifecycle Engine | Foundational | BLOCKED | Unit 0; Unit 1; Unit 6 |
-| 8 Case Routing Engine | Foundational | BLOCKED | Unit 0; Unit 6; Unit 7 |
-| 9 Case Prioritisation Engine | Foundational | BLOCKED | Unit 0; Unit 6; Unit 7 |
-| 10 Case SLA Engine | Foundational | BLOCKED | Unit 0; Unit 6; Unit 7 |
-| 11 Validation Lifecycle Engine | Foundational | BLOCKED | Unit 0; Unit 6; Unit 7 |
-| 12 Closure Gate Engine | Foundational | BLOCKED | Unit 0; Unit 6; Unit 7; Unit 11 |
-| 13 Reopening Trigger Engine | Foundational | BLOCKED | Unit 0; Unit 6; Unit 7; Unit 12 |
-| 14 Intelligence Layer — Four Streams | Foundational | BLOCKED | Unit 0; Unit 4; Unit 5 |
-| 15 OODA Layer | Foundational | BLOCKED | Unit 0; Unit 14; Units 7–13 |
-| 16 Command Centre | Foundational | BLOCKED | Unit 0; Unit 15; Unit 14; Units 7–13 |
-| 17 Case Management UI | Foundational | BLOCKED | Unit 0; Units 7–13; Unit 16 |
-| 18 Identity Intelligence Surface | Foundational | BLOCKED | Unit 0; Unit 14; Unit 5 |
-| 19 Asset Intelligence Surface | Foundational | BLOCKED | Unit 0; Unit 14; Unit 5 |
-| 20 External Operating Picture | Foundational | BLOCKED | Unit 0; Unit 14; Unit 16 |
-| 21 Internal Operating Picture | Foundational | BLOCKED | Unit 0; Unit 14; Unit 16 |
-| 22 Tenant Admin Surface | Foundational | BLOCKED | Unit 0; Unit 4; Unit 6 |
+| 0 Foundation Correction (common.ts) | Foundational | **DONE** | — |
+| 1 Risk Object DB Schema | Foundational | **READY** | — |
+| 2 Strategy Policy DB Schema | Foundational | **READY** | — |
+| 3 Case Strategy Binding Schema + Fixture | Foundational | BLOCKED | Unit 2 (not DONE yet); ARCH-DEBT-032 is self-resolving |
+| 4 Connector Layer Foundation | Foundational | **READY** | — |
+| 5 Normalisation Layer | Foundational | BLOCKED | Unit 4 (not DONE yet) |
+| 6 Strategy Layer Runtime (build-blocking) | Foundational | BLOCKED | Unit 2; Unit 3 |
+| 7 Case Lifecycle Engine | Foundational | BLOCKED | Unit 1; Unit 6 |
+| 8 Case Routing Engine | Foundational | BLOCKED | Unit 6; Unit 7 |
+| 9 Case Prioritisation Engine | Foundational | BLOCKED | Unit 6; Unit 7 |
+| 10 Case SLA Engine | Foundational | BLOCKED | Unit 6; Unit 7 |
+| 11 Validation Lifecycle Engine | Foundational | BLOCKED | Unit 6; Unit 7 |
+| 12 Closure Gate Engine | Foundational | BLOCKED | Unit 6; Unit 7; Unit 11 |
+| 13 Reopening Trigger Engine | Foundational | BLOCKED | Unit 6; Unit 7; Unit 12 |
+| 14 Intelligence Layer — Four Streams | Foundational | BLOCKED | Unit 4; Unit 5 |
+| 15 OODA Layer | Foundational | BLOCKED | Unit 14; Units 7–13 |
+| 16 Command Centre | Foundational | BLOCKED | Unit 15; Unit 14; Units 7–13 |
+| 17 Case Management UI | Foundational | BLOCKED | Units 7–13; Unit 16 |
+| 18 Identity Intelligence Surface | Foundational | BLOCKED | Unit 14; Unit 5 |
+| 19 Asset Intelligence Surface | Foundational | BLOCKED | Unit 14; Unit 5 |
+| 20 External Operating Picture | Foundational | BLOCKED | Unit 14; Unit 16 |
+| 21 Internal Operating Picture | Foundational | BLOCKED | Unit 14; Unit 16 |
+| 22 Tenant Admin Surface | Foundational | BLOCKED | Unit 4; Unit 6 |
 | 23 Commercial Control Plane | Team 2 | BLOCKED | ARCH-006 (USE_CASE_SCHEDULE.md + PAGE_INVENTORY.md absent) |
 | 24 Drift Detection Engine | Team 2 | BLOCKED | ARCH-006; Unit 5; Unit 4 |
 | 25 Identity Intelligence Engine | Team 2 | BLOCKED | ARCH-006; Unit 5; Unit 14 |
@@ -115,12 +115,12 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 | 35 Governance & Reporting UI | Team 2 | BLOCKED | ARCH-006; Units 7–13; Unit 14; Unit 15 |
 | 36 CISO Dashboard | Team 2 | BLOCKED | ARCH-006; Unit 15; Unit 14; Units 7–13 |
 | 37 Security C2 / War Room | Team 2 | BLOCKED | ARCH-006; Unit 15; Unit 14; Units 7–13 |
-| 38 Mock Connectors | Foundational | BLOCKED | Unit 0; Unit 4 |
+| 38 Mock Connectors | Foundational | BLOCKED | Unit 4 |
 | 39 Real Connector Readiness | Team 2 | BLOCKED | ARCH-006; Unit 4; Unit 38 |
-| 40 Commander AI Core | Foundational | BLOCKED | Unit 0; Units 7–13; Unit 14; Unit 5 |
+| 40 Commander AI Core | Foundational | BLOCKED | Units 7–13; Unit 14; Unit 5 |
 | 41 AWS Alignment — Evaluation Lane | Team 2 | BLOCKED | ARCH-006; Unit 40; ARCH-DEBT-034 (needs re-sourcing) |
 | 42 Push Governance — Dry-Run | Team 2 | BLOCKED | ARCH-006; Units 7–13; Unit 6 |
-| 43 Audit Trail | Foundational | BLOCKED | Unit 0; Units 7–13; Unit 6; Unit 4; ARCH-DEBT-035 (needs re-sourcing) |
+| 43 Audit Trail | Foundational | BLOCKED | Units 7–13; Unit 6; Unit 4; ARCH-DEBT-035 (needs re-sourcing) |
 | 44 Email Case Communication | Team 2 | BLOCKED | ARCH-006; Units 7–13; Unit 12 |
 | 45 Security Tool Intelligence | Team 2 | BLOCKED | ARCH-006; Unit 4; Unit 14 |
 | 46 Observability & Tool Health UI | Team 2 | BLOCKED | ARCH-006; Unit 45; Unit 16; ARCH-DEBT-036 (needs re-sourcing) |
@@ -128,15 +128,17 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 | 48 Platform Security Hardening | Team 2 | BLOCKED | ARCH-006; Unit 22; Unit 23 |
 | 49 Phase 3 Pilot & Production Hardening | Team 2 | BLOCKED | ARCH-006; Unit 47; Unit 48; ARCH-DEBT-038 (needs re-sourcing) |
 
-> **"Self-resolving" note:** Units 1/2/3 each *exist to close* their own data-layer debt (ARCH-DEBT-030/031/032). That own-debt does not self-block them per the state-machine rule; they are blocked by Unit 0 (and, for Unit 3, by Unit 2) instead. Once Unit 0 is DONE, Units 1, 2 and 4 become READY (recompute rule).
+> **"Self-resolving" note:** Units 1/2/3 each *exist to close* their own data-layer debt (ARCH-DEBT-030/031/032). That own-debt does not self-block them per the state-machine rule. Unit 3 is blocked by Unit 2 (dependency). Once Units 1 and 2 are DONE, Unit 3 becomes READY (recompute rule).
 
 ---
 
 ### Unit 0: Foundation Correction — `SourceMetadata.rawPayloadRef` Contract-vs-Source Drift (ARCH-DEBT-033)
 
-**Status:** READY
+**Status:** DONE
 
-**Blocked by:** — (no dependencies, no blocking debt)
+**Blocked by:** — (complete)
+
+**Verification:** Spec #05 §11.3 from `docs/99_source_archive/baseline_v2_6_2/docs/02_child_specs/05_Data_Connector_Normalisation_Implementation_Spec_v1_5.md`. Evidence: rawPayloadRef removed from SourceMetadata contract + SEED_SOURCE fixture; typecheck clean; vitest 601/601 pass (0 new failures); contract↔schema match confirmed by grep (4 fields: connectorId, importRunId, sourceSystem, sourceTimestamp).
 
 **Purpose:** Resolve the canonical-contract over-specification where `SourceMetadata.rawPayloadRef` (in `packages/contracts/src/entities/common.ts`) carries a provenance field that Spec #05 §11.3 assigns to the raw-ingestion record, not the canonical entity. This is a foundation correction: `common.ts` is inherited by every canonical entity, so the drift affects all of them. Closing it before the data-layer entity units re-establishes a clean contract↔schema baseline.
 
@@ -171,9 +173,9 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ### Unit 1: Risk Object DB Schema (ARCH-DEBT-030)
 
-**Status:** BLOCKED
+**Status:** READY
 
-**Blocked by:** Unit 0 (ARCH-DEBT-033 OPEN — `common.ts` inherited by Risk Object)
+**Blocked by:** — (Unit 0 DONE; ARCH-DEBT-030 is this unit's own resolving debt, not self-blocking)
 
 **Purpose:** Close foundational data-layer gap — create missing Risk Object database schema
 
@@ -209,9 +211,9 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ### Unit 2: Strategy Policy DB Schema (ARCH-DEBT-031)
 
-**Status:** BLOCKED
+**Status:** READY
 
-**Blocked by:** Unit 0 (ARCH-DEBT-033 OPEN). ARCH-DEBT-031 is this unit's own resolving debt (not self-blocking).
+**Blocked by:** — (Unit 0 DONE; ARCH-DEBT-031 is this unit's own resolving debt, not self-blocking)
 
 **Purpose:** Close foundational data-layer gap — create missing Strategy Policy database schema
 
@@ -249,7 +251,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Unit 0 (ARCH-DEBT-033 OPEN); Unit 2 (Strategy Policy schema must exist first). ARCH-DEBT-032 is this unit's own resolving debt (not self-blocking).
+**Blocked by:** Unit 2 (Strategy Policy schema must exist first). ARCH-DEBT-032 is this unit's own resolving debt (not self-blocking).
 
 **Purpose:** Close foundational data-layer gap — create missing Case Strategy Binding schema and fixture
 
@@ -287,9 +289,9 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ### Unit 4: Connector Layer Foundation
 
-**Status:** BLOCKED
+**Status:** READY
 
-**Blocked by:** Unit 0 (ARCH-DEBT-033 OPEN — Connector inherits `common.ts`)
+**Blocked by:** — (Unit 0 DONE; no other dependencies)
 
 **Purpose:** Build four-class connector architecture foundation (A/B/C/D), eight signal purposes, conformance tier system
 
@@ -330,7 +332,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Unit 0 (ARCH-DEBT-033 OPEN); Unit 4 (Connector Layer)
+**Blocked by:** Unit 4 (Connector Layer)
 
 **Purpose:** Build canonical entity model, authority resolution, entity matching
 
@@ -370,7 +372,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Unit 0 (ARCH-DEBT-033 OPEN); Unit 2 (Strategy Policy schema); Unit 3 (Case Strategy Binding schema + fixture)
+**Blocked by:** Unit 2 (Strategy Policy schema); Unit 3 (Case Strategy Binding schema + fixture)
 
 **Purpose:** Implement Strategy Layer Runtime Surface — the build-blocking prerequisite to case management, routing, validation/closure, reopening
 
@@ -419,7 +421,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Unit 0 (ARCH-DEBT-033 OPEN); Unit 1 (Risk Object schema); Unit 6 (Strategy Layer — build-blocking)
+**Blocked by:** Unit 1 (Risk Object schema); Unit 6 (Strategy Layer — build-blocking)
 
 **Purpose:** Build closed-loop case lifecycle engine with 12 states, system-owned transitions only
 
@@ -462,7 +464,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Unit 0 (ARCH-DEBT-033 OPEN); Unit 6 (Strategy Layer — Routing Strategy); Unit 7 (Case Lifecycle core)
+**Blocked by:** Unit 6 (Strategy Layer — Routing Strategy); Unit 7 (Case Lifecycle core)
 
 **Purpose:** Build case routing engine consuming Routing Strategy from Strategy Layer
 
@@ -504,7 +506,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Unit 0 (ARCH-DEBT-033 OPEN); Unit 6 (Strategy Layer — Prioritisation Weight Strategy); Unit 7 (Case Lifecycle core)
+**Blocked by:** Unit 6 (Strategy Layer — Prioritisation Weight Strategy); Unit 7 (Case Lifecycle core)
 
 **Purpose:** Build case prioritisation engine consuming Prioritisation Weight Strategy from Strategy Layer
 
@@ -542,7 +544,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Unit 0 (ARCH-DEBT-033 OPEN); Unit 6 (Strategy Layer — SLA Strategy); Unit 7 (Case Lifecycle core)
+**Blocked by:** Unit 6 (Strategy Layer — SLA Strategy); Unit 7 (Case Lifecycle core)
 
 **Purpose:** Build case SLA engine consuming SLA Strategy from Strategy Layer
 
@@ -580,7 +582,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Unit 0 (ARCH-DEBT-033 OPEN); Unit 6 (Strategy Layer — Validation Window Strategy); Unit 7 (Case Lifecycle core)
+**Blocked by:** Unit 6 (Strategy Layer — Validation Window Strategy); Unit 7 (Case Lifecycle core)
 
 **Purpose:** Build validation lifecycle engine (11 states) consuming Validation Window Strategy from Strategy Layer
 
@@ -618,7 +620,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Unit 0 (ARCH-DEBT-033 OPEN); Unit 6 (Strategy Layer — Closure Gate Strategy); Unit 7 (Case Lifecycle core); Unit 11 (Validation Lifecycle)
+**Blocked by:** Unit 6 (Strategy Layer — Closure Gate Strategy); Unit 7 (Case Lifecycle core); Unit 11 (Validation Lifecycle)
 
 **Purpose:** Build closure gate engine (12 gates) consuming Closure Gate Strategy from Strategy Layer
 
@@ -656,7 +658,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Unit 0 (ARCH-DEBT-033 OPEN); Unit 6 (Strategy Layer — Reopening Trigger Strategy); Unit 7 (Case Lifecycle core); Unit 12 (Closure Gate Engine)
+**Blocked by:** Unit 6 (Strategy Layer — Reopening Trigger Strategy); Unit 7 (Case Lifecycle core); Unit 12 (Closure Gate Engine)
 
 **Purpose:** Build reopening trigger engine (14 triggers) consuming Reopening Trigger Strategy from Strategy Layer
 
@@ -694,7 +696,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Unit 0 (ARCH-DEBT-033 OPEN); Unit 4 (Connector Layer); Unit 5 (Normalisation Layer)
+**Blocked by:** Unit 4 (Connector Layer); Unit 5 (Normalisation Layer)
 
 **Purpose:** Build Intelligence Layer integrating four streams (External Threat, External Attack, Internal Behavioural, Posture) into Estate Intelligence Picture
 
@@ -737,7 +739,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Unit 0 (ARCH-DEBT-033 OPEN); Unit 14 (Intelligence Layer — EIP); Units 7–13 (Case Layer)
+**Blocked by:** Unit 14 (Intelligence Layer — EIP); Units 7–13 (Case Layer)
 
 **Purpose:** Build OODA Layer with four-phase tempo (Observe, Orient, Decide, Act) and phase health metrics
 
@@ -779,7 +781,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Unit 0 (ARCH-DEBT-033 OPEN); Unit 15 (OODA Layer); Unit 14 (Intelligence Layer); Units 7–13 (Case Layer)
+**Blocked by:** Unit 15 (OODA Layer); Unit 14 (Intelligence Layer); Units 7–13 (Case Layer)
 
 **Purpose:** Build Command Centre as the operational entry point for Commander SDR Operational Application
 
@@ -824,7 +826,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Unit 0 (ARCH-DEBT-033 OPEN); Units 7–13 (Case Layer); Unit 16 (Command Centre)
+**Blocked by:** Units 7–13 (Case Layer); Unit 16 (Command Centre)
 
 **Purpose:** Build Case Management UI for viewing and progressing cases (system-owned lifecycle only)
 
@@ -864,7 +866,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Unit 0 (ARCH-DEBT-033 OPEN); Unit 14 (Intelligence Layer — Internal Behavioural stream); Unit 5 (Normalisation Layer — Identity)
+**Blocked by:** Unit 14 (Intelligence Layer — Internal Behavioural stream); Unit 5 (Normalisation Layer — Identity)
 
 **Purpose:** Build Identity Intelligence Surface (six-section composition)
 
@@ -903,7 +905,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Unit 0 (ARCH-DEBT-033 OPEN); Unit 14 (Intelligence Layer — Posture stream); Unit 5 (Normalisation Layer — Asset)
+**Blocked by:** Unit 14 (Intelligence Layer — Posture stream); Unit 5 (Normalisation Layer — Asset)
 
 **Purpose:** Build Asset Intelligence Surface (seven-section composition)
 
@@ -941,7 +943,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Unit 0 (ARCH-DEBT-033 OPEN); Unit 14 (Intelligence Layer — External Attack stream); Unit 16 (Command Centre)
+**Blocked by:** Unit 14 (Intelligence Layer — External Attack stream); Unit 16 (Command Centre)
 
 **Purpose:** Build External Operating Picture (external attack surface view)
 
@@ -980,7 +982,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Unit 0 (ARCH-DEBT-033 OPEN); Unit 14 (Intelligence Layer — Internal Behavioural stream); Unit 16 (Command Centre)
+**Blocked by:** Unit 14 (Intelligence Layer — Internal Behavioural stream); Unit 16 (Command Centre)
 
 **Purpose:** Build Internal Operating Picture (internal attack surface view)
 
@@ -1021,7 +1023,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Unit 0 (ARCH-DEBT-033 OPEN); Unit 4 (Connector Layer); Unit 6 (Strategy Layer)
+**Blocked by:** Unit 4 (Connector Layer); Unit 6 (Strategy Layer)
 
 **Purpose:** Build Tenant Admin Surface foundation (second application boundary)
 
@@ -1635,7 +1637,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Unit 0 (ARCH-DEBT-033 OPEN); Unit 4 (Connector Layer Foundation)
+**Blocked by:** Unit 4 (Connector Layer Foundation)
 
 **Purpose:** Build mock connectors for all four classes (A/B/C/D) to support local-first development
 
@@ -1712,7 +1714,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Unit 0 (ARCH-DEBT-033 OPEN); Units 7–13 (Case Layer); Unit 14 (Intelligence Layer); Unit 5 (Normalisation Layer)
+**Blocked by:** Units 7–13 (Case Layer); Unit 14 (Intelligence Layer); Unit 5 (Normalisation Layer)
 
 **Purpose:** Build Commander AI core with grounding in Commander data and refusal framework
 
@@ -1833,7 +1835,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Unit 0 (ARCH-DEBT-033 OPEN); Units 7–13 (Case Layer); Unit 6 (Strategy Layer); Unit 4 (Connector Layer); **ARCH-DEBT-035 (needs re-sourcing to baseline — no dedicated baseline audit-trail spec)**
+**Blocked by:** Units 7–13 (Case Layer); Unit 6 (Strategy Layer); Unit 4 (Connector Layer); **ARCH-DEBT-035 (needs re-sourcing to baseline — no dedicated baseline audit-trail spec)**
 
 **Purpose:** Build comprehensive audit trail (all Commander actions logged immutably)
 
@@ -2109,9 +2111,9 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Total build units:** 50 (Unit 0 foundation-correction + Units 1–49)
 
-**Readiness state (computed 2026-05-31):** READY = 1 (Unit 0). DONE = 0. BLOCKED = 49. See the Live Status Snapshot near the top for the full per-unit table. Status is computed mechanically from dependency-chain status + mapped ARCH-DEBT status (Readiness State Machine).
+**Readiness state (computed 2026-05-31):** READY = 3 (Units 1, 2, 4). DONE = 1 (Unit 0). BLOCKED = 46. See the Live Status Snapshot near the top for the full per-unit table.
 
-**Foundation correction (Team 1):** Unit 0 (closes ARCH-DEBT-033, `common.ts` contract-vs-source drift) — the single current READY unit.
+**Foundation correction (Team 1):** Unit 0 (closed ARCH-DEBT-033, `common.ts` contract-vs-source drift) — DONE.
 
 **Foundational units (Team 1):** 22 (Units 1-22, 38, 40, 43)
 
@@ -2180,7 +2182,7 @@ A build unit is complete when:
 ---
 
 **Last Updated:** 2026-05-31  
-**Status:** ACTIVE — readiness state machine. Build only from the READY set (currently Unit 0). Status recomputes on debt-resolution / unit-completion.  
+**Status:** ACTIVE — readiness state machine. Build only from the READY set (currently Units 1, 2, 4). Status recomputes on debt-resolution / unit-completion.  
 **Enforcement:** ARCH-006 (build-stream sequencing) + ARCH-007 (blocking-debt prerequisite) in `.kiro/testing/conformance-registry.md`, auto-run via post-task-review. "What's next" query defined in `.kiro/steering/execution-discipline.md`.  
 **Authority:** Derived from SYSTEM_KNOWLEDGE_GRAPH.md, DATA_DICTIONARY.md, REBASELINED_BUILD_SCHEDULE_NOTES.md, baseline source. Decision: `DEC-build-readiness-state-machine` (DECISIONS.md).  
 **Sourcing rule:** Never cite the translation layer — all citations from `docs/99_source_archive/baseline_v2_6_2/`

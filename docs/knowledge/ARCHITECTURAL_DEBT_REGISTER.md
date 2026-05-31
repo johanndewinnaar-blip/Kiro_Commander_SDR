@@ -696,12 +696,16 @@ Authority: `.kiro/steering/feature-function-backlog.md` (extended in this update
 - **Scope of fix:** Either (a) remove `rawPayloadRef` from `SourceMetadata` in `packages/contracts/src/entities/common.ts` so the canonical contract matches Spec #05 §11.3, updating any fixtures/resolvers that populate it and re-establishing the contract↔schema match; OR (b) document an explicit, source-cited decision (DECISIONS.md) for why `rawPayloadRef` is retained on the canonical contract as a convenience denormalisation, with the lineage authority remaining the raw-ingestion store via `normalised_entity_refs`. Decision required before either path ships. Cite Spec #05 §11.3.
 - **Affected specs / artifacts:** `packages/contracts/src/entities/common.ts` (`SourceMetadata`); all canonical entity contracts that extend `CommonFields`; `packages/contracts/src/fixtures/seed-tenant.ts` (`SEED_SOURCE`) and all seed fixtures that populate `rawPayloadRef`; `docs/knowledge/DATA_DICTIONARY.md` Common Fields section; Spec #05 §11.1–11.3, §7.4
 - **Scheduled resolution:** Canonical contract reconciliation pass (before Phase 2 connector integration, since real raw-ingestion store lands in Phase 2)
-- **Status:** OPEN
+- **Status:** RESOLVED
 - **Date logged:** 2026-05-31
 - **Last reviewed:** 2026-05-31
+- **Resolution date:** 2026-05-31
+
+**Verification:** Checked against Spec #05 §11.3 (Provenance Requirements) from `docs/99_source_archive/baseline_v2_6_2/docs/02_child_specs/05_Data_Connector_Normalisation_Implementation_Spec_v1_5.md`. Evidence: (1) `rawPayloadRef` removed from `SourceMetadata` in `packages/contracts/src/entities/common.ts` — grep confirms field absent; (2) `SEED_SOURCE` in `seed-tenant.ts` no longer populates it — grep confirms; (3) `vitest run` passes 601 tests with 0 new failures introduced (33 pre-existing DS-1.0/shell failures unchanged); (4) contract now carries exactly the 4 fields the DB schemas persist (connectorId, importRunId, sourceSystem, sourceTimestamp) — contract↔schema match re-established.
 
 **History**
 - 2026-05-31: OPEN — surfaced during `rawPayloadRef` non-persistence investigation. Source (Spec #05 §11) confirms DB schemas correctly omit the field; the drift is the contract over-specifying the canonical provenance set per §11.3.
+- 2026-05-31: RESOLVED — Unit 0 executed path (a): removed `rawPayloadRef` from `SourceMetadata` contract and `SEED_SOURCE` fixture. Contract now matches Spec #05 §11.3 and all DB schemas. DATA_DICTIONARY.md updated. Verification recorded per ARCH-009.
 
 ---
 
