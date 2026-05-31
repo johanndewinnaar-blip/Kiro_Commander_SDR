@@ -69,11 +69,11 @@ A unit is **READY** iff every dependency unit is **DONE** and every mapped chain
 
 Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readiness State Machine above.
 
-**READY (4):** Unit 5 (Normalisation Layer), Unit 6 (Strategy Layer Runtime — build-blocking), Unit 38 (Mock Connectors).
+**READY (5):** Unit 5 (Normalisation Layer), Unit 7 (Case Lifecycle Engine), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors).
 
-**DONE (5):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4.
+**DONE (6):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 6.
 
-**BLOCKED (41):** Units 7–37, 39–49 (except Units 5, 6, 38). Unit 3 blocked on Unit 2. Units 5+ blocked on their dependency chains. All 27 Team 2 units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006.
+**BLOCKED (39):** Units 8–21, 23–37, 39–49 (except Units 5, 7, 22, 38). Unit 3 blocked on Unit 2. Units 5+ blocked on their dependency chains. All 27 Team 2 units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006.
 
 | Unit | Tag | Status | Blocked by |
 |---|---|---|---|
@@ -83,8 +83,8 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 | 3 Case Strategy Binding Schema + Fixture | Foundational | **DONE** | — |
 | 4 Connector Layer Foundation | Foundational | **DONE** | — |
 | 5 Normalisation Layer | Foundational | **READY** | — |
-| 6 Strategy Layer Runtime (build-blocking) | Foundational | **READY** | — |
-| 7 Case Lifecycle Engine | Foundational | BLOCKED | Unit 6 |
+| 6 Strategy Layer Runtime (build-blocking) | Foundational | **DONE** | — |
+| 7 Case Lifecycle Engine | Foundational | **READY** | — |
 | 8 Case Routing Engine | Foundational | BLOCKED | Unit 6; Unit 7 |
 | 9 Case Prioritisation Engine | Foundational | BLOCKED | Unit 6; Unit 7 |
 | 10 Case SLA Engine | Foundational | BLOCKED | Unit 6; Unit 7 |
@@ -99,7 +99,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 | 19 Asset Intelligence Surface | Foundational | BLOCKED | Unit 14; Unit 5 |
 | 20 External Operating Picture | Foundational | BLOCKED | Unit 14; Unit 16 |
 | 21 Internal Operating Picture | Foundational | BLOCKED | Unit 14; Unit 16 |
-| 22 Tenant Admin Surface | Foundational | BLOCKED | Unit 6 |
+| 22 Tenant Admin Surface | Foundational | **READY** | — |
 | 23 Commercial Control Plane | Team 2 | BLOCKED | ARCH-006 (USE_CASE_SCHEDULE.md + PAGE_INVENTORY.md absent) |
 | 24 Drift Detection Engine | Team 2 | BLOCKED | ARCH-006; Unit 5; Unit 4 |
 | 25 Identity Intelligence Engine | Team 2 | BLOCKED | ARCH-006; Unit 5; Unit 14 |
@@ -378,9 +378,11 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ### Unit 6: Strategy Layer Runtime Surface (BUILD-BLOCKING)
 
-**Status:** READY
+**Status:** DONE
 
-**Blocked by:** — (Unit 2 DONE, Unit 3 DONE; all dependencies satisfied)
+**Blocked by:** — (complete)
+
+**Verification:** Spec #32 Strategy Layer Runtime Surface from `docs/99_source_archive/baseline_v2_6_2/docs/02_child_specs/32_Strategy_Layer_Runtime_Surface_Spec.md`. Evidence: typecheck clean (tsc --noEmit exit 0); vitest 32/32 strategy-runtime-surface tests pass (655 total, 0 new failures); policy lifecycle state machine (6 states, valid transitions enforced); approval workflow (validates approval record before activation); semantic versioning (validates increment); effective date ranges (enforces effectiveFrom/effectiveUntil); simulation framework (dry-run before activation); all 6 strategy surfaces consumed by case lifecycle via resolveAllStrategies() (no hardcoded values — returns 'unresolved' when policies missing); policy supersession logic operational.
 
 **Purpose:** Implement Strategy Layer Runtime Surface — the build-blocking prerequisite to case management, routing, validation/closure, reopening
 
@@ -427,9 +429,9 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ### Unit 7: Case Lifecycle Engine — Core State Machine
 
-**Status:** BLOCKED
+**Status:** READY
 
-**Blocked by:** Unit 6 (Strategy Layer — build-blocking)
+**Blocked by:** — (Unit 1 DONE, Unit 6 DONE; all dependencies satisfied)
 
 **Purpose:** Build closed-loop case lifecycle engine with 12 states, system-owned transitions only
 
@@ -472,7 +474,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Unit 6 (Strategy Layer — Routing Strategy); Unit 7 (Case Lifecycle core)
+**Blocked by:** Unit 7 (Case Lifecycle core)
 
 **Purpose:** Build case routing engine consuming Routing Strategy from Strategy Layer
 
@@ -514,7 +516,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Unit 6 (Strategy Layer — Prioritisation Weight Strategy); Unit 7 (Case Lifecycle core)
+**Blocked by:** Unit 7 (Case Lifecycle core)
 
 **Purpose:** Build case prioritisation engine consuming Prioritisation Weight Strategy from Strategy Layer
 
@@ -552,7 +554,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Unit 6 (Strategy Layer — SLA Strategy); Unit 7 (Case Lifecycle core)
+**Blocked by:** Unit 7 (Case Lifecycle core)
 
 **Purpose:** Build case SLA engine consuming SLA Strategy from Strategy Layer
 
@@ -590,7 +592,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Unit 6 (Strategy Layer — Validation Window Strategy); Unit 7 (Case Lifecycle core)
+**Blocked by:** Unit 7 (Case Lifecycle core)
 
 **Purpose:** Build validation lifecycle engine (11 states) consuming Validation Window Strategy from Strategy Layer
 
@@ -628,7 +630,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Unit 6 (Strategy Layer — Closure Gate Strategy); Unit 7 (Case Lifecycle core); Unit 11 (Validation Lifecycle)
+**Blocked by:** Unit 7 (Case Lifecycle core); Unit 11 (Validation Lifecycle)
 
 **Purpose:** Build closure gate engine (12 gates) consuming Closure Gate Strategy from Strategy Layer
 
@@ -666,7 +668,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Unit 6 (Strategy Layer — Reopening Trigger Strategy); Unit 7 (Case Lifecycle core); Unit 12 (Closure Gate Engine)
+**Blocked by:** Unit 7 (Case Lifecycle core); Unit 12 (Closure Gate Engine)
 
 **Purpose:** Build reopening trigger engine (14 triggers) consuming Reopening Trigger Strategy from Strategy Layer
 
@@ -1029,9 +1031,9 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ### Unit 22: Tenant Admin Surface — Foundation
 
-**Status:** BLOCKED
+**Status:** READY
 
-**Blocked by:** Unit 6 (Strategy Layer)
+**Blocked by:** — (Unit 4 DONE, Unit 6 DONE; all dependencies satisfied)
 
 **Purpose:** Build Tenant Admin Surface foundation (second application boundary)
 
@@ -2190,7 +2192,7 @@ A build unit is complete when:
 ---
 
 **Last Updated:** 2026-05-31  
-**Status:** ACTIVE — readiness state machine. Build only from the READY set (currently Units 5, 6, 38). Status recomputes on debt-resolution / unit-completion.  
+**Status:** ACTIVE — readiness state machine. Build only from the READY set (currently Units 5, 7, 22, 38). Status recomputes on debt-resolution / unit-completion.  
 **Enforcement:** ARCH-006 (build-stream sequencing) + ARCH-007 (blocking-debt prerequisite) in `.kiro/testing/conformance-registry.md`, auto-run via post-task-review. "What's next" query defined in `.kiro/steering/execution-discipline.md`.  
 **Authority:** Derived from SYSTEM_KNOWLEDGE_GRAPH.md, DATA_DICTIONARY.md, REBASELINED_BUILD_SCHEDULE_NOTES.md, baseline source. Decision: `DEC-build-readiness-state-machine` (DECISIONS.md).  
 **Sourcing rule:** Never cite the translation layer — all citations from `docs/99_source_archive/baseline_v2_6_2/`

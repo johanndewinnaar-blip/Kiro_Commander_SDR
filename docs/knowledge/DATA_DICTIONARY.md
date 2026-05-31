@@ -222,7 +222,7 @@
 | `approval` | StrategyApproval \| null | workflow-derived | AVAILABLE | — | Approval metadata (approvedBy, approvedAt, condition, rationale) |
 | `effectiveFrom` | string \| null | workflow-derived | AVAILABLE | — | Effective from timestamp |
 | `effectiveUntil` | string \| null | workflow-derived | AVAILABLE | — | Effective until timestamp |
-| `simulationRef` | string \| null | workflow-derived | FUTURE | Missing resolver: strategy-simulator.ts | Simulation result reference |
+| `simulationRef` | string \| null | workflow-derived | AVAILABLE | — | Simulation result reference. Resolver: `strategy-policy-lifecycle.ts` `simulatePolicy()`. |
 | `source` | SourceMetadata | seeded | AVAILABLE | — | Provenance. Contract↔schema aligned per Spec #05 §11.3 (rawPayloadRef removed). |
 | `createdAt` | string (ISO 8601) | system-calculated | AVAILABLE | — | Record creation timestamp |
 | `updatedAt` | string (ISO 8601) | system-calculated | AVAILABLE | — | Record update timestamp |
