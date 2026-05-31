@@ -22,6 +22,13 @@
       "when": 1780244223913,
       "tag": "0002_case_strategy_bindings_unit3",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1780245258812,
+      "tag": "0003_connector_foundation_unit4",
+      "breakpoints": true
     }
   ]
 }

@@ -34,3 +34,50 @@ export type ConnectorState =
   | 'error'
   | 'pending-approval'
   | 'decommissioned';
+
+/** Conformance tier per Spec #61 §4.1 — tracks connector maturity per class */
+export type ConformanceTier = 'certified' | 'full' | 'baseline' | 'planned';
+
+/** All conformance tiers as a constant array */
+export const CONFORMANCE_TIERS: ConformanceTier[] = [
+  'certified',
+  'full',
+  'baseline',
+  'planned',
+];
+
+/** Conformance tier labels */
+export const CONFORMANCE_TIER_LABELS: Record<ConformanceTier, string> = {
+  certified: 'Certified',
+  full: 'Full',
+  baseline: 'Baseline',
+  planned: 'Planned',
+};
+
+/** Per-class conformance record — tracks tier per connector class */
+export interface ClassConformance {
+  class: ConnectorClass;
+  tier: ConformanceTier;
+  certifiedAt: string | null;
+  lastAssessedAt: string;
+}
+
+/** Signal purpose resolution — maps a pull operation to its resolved purposes */
+export interface SignalPurposeResolution {
+  connectorId: string;
+  pullRunId: string;
+  resolvedPurposes: import('./common').SignalPurpose[];
+  resolvedAt: string;
+}
+
+/** Pull operation result */
+export interface PullResult {
+  connectorId: string;
+  runId: string;
+  status: 'success' | 'partial' | 'failed';
+  recordsIngested: number;
+  signalPurposes: import('./common').SignalPurpose[];
+  startedAt: string;
+  completedAt: string;
+  errorDetail: string | null;
+}

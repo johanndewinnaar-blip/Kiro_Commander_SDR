@@ -69,11 +69,11 @@ A unit is **READY** iff every dependency unit is **DONE** and every mapped chain
 
 Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readiness State Machine above.
 
-**READY (2):** Unit 4 (Connector Layer Foundation), Unit 6 (Strategy Layer Runtime — build-blocking).
+**READY (4):** Unit 5 (Normalisation Layer), Unit 6 (Strategy Layer Runtime — build-blocking), Unit 38 (Mock Connectors).
 
-**DONE (4):** Unit 0, Unit 1, Unit 2, Unit 3.
+**DONE (5):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4.
 
-**BLOCKED (44):** Units 5, 7–49 (except Unit 4 and 6). Unit 3 blocked on Unit 2. Units 5+ blocked on their dependency chains. All 27 Team 2 units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006.
+**BLOCKED (41):** Units 7–37, 39–49 (except Units 5, 6, 38). Unit 3 blocked on Unit 2. Units 5+ blocked on their dependency chains. All 27 Team 2 units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006.
 
 | Unit | Tag | Status | Blocked by |
 |---|---|---|---|
@@ -81,8 +81,8 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 | 1 Risk Object DB Schema | Foundational | **DONE** | — |
 | 2 Strategy Policy DB Schema | Foundational | **DONE** | — |
 | 3 Case Strategy Binding Schema + Fixture | Foundational | **DONE** | — |
-| 4 Connector Layer Foundation | Foundational | **READY** | — |
-| 5 Normalisation Layer | Foundational | BLOCKED | Unit 4 (not DONE yet) |
+| 4 Connector Layer Foundation | Foundational | **DONE** | — |
+| 5 Normalisation Layer | Foundational | **READY** | — |
 | 6 Strategy Layer Runtime (build-blocking) | Foundational | **READY** | — |
 | 7 Case Lifecycle Engine | Foundational | BLOCKED | Unit 6 |
 | 8 Case Routing Engine | Foundational | BLOCKED | Unit 6; Unit 7 |
@@ -91,7 +91,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 | 11 Validation Lifecycle Engine | Foundational | BLOCKED | Unit 6; Unit 7 |
 | 12 Closure Gate Engine | Foundational | BLOCKED | Unit 6; Unit 7; Unit 11 |
 | 13 Reopening Trigger Engine | Foundational | BLOCKED | Unit 6; Unit 7; Unit 12 |
-| 14 Intelligence Layer — Four Streams | Foundational | BLOCKED | Unit 4; Unit 5 |
+| 14 Intelligence Layer — Four Streams | Foundational | BLOCKED | Unit 5 |
 | 15 OODA Layer | Foundational | BLOCKED | Unit 14; Units 7–13 |
 | 16 Command Centre | Foundational | BLOCKED | Unit 15; Unit 14; Units 7–13 |
 | 17 Case Management UI | Foundational | BLOCKED | Units 7–13; Unit 16 |
@@ -99,7 +99,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 | 19 Asset Intelligence Surface | Foundational | BLOCKED | Unit 14; Unit 5 |
 | 20 External Operating Picture | Foundational | BLOCKED | Unit 14; Unit 16 |
 | 21 Internal Operating Picture | Foundational | BLOCKED | Unit 14; Unit 16 |
-| 22 Tenant Admin Surface | Foundational | BLOCKED | Unit 4; Unit 6 |
+| 22 Tenant Admin Surface | Foundational | BLOCKED | Unit 6 |
 | 23 Commercial Control Plane | Team 2 | BLOCKED | ARCH-006 (USE_CASE_SCHEDULE.md + PAGE_INVENTORY.md absent) |
 | 24 Drift Detection Engine | Team 2 | BLOCKED | ARCH-006; Unit 5; Unit 4 |
 | 25 Identity Intelligence Engine | Team 2 | BLOCKED | ARCH-006; Unit 5; Unit 14 |
@@ -115,12 +115,12 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 | 35 Governance & Reporting UI | Team 2 | BLOCKED | ARCH-006; Units 7–13; Unit 14; Unit 15 |
 | 36 CISO Dashboard | Team 2 | BLOCKED | ARCH-006; Unit 15; Unit 14; Units 7–13 |
 | 37 Security C2 / War Room | Team 2 | BLOCKED | ARCH-006; Unit 15; Unit 14; Units 7–13 |
-| 38 Mock Connectors | Foundational | BLOCKED | Unit 4 |
+| 38 Mock Connectors | Foundational | **READY** | — |
 | 39 Real Connector Readiness | Team 2 | BLOCKED | ARCH-006; Unit 4; Unit 38 |
 | 40 Commander AI Core | Foundational | BLOCKED | Units 7–13; Unit 14; Unit 5 |
 | 41 AWS Alignment — Evaluation Lane | Team 2 | BLOCKED | ARCH-006; Unit 40; ARCH-DEBT-034 (needs re-sourcing) |
 | 42 Push Governance — Dry-Run | Team 2 | BLOCKED | ARCH-006; Units 7–13; Unit 6 |
-| 43 Audit Trail | Foundational | BLOCKED | Units 7–13; Unit 6; Unit 4; ARCH-DEBT-035 (needs re-sourcing) |
+| 43 Audit Trail | Foundational | BLOCKED | Units 7–13; Unit 6; ARCH-DEBT-035 (needs re-sourcing) |
 | 44 Email Case Communication | Team 2 | BLOCKED | ARCH-006; Units 7–13; Unit 12 |
 | 45 Security Tool Intelligence | Team 2 | BLOCKED | ARCH-006; Unit 4; Unit 14 |
 | 46 Observability & Tool Health UI | Team 2 | BLOCKED | ARCH-006; Unit 45; Unit 16; ARCH-DEBT-036 (needs re-sourcing) |
@@ -295,9 +295,11 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ### Unit 4: Connector Layer Foundation
 
-**Status:** READY
+**Status:** DONE
 
-**Blocked by:** — (Unit 0 DONE; no other dependencies)
+**Blocked by:** — (complete)
+
+**Verification:** Spec #61 Universal Security Signal Connector Contract from `docs/99_source_archive/baseline_v2_6_2/docs/02_child_specs/61_Universal_Security_Signal_Connector_Contract_Spec.md` + Spec #05 §6.4.4. Evidence: typecheck clean (tsc --noEmit exit 0); vitest 22/22 connector-foundation tests pass (623 total, 0 new failures); pull orchestration framework operational (executePull read-only, rejects non-active); signal purpose resolution maps 4 classes → 8 purposes exhaustively; state machine enforced (5 states, valid transitions only, throws on invalid); conformance tier tracked per class (JSONB); multi-class validated (A/B/C/D only per Doctrinal Assertion 11); Drizzle migration 0003_connector_foundation_unit4.sql generated (18 columns, 1 FK, 3 new enums).
 
 **Purpose:** Build four-class connector architecture foundation (A/B/C/D), eight signal purposes, conformance tier system
 
@@ -336,9 +338,9 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ### Unit 5: Normalisation Layer — Canonical Entity Model
 
-**Status:** BLOCKED
+**Status:** READY
 
-**Blocked by:** Unit 4 (Connector Layer)
+**Blocked by:** — (Unit 4 DONE; all dependencies satisfied)
 
 **Purpose:** Build canonical entity model, authority resolution, entity matching
 
@@ -702,7 +704,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Unit 4 (Connector Layer); Unit 5 (Normalisation Layer)
+**Blocked by:** Unit 5 (Normalisation Layer)
 
 **Purpose:** Build Intelligence Layer integrating four streams (External Threat, External Attack, Internal Behavioural, Posture) into Estate Intelligence Picture
 
@@ -1029,7 +1031,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Unit 4 (Connector Layer); Unit 6 (Strategy Layer)
+**Blocked by:** Unit 6 (Strategy Layer)
 
 **Purpose:** Build Tenant Admin Surface foundation (second application boundary)
 
@@ -1641,9 +1643,9 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ### Unit 38: Connector Layer — Mock Connectors (Foundational)
 
-**Status:** BLOCKED
+**Status:** READY
 
-**Blocked by:** Unit 4 (Connector Layer Foundation)
+**Blocked by:** — (Unit 4 DONE; no other dependencies)
 
 **Purpose:** Build mock connectors for all four classes (A/B/C/D) to support local-first development
 
@@ -1841,7 +1843,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Units 7–13 (Case Layer); Unit 6 (Strategy Layer); Unit 4 (Connector Layer); **ARCH-DEBT-035 (needs re-sourcing to baseline — no dedicated baseline audit-trail spec)**
+**Blocked by:** Units 7–13 (Case Layer); Unit 6 (Strategy Layer); ARCH-DEBT-035 (needs re-sourcing)
 
 **Purpose:** Build comprehensive audit trail (all Commander actions logged immutably)
 
@@ -2188,7 +2190,7 @@ A build unit is complete when:
 ---
 
 **Last Updated:** 2026-05-31  
-**Status:** ACTIVE — readiness state machine. Build only from the READY set (currently Units 4, 6). Status recomputes on debt-resolution / unit-completion.  
+**Status:** ACTIVE — readiness state machine. Build only from the READY set (currently Units 5, 6, 38). Status recomputes on debt-resolution / unit-completion.  
 **Enforcement:** ARCH-006 (build-stream sequencing) + ARCH-007 (blocking-debt prerequisite) in `.kiro/testing/conformance-registry.md`, auto-run via post-task-review. "What's next" query defined in `.kiro/steering/execution-discipline.md`.  
 **Authority:** Derived from SYSTEM_KNOWLEDGE_GRAPH.md, DATA_DICTIONARY.md, REBASELINED_BUILD_SCHEDULE_NOTES.md, baseline source. Decision: `DEC-build-readiness-state-machine` (DECISIONS.md).  
 **Sourcing rule:** Never cite the translation layer — all citations from `docs/99_source_archive/baseline_v2_6_2/`

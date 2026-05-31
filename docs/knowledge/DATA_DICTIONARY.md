@@ -183,15 +183,19 @@
 | `classes` | ConnectorClass[] | seeded | AVAILABLE | — | A/B/C/D only (Spec #61): A=SOC Telemetry, B=Operational Verdict, C=Configuration State, D=Threat Intelligence |
 | `sourceType` | string | seeded | AVAILABLE | — | Vendor platform name |
 | `tier` | string | seeded | AVAILABLE | — | core, extended, community |
-| `state` | ConnectorState | seeded | AVAILABLE | — | active, paused, error, pending-approval, decommissioned |
+| `state` | ConnectorState | seeded | AVAILABLE | — | active, paused, error, pending-approval, decommissioned. State machine enforced by `connector-pull-orchestrator.ts` (valid transitions only). |
 | `lastRunAt` | string \| null | workflow-derived | AVAILABLE | — | Last successful run timestamp |
-| `lastRunStatus` | string | workflow-derived | AVAILABLE | — | success, partial, failed, never-run |
+| `lastRunStatus` | string | workflow-derived | AVAILABLE | — | success, partial, failed, never-run (enum in DB schema) |
 | `mappingPackVersion` | string | seeded | AVAILABLE | — | Mapping pack version |
+| `classConformance` | ClassConformance[] \| null | system-calculated | AVAILABLE | — | Per-class conformance tier tracking (Certified/Full/Baseline/Planned per Spec #61 §7). JSONB array of {class, tier, certifiedAt, lastAssessedAt}. |
 | `source` | SourceMetadata | seeded | AVAILABLE | — | Provenance. Contract↔schema aligned per Spec #05 §11.3 (rawPayloadRef removed). |
 | `createdAt` | string (ISO 8601) | system-calculated | AVAILABLE | — | Record creation timestamp |
 | `updatedAt` | string (ISO 8601) | system-calculated | AVAILABLE | — | Record update timestamp |
 
-**DB Schema Reconciliation:** ✅ Contract and schema aligned.
+**Runtime Functions (Unit 4):**
+- `connector-pull-orchestrator.ts` — pull orchestration (read-only), signal purpose resolution, state machine enforcement, conformance tier assessment, multi-class validation. Source: Spec #61.
+
+**DB Schema Reconciliation:** ✅ Contract and schema aligned. DB schema adds `conformanceTierEnum`, `connectorStateEnum`, `lastRunStatusEnum` (typed enums replacing text columns), and `classConformance` JSONB column for per-class conformance tracking.
 
 ---
 
