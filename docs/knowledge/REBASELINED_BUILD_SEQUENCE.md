@@ -69,21 +69,21 @@ A unit is **READY** iff every dependency unit is **DONE** and every mapped chain
 
 Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readiness State Machine above.
 
-**READY (2):** Unit 2 (Strategy Policy DB Schema), Unit 4 (Connector Layer Foundation).
+**READY (2):** Unit 3 (Case Strategy Binding Schema + Fixture), Unit 4 (Connector Layer Foundation).
 
-**DONE (2):** Unit 0 (common.ts foundation correction), Unit 1 (Risk Object DB Schema — ARCH-DEBT-030 RESOLVED).
+**DONE (3):** Unit 0, Unit 1, Unit 2.
 
-**BLOCKED (46):** Units 3, 5–49. Unit 3 blocked on Unit 2. Units 5+ blocked on their dependency chains. All 27 Team 2 units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006.
+**BLOCKED (45):** Units 5–49 (except Unit 3 and 4). Unit 3 blocked on Unit 2. Units 5+ blocked on their dependency chains. All 27 Team 2 units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006.
 
 | Unit | Tag | Status | Blocked by |
 |---|---|---|---|
 | 0 Foundation Correction (common.ts) | Foundational | **DONE** | — |
 | 1 Risk Object DB Schema | Foundational | **DONE** | — |
-| 2 Strategy Policy DB Schema | Foundational | **READY** | — |
-| 3 Case Strategy Binding Schema + Fixture | Foundational | BLOCKED | Unit 2 (not DONE yet); ARCH-DEBT-032 is self-resolving |
+| 2 Strategy Policy DB Schema | Foundational | **DONE** | — |
+| 3 Case Strategy Binding Schema + Fixture | Foundational | **READY** | — |
 | 4 Connector Layer Foundation | Foundational | **READY** | — |
 | 5 Normalisation Layer | Foundational | BLOCKED | Unit 4 (not DONE yet) |
-| 6 Strategy Layer Runtime (build-blocking) | Foundational | BLOCKED | Unit 2; Unit 3 |
+| 6 Strategy Layer Runtime (build-blocking) | Foundational | BLOCKED | Unit 3 |
 | 7 Case Lifecycle Engine | Foundational | BLOCKED | Unit 6 |
 | 8 Case Routing Engine | Foundational | BLOCKED | Unit 6; Unit 7 |
 | 9 Case Prioritisation Engine | Foundational | BLOCKED | Unit 6; Unit 7 |
@@ -213,9 +213,11 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ### Unit 2: Strategy Policy DB Schema (ARCH-DEBT-031)
 
-**Status:** READY
+**Status:** DONE
 
-**Blocked by:** — (Unit 0 DONE; ARCH-DEBT-031 is this unit's own resolving debt, not self-blocking)
+**Blocked by:** — (complete)
+
+**Verification:** Spec #32 Strategy Layer Runtime Surface from `docs/99_source_archive/baseline_v2_6_2/docs/02_child_specs/32_Strategy_Layer_Runtime_Surface_Spec.md`. Evidence: typecheck clean (tsc --noEmit exit 0); vitest 601/601 pass (0 new failures); 13 StrategySurfaceType + 6 StrategyPolicyStatus enum values mapped; all contract fields → schema columns; DATA_DICTIONARY.md updated; ARCH-DEBT-031 RESOLVED with verification.
 
 **Purpose:** Close foundational data-layer gap — create missing Strategy Policy database schema
 
@@ -251,9 +253,9 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ### Unit 3: Case Strategy Binding Schema + Fixture (ARCH-DEBT-032)
 
-**Status:** BLOCKED
+**Status:** READY
 
-**Blocked by:** Unit 2 (Strategy Policy schema must exist first). ARCH-DEBT-032 is this unit's own resolving debt (not self-blocking).
+**Blocked by:** — (Unit 2 DONE; ARCH-DEBT-032 is this unit's own resolving debt, not self-blocking)
 
 **Purpose:** Close foundational data-layer gap — create missing Case Strategy Binding schema and fixture
 
@@ -374,7 +376,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Unit 2 (Strategy Policy schema); Unit 3 (Case Strategy Binding schema + fixture)
+**Blocked by:** Unit 3 (Case Strategy Binding schema + fixture)
 
 **Purpose:** Implement Strategy Layer Runtime Surface — the build-blocking prerequisite to case management, routing, validation/closure, reopening
 
@@ -2184,7 +2186,7 @@ A build unit is complete when:
 ---
 
 **Last Updated:** 2026-05-31  
-**Status:** ACTIVE — readiness state machine. Build only from the READY set (currently Units 2, 4). Status recomputes on debt-resolution / unit-completion.  
+**Status:** ACTIVE — readiness state machine. Build only from the READY set (currently Units 3, 4). Status recomputes on debt-resolution / unit-completion.  
 **Enforcement:** ARCH-006 (build-stream sequencing) + ARCH-007 (blocking-debt prerequisite) in `.kiro/testing/conformance-registry.md`, auto-run via post-task-review. "What's next" query defined in `.kiro/steering/execution-discipline.md`.  
 **Authority:** Derived from SYSTEM_KNOWLEDGE_GRAPH.md, DATA_DICTIONARY.md, REBASELINED_BUILD_SCHEDULE_NOTES.md, baseline source. Decision: `DEC-build-readiness-state-machine` (DECISIONS.md).  
 **Sourcing rule:** Never cite the translation layer — all citations from `docs/99_source_archive/baseline_v2_6_2/`

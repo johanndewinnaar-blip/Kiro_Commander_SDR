@@ -663,12 +663,16 @@ Authority: `.kiro/steering/feature-function-backlog.md` (extended in this update
 - **Scope of fix:** Create `packages/db/src/schema/strategies.ts` with Drizzle schema matching the contract. Map 13 StrategySurfaceType values (sla, threshold, automation-boundary, routing, posture, mission-objective, operational-tempo, domain-specific, prioritisation-weight, validation-window, closure-gate, reopening-trigger, evidence-sufficiency) and 6 StrategyPolicyStatus values (draft, pending-approval, approved, active, superseded, rejected). Add to schema index exports.
 - **Affected specs / artifacts:** `packages/contracts/src/entities/strategy.ts`; `packages/contracts/src/fixtures/seed-strategies.ts`; `packages/db/src/schema/` (missing file); Spec #32 Strategy Layer Runtime Surface
 - **Scheduled resolution:** Data-layer completion pass (before Phase 2)
-- **Status:** OPEN
+- **Status:** RESOLVED
 - **Date logged:** 2026-05-31
 - **Last reviewed:** 2026-05-31
+- **Resolution date:** 2026-05-31
+
+**Verification:** Checked against Spec #32 Strategy Layer Runtime Surface from `docs/99_source_archive/baseline_v2_6_2/docs/02_child_specs/32_Strategy_Layer_Runtime_Surface_Spec.md`. Evidence: (1) typecheck clean (`tsc --noEmit` on schema + contract — exit 0); (2) `vitest run` — 601/601 pass (0 new failures); (3) schema maps all 13 StrategySurfaceType enum values and 6 StrategyPolicyStatus enum values; (4) contract fields mapped to schema columns (surfaceType, policyVersion, status, configuration as JSONB, proposedBy, proposedAt, approval as JSONB, effectiveFrom, effectiveUntil, simulationRef, standard tenant FK + 4 source columns per Spec #05 §11.3).
 
 **History**
 - 2026-05-31: OPEN — surfaced from DATA_DICTIONARY.md contract-vs-schema reconciliation
+- 2026-05-31: RESOLVED — Unit 2 created `packages/db/src/schema/strategies.ts` with full Drizzle schema matching contract. Verification recorded per ARCH-009.
 
 ---
 

@@ -200,9 +200,9 @@
 **Source:** Spec #32 Strategy Layer Runtime Surface Specification  
 **Coverage:** Partial (Spec #32 base spec read)  
 **Contract:** `packages/contracts/src/entities/strategy.ts`  
-**DB Schema:** ❌ NOT FOUND in `packages/db/src/schema/`  
+**DB Schema:** `packages/db/src/schema/strategies.ts` ✅  
 **Fixture:** `packages/contracts/src/fixtures/seed-strategies.ts` ✅  
-**Status:** AVAILABLE (fixture exists) — **DIVERGENCE: contract exists, db schema missing**
+**Status:** AVAILABLE (fixture exists, db schema created)
 
 | Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
 |-------|------|----------------------|--------------|---------------------|-------|
@@ -223,7 +223,7 @@
 | `createdAt` | string (ISO 8601) | system-calculated | AVAILABLE | — | Record creation timestamp |
 | `updatedAt` | string (ISO 8601) | system-calculated | AVAILABLE | — | Record update timestamp |
 
-**DB Schema Reconciliation:** ❌ **DIVERGENCE** — Contract exists, DB schema missing. Propose ARCH-DEBT entry.
+**DB Schema Reconciliation:** ✅ Contract and schema aligned. DB schema flattens `tenant` to `tenantId` reference, `source` to individual columns, `approval` to JSONB, `proposedAt`/`effectiveFrom`/`effectiveUntil` to timestamptz.
 
 ---
 
@@ -409,26 +409,26 @@ These are code-conformance debt items (contract field removed, test fixtures not
 
 ### Contract vs DB Schema Reconciliation
 
-**Aligned (8):**
+**Aligned (9):**
 - Asset ✅
 - Case ✅
 - Identity ✅
 - Risk Object ✅
 - Connector ✅
+- Strategy Policy ✅
 - Audit Event ✅
 - Common Fields ✅
 - Case Lifecycle (transitions in audit events) ✅
 
-**Divergences (2):**
-1. **Strategy Policy** — Contract + fixture exist, DB schema missing
-2. **Case Strategy Binding** — Contract exists, DB schema + fixture missing
+**Divergences (1):**
+1. **Case Strategy Binding** — Contract exists, DB schema + fixture missing
 
 **Proposed Architectural Debt Entries:**
-- ARCH-DEBT-031: Strategy Policy DB schema missing (contract + fixture exist)
 - ARCH-DEBT-032: Case Strategy Binding incomplete (contract exists, db schema + fixture missing)
 
 **Resolved Architectural Debt:**
 - ARCH-DEBT-030: Risk Object DB schema missing (contract + fixture exist) — ✅ RESOLVED (Unit 1)
+- ARCH-DEBT-031: Strategy Policy DB schema missing (contract + fixture exist) — ✅ RESOLVED (Unit 2)
 
 ---
 

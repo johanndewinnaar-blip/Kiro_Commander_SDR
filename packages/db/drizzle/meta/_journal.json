@@ -8,6 +8,13 @@
       "when": 1780231319634,
       "tag": "0000_risk_objects_unit1",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1780242839832,
+      "tag": "0001_strategy_policies_unit2",
+      "breakpoints": true
     }
   ]
 }
