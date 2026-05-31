@@ -2,7 +2,7 @@
 
 **Status:** First clean derivation under the locked `SOURCING_RULE.md`.
 **Sourced exclusively from:** `docs/99_source_archive/baseline_v2_6_2/` (masters + child specs #01–#75).
-**Excluded from sourcing:** the `.kiro/specs/` translation layer (folders 00–43) — not authority for knowledge work.
+**Excluded from sourcing:** the Kiro translation layer (per locked `SOURCING_RULE.md`) — not authority for knowledge work.
 **Read state:** every file cited below was opened in-session for this build; section coverage is recorded in `COVERAGE.md`.
 
 This document is a structural map of *what Commander SDR is*, derived from the baseline. It is not a build plan and not a roadmap. It is the substrate that subsequent artefacts (`DOMAIN_REGISTER.md`, `RELATIONSHIP_MAP.md`, `ARCHITECTURAL_FINDINGS.md`) project from.
@@ -72,12 +72,21 @@ Every pull operation produces signal that resolves to one or more of eight canon
 4. **Detection Signal** — asserted event not yet resolved (EDR detection, NDR model breach, SIEM alert pre-case) → External Attack Intelligence stream, priority engine attack-context input.
 5. **Case Signal** — managed investigation workflow with state, assignee, severity (SIEM incident, SOC platform case, XDR investigation, MDR ticket) → External Attack Intelligence stream, Operating Pictures, External Attack Correlation case type.
 6. **Inventory Signal** — existence of an entity (asset, identity, application, network device, cloud resource) → canonical entity model.
-7. **Behavioural Signal** — behavioural patterns observable in tool data (referenced in Spec #61 §3 enumeration; full §3.7 body truncated in this read pass).
+7. **Behavioural Signal** — aggregate behavioural summaries about an entity (risk scores, anomaly counts, dormancy flags, privilege escalation patterns); tool-computed risk indicators. Examples (Spec #61 §3.7): per-identity risk scores from identity platforms, per-asset behavioural risk from EDR, anomaly counters from NDR, sign-in risk scores from Entra ID Protection, UEBA outputs. → Risk scoring engine (existing v2.5 summary counter framework, extended for v2.6); aggregates as inputs to Identity Intelligence Surface (Spec #68) and Asset Intelligence Surface (Spec #69).
 8. **Threat Signal** — external threat intelligence (referenced in MTS v7.0 §2.2 list; resolves to External Threat Intelligence stream and the estate-matching engine).
 
 ### 3.3 Conformance tier system
 
-Per Spec #61 §4.1 (read by reference in MTS v7.0 §2.3), every connector has a per-class conformance tier. Conformance tier per class is captured in `docs/03_api_specs/INDEX.md` and informs deployment planning. The full four-tier nomenclature appears in the v2.6 Baseline Configuration Addendum (Spec #55) as `connector.conformance.*` parameters; explicit tier names were not enumerated in the §4.1 portion read.
+Per Spec #61 §4.1, every connector has a per-class conformance tier. Conformance tier per class is captured in `docs/03_api_specs/INDEX.md` and informs deployment planning. The four named tiers (Spec #61 §4.1, Class A; same scheme reused for Classes B/C/D in §§4.2–4.4):
+
+| Tier | Definition |
+|---|---|
+| **Certified** | Built, tested against vendor sandbox, conformance test suite running continuously, deployment validated in pilot. |
+| **Full** | Built, tested against customer data in pilot, vendor-specific tuning completed. |
+| **Baseline** | Built against vendor documentation, customer-specific tuning expected on deployment. |
+| **Planned** | Named in `docs/03_api_specs/INDEX.md`, not yet built. |
+
+The same four tiers govern test cadence (Spec #61 §7): Certified runs continuously against sandbox + production, Full runs in pilot environments, Baseline runs at deployment, Planned has the test suite specified but not yet executed. Spec #55 v2.6 §V2.6-10 exposes these tier states through `connector.conformance.*` configuration parameters.
 
 ---
 
@@ -136,6 +145,34 @@ Commander is a platform with **three distinct application surfaces** (binding do
 
 **Visual treatment (Spec #41 §4):** Operational App carries the strongest command/intelligence treatment (intensity ceiling Level 3); Tenant Admin a controlled administrative console (ceiling Level 2); Internal Control Plane a secure operator-console (Level 2, with Level 3 only for emergency controls).
 
+### 6.1 SDR Commercial Control Plane runtime contract (SDR Control Plane Specification v1.1 §§7–19)
+
+The Commander Internal Control Plane is implemented per the **SDR Commercial Control Plane Specification v1.1**. The runtime contract between the Control Plane and SDR instances is binding.
+
+**Source-of-truth coupling (§§7, 13).** The **Feature Registry FR-001** is the authoritative list of all discrete feature controls in Commander SDR. No feature flag key may be used in the Control Plane, in the entitlement manifest, in the SDR platform application, in the tenant admin panel, in the operator console, in tests, or in fixtures unless it is registered in `SDR_Feature_Registry_FR001_v1_0.md`. Adding a feature requires: register in FR-001 → assign commercial gate → assign control scope → assign phase → update manifest schema if a new module/gate is introduced → add platform enforcement → add operator and/or tenant-admin controls where relevant → add tests.
+
+**Entitlement manifest (§8).** Each SDR instance pulls a signed `EntitlementManifest` from the Control Plane. The manifest declares: `manifest_id`, `tenant_id`, `instance_id`, `issued_at`, `expires_at`, `manifest_version`, `commercial_status` (one of `trial | active | suspended | expired | demo | dogfood`), `deployment_model` (one of `saas | self_hosted_connected | self_hosted_airgapped`), `plan`, `entitlements` (record of commercial gate → boolean), `limits`, `feature_states` (record of flag_key → `{active, scope, reason}` where `scope ∈ { operator_controlled | tenant_configurable | locked | hidden }`), `ring` (`{ring_id, ring_name}`), and `signature`. The manifest must be signed by the Control Plane and signature-verified by the SDR instance before acceptance.
+
+**Effective feature state computation (§9).** The SDR instance computes effective feature state per flag from the manifest plus the flag's `commercial_gate`, `phase`, and `control_scope`. The reasons surfaced are `not_entitled`, `not_yet_available`, `operator_active`, `operator_inactive`, `operator_not_enabled`, or `tenant_configurable`. Visibility is one of `locked | hidden | operator_controlled | locked_by_operator | configurable`. **Local enforcement (§3.3):** the SDR platform application enforces feature state at the backend API and service layer, not only in the UI.
+
+**Three control scopes (§13.2):** `operator-only` (Commander operator decides; tenant cannot toggle), `tenant-admin` (tenant admin configures within entitlement), `operator-sets-tenant-configures` (operator gates first; tenant admin then configures within that gate). The tenant admin panel is technically prevented from toggling operator-only features (§14).
+
+**Special tenant types (§10).** Dogfood tenants (internal SDR team) may receive flags earlier than production but every flag must still exist in FR-001 and every activation is audited (§10.1). Demo tenants use `DemoScenario` records (§10.3) that name enabled/disabled features, seeded data packs, reset scripts, default ring, and expiry; demo reset scripts must not run against production customer tenants. Trial state (§10.4) is recorded by module and expiry date; expired trials revert to locked unless converted.
+
+**Usage metering (§11).** The platform may report aggregated usage events (active users, case counts, connector counts, feature usage, push proposal counts, push execution counts where enabled, Commander AI execution counts, automation savings hours, audit export counts) to the Control Plane. Usage events MUST NOT include asset names, identity names, case evidence, raw payloads, tenant secrets, or confidential remediation details.
+
+**Self-hosted licence model (§12).** Connected self-hosted deployments retrieve signed manifests from the Control Plane. Air-gapped deployments use offline signed licence files generated by the Control Plane and imported into the SDR instance. The SDR platform uses a `LicenceService` abstraction that accepts either form.
+
+**Code-update boundary (§15).** The Control Plane does not deploy code, build images, execute migrations or push updates. **GitHub Actions / CI-CD owns deployment**; the Control Plane and the deployment pipeline are separate systems sharing state through the Control Plane API and GitHub webhooks. The CI/CD pipeline may query the Control Plane for ring membership and report deployment completion status back; the Control Plane does not execute deployments.
+
+**Control Plane APIs (§16).** Instance lifecycle (`POST /instances/register`, `POST /instances/heartbeat`, `GET /instances/{id}/status`); manifest (`GET /tenants/{id}/manifest`, `POST /tenants/{id}/manifest/refresh`); features (`GET /features`, `GET /features/{key}`, `PATCH /features/{key}/tenant-state`, `PATCH /features/{key}/ring-state`); entitlements + trial + suspend/reactivate (`GET/PATCH /tenants/{id}/entitlements`, `POST /tenants/{id}/trials`, `POST /tenants/{id}/suspend`, `POST /tenants/{id}/reactivate`); rings (`GET /rings`, `PATCH /rings/{id}/tenants`, `POST /rings/{id}/progression`); usage (`POST /usage/events`, `GET /tenants/{id}/usage`); offline licence files (`POST /tenants/{id}/licence-files`, `GET /tenants/{id}/licence-files/{licence_id}`).
+
+**Security, audit and tenant isolation (§17).** Control Plane is internal only. Operator access requires operator identity, operator RBAC, MFA and audit logging. Audit is required for entitlement changes, feature activation/deactivation, tenant state changes, ring assignment changes, trial start/extension/expiry, demo reset, dogfood enablement, manifest generation, offline licence generation, operator access, failed signature validation, and API errors affecting commercial state. The Control Plane MUST NOT store customer connector secrets. Manifest and licence signing keys must be protected and rotatable.
+
+**Implementation phasing (§18).** Feature Registry registration, Tenant Admin Panel spec, Control Plane spec all are immediate-baseline. `LicenceService` abstraction, connected entitlement manifest, feature effective-state enforcement, tenant-admin settings based on manifest, deployment ring metadata are Phase 1. CI/CD ring query / status reporting and usage metering are Phase 1/2. Demo / dogfood scenario management is Phase 1/2. Offline licence file generation and air-gapped self-hosted support are Phase 3.
+
+**Acceptance criteria (§19).** The specification is complete when the Control Plane operates as the authoritative source for commercial state across SDR deployments, FR-001 is the only place feature keys are defined, manifests are signed and verified, effective feature state is enforced at the platform service layer, the three control scopes operate correctly, and the audit chain captures every change.
+
 ---
 
 ## 7. The Closed-Loop Case Engine
@@ -152,7 +189,11 @@ Required minimum fields: `risk_object_id`, `risk_object_type`, `domain`, `source
 
 `identity` · `architecture` · `vulnerability` · `exposure` · `control` · `drift` · `tool_health` · `coverage` · `blast_radius` · `asset` · `communication` · `trust_boundary` · `BAS` · `SIEM_SOAR` · `shared_responsibility` · `security_debt` · `exception`
 
-**v2.6 extension (MTS v7.0 §6.3):** the `risk_object_type` enum extends with at least `ooda_phase_degradation` (and additional types listed in MTS §6.3 — full list truncated in this read pass; recorded as **GAP** for completion in a follow-up read of MTS §6.3).
+**v2.6 extension (MTS v7.0 §6.3 verbatim):** the `risk_object_type` enum extends with five new values, one per v2.6 case type:
+
+`external_attack_correlation` · `verdict_pattern` · `coverage_blindspot` · `policy_effectiveness` · `ooda_phase_degradation`
+
+Combined with the 17-value v2.5 base, the v2.6 RiskObject enum totals 22 values.
 
 ### 7.2 Case binding outcomes
 
@@ -253,6 +294,80 @@ Source: Spec #08 `08_Case_Management_Workflow_Spec.md` §V2.6-1 (v2.6 Extension 
 
 Priority is modulated by the Context-Aware Drift Prioritisation Matrix (Spec #74) for case types that touch drift state.
 
+### 7.9 Cognitive Case Handling Engine — internal mechanics (Spec #08 §§5–15)
+
+Spec #08 (Case Management & Workflow) is the binding engineering spec for the **Cognitive Case Handling Engine (CCHE)**. The CCHE operates above the universal closed-loop case lifecycle (§§7.1–7.7) and adds deterministic scoring, ranking, assignment, override governance, audit and acceptance discipline.
+
+#### 7.9.1 Three deterministic scores (Spec #08 §3)
+
+The CCHE is governed by three formulae, all configurable via the SOM Configuration Panel with versioning and audit trail:
+
+- **Case Risk Score (CRS, §3.1)** — single normalised metric representing current risk magnitude of a parent case. Platform's objective function — the number every action, assignment and workflow is oriented to reduce.
+- **Momentum Score (MS, §3.2)** — measures how quickly a case's risk is being reduced. Positive = active effective remediation; zero or negative = stalling, blocked, or unproductive investigation loops.
+- **Workload Capacity Score (WCS, §3.3)** — per-analyst capacity metric used by the Assignment Engine. WCS = 100 indicates a fully available analyst; WCS = 0 indicates an analyst at maximum capacity.
+
+#### 7.9.2 Case Action Algorithm (CAA, §5)
+
+Produces a deterministic ranking of actionable sub-cases that maximises expected CRS reduction per unit of cognitive cost. The ranked output is the **Next Best Action (NBA)** list, presented to the assigned analyst on the case detail view. Inputs combine `adjustedImpact`, `aisNormalised`, `typeMultiplier` and `frictionPenalty` (the latter accounts for: number of approvals required (each adds 0.05), number of distinct systems touched (each adds 0.03), number of stakeholder contacts required (each adds 0.04), context switch from analyst's current domain (adds 0.10), capped at 0.50). The CAA must be deterministic — identical inputs MUST produce identical ranking on every invocation; ties on `adjustedImpact` resolve by `subCaseId` lexicographic order. **Push preference rule:** if a Push sub-case `adjustedImpact ≥ topNonPushAdjustedImpact × 0.90`, Push is elevated to rank 1.
+
+#### 7.9.3 Parent and SubCase state machines (§§6, 7)
+
+Parent case state machine (§6) extends MTS §13.3 with CRS-driven transitions and guards; no existing states or transitions are removed or modified. SubCase state machine (§7) is a four-state model with CCHE-specific transitions.
+
+#### 7.9.4 Assignment Engine (§8)
+
+Extends the existing case-assignment model (MTS §§13.10, 13.17) without replacing it. Adds the CCHE scoring layer, override governance, workload-mix enforcement and anti-hoarding rules.
+
+- **Assignment scoring (§8.1)** — when a sub-case enters Open or returns to Open, the engine evaluates all eligible analysts and computes an assignment score per analyst; highest-scoring eligible analyst is selected; the assignment decision, score breakdown and all factor values are recorded in the sub-case entity and visible to the SOM via Case Pulse.
+- **Workload mix enforcement (§8.2)** — over each analyst's rolling window (default 14 days), the engine tracks actual sub-case type distribution against `WorkloadMix.targetRatios`; SOM can adjust ratios per-analyst or override during surge with logged rationale.
+- **Override governance — AutoOn / AutoOff / Locked (§8.3)** — every sub-case has an `autoAssignmentState` field governing whether the CCHE may auto-assign it; every parent case also has an `autoAssignmentState` governing all sub-cases unless individually overridden.
+- **Anti-hoarding (§8.4)** — analyst retaining a sub-case beyond AutoOff TTL without demonstrable progress is flagged for SOM review (alert is not shown to the analyst — escalation is handled at SOM level).
+- **Reassignment (§8.5)** — sub-cases may be reassigned at any time by SOM, the analyst, or the engine.
+
+#### 7.9.5 Case Pulse — SOM Command Surface (§9)
+
+Real-time SOM command dashboard, dedicated workspace view (specified at presentation level in Spec #11b; specified at data and behaviour level in Spec #08 §9).
+
+- **Three operating modes (§9.1)** in `SOMConfig.operatingMode` — mode changes logged with mandatory SOM rationale.
+- **SOM controls (§9.2)** including export Case Pulse snapshot — every action logged with actor, timestamp, rationale.
+- **Telemetry obligations (§9.3)** — Case Pulse must surface workload, assignment status, momentum, hoarding alerts, override states, mode state, and queue health in real time.
+
+#### 7.9.6 Teams, Ranks (L0–L7), Specialisms (§10)
+
+- **Team model (§10.1)** — Teams are first-class entities. Team Leaders designated by SOM with authority to reassign within team, set WorkloadMix, review Operational Passport entries, approve rank promotions up to L5 (L6+ requires SOM approval).
+- **Rank ladder L0–L7 (§10.2)** — finer-grained progression mechanism within the existing 4-level grade band (MTS §13.20). MTS grades govern RBAC and approval authority (unchanged); CCHE ranks govern Operational Passport progression, assignment scoring priority within a grade band, career visibility and specialism recognition.
+- **Grade-to-rank mapping (§10.3)** — within the same grade band, higher-ranked analysts receive priority for complex sub-cases (`impactWeight ≥ 7` or Push on critical assets) via the `rankScore` factor.
+- **Specialism model (§10.4)** — nine specialism domains: Cloud Security, Identity Intelligence, Network Defence, Endpoint Operations, Threat Response, Vulnerability Management, Compliance and Assurance, Architecture Security, Push Operations.
+- **Rank progression (§10.5)** — promotion requires SOM/Team Leader review and approval; evidence in the Operational Passport; metric criteria met.
+
+#### 7.9.7 Operational Passport (§11)
+
+The analyst's verified career record within Commander SDR. Architecture-level governance in MTS §13.34; Spec #08 §11 provides the spec-level data model. SHA-256 hash chain produces a verifiable credential record per analyst.
+
+#### 7.9.8 Evidence Packs and Rollback Snapshots (§12)
+
+Extends MTS §§13.8, 13.11 to require evidence packs **for every sub-case action type** — not just push actions.
+
+- **Evidence Pack schema (§12.1)** — structured evidence per action type.
+- **Auto-healing behaviour (§12.2)** — when continuous revalidation (MTS §13.31) detects a self-healed condition, the CCHE writes an evidence pack with `actor: 'system'`; the case transitions to AUTO-RESOLVED; Commander generates a confirmation note (MTS §13.31); evidence pack is exportable for audit.
+- **Rollback snapshot requirements (§12.3)** — for all Push sub-cases (extending MTS §14.3): valid rollback snapshot is required; Push aborts if rollback generation fails.
+
+#### 7.9.9 Audit and logging requirements (§13)
+
+All CCHE events MUST be written to the immutable audit trail (MTS §17.6, hash-chained, tamper-evident). Mandatory event types:
+
+`crs_computed` · `caa_computed` · `nba_presented` · `assignment_made` · `override_set` · `override_expired` · `hoarding_detected` · `auto_park` · `phase_transition` · `som_mode_change` · `som_config_change` · `evidence_pack_created` · `rank_promotion` · `specialism_awarded`.
+
+All events include `tenantId` for tenant isolation.
+
+#### 7.9.10 Migration notes (§14) and email closed-loop alignment (§14A)
+
+Migration (§14) covers existing cases coming onto the CCHE schema (CRS initialisation, SubCase migration, AutoAssignment defaults, Operational Passport backfill, SOMConfig initialisation, evidence packs from migration date forward). §14A aligns Spec #8 with MP v4.7 / MTS v6.7 §13.26A / Spec #26a for **closed-loop email communication**: communication state values (`not_started | initiated | awaiting_response | in_discussion | stale | escalated | closed`); email events influence communication state, stakeholder engagement state, SLA reminders, no-response escalation, closure-readiness checks; email events do NOT by themselves close technical remediation work without normal SDR validation evidence. Vulnerability Management workflow (§14A.6) supports inbound advisory intake, CVE/asset extraction, case creation/linking, acknowledgement to notifier, owner engagement, update cadence, dispute handling, closure confirmation.
+
+#### 7.9.11 Acceptance criteria (§15)
+
+Seven epics with binding acceptance criteria and tests: **A — Case Risk Engine** (CRS computation, CRS timeline API); **B — Case Action Algorithm** (determinism, dependency handling, explainability, push preference); **C — Assignment Engine** (WCS computation, scoring & eligibility, anti-hoarding TTL); **D — Override Governance** (audit, inactivity escalation); **E — Teams and Ranks** (team metrics, Operational Passport with SHA-256 hash chain verifiable via endpoint, no automatic promotion); **F — Case Pulse** (mode-switch rationale capture, SOMConfig versioning + rollback); **G — Evidence Packs** (creation per action type, valid rollback snapshot for Push, auto-healing evidence pack with `actor='system'`).
+
 ---
 
 ## 8. Routing Model and Strategy Layer
@@ -330,7 +445,7 @@ The two are complementary, not substitutes.
 | **Observe** | *How well is Commander seeing the estate right now?* | Class A/B/C/D connectors; Inverse Discovery | Connector freshness per class; signal volume by purpose and class; coverage completeness; blind-spots; aggregate Observe phase health score 0–100 |
 | **Orient** | *What does the signal mean in the context of this estate?* | Drift detection (~240 models across 13 domains); risk scoring; blast radius; pre-warned classification (#71); architecture intelligence; identity-chain computation; threat relevance scoring; entity + authority resolution | Drift detection tempo; risk-model freshness; architecture-intelligence status; classification distribution (pre-warned/protected/novel); blast-radius computation tempo; aggregate Orient phase health score |
 | **Decide** | *Given what we understand, what should be done?* | Remediation generation (push payloads, detection specs, compensating controls, manual recommendations); routing engine (#31); priority boost (#28); Context-Aware Drift Prioritisation Matrix (#74); tactical-objective auto-promotion; approval orchestration | Decision throughput; queue depth; approval cycle time; routing accuracy; auto-promotion activity; aggregate Decide phase health score |
-| **Act** | *Was what was decided actually done?* (full §3.4 body truncated in this read) | Push execution, ITSM dispatch, detection-spec deployment, manual remediation completion, validation | Execution throughput, latency, success rate, validation pending, failed actions, closure tempo (per Spec #67 §6) |
+| **Act** | *Was what was decided actually done?* | Push execution engine (Spec #14, Spec #20); SOAR dispatch interface; ITSM record creation; detection-spec handoff (Spec #15); compensating-control deployment tracking; validation engine (Spec #30); manual-remediation tracking | Execution throughput (push actions, ITSM dispatches, specs delivered, controls deployed); execution latency (decision-approved to action-executed by method); execution success rate (pushes succeeded vs rolled back, dispatches acknowledged, specs deployed); validation pending count; failed-action count (rollbacks, refusals, rejections, abandonments); aggregate Act phase health score |
 
 ### 9.2 OODA → SDR closed-loop mapping
 
@@ -357,6 +472,46 @@ Five dashboards comprise the family:
 3. **Decide Phase Dashboard**
 4. **Act Phase Dashboard**
 5. **Command Tempo Dashboard** — unified executive view; the CISO's primary executive surface alongside the Operating Pictures.
+
+#### 9.3.1 Act Phase Dashboard composition (Spec #67 §6)
+
+**Purpose:** answer *was what was decided actually done?*
+
+**Composition (panels):**
+- Act phase health score gauge
+- Execution throughput panel — push actions, ITSM dispatches, detection specifications, controls deployed, manual remediations completed
+- Execution latency panel — time from approval to execution, by execution method
+- Execution success rate panel — fraction of pushes succeeded vs rolled back, dispatches acknowledged, specifications deployed
+- Validation pending panel — actions executed but not yet validated
+- Failed actions panel — pushes rolled back, dispatches refused, specifications rejected, manual remediations abandoned
+- Closure tempo panel — cases reaching `CLOSED_BY_SYSTEM` per time window
+
+**Drill paths:**
+- Execution method → latency per method → bottleneck identification
+- Owner team → success rate and latency per team
+- Failed actions list → root-cause analysis → recovery routing
+
+**Primary personas:** SOM, Push Operations, Platform Engineering, CISO.
+
+**Phase degradation cases (Spec #58 §3.4):** execution success rate below threshold, latency above threshold, or failed-action count above threshold generates an OODA Tempo Degradation case routed to push operations, platform team, or SOM depending on root cause.
+
+#### 9.3.2 Command Tempo Dashboard composition (Spec #67 §7)
+
+**Purpose:** unified CISO-grade executive view of OODA across all four phases.
+
+**Composition:**
+- Four phase health scores as four-quadrant view, colour-coded
+- OODA tempo headline metric (average time for a finding to traverse the full cycle) with trend indicator (improving / stable / degrading / failing)
+- Bottleneck identification panel — which phase is the current bottleneck with context
+- OODA loop count panel — concurrent loops in flight, distribution by case type, distribution by domain
+- Strategic priority progress — rollup of OODA loops contributing to each active strategic priority, with trajectory
+- Tactical priority progress — rollup per active tactical priority
+- Top three bottlenecks — current OODA Tempo Degradation cases with severity
+- Top three improvements — phases recently recovered, tempo improvements achieved
+
+**Drill paths:** click any phase score → opens that phase dashboard; click bottleneck → opens OODA Tempo Degradation case; click strategic priority → Spec #28 detail; click tempo metric → tempo decomposition by case type and domain.
+
+**Primary personas:** CISO (primary), SOM, Risk Analyst.
 
 **Four reporting cadences** against the same data substrate (Spec #67 §8):
 - Hourly Tactical Refresh (SOM, ops centre, on-shift Security Analysts) — real-time interactive view
@@ -487,10 +642,10 @@ The UI is organised around **workspaces (jobs-to-be-done)**, not job titles. Sou
 | Workspace | Purpose | Primary personas |
 |---|---|---|
 | **Executive Posture** | Enterprise risk, trend, posture, governance, compliance alignment | CISO, Risk/Compliance, Risk Analyst |
-| **Drift Operations** | (Body of §24 table truncated in this read for the four middle workspaces — Drift Operations confirmed by name in §24.1 v2.6 surface additions) | (recorded as **GAP** for completion in a focused re-read of MP v5.0 §24) |
-| **Control & Architecture** | (As above) | (recorded as **GAP**) |
-| **Identity & Asset Intelligence** | (As above) | (recorded as **GAP**) |
-| **Assurance & Audit** | (As above) | (recorded as **GAP**) |
+| **Drift Operations** | Case queues, triage, operational oversight, escalation, SLA management | SOA, SOM, Security Analyst, Vulnerability Analyst |
+| **Control & Architecture** | Control logic, architecture analysis, exception review, rule/model building | Security Architect, Control Owner |
+| **Identity & Asset Intelligence** | Identity, asset, relationship, ownership analysis | Identity/Access Specialist, Security Architect, Security Analyst |
+| **Assurance & Audit** | Evidence, compliance mapping, exceptions, governance, proof | Risk/Compliance/Audit User |
 | **Transformation & M&A** | Integration, comparative posture, inherited risk, change-programme | M&A/Transformation Analyst |
 
 **v2.6 surface additions distributed across workspaces** (MP v5.0 §24.1):
@@ -532,8 +687,38 @@ The Policy Effectiveness Direction Board generates Policy Effectiveness cases wh
 
 ### 14.5 Identity and Asset Intelligence Surfaces
 
-- **Identity Intelligence Surface (Spec #68)** — dedicated per-identity intelligence picture integrating access, behavioural, threat, case, and risk-trajectory data for a single identity. Behavioural section gated by Internal Risk authority (Spec #55 v2.6 §V2.6-9 default `behavioural_section_visible_to: internal_risk_authority`).
-- **Asset Intelligence Surface (Spec #69)** — dedicated per-asset intelligence picture parallel to the Identity Intelligence Surface for any asset (device, server, workload, container, application). Surface that opens when an asset appears in an active attack case, when investigating "why is this server appearing in so many cases?", during M&A integration, and supports retirement / refresh / incident retrospective.
+#### Identity Intelligence Surface (Spec #68)
+
+Dedicated per-identity intelligence picture for any identity in the estate. Six sections (§3):
+
+1. **Identity Overview** — name, UPN, email, account status, lifecycle stage (joiner/active/mover/leaver), department, manager, location, employment type (employee/contractor/service/external); primary identity provider (Entra/Okta) with sync state; MFA enforcement state; privileged-access flag (standing admin? PIM-eligible?); last sign-in; account creation date; composite risk score; quick links to source platforms.
+2. **Access Intelligence** — full entitlement footprint across every connected system; computed access chains (hop-by-hop, with privilege-escalation paths highlighted); privileged access summary (standing admin, PIM-eligible, vault, JIT); group memberships (direct + inherited); cross-system correlation; identity CHAIN computation Stage 1/2/3.
+3. **Behavioural Intelligence** *(gated by Internal Risk authority per Spec #75)* — verdict history timeline; per-disposition breakdown (BLOCK/QUARANTINE/COACH/REQUIRE_MFA/REQUIRE_COMPLIANT/MONITOR/ALLOW/AUDIT); per-source verdict density; policy firing patterns; peer comparison; anomaly indicators (impossible travel, unusual download volume, restricted geography); trust calibration context per tool.
+4. **Threat Intelligence** — external threats targeting this identity (phishing campaigns, breach-database exposure, threat actor focus on similar identities); internal threats from this identity *(Internal Risk authority required)*; identity-relevant CVEs.
+5. **Case History** — SOC cases involving this identity (via External Attack Correlation); Commander cases (Identity, Verdict Pattern, Vulnerability tied to identity-owned devices); case timeline; resolution outcomes.
+6. **Risk Trajectory** — risk-score evolution chart (90d, 1y, lifetime); driving-event annotations; trajectory analysis (improving/stable/degrading/volatile); 30/60/90-day projection.
+
+Visual language (Spec #41 v2.6): intensity Level 1 routine / Level 2 active Verdict Pattern or External Attack Correlation / Level 3 P0 Zero-Day. Interaction model includes drill from access chain → Asset Intelligence Surface; verdict click → verdict detail with policy reference; time scrubber; cross-tenant institutional memory (where licensed); add-to-watchlist; evidence-pack export (Internal Risk + Investigation authority).
+
+RBAC (§6): aggregate view to Identity/Access Specialist, Security Architect, Security Analyst, CISO, SOM; behavioural section, internal threat detail, Verdict Pattern case detail, evidence-pack generation, cross-tenant comparison all gated by Internal Risk authority (and Investigation authority for evidence-pack). Audit-of-access logged per Spec #75.
+
+#### Asset Intelligence Surface (Spec #69)
+
+Dedicated per-asset intelligence picture parallel to the Identity Intelligence Surface for any asset (device, server, workload, container, application). Seven sections (§3):
+
+1. **Asset Overview** — name, type, role, lifecycle status, owner, business unit; criticality classification (standard/important/critical/mission-critical); environment (production/staging/development/sandbox); cloud or on-premise classification with region/AZ; persistent vs ephemeral classification; external-attack-surface positioning (internet-facing/boundary/internal-only) per Spec #60; last-seen timestamp per source; composite asset risk score; trust-boundary context; quick links to source platforms (Tenable, CrowdStrike, Intune, vendor consoles).
+2. **Configuration State** — current configuration vs intended baseline (per asset-type baseline); active drift findings; coverage state (controls present / missing); recent configuration changes; connected configuration sources (Class C connectors).
+3. **Verdict History** — every prevention action involving the asset; compliance verdicts (Intune/Jamf/Workspace ONE); endpoint detection/prevention verdicts (CrowdStrike/Defender/SentinelOne); web-filtering verdicts when asset is the source; DLP verdicts; per-disposition breakdown; verdict density trended.
+4. **Behavioural Pattern** — asset behavioural risk score (v2.5 summary counters); peer comparison; anomaly indicators (unusual processes, network destinations, user activity); resource utilisation patterns where available.
+5. **Case History** — all Commander cases (Drift, Vulnerability, Coverage, Exposure, Tool Health, External Attack Correlation, Inverse Discovery); SOC cases (External Attack Correlation type); case timeline; resolution outcomes.
+6. **Vulnerability State** — current CVEs (Tenable, Defender Vuln Mgmt); patch status (applied/pending/N/A); exploitability indicators (KEV match, EPSS, BAS validation); attack-path likelihood; blast radius.
+7. **Identity Exposure** — identities with privileged access; identities with recent activity; privileged access chains terminating on the asset; cross-system identity correlation.
+
+Visual language and interaction model (§§4–5): same intensity ladder as Identity Surface; click-through to Identity Intelligence Surface, verdict detail, case detail, CVE detail, attack-path visualisation, time scrubber, drift-remediation initiation (Approval authority).
+
+RBAC (§6): asset overview, configuration, vulnerability state, case history accessible to SOC Operations Analyst, SOM, Security Architect, Vulnerability Analyst, Identity/Access Specialist, CISO, Risk Analyst. Verdict history detail and behavioural pattern detail require Internal Risk authority where they correlate with identifiable user activity. Identity exposure section accessible to authorised personas.
+
+Both surfaces are configurable per Spec #55 v2.6 (per-section enable/disable, behavioural visibility per jurisdiction, verdict timeline density, peer comparison, evidence-pack template) and emit dedicated audit events on access, behavioural-section access, evidence-pack generation, watchlist additions, and cross-tenant comparison requests.
 
 ### 14.6 Silent Defence Reporting (Spec #73)
 
@@ -567,14 +752,26 @@ This is the **dual** of Pre-Warned Classification: Pre-Warned says *"we knew, at
 
 ### 15.1 Eleven personas
 
-Source: MTS v7.0 §9.1 (per Spec #17 v2.6 reference); MP v5.0 §22.
+Source: MP v5.0 §22 (verbatim enumeration); MTS v7.0 §9.1 (cross-reference); Spec #17 v2.6 reference.
 
-The persona model is referenced in MTS v7.0 §9.1 as **eleven personas (nine existing plus Security Analyst and Risk Analyst)**. The full enumerated list is in Spec #17 (Target Users and Persona Model) v2.6, but the v2.6 persona expansion addendum was not located in the §V2.6 portion of Spec #17 read for this build. The enumerated names confirmed in source:
+> **Note on source location:** The eleven-persona list is enumerated verbatim in **MP v5.0 §22** ("Target Users and Persona Model"), not in Spec #17's v2.6 addendum. Spec #17's v2.6 extension is the **OODA Integration Addendum** (V2.6-1 through V2.6-4), which maps the SDR closed-loop stages to OODA phases — it does not contain a persona expansion. The persona enumeration cited here therefore takes MP v5.0 §22 as authority and MTS v7.0 §9.1 as the corroborating master.
 
-- **Security Analyst** (new in v2.6) — cross-domain investigator hunting across the four intelligence streams. Sits between SOC Operations Analyst (case queue triage) and Security Architect (control design). Primary workspace: Drift Operations with extensive Intelligence Layer access. Source: MP v5.0 §22.
-- **Risk Analyst** (new in v2.6) — operational risk modelling. Primary workspace: Executive Posture with cross-workspace access. Source: MP v5.0 §22.
+**v2.5 personas (carried forward unchanged) — nine:**
 
-The other nine personas (CISO, SOC Operations Analyst, Security Architect, Identity/Access Specialist, Vulnerability Analyst, M&A/Transformation Analyst, Risk/Compliance/Audit User, Tenant Admin/Security Platform Owner, SOM — names typical from prior reads but not all explicitly enumerated as a list in the §V2.6 portions read this session) are recorded as **GAP — to be confirmed by full read of Spec #17 v2.6 Persona Expansion Addendum**.
+1. **Security Operations Analyst (SOA)** — primary case-queue triage operator.
+2. **Security Operations Manager (SOM)** — workload, routing, escalation, mode control over the case engine.
+3. **Vulnerability Analyst** — vulnerability/exposure case work, KEV/EPSS context, remediation coordination.
+4. **Security Architect** — control design, architectural pattern analysis, exception review, rule/model authoring.
+5. **Identity/Access Specialist** — identity-graph operations, privileged access reviews, joiner/mover/leaver risk.
+6. **Risk/Compliance/Audit User** — evidence, attestation, exception governance, audit-of-access reporting.
+7. **M&A/Transformation Analyst** — integration posture, comparative risk, inherited-risk evaluation.
+8. **CISO** — programme-level executive view; primary user of Command Tempo Dashboard, Operating Pictures, board-grade reporting.
+9. **Control Owner** — accountable for specific controls, drift remediation owner for assigned domain.
+
+**v2.6 new personas — two (MP v5.0 §22 verbatim):**
+
+10. **Security Analyst** — cross-domain investigator hunting across the four intelligence streams. Operates the Intelligence Layer, the Operating Pictures, Identity Intelligence Surface, and Verdict Pattern cases. Sits between SOA (queue triage) and Security Architect (control design). Primary workspace: Drift Operations with extensive Intelligence Layer access. Consumes the four streams to hunt and surface patterns rather than respond to individual triage items.
+11. **Risk Analyst** — operational risk specialist quantifying, modelling and reasoning about risk as a continuous metric. Consumes Security Debt Register, Identity Intelligence Surface for risk concentration, Asset Intelligence Surface for asset risk trajectories, OODA Tempo metrics for operational risk. Reports to enterprise risk management. Distinct from Risk/Compliance/Audit User (evidence and attestation focus); Risk Analyst focuses on operational risk modelling. Primary workspace: Executive Posture with cross-workspace access.
 
 ### 15.2 Authority overlays — five (v2.6)
 
@@ -711,22 +908,30 @@ Source: Spec #41 `41_Commander_SDR_Military_Intelligence_UI_Doctrine_Spec.md` §
 
 ## 20. Explicit GAPs Recorded This Build
 
-Per `SOURCING_RULE.md` discipline, gaps are recorded explicitly rather than guessed. The following items are partial-read or absent in source material read this build, and require focused re-reads in a follow-up pass before deeper claims:
+Per `SOURCING_RULE.md` discipline, gaps are recorded explicitly rather than guessed.
 
-| GAP | Where it should resolve | Status |
-|---|---|---|
-| Eight-class verdict signal disposition body for `Behavioural Signal` (signal purpose 7) | Spec #61 §3.7 | Truncated in this read |
-| Connector conformance tier nomenclature (the four named tiers) | Spec #61 §4.1 | Read by reference; full tier names not enumerated in §4.1 portion read; named in Spec #55 v2.6 §V2.6-10 as `connector.conformance.*` parameters but tier labels not enumerated |
-| Full risk-object type extension list under v2.6 (beyond `ooda_phase_degradation`) | MTS v7.0 §6.3 | Truncated in this read |
-| Workspace bodies for the four middle workspaces (Drift Operations, Control & Architecture, Identity & Asset Intelligence, Assurance & Audit) — primary personas, contents, jobs-to-be-done | MP v5.0 §24 | Header confirmed via grep; row bodies not read |
-| The full eleven-persona enumeration | Spec #17 v2.6 Persona Expansion Addendum (referenced from MTS v7.0 §9.1 and MP v5.0 §22) | Located by reference; the explicit bulleted list is in the addendum portion of Spec #17 not surfaced in this build's grep |
-| Spec #08 sections 5–15 (Case Action Algorithm, Assignment Engine, Case Pulse, Teams/Ranks, Operational Passport, Evidence Packs, Audit, Acceptance Criteria) | Spec #08 §5–§15 | Only ToC + §1–§4 + v2.6 Extension addendum read |
-| Act Phase Dashboard composition body | Spec #67 §6 | Read by reference; full body truncated |
-| Identity Intelligence Surface and Asset Intelligence Surface compositions (sections beyond §1–§2) | Spec #68 §3+, Spec #69 §3+ | §1–§2 confirmed; remainder not read |
-| OODA phase 4 (Act) §3.4 detail | Spec #58 §3.4 | Truncated in this read |
-| SDR Control Plane Specification v1.1 sections 7–19 | `SDR_Control_Plane_Specification_v1_1.md` | §0–§6 read in prior session; remainder not yet read |
+### 20.1 GAPs closed on 2026-05-31
 
-These gaps are flagged in the relevant cells above with **GAP** notation. They do not block this graph's structural claims (which are sourced from sections that *were* read), but they bind the next read pass.
+The ten read-state GAPs originally surfaced in this build were closed by a focused source-authority read pass on 2026-05-31. Each was filled from baseline material in `docs/99_source_archive/baseline_v2_6_2/` and registered against the corresponding Architectural Debt entry. The closures are:
+
+| Original GAP | Resolved by | Knowledge-graph location now containing the sourced detail | ARCH-DEBT |
+|---|---|---|---|
+| Behavioural Signal disposition body (signal purpose 7) | Spec #61 §3.7 | §3.2 (signal purpose 7 entry) | ARCH-DEBT-009 |
+| Connector conformance tier names | Spec #61 §4.1 | §3.3 (Certified · Full · Baseline · Planned) | ARCH-DEBT-010 |
+| Full v2.6 risk-object type extension list | MTS v7.0 §6.3 | §7.1 (five values appended; total 22 with v2.5 base) | ARCH-DEBT-011 |
+| Workspace bodies for the four middle workspaces | MP v5.0 §24 | §14.1 (full table) | ARCH-DEBT-012 |
+| Full eleven-persona enumeration | MP v5.0 §22 (real source location) | §15.1 (nine v2.5 + two v2.6) | ARCH-DEBT-013 |
+| Spec #08 §§5–§15 internal mechanics | Spec #08 §§5, 8, 9, 10, 11, 12, 13, 14A, 15 | §7.9 (CCHE: 11 sub-sections) | ARCH-DEBT-014 |
+| Act Phase Dashboard composition | Spec #67 §6 | §9.3.1 | ARCH-DEBT-015 |
+| Identity / Asset Intelligence Surface compositions | Spec #68 §§3–10; Spec #69 §§3–10 | §14.5 (full per-section composition for both) | ARCH-DEBT-016 |
+| OODA phase 4 (Act) §3.4 detail | Spec #58 §3.4 | §9.1 Act row + §9.3.1 (composition) | ARCH-DEBT-017 |
+| SDR Control Plane Specification §§7–§19 | SDR Control Plane Specification v1.1 §§7–19 | §6.1 (runtime contract) | ARCH-DEBT-018 |
+
+> **Source-location correction recorded for ARCH-DEBT-013.** The original GAP cited Spec #17 v2.6 Persona Expansion Addendum as the resolution path. The eleven-persona enumeration is in fact verbatim in **MP v5.0 §22**; Spec #17's v2.6 addendum is the OODA Integration Addendum (V2.6-1..V2.6-4), which does not contain a persona expansion. The ARCH-DEBT-013 entry is closed against the actual source. This is recorded for lineage so the original location-claim is not re-entered as a future gap.
+
+### 20.2 Standing GAPs (not yet opened)
+
+No new standing GAPs are recorded by this build. Future builds that surface partial reads in *new* baseline sections will re-open GAP entries here; closure runs through the same `log architectural debt` → register → resolve path used for ARCH-DEBT-009..018.
 
 ---
 
@@ -778,4 +983,4 @@ Every section of this graph cites source from the following baseline files (all 
 - `55_Baseline_Configuration_Framework_Model_and_Defaults_Spec.md` (base + v2.6 Baseline Configuration Addendum)
 - `56_Shell_Reference_vs_Build_Authority_Doctrine_Spec.md`
 
-The `.kiro/specs/` translation layer (folders `00`–`43`) was **not consulted** for any claim in this document, per `SOURCING_RULE.md`.
+The Kiro translation layer (per locked `SOURCING_RULE.md`) was **not consulted** for any claim in this document.

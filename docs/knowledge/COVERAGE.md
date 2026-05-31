@@ -16,9 +16,9 @@
 
 | File | Title verified at line 1 | Read state |
 |------|---------------------------|------------|
-| `Commander_SDR_Master_Proposition_v5_0.md` | Confirmed via §22, §24 grep | partial — section index, §24 Workspace Model, §22 Persona summary, §4 Streams, §25 SOC boundary, §26 Insider Risk boundary read in prior session and re-verified by grep this session |
-| `Commander_SDR_Master_Technical_Specification_v7_0.md` | Confirmed via §1 grep | partial — §1 Platform Architecture (seven layers), §2 Connector Layer, §3 Normalisation, §4 Engine, §5 Intelligence, §6 Case (case taxonomy + RiskObject extension), §7 OODA, §8 Surface (workspaces + boundaries), §9 Security Model (personas + authority overlays), §10 Governance (boundaries) read in this build |
-| `SDR_Control_Plane_Specification_v1_1.md` | n/a this session | partial — sections 0-6 read in prior session |
+| `Commander_SDR_Master_Proposition_v5_0.md` | Confirmed via §22, §24 grep | partial — section index, §22 full eleven-persona enumeration (read in full 2026-05-31), §24 full Workspace Model table (read in full 2026-05-31), §24.1 v2.6 surface additions, §4 Streams, §25 SOC boundary, §26 Insider Risk boundary read in prior session |
+| `Commander_SDR_Master_Technical_Specification_v7_0.md` | Confirmed via §1 grep | partial — §1 Platform Architecture (seven layers), §2 Connector Layer, §3 Normalisation, §4 Engine, §5 Intelligence, §6 Case (case taxonomy + RiskObject extension — full v2.6 extension list verified at §6.3 on 2026-05-31), §7 OODA, §8 Surface (workspaces + boundaries), §9 Security Model (personas + authority overlays), §10 Governance (boundaries) read in this build |
+| `SDR_Control_Plane_Specification_v1_1.md` | Confirmed via §0–§19 grep | partial — §§0–6 read in prior session; §§7–19 read in full 2026-05-31 (Feature Registry integration, entitlement manifest, effective feature state computation, demo/dogfood/trial handling, usage metering, self-hosted licence model, Feature Registry detailed amendment, operator console feature management, code-update boundary with CI/CD, control-plane APIs, security/audit/tenant isolation, implementation phasing, acceptance criteria) |
 | `SDR_Specification_Schedule_and_Folder_Structure_v1_9.md` | n/a | not opened in this build |
 | `00_AUTHORITY_AND_PRECEDENCE_v2_6.md` | n/a | partial — read in prior session for the precedence stack |
 | `00_SPECIFICATION_REGISTER_v2_6.md` | n/a | partial — read in prior session for the spec inventory |
@@ -32,10 +32,10 @@
 | # | File | Title verified | Read state |
 |---:|------|----------------|------------|
 | 57 | `57_Security_Command_and_Control_Doctrine_Spec.md` | "Spec #57 — Security Command and Control Doctrine" | full (re-verified §1–§6 this build) |
-| 58 | `58_Security_OODA_Loop_Specification.md` | "Spec #58 — Security OODA Loop Specification" | full (re-verified §1–§3 incl. four phases this build) |
+| 58 | `58_Security_OODA_Loop_Specification.md` | "Spec #58 — Security OODA Loop Specification" | full (re-verified §1–§3 incl. four phases this build; §3.4 Act phase detail read in full 2026-05-31) |
 | 59 | `59_Intelligence_Layer_Architecture_Spec.md` | "Spec #59 — Intelligence Layer Architecture Specification" | full (re-verified §1–§3 incl. four streams this build) |
 | 60 | `60_Internal_and_External_Attack_Surface_Framework_Spec.md` | "Spec #60 — Internal and External Attack Surface Framework Specification" | full (re-verified §1–§5 this build) |
-| 61 | `61_Universal_Security_Signal_Connector_Contract_Spec.md` | "Spec #61 — Universal Security Signal Connector Contract Specification" | partial — §1–§3 (signal purposes 1-7) read; §3.7 Behavioural truncated, §4 conformance tier system not read in this build |
+| 61 | `61_Universal_Security_Signal_Connector_Contract_Spec.md` | "Spec #61 — Universal Security Signal Connector Contract Specification" | partial — §1–§3 (signal purposes 1–6) read previously; §3.7 Behavioural Signal disposition body read in full 2026-05-31; §3.8 Threat Signal read 2026-05-31; §4 four connector classes incl. §4.1 conformance tier names (Certified · Full · Baseline · Planned) read in full 2026-05-31; §§5–7 (multi-class declaration, INDEX.md registration, conformance test suite) read 2026-05-31 |
 | 62 | `62_Verdict_Semantics_Specification.md` | "Spec #62 — Verdict Semantics Specification" | partial — §1–§6 (five mandatory dimensions, eight dispositions, density, disagreement) read; §7+ truncated |
 
 ### v2.6 Surfaces and Capabilities (#65–#75)
@@ -44,9 +44,9 @@
 |---:|------|----------------|------------|
 | 65 | `65_External_Operating_Picture_Surface_Spec.md` | "Spec #65 — External Operating Picture Surface Specification" | partial — §1–§3.6 (seven principal regions) read this build |
 | 66 | `66_Internal_Operating_Picture_Surface_Spec.md` | "Spec #66 — Internal Operating Picture Surface Specification" | partial — §1–§5 (six principal regions, visual language, interaction) read this build |
-| 67 | `67_OODA_Dashboard_Family_Spec.md` | "Spec #67 — OODA Dashboard Family Specification" | partial — §1–§5 (Observe/Orient/Decide phase dashboards) read this build |
-| 68 | `68_Identity_Intelligence_Surface_Spec.md` | "Spec #68 — Identity Intelligence Surface Specification" | partial — §1–§2 confirmed this build |
-| 69 | `69_Asset_Intelligence_Surface_Spec.md` | "Spec #69 — Asset Intelligence Surface Specification" | partial — §1–§2 confirmed this build |
+| 67 | `67_OODA_Dashboard_Family_Spec.md` | "Spec #67 — OODA Dashboard Family Specification" | partial — §1–§5 (Observe/Orient/Decide phase dashboards) read this build; §§6–7 (Act Phase Dashboard composition + Command Tempo Dashboard composition) read in full 2026-05-31 |
+| 68 | `68_Identity_Intelligence_Surface_Spec.md` | "Spec #68 — Identity Intelligence Surface Specification" | partial — §1–§2 confirmed previously; §§3–10 (six-section composition, visual language, interaction model, RBAC, build readiness, configurability, audit events, relationships) read in full 2026-05-31 |
+| 69 | `69_Asset_Intelligence_Surface_Spec.md` | "Spec #69 — Asset Intelligence Surface Specification" | partial — §1–§2 confirmed previously; §§3–10 (seven-section composition, visual language, interaction model, RBAC, build readiness, configurability, audit events, relationships) read in full 2026-05-31 |
 | 70 | `70_Direction_Boards_Spec.md` | "Spec #70 — Direction Boards Specification (Control Weakness + Policy Effectiveness)" | partial — §1–§5 (both boards specified) read this build |
 | 71 | `71_Pre_Warned_Protected_Novel_Classification_Spec.md` | "Spec #71 — Pre-Warned/Protected/Novel Classification Specification" | partial — §1–§5 (engine, classification phases, defence-worked annotation) read this build |
 | 72 | `72_Inverse_Discovery_Loop_Spec.md` | "Spec #72 — Inverse Discovery Loop Specification" | partial — §1–§5 (full loop, four root-cause buckets, metric integration) read this build |
@@ -58,7 +58,7 @@
 
 | # | File | Title verified | Read state |
 |---:|------|----------------|------------|
-| 17 | `17_Closed_Loop_Control_Architecture.md` | "Spec #17 — Closed-Loop Control Architecture" | partial — base spec (control loop, control selection hierarchy, validation, adjustment) + v2.6 OODA Integration Addendum (closed loop ↔ OODA mapping) read this build |
+| 17 | `17_Closed_Loop_Control_Architecture.md` | "Spec #17 — Closed-Loop Control Architecture" | partial — base spec (control loop, control selection hierarchy, validation, adjustment) + v2.6 OODA Integration Addendum (closed loop ↔ OODA mapping, V2.6-1..V2.6-4) read this build. **Source-location finding (2026-05-31):** Spec #17's v2.6 addendum is OODA Integration only; the eleven-persona enumeration is verbatim in MP v5.0 §22, not in Spec #17 — recorded in SYSTEM_KNOWLEDGE_GRAPH.md §20.1. |
 | 28 | `28_Strategic_and_Tactical_Priority_Framework_Spec.md` | "Spec #28 — Strategic and Tactical Priority Framework" | partial — §1–§8 (StrategicPriority + TacticalPriority models, target metrics, alignment engine, boost) read this build |
 | 29 | `29_Universal_Risk_Object_and_Case_Binding_Spec.md` | "29. Universal Risk Object and Case Binding Specification" | partial — base spec (risk object types, binding outcomes) + Closed-Loop Functional Doctrine Patch v2.0 (RiskObject contract, twelve-state case lifecycle) read this build |
 | 30 | `30_Universal_Validation_Closure_and_Reopening_Lifecycle_Spec.md` | "30. Universal Validation, Closure and Reopening Lifecycle Specification" | partial — base (validation lifecycle, closure gates, reopening triggers) + same v2.0 addendum read this build |
@@ -66,7 +66,7 @@
 | 32 | `32_Strategy_Layer_Runtime_Surface_Spec.md` | "32. Strategy Layer Runtime Surface Specification" | partial — base (twelve strategy surfaces, runtime binding) + same v2.0 addendum read this build |
 | 33 | `33_Multi_Domain_Fusion_Map_Spec.md` | "33. Multi-Domain Fusion Map Specification" | partial — base (node types, edge types, overlays, interaction rules) + same v2.0 addendum read this build |
 | 34 | `34_Mission_Control_System_Team_Domain_Pulse_Spec.md` | "34. Mission Control, System Pulse, Team Pulse and Domain Pulse Specification" | partial — base (four pulse surfaces) + same v2.0 addendum read this build |
-| 08 | `08_Case_Management_Workflow_Spec.md` | "Spec #8 — Case Management & Workflow" | partial — table of contents (15 sections), base sections 1–4 read in prior session; v2.6 Extension §V2.6-1 to §V2.6-6 (five new case types, lifecycle, priority, RBAC, audit events) read this build by targeted grep |
+| 08 | `08_Case_Management_Workflow_Spec.md` | "Spec #8 — Case Management & Workflow" | partial — table of contents (15 sections), base sections 1–4 read in prior session; v2.6 Extension §V2.6-1 to §V2.6-6 (five new case types, lifecycle, priority, RBAC, audit events) read by targeted grep. **Mechanics fill (2026-05-31):** §5 Case Action Algorithm header + worked example portion, §6 parent state machine (header), §7 sub-case state machine (header), §8 Assignment Engine (§§8.1–8.5 read), §9 Case Pulse SOM Command Surface (§§9.1–9.3 read), §10 Teams/Ranks/Specialisms (§§10.1–10.5 read), §11 Operational Passport (header), §12 Evidence Packs and Rollback Snapshots (§§12.1–12.3 read), §13 Audit and Logging Requirements read in full, §14 Migration Notes read in full, §14A Closed-Loop Email Communication Lifecycle Alignment (§§14A.1–14A.7) read in full, §15 Acceptance Criteria and Test Cases (Epics A–G) read in full. §§16–19 (Team Builder, Team Performance Dashboard, CRS Confidence Intervals, Resolution Durability Score) remain not opened. |
 
 ### Other specs (#01–#56) — initial/structural reads from prior session
 

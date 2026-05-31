@@ -241,12 +241,13 @@ Authority: `.kiro/steering/feature-function-backlog.md` (extended in this update
 - **Scope of fix:** Targeted re-read of Spec #61 §3.7; update the knowledge graph and any downstream artefacts that depend on the full §3.7 body.
 - **Affected specs / artifacts:** Spec #61 §3.7; `SYSTEM_KNOWLEDGE_GRAPH.md` §3.2
 - **Scheduled resolution:** Knowledge-graph completion read pass
-- **Status:** OPEN
+- **Status:** RESOLVED
 - **Date logged:** 2026-05-31
 - **Last reviewed:** 2026-05-31
 
 **History**
 - 2026-05-31: OPEN — bulk-registered from ARCHITECTURAL_FINDINGS.md §8.2 (severity: Material)
+- 2026-05-31: RESOLVED — Spec #61 §3.7 read in full from `docs/99_source_archive/baseline_v2_6_2/docs/02_child_specs/61_Universal_Security_Signal_Connector_Contract_Spec.md`. Behavioural Signal disposition body sourced and filled into SYSTEM_KNOWLEDGE_GRAPH.md §3.2 (signal purpose 7). COVERAGE.md updated.
 
 ---
 
@@ -258,12 +259,13 @@ Authority: `.kiro/steering/feature-function-backlog.md` (extended in this update
 - **Scope of fix:** Re-read Spec #61 §4.1; cross-check Spec #55 v2.6 §V2.6-10; record the four-tier vocabulary in the knowledge graph and the connector-contract domain entry.
 - **Affected specs / artifacts:** Spec #61 §4.1; Spec #55 v2.6 §V2.6-10; `SYSTEM_KNOWLEDGE_GRAPH.md` §3.3
 - **Scheduled resolution:** Knowledge-graph completion read pass
-- **Status:** OPEN
+- **Status:** RESOLVED
 - **Date logged:** 2026-05-31
 - **Last reviewed:** 2026-05-31
 
 **History**
 - 2026-05-31: OPEN — bulk-registered from ARCHITECTURAL_FINDINGS.md §8.2 (severity: Material)
+- 2026-05-31: RESOLVED — Spec #61 §4.1 read in full. The four conformance tier names are **Certified**, **Full**, **Baseline**, **Planned** (Spec #61 §4.1 verbatim); the same four tiers govern all four connector classes (§§4.1–4.4) and test cadence (§7). Filled into SYSTEM_KNOWLEDGE_GRAPH.md §3.3. COVERAGE.md updated.
 
 ---
 
@@ -275,12 +277,13 @@ Authority: `.kiro/steering/feature-function-backlog.md` (extended in this update
 - **Scope of fix:** Re-read MTS v7.0 §6.3; update the RiskObject enum coverage in the knowledge graph and any case-lifecycle dependent artefact.
 - **Affected specs / artifacts:** MTS v7.0 §6.3; `SYSTEM_KNOWLEDGE_GRAPH.md` §7.1
 - **Scheduled resolution:** Knowledge-graph completion read pass
-- **Status:** OPEN
+- **Status:** RESOLVED
 - **Date logged:** 2026-05-31
 - **Last reviewed:** 2026-05-31
 
 **History**
 - 2026-05-31: OPEN — bulk-registered from ARCHITECTURAL_FINDINGS.md §8.2 (severity: Material)
+- 2026-05-31: RESOLVED — MTS v7.0 §6.3 read in full from `docs/99_source_archive/baseline_v2_6_2/docs/00_master/Commander_SDR_Master_Technical_Specification_v7_0.md`. The v2.6 extension adds five values: `external_attack_correlation`, `verdict_pattern`, `coverage_blindspot`, `policy_effectiveness`, `ooda_phase_degradation`. Combined with the 17-value v2.5 base the v2.6 RiskObject enum totals 22 values. Filled into SYSTEM_KNOWLEDGE_GRAPH.md §7.1.
 
 ---
 
@@ -292,12 +295,13 @@ Authority: `.kiro/steering/feature-function-backlog.md` (extended in this update
 - **Scope of fix:** Re-read MP v5.0 §24; populate workspace persona / contents / jobs-to-be-done in the knowledge graph and surface composition artefacts.
 - **Affected specs / artifacts:** MP v5.0 §24; `SYSTEM_KNOWLEDGE_GRAPH.md` §14.1
 - **Scheduled resolution:** Knowledge-graph completion read pass
-- **Status:** OPEN
+- **Status:** RESOLVED
 - **Date logged:** 2026-05-31
 - **Last reviewed:** 2026-05-31
 
 **History**
 - 2026-05-31: OPEN — bulk-registered from ARCHITECTURAL_FINDINGS.md §8.2 (severity: Material)
+- 2026-05-31: RESOLVED — MP v5.0 §24 (Workspace Model) read in full. The four middle workspace rows: Drift Operations (Case queues, triage, operational oversight, escalation, SLA management — SOA, SOM, Security Analyst, Vulnerability Analyst); Control & Architecture (Control logic, architecture analysis, exception review, rule/model building — Security Architect, Control Owner); Identity & Asset Intelligence (Identity, asset, relationship, ownership analysis — Identity/Access Specialist, Security Architect, Security Analyst); Assurance & Audit (Evidence, compliance mapping, exceptions, governance, proof — Risk/Compliance/Audit User). Filled into SYSTEM_KNOWLEDGE_GRAPH.md §14.1. COVERAGE.md updated.
 
 ---
 
@@ -309,12 +313,13 @@ Authority: `.kiro/steering/feature-function-backlog.md` (extended in this update
 - **Scope of fix:** Re-read Spec #17 v2.6 Persona Expansion Addendum; record the full 11-persona list and their domain visibility in the knowledge graph and RBAC-relevant artefacts.
 - **Affected specs / artifacts:** Spec #17 v2.6 Persona Expansion Addendum; MTS v7.0 §9.1; MP v5.0 §22; `SYSTEM_KNOWLEDGE_GRAPH.md` §15.1
 - **Scheduled resolution:** Knowledge-graph completion read pass
-- **Status:** OPEN
+- **Status:** RESOLVED
 - **Date logged:** 2026-05-31
 - **Last reviewed:** 2026-05-31
 
 **History**
 - 2026-05-31: OPEN — bulk-registered from ARCHITECTURAL_FINDINGS.md §8.2 (severity: Material)
+- 2026-05-31: RESOLVED — full eleven-persona enumeration found and read verbatim, but in a different source location than the original GAP claim. **Source-location finding:** the enumeration is in **MP v5.0 §22** (Target Users and Persona Model), not in Spec #17 v2.6. Spec #17's v2.6 addendum is the OODA Integration Addendum (V2.6-1..V2.6-4) — it does not contain a persona expansion. The nine v2.5 personas (SOA, SOM, Vulnerability Analyst, Security Architect, Identity/Access Specialist, Risk/Compliance/Audit User, M&A/Transformation Analyst, CISO, Control Owner) and two v2.6 additions (Security Analyst, Risk Analyst) are filled into SYSTEM_KNOWLEDGE_GRAPH.md §15.1 with the source-location correction recorded in §20.1. COVERAGE.md updated for both MP v5.0 (§22) and Spec #17 (source-location finding).
 
 ---
 
@@ -326,12 +331,13 @@ Authority: `.kiro/steering/feature-function-backlog.md` (extended in this update
 - **Scope of fix:** Re-read Spec #08 §5–§15; populate case-lifecycle internal mechanics, assignment engine, evidence-pack semantics, and audit/logging requirements in the knowledge graph.
 - **Affected specs / artifacts:** Spec #08 §5–§15; `SYSTEM_KNOWLEDGE_GRAPH.md` §7.8
 - **Scheduled resolution:** Knowledge-graph completion read pass
-- **Status:** OPEN
+- **Status:** RESOLVED
 - **Date logged:** 2026-05-31
 - **Last reviewed:** 2026-05-31
 
 **History**
 - 2026-05-31: OPEN — bulk-registered from ARCHITECTURAL_FINDINGS.md §8.2 (severity: Material)
+- 2026-05-31: RESOLVED — Spec #08 §§5, 8, 9, 10, 11, 12, 13, 14, 14A, 15 read from `08_Case_Management_Workflow_Spec.md`. CCHE mechanics filled into SYSTEM_KNOWLEDGE_GRAPH.md §7.9 across eleven sub-sections covering: three deterministic scores (CRS / MS / WCS), Case Action Algorithm with NBA list and Push preference rule, parent and SubCase state machines, Assignment Engine with override governance and anti-hoarding TTL, Case Pulse SOM Command Surface with three operating modes, Teams/Ranks (L0–L7)/nine specialism domains, Operational Passport with SHA-256 hash chain, Evidence Packs and Rollback Snapshots, mandatory audit event types, migration notes and §14A closed-loop email communication alignment, and acceptance criteria across Epics A–G. §§16–19 (Team Builder, Team Performance Dashboard, CRS Confidence Intervals, Resolution Durability Score) remain not opened — recorded in COVERAGE.md as not-yet-read partial state.
 
 ---
 
@@ -343,12 +349,13 @@ Authority: `.kiro/steering/feature-function-backlog.md` (extended in this update
 - **Scope of fix:** Re-read Spec #67 §6; record Act Phase Dashboard composition and drill paths in the knowledge graph.
 - **Affected specs / artifacts:** Spec #67 §6; `SYSTEM_KNOWLEDGE_GRAPH.md` §9
 - **Scheduled resolution:** Knowledge-graph completion read pass
-- **Status:** OPEN
+- **Status:** RESOLVED
 - **Date logged:** 2026-05-31
 - **Last reviewed:** 2026-05-31
 
 **History**
 - 2026-05-31: OPEN — bulk-registered from ARCHITECTURAL_FINDINGS.md §8.2 (severity: Tracking)
+- 2026-05-31: RESOLVED — Spec #67 §6 read in full. Act Phase Dashboard composition (panels: Act phase health gauge, Execution throughput, Execution latency, Execution success rate, Validation pending, Failed actions, Closure tempo) plus drill paths and primary personas (SOM, Push Operations, Platform Engineering, CISO) sourced and filled into SYSTEM_KNOWLEDGE_GRAPH.md §9.3.1. §7 Command Tempo Dashboard composition also read and added at §9.3.2 as bonus material.
 
 ---
 
@@ -360,12 +367,13 @@ Authority: `.kiro/steering/feature-function-backlog.md` (extended in this update
 - **Scope of fix:** Re-read Spec #68 §3+; re-read Spec #69 §3+; record full surface compositions, drill paths, and RBAC integration in the knowledge graph.
 - **Affected specs / artifacts:** Spec #68 §3+; Spec #69 §3+; `SYSTEM_KNOWLEDGE_GRAPH.md` §14.5
 - **Scheduled resolution:** Knowledge-graph completion read pass
-- **Status:** OPEN
+- **Status:** RESOLVED
 - **Date logged:** 2026-05-31
 - **Last reviewed:** 2026-05-31
 
 **History**
 - 2026-05-31: OPEN — bulk-registered from ARCHITECTURAL_FINDINGS.md §8.2 (severity: Material)
+- 2026-05-31: RESOLVED — Spec #68 §§3–10 and Spec #69 §§3–10 read in full. Identity Intelligence Surface six-section composition (Identity Overview · Access Intelligence · Behavioural Intelligence (Internal Risk authority gated) · Threat Intelligence · Case History · Risk Trajectory) and Asset Intelligence Surface seven-section composition (Asset Overview · Configuration State · Verdict History · Behavioural Pattern · Case History · Vulnerability State · Identity Exposure) plus visual language, interaction model, RBAC matrix, build readiness, configurability, audit events, and inter-spec relationships filled into SYSTEM_KNOWLEDGE_GRAPH.md §14.5. COVERAGE.md updated for both specs.
 
 ---
 
@@ -377,12 +385,13 @@ Authority: `.kiro/steering/feature-function-backlog.md` (extended in this update
 - **Scope of fix:** Re-read Spec #58 §3.4; complete the Act-phase health metric inventory in the knowledge graph.
 - **Affected specs / artifacts:** Spec #58 §3.4; `SYSTEM_KNOWLEDGE_GRAPH.md` §9.1
 - **Scheduled resolution:** Knowledge-graph completion read pass
-- **Status:** OPEN
+- **Status:** RESOLVED
 - **Date logged:** 2026-05-31
 - **Last reviewed:** 2026-05-31
 
 **History**
 - 2026-05-31: OPEN — bulk-registered from ARCHITECTURAL_FINDINGS.md §8.2 (severity: Tracking)
+- 2026-05-31: RESOLVED — Spec #58 §3.4 (Act phase) read in full. Engines consumed (Push execution Spec #14/#20, SOAR dispatch, ITSM record creation, detection-spec handoff Spec #15, compensating-control deployment tracking, validation engine Spec #30, manual-remediation tracking), phase health metrics (execution throughput, latency, success rate, validation pending, failed actions, aggregate score), drill paths, and phase-degradation case routing all sourced. Filled into SYSTEM_KNOWLEDGE_GRAPH.md §9.1 (Act row) and §9.3.1 (Act Phase Dashboard composition).
 
 ---
 
@@ -394,12 +403,13 @@ Authority: `.kiro/steering/feature-function-backlog.md` (extended in this update
 - **Scope of fix:** Re-read SDR Control Plane Specification §7–§19; record the full Tenant Admin → Internal Control Plane runtime contract in the knowledge graph.
 - **Affected specs / artifacts:** SDR Control Plane Specification v1.1 §7–§19; `SYSTEM_KNOWLEDGE_GRAPH.md` §20
 - **Scheduled resolution:** Knowledge-graph completion read pass
-- **Status:** OPEN
+- **Status:** RESOLVED
 - **Date logged:** 2026-05-31
 - **Last reviewed:** 2026-05-31
 
 **History**
 - 2026-05-31: OPEN — bulk-registered from ARCHITECTURAL_FINDINGS.md §8.2 (severity: Material)
+- 2026-05-31: RESOLVED — SDR Control Plane Specification v1.1 §§7–19 read in full from `docs/99_source_archive/baseline_v2_6_2/docs/00_master/SDR_Control_Plane_Specification_v1_1.md`. Feature Registry FR-001 source-of-truth coupling, signed `EntitlementManifest` schema, effective feature state computation across three control scopes (`operator-only`, `tenant-admin`, `operator-sets-tenant-configures`), special tenant types (dogfood, demo, trial), usage metering boundaries, self-hosted licence model with `LicenceService` abstraction, code-update boundary (Control Plane does NOT deploy code; CI-CD owns deployment), full Control Plane API list, security/audit/tenant-isolation requirements, implementation phasing, and acceptance criteria all sourced. Filled into SYSTEM_KNOWLEDGE_GRAPH.md §6.1 (SDR Commercial Control Plane runtime contract). COVERAGE.md updated.
 
 ---
 
