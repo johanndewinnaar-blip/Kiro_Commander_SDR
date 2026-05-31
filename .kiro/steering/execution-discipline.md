@@ -41,20 +41,54 @@ Standing rules for all build execution in this programme. These apply regardless
 
 ## Unit closure review (mandatory pre-commit)
 
-Before committing any build unit, run the Unit Closure Review checklist (`docs/07_prompt_library/09_UNIT_CLOSURE_REVIEW_PROMPT.md`) and report each item factually. This is not optional — it is a standing execution requirement.
+Before committing any build unit, execute the following sequence in order:
 
-The checklist covers:
-1. **Implementation completion** — all deliverables from the unit definition are implemented.
-2. **Migration status** — Drizzle migration generated if schema changed.
-3. **DATA_DICTIONARY.md status** — updated if new entity/field/availability change.
-4. **ARCH-DEBT status** — resolved items marked with verification; new debt logged if source-proven.
-5. **ARCH-009 verification** — verification line with baseline spec #N + evidence exists.
-6. **REBASELINED_BUILD_SEQUENCE.md status** — unit DONE, dependents recomputed, snapshot/summary updated.
-7. **Tests / conformance** — typecheck passes, full suite run, 0 new failures.
-8. **Exact stage list** — only this unit's files staged, no contamination from other units.
-9. **Commit readiness** — all items satisfied, owner approval received.
+### Step 1: Run scoped Core Testing Pipeline
 
-If any item fails, do not commit — resolve the issue first and re-run. The checklist output is the evidence that closure was verified before commit.
+After implementation is complete (code written, typecheck passes, tests pass), invoke the core testing pipeline scoped to the unit's changed files:
+
+```
+run core testing <unit files or directory>
+```
+
+This mechanically evaluates:
+- **Stage 1:** Functional checks (build, tests, types, lint)
+- **Stage 2:** Conformance checks — specifically ARCH-005 (data-dictionary completeness), ARCH-006 (build-stream sequencing), ARCH-007 (blocking-debt prerequisite), ARCH-008 (readiness-machine integrity), ARCH-009 (verification-before-done), plus any layer-relevant assertions (DSC/TOK/PERF/DOC if the unit touches those layers)
+- **Post-run:** Debt closure loop, score register update, run log creation
+
+If the pipeline is not yet machine-runnable (no automated runner wired), execute the checks manually by grep/file-inspection and report the results explicitly. The checks are mechanical (grep-based) and can be performed without a runner. State which method was used (automated runner vs manual grep).
+
+The pipeline run produces the **evidence** that the Unit Closure Review reports on. Do not skip this step.
+
+### Step 2: Run Unit Closure Review checklist
+
+Run the full checklist from `docs/07_prompt_library/09_UNIT_CLOSURE_REVIEW_PROMPT.md` and report each item factually. Item 7 (Tests/Conformance) must now include the pipeline outcome from Step 1.
+
+### Step 3: Owner review
+
+Present the closure review report. Do not commit until the owner explicitly approves.
+
+### Step 4: Commit through the gate
+
+Stage only this unit's files. Commit with descriptive message. The `.githooks/pre-commit` gate runs automatically.
+
+---
+
+The full execution sequence for a unit build is:
+
+```
+1. Confirm unit Status = READY (readiness state machine)
+2. Read unit definition + baseline spec
+3. Implement deliverables
+4. Run typecheck + tests (functional verification)
+5. Run scoped Core Testing Pipeline (conformance verification — ARCH-005–009)
+6. Run Unit Closure Review checklist (governance report)
+7. Owner review + approval
+8. Commit through git gate
+9. Push to origin
+```
+
+If any step fails, do not proceed to the next — resolve the issue first.
 
 ## Data-layer completion
 

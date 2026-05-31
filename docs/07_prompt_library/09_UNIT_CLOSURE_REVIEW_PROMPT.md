@@ -40,10 +40,17 @@ Report each item with ✅ (satisfied), ❌ (not satisfied — block commit), or 
 - [ ] Snapshot table updated.
 - [ ] Summary/footer READY set updated.
 
-### 7. Tests / Conformance
+### 7. Tests / Conformance / Pipeline
+- [ ] **Core Testing Pipeline was run** (scoped to this unit's files). State method: automated runner OR manual grep.
+- [ ] Pipeline outcome: ARCH-005 (data-dictionary completeness) — PASS / FAIL / N/A.
+- [ ] Pipeline outcome: ARCH-006 (build-stream sequencing) — PASS / FAIL / N/A.
+- [ ] Pipeline outcome: ARCH-007 (blocking-debt prerequisite) — PASS / FAIL / N/A.
+- [ ] Pipeline outcome: ARCH-008 (readiness-machine integrity) — PASS / FAIL / N/A.
+- [ ] Pipeline outcome: ARCH-009 (verification-before-done) — PASS / FAIL / N/A.
 - [ ] Typecheck passes (tsc --noEmit exit 0).
 - [ ] Full test suite run — report pass count and confirm 0 new failures.
 - [ ] Pre-existing failures are unchanged (same count, same tests).
+- [ ] If pipeline produced a run log, state its location.
 
 ### 8. Exact Stage List
 - [ ] List every file to be staged for this commit.
