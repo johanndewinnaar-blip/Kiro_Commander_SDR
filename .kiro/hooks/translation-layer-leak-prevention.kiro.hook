@@ -1,0 +1,23 @@
+{
+  "enabled": true,
+  "name": "Translation-Layer Authority-Leak Prevention",
+  "description": "Refuses any attempt to read from or cite the .kiro/specs/ translation layer as a source for knowledge-graph, spec-derivation, build-plan or rebaseline work. Ties to ARCH-DEBT-001 and SOURCING_RULE.md.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "docs/knowledge/**/*.md",
+      "docs/00_authority/**/*.md",
+      "docs/04_build_packs/**/*.md",
+      "docs/02_architecture/**/*.md",
+      "DECISIONS.md",
+      "BUILD_SEQUENCE.md",
+      "BUILD_VERSION_ROADMAP.md",
+      "SALVAGE_AND_REBASELINE_REGISTER.md"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A file in the knowledge / authority / build-pack / rebaseline scope was just edited. Run translation-layer authority-leak prevention.\n\nCONTEXT:\n- The locked sourcing rule is `docs/knowledge/SOURCING_RULE.md`. Knowledge-workspace work derives ONLY from `docs/99_source_archive/baseline_v2_6_2/` (masters + child specs #01–#75).\n- The `.kiro/specs/` translation layer (folders 00–43) is NOT authority. It is a derived, separately-numbered translation. Its folder numbers do NOT correspond to baseline spec numbers.\n- The Phase 1–6 contamination that necessitated the entire knowledge-graph rebuild traced to BPs sourcing depth from `.kiro/specs/`. This is logged as ARCH-DEBT-001.\n\nCHECKS to run on the edited file:\n\n1. **Translation-layer citation scan.** Scan the edited file for any citation of the form `.kiro/specs/`, references to Kiro-spec folder paths, or treatment of folder numbers `00`–`43` as if they were baseline spec numbers. If found:\n   - If the file is anywhere under `docs/knowledge/`, this is a HARD VIOLATION of the locked sourcing rule. Block the edit; require the citation to be re-pointed to the baseline filename and `#N §section` from `docs/99_source_archive/baseline_v2_6_2/docs/02_child_specs/` (or `00_master/`).\n   - If the file is elsewhere, FLAG the citation. The author must either (a) re-point to the baseline `#N` source, or (b) explicitly mark the citation as \"translation-layer reference, not source\" with a one-line justification.\n\n2. **Build-plan / spec-derivation scan.** If the edit introduces a new build pack, build-sequence row, version-roadmap entry, or spec-derivation claim that is sourced from a Kiro-spec folder rather than a baseline spec, refuse the edit and require a baseline citation.\n\n3. **Folder-number conflation scan.** If the edit treats Kiro folder numbers (e.g. `09-asset-intelligence`, `34-drift-and-rule-engine`, `42-universal-search`) as equivalent to baseline `#N` (e.g. baseline #09 is Connector Architecture, baseline #34 is Mission Control + Pulse, baseline #42 is UI Component Catalogue), refuse and surface the mis-mapping. Cite `BASELINE_SOURCE_INVENTORY.md` for the verified mapping.\n\n4. **Sourcing-rule respect.** Confirm the file (if in `docs/knowledge/`) does not silently absorb a `.kiro/specs/` claim into a knowledge-graph artefact. The sourcing rule is locked.\n\nREPORT:\n- If clean: confirm \"No translation-layer citation detected. Sourcing rule respected. ARCH-DEBT-001 risk vector held.\"\n- If flagged: name the line(s), state the violation type (citation-leak / build-derivation / folder-number conflation), require remediation before the edit is considered settled.\n- If hard violation in `docs/knowledge/`: refuse and require the edit be reverted or re-cited.\n\nDo not auto-fix. The author corrects manually. Reference: `docs/knowledge/SOURCING_RULE.md`, `docs/knowledge/BASELINE_SOURCE_INVENTORY.md`, ARCH-DEBT-001 in `docs/knowledge/ARCHITECTURAL_DEBT_REGISTER.md`."
+  }
+}

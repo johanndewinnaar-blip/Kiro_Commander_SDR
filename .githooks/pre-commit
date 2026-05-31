@@ -1,0 +1,203 @@
+#!/usr/bin/env bash
+# Commander SDR — git pre-commit gate
+#
+# Closes GOVERNANCE_MAP gap G-07 (commit-time enforcement). Kiro hooks have
+# no native git pre-commit event, so this script provides the commit-time
+# conformance subset that complements the Kiro hooks layer.
+#
+# Activation (run once per clone):
+#     git config core.hooksPath .githooks
+#
+# Behaviour:
+# - Reads the staged files for the pending commit (no working-tree scans).
+# - Refuses the commit on any HARD violation; prints the violation and the
+#   reference assertion / authority document.
+# - Exits 0 on clean; non-zero on any violation.
+# - Does not modify files. Author corrects manually.
+#
+# Authority:
+# - docs/knowledge/SOURCING_RULE.md (locked)
+# - .kiro/testing/conformance-registry.md (SEC-001 hardcoded secrets)
+# - docs/knowledge/ARCHITECTURAL_DEBT_REGISTER.md ARCH-DEBT-001
+#
+# Implementation note: portable Bash + grep only. Works on Git Bash on
+# Windows, macOS, and Linux. Uses BSD-compatible grep syntax where possible.
+
+set -uo pipefail
+
+# Colours (best-effort; honoured if terminal supports them).
+if [[ -t 2 ]]; then
+    RED=$'\e[31m'
+    YEL=$'\e[33m'
+    GRN=$'\e[32m'
+    DIM=$'\e[2m'
+    OFF=$'\e[0m'
+else
+    RED=''; YEL=''; GRN=''; DIM=''; OFF=''
+fi
+
+violations=0
+
+# Helper — record a violation.
+flag() {
+    local rule="$1"; shift
+    local file="$1"; shift
+    local message="$*"
+    printf '%s[FAIL]%s %s — %s\n         %s%s%s\n' \
+        "$RED" "$OFF" "$rule" "$file" "$DIM" "$message" "$OFF" >&2
+    violations=$((violations + 1))
+}
+
+note() {
+    local rule="$1"; shift
+    local file="$1"; shift
+    local message="$*"
+    printf '%s[FLAG]%s %s — %s\n         %s%s%s\n' \
+        "$YEL" "$OFF" "$rule" "$file" "$DIM" "$message" "$OFF" >&2
+}
+
+# Files staged for this commit (Added, Copied, Modified, Renamed; ignore Deletions).
+staged_files=$(git diff --cached --name-only --diff-filter=ACMR)
+
+if [[ -z "${staged_files:-}" ]]; then
+    # Nothing to check (e.g. empty commit or only deletions).
+    exit 0
+fi
+
+# Iterate each staged file. Read the staged version (`git show :file`) rather
+# than the working-tree copy so we check what is actually being committed.
+while IFS= read -r file; do
+    [[ -z "$file" ]] && continue
+    [[ ! -f "$file" ]] && continue
+
+    # Skip the script itself, the conformance registry, and known meta-files
+    # that legitimately reference forbidden patterns as documentation.
+    case "$file" in
+        .githooks/pre-commit) continue ;;
+        .kiro/testing/conformance-registry.md) continue ;;
+        .kiro/hooks/README.md) continue ;;
+        .kiro/hooks/*.kiro.hook) continue ;;
+        .kiro/hooks/*-hook.md) continue ;;
+        .kiro/hooks/*-hook.json) continue ;;
+        .kiro/steering/*.md) continue ;;
+        docs/knowledge/SOURCING_RULE.md) continue ;;
+        docs/knowledge/BASELINE_SOURCE_INVENTORY.md) continue ;;
+        docs/knowledge/HOOK_RECONCILIATION.md) continue ;;
+        docs/knowledge/ARCHITECTURAL_DEBT_REGISTER.md) continue ;;
+        docs/knowledge/ARCHITECTURAL_FINDINGS.md) continue ;;
+        docs/knowledge/RELATIONSHIP_MAP.md) continue ;;
+        docs/knowledge/COVERAGE.md) continue ;;
+        docs/knowledge/SALVAGE_AND_REBASELINE_REGISTER.md) continue ;;
+        docs/knowledge/GOVERNANCE_MAP.md) continue ;;
+        docs/knowledge/GOVERNANCE_BUILD_INVENTORY.md) continue ;;
+        docs/knowledge/_superseded/*) continue ;;
+        docs/99_source_archive/*) continue ;;
+    esac
+
+    # Pull the staged blob; on read failure just skip and warn.
+    blob=$(git show ":$file" 2>/dev/null) || continue
+
+    # ----------------------------------------------------------------
+    # CHECK 1 — Translation-layer citation in knowledge / authority /
+    #           build-pack / rebaseline files.
+    # ----------------------------------------------------------------
+    case "$file" in
+        docs/knowledge/*|docs/00_authority/*|docs/04_build_packs/*|docs/02_architecture/*|DECISIONS.md|BUILD_SEQUENCE.md|BUILD_VERSION_ROADMAP.md|SALVAGE_AND_REBASELINE_REGISTER.md)
+            if printf '%s' "$blob" | grep -nE '\.kiro/specs/' >/dev/null 2>&1; then
+                # Be precise — show line numbers.
+                matches=$(printf '%s' "$blob" | grep -nE '\.kiro/specs/' | head -3)
+                flag "ARCH-DEBT-001" "$file" \
+                    "Citation to '.kiro/specs/' translation layer detected. Re-point to baseline #N filename in docs/99_source_archive/baseline_v2_6_2/. Authority: docs/knowledge/SOURCING_RULE.md."
+                printf '         %s%s%s\n' "$DIM" "$(printf '%s\n' "$matches" | sed 's/^/         /' | head -3)" "$OFF" >&2
+            fi
+            ;;
+    esac
+
+    # ----------------------------------------------------------------
+    # CHECK 2 — Forbidden source citations in docs/knowledge/.
+    #           Beyond the translation layer, also flag derived sources.
+    # ----------------------------------------------------------------
+    case "$file" in
+        docs/knowledge/*)
+            if printf '%s' "$blob" | grep -nE 'docs/02_architecture/source_|docs/05_design_reference/source_' >/dev/null 2>&1; then
+                matches=$(printf '%s' "$blob" | grep -nE 'docs/02_architecture/source_|docs/05_design_reference/source_' | head -3)
+                flag "SOURCING_RULE" "$file" \
+                    "Citation to derived source-copy file (docs/02_architecture/source_* or docs/05_design_reference/source_*). Re-point to docs/99_source_archive/baseline_v2_6_2/."
+                printf '         %s%s%s\n' "$DIM" "$(printf '%s\n' "$matches" | sed 's/^/         /' | head -3)" "$OFF" >&2
+            fi
+            ;;
+    esac
+
+    # ----------------------------------------------------------------
+    # CHECK 3 — Hardcoded secrets (SEC-001).
+    #
+    # Scans every staged file for high-confidence secret patterns. Conservative
+    # by design — false positives create commit pain; better to undermatch and
+    # rely on the Kiro postTask hook for deeper checks.
+    #
+    # Patterns:
+    #   - AWS access key IDs:  AKIA[0-9A-Z]{16}
+    #   - AWS secret access keys: looks for 40-char base64-ish near a hint
+    #   - Private keys: BEGIN ... PRIVATE KEY
+    #   - Bearer tokens with JWT shape (three base64url segments)
+    # ----------------------------------------------------------------
+
+    # 3a — AWS access key IDs.
+    if printf '%s' "$blob" | grep -nE 'AKIA[0-9A-Z]{16}' >/dev/null 2>&1; then
+        matches=$(printf '%s' "$blob" | grep -nE 'AKIA[0-9A-Z]{16}' | head -3)
+        flag "SEC-001" "$file" \
+            "Hardcoded AWS access key ID detected (AKIA…). Use environment variables or secret manager."
+        printf '         %s%s%s\n' "$DIM" "$(printf '%s\n' "$matches" | sed 's/^/         /' | head -3)" "$OFF" >&2
+    fi
+
+    # 3b — Private key blocks.
+    if printf '%s' "$blob" | grep -nE 'BEGIN [A-Z ]*PRIVATE KEY' >/dev/null 2>&1; then
+        matches=$(printf '%s' "$blob" | grep -nE 'BEGIN [A-Z ]*PRIVATE KEY' | head -1)
+        flag "SEC-001" "$file" \
+            "Private key block detected. Private keys must never be committed."
+        printf '         %s%s%s\n' "$DIM" "         $matches" "$OFF" >&2
+    fi
+
+    # 3c — JWT-shaped bearer tokens hard-coded.
+    if printf '%s' "$blob" | grep -nE 'eyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}' >/dev/null 2>&1; then
+        matches=$(printf '%s' "$blob" | grep -nE 'eyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}' | head -1)
+        flag "SEC-001" "$file" \
+            "JWT-shaped bearer token detected. Tokens must not be committed; use placeholders or env vars."
+        printf '         %s%s%s\n' "$DIM" "         $matches" "$OFF" >&2
+    fi
+
+    # 3d — Real-looking password / api_key assignments with non-placeholder values.
+    #     Restrict to source code files to avoid false positives in markdown.
+    case "$file" in
+        *.ts|*.tsx|*.js|*.jsx|*.py|*.rb|*.go|*.java|*.cs|*.kt|*.rs|*.php|*.sh)
+            if printf '%s' "$blob" | grep -nEi '(api[_-]?key|password|secret)[[:space:]]*[:=][[:space:]]*"[A-Za-z0-9_/+=-]{20,}"' >/dev/null 2>&1; then
+                matches=$(printf '%s' "$blob" | grep -nEi '(api[_-]?key|password|secret)[[:space:]]*[:=][[:space:]]*"[A-Za-z0-9_/+=-]{20,}"' | head -2)
+                # Check it isn't a placeholder.
+                if ! printf '%s' "$matches" | grep -Eqi 'xxxx|example|placeholder|<your|your-key|sample|fake|test|EXAMPLE_' ; then
+                    flag "SEC-001" "$file" \
+                        "Hardcoded credential-shaped string (api_key/password/secret). If this is an example, use a placeholder (xxxx, EXAMPLE_KEY, <your-key-here>)."
+                    printf '         %s%s%s\n' "$DIM" "$(printf '%s\n' "$matches" | sed 's/^/         /')" "$OFF" >&2
+                fi
+            fi
+            ;;
+    esac
+
+done <<< "$staged_files"
+
+# ----------------------------------------------------------------
+# Decision.
+# ----------------------------------------------------------------
+
+if (( violations > 0 )); then
+    printf '\n%s[REFUSED]%s pre-commit gate found %d violation(s). Address them before retrying the commit.\n' \
+        "$RED" "$OFF" "$violations" >&2
+    printf '%sReferences:%s\n' "$DIM" "$OFF" >&2
+    printf '  - docs/knowledge/SOURCING_RULE.md\n' >&2
+    printf '  - .kiro/testing/conformance-registry.md (SEC-001..006, RBAC-001..004)\n' >&2
+    printf '  - docs/knowledge/ARCHITECTURAL_DEBT_REGISTER.md (ARCH-DEBT-001)\n' >&2
+    printf '  - .kiro/hooks/README.md (commit-time enforcement section)\n' >&2
+    exit 1
+fi
+
+printf '%s[OK]%s pre-commit gate clean.\n' "$GRN" "$OFF" >&2
+exit 0
