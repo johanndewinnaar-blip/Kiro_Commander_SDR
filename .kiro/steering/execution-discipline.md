@@ -39,6 +39,23 @@ Standing rules for all build execution in this programme. These apply regardless
 - One logical change per commit where practical.
 - Push at session end or when a coherent unit of work is complete.
 
+## Unit closure review (mandatory pre-commit)
+
+Before committing any build unit, run the Unit Closure Review checklist (`docs/07_prompt_library/09_UNIT_CLOSURE_REVIEW_PROMPT.md`) and report each item factually. This is not optional — it is a standing execution requirement.
+
+The checklist covers:
+1. **Implementation completion** — all deliverables from the unit definition are implemented.
+2. **Migration status** — Drizzle migration generated if schema changed.
+3. **DATA_DICTIONARY.md status** — updated if new entity/field/availability change.
+4. **ARCH-DEBT status** — resolved items marked with verification; new debt logged if source-proven.
+5. **ARCH-009 verification** — verification line with baseline spec #N + evidence exists.
+6. **REBASELINED_BUILD_SEQUENCE.md status** — unit DONE, dependents recomputed, snapshot/summary updated.
+7. **Tests / conformance** — typecheck passes, full suite run, 0 new failures.
+8. **Exact stage list** — only this unit's files staged, no contamination from other units.
+9. **Commit readiness** — all items satisfied, owner approval received.
+
+If any item fails, do not commit — resolve the issue first and re-run. The checklist output is the evidence that closure was verified before commit.
+
 ## Data-layer completion
 
 - Data-layer build units are not "done" until their DATA_DICTIONARY.md entry exists.
