@@ -95,3 +95,21 @@ export {
   evaluateClosureReadiness,
   isManualClosureBlocked,
 } from './case-closure-gate-engine';
+
+// Unit 13: Case Reopening Trigger Engine
+export type {
+  ReopeningTriggerType,
+  ReopeningTriggerInput,
+  TriggerResult,
+  CaseReopeningTriggerState,
+  ReopeningTriggerEvaluationRequest,
+  ReopeningTriggerEvaluationResult,
+} from './case-reopening-trigger-engine';
+export {
+  REOPENING_TRIGGER_TYPES,
+  evaluateTrigger,
+  evaluateAllTriggers,
+  extractReopeningTriggerConfig,
+  evaluateReopeningReadiness,
+  isManualReopeningBlocked,
+} from './case-reopening-trigger-engine';
