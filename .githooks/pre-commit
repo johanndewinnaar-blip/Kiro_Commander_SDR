@@ -185,6 +185,17 @@ while IFS= read -r file; do
 done <<< "$staged_files"
 
 # ----------------------------------------------------------------
+# Governance runner (ARCH-008 integrity backstop).
+# ----------------------------------------------------------------
+
+if command -v node >/dev/null 2>&1 && [[ -f "$PWD/scripts/governance-check.cjs" ]]; then
+    node "$PWD/scripts/governance-check.cjs" --pre-commit 2>&1
+    if (( $? != 0 )); then
+        violations=$((violations + 1))
+    fi
+fi
+
+# ----------------------------------------------------------------
 # Decision.
 # ----------------------------------------------------------------
 

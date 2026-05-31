@@ -9,7 +9,8 @@
   },
   "scripts": {
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "governance": "node scripts/governance-check.cjs"
   },
   "devDependencies": {
     "drizzle-kit": "^0.31.10",

@@ -48,7 +48,13 @@ Before committing any build unit, execute the following sequence in order:
 After implementation is complete (code written, typecheck passes, tests pass), invoke the core testing pipeline scoped to the unit's changed files:
 
 ```
-run core testing <unit files or directory>
+node scripts/governance-check.cjs --unit N
+```
+
+Or via npm script:
+
+```
+pnpm governance -- --unit N
 ```
 
 This mechanically evaluates:
