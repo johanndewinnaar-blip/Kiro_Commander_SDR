@@ -53,3 +53,26 @@ export {
   calculateEscalation,
   evaluateSla,
 } from './case-sla-engine';
+
+// Unit 11: Case Validation Engine
+export type {
+  ValidationState,
+  ValidationTriggerType,
+  ValidationTransition,
+  EvidenceRecord,
+  CaseValidationState,
+  ValidationEvaluationRequest,
+  ValidationEvaluationResult,
+} from './case-validation-engine';
+export {
+  VALIDATION_STATES,
+  VALIDATION_TRIGGER_TYPES,
+  VALIDATION_TRANSITIONS,
+  isValidationTransitionAllowed,
+  getNextValidationStates,
+  executeValidationTransition,
+  checkEvidenceFreshness,
+  checkWindowExpiry,
+  shouldTriggerRevalidation,
+  evaluateValidation,
+} from './case-validation-engine';

@@ -69,9 +69,9 @@ A unit is **READY** iff every dependency unit is **DONE** and every mapped chain
 
 Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readiness State Machine above.
 
-**READY (4):** Unit 5 (Normalisation Layer), Unit 11 (Validation Lifecycle Engine), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors).
+**READY (4):** Unit 5 (Normalisation Layer), Unit 12 (Closure Gate Engine), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors).
 
-**DONE (10):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10.
+**DONE (11):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11.
 
 **BLOCKED (36):** Units 12–21, 23–37, 39–49 (except Units 5, 22, 38). All 27 Team 2 units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006.
 
@@ -88,8 +88,8 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 | 8 Case Routing Engine | Foundational | **DONE** | — |
 | 9 Case Prioritisation Engine | Foundational | **DONE** | — |
 | 10 Case SLA Engine | Foundational | **DONE** | — |
-| 11 Validation Lifecycle Engine | Foundational | **READY** | — |
-| 12 Closure Gate Engine | Foundational | BLOCKED | Unit 11 |
+| 11 Validation Lifecycle Engine | Foundational | **DONE** | — |
+| 12 Closure Gate Engine | Foundational | **READY** | — |
 | 13 Reopening Trigger Engine | Foundational | BLOCKED | Unit 12 |
 | 14 Intelligence Layer — Four Streams | Foundational | BLOCKED | Unit 5 |
 | 15 OODA Layer | Foundational | BLOCKED | Unit 14; Units 8–13 |
@@ -598,9 +598,11 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ### Unit 11: Validation Lifecycle Engine
 
-**Status:** BLOCKED
+**Status:** DONE
 
-**Blocked by:** Unit 7 (Case Lifecycle core)
+**Blocked by:** — (complete)
+
+**Verification:** Spec #30 Universal Validation, Closure and Reopening Lifecycle §6. Evidence: typecheck clean; vitest 93/93 Unit 11 tests pass; 11-state validation lifecycle (not_started through revalidation_required); 11 validation trigger types; complete transition graph; evidence freshness checking (strategy-driven); window expiry detection (strategy-driven); revalidation trigger logic; all values from validation-window strategy; returns error on missing strategy; governance Green (100%).
 
 **Purpose:** Build validation lifecycle engine (11 states) consuming Validation Window Strategy from Strategy Layer
 
