@@ -33,6 +33,46 @@ Standing rules for all build execution in this programme. These apply regardless
 - Follow the authority read order in AGENTS.md before any change.
 - If a hook or guardrail refuses an action, stop and report. Do not work around it.
 
+## READY unit auto-commit lifecycle
+
+When the owner instructs execution of a READY build unit, the default lifecycle is autonomous end-to-end:
+
+1. Implement deliverables (apply auto-fix where permitted by doctrine)
+2. Run functional tests (`pnpm test`)
+3. Run governance runner (`node scripts/governance-check.cjs --unit N`)
+4. Update score-register.md (automatic via governance runner)
+5. Create run log (automatic via governance runner)
+6. Run unit closure review checklist
+7. If ALL checks PASS and no stop-conditions are triggered:
+   - Mark unit DONE in REBASELINED_BUILD_SEQUENCE.md
+   - Recompute READY set
+   - Commit (through pre-commit gate)
+   - Push to origin
+   - Report final state (commit hash, DONE set, READY set)
+
+**Stop for owner review only if:**
+
+- Functional tests fail after auto-fix attempts
+- Governance runner fails (any ARCH-00x check)
+- Scorecard band becomes Red
+- Unresolved structural debt is created
+- Authority, governance, hook, gate, or doctrine files are modified
+- Build scope is ambiguous or deliverables are unclear
+- Destructive git or file operation is required
+- Live AWS, vendor API, credential, or billing action is requested
+
+**What this does NOT weaken:**
+
+- Governance runner still runs on every unit
+- Pre-commit gate still fires on every commit
+- Hooks still enforce (performance compliance, post-task review)
+- Scorecard reporting still mandatory
+- Closure review still mandatory
+- All doctrinal assertions still enforced
+- Authority preflight still checked
+
+This is a workflow-friction reduction only. The governance chain is unchanged.
+
 ## Commit discipline
 
 - Commit messages are descriptive and reference the spec/phase/pass.
