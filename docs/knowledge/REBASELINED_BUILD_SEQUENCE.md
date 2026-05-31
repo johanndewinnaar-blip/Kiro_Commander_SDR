@@ -69,22 +69,22 @@ A unit is **READY** iff every dependency unit is **DONE** and every mapped chain
 
 Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readiness State Machine above.
 
-**READY (3):** Unit 1 (Risk Object DB Schema), Unit 2 (Strategy Policy DB Schema), Unit 4 (Connector Layer Foundation).
+**READY (2):** Unit 2 (Strategy Policy DB Schema), Unit 4 (Connector Layer Foundation).
 
-**DONE (1):** Unit 0 (common.ts foundation correction — ARCH-DEBT-033 RESOLVED).
+**DONE (2):** Unit 0 (common.ts foundation correction), Unit 1 (Risk Object DB Schema — ARCH-DEBT-030 RESOLVED).
 
 **BLOCKED (46):** Units 3, 5–49. Unit 3 blocked on Unit 2. Units 5+ blocked on their dependency chains. All 27 Team 2 units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006.
 
 | Unit | Tag | Status | Blocked by |
 |---|---|---|---|
 | 0 Foundation Correction (common.ts) | Foundational | **DONE** | — |
-| 1 Risk Object DB Schema | Foundational | **READY** | — |
+| 1 Risk Object DB Schema | Foundational | **DONE** | — |
 | 2 Strategy Policy DB Schema | Foundational | **READY** | — |
 | 3 Case Strategy Binding Schema + Fixture | Foundational | BLOCKED | Unit 2 (not DONE yet); ARCH-DEBT-032 is self-resolving |
 | 4 Connector Layer Foundation | Foundational | **READY** | — |
 | 5 Normalisation Layer | Foundational | BLOCKED | Unit 4 (not DONE yet) |
 | 6 Strategy Layer Runtime (build-blocking) | Foundational | BLOCKED | Unit 2; Unit 3 |
-| 7 Case Lifecycle Engine | Foundational | BLOCKED | Unit 1; Unit 6 |
+| 7 Case Lifecycle Engine | Foundational | BLOCKED | Unit 6 |
 | 8 Case Routing Engine | Foundational | BLOCKED | Unit 6; Unit 7 |
 | 9 Case Prioritisation Engine | Foundational | BLOCKED | Unit 6; Unit 7 |
 | 10 Case SLA Engine | Foundational | BLOCKED | Unit 6; Unit 7 |
@@ -173,9 +173,11 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ### Unit 1: Risk Object DB Schema (ARCH-DEBT-030)
 
-**Status:** READY
+**Status:** DONE
 
-**Blocked by:** — (Unit 0 DONE; ARCH-DEBT-030 is this unit's own resolving debt, not self-blocking)
+**Blocked by:** — (complete)
+
+**Verification:** Spec #29 Universal Risk Object and Case Binding from `docs/99_source_archive/baseline_v2_6_2/docs/02_child_specs/29_Universal_Risk_Object_and_Case_Binding_Spec.md`. Evidence: typecheck clean (tsc --noEmit exit 0); vitest 26/26 pass (case-domain-model.test.ts); field-for-field diff confirmed (8 RiskObjectType, 4 TreatmentState, all contract fields → schema columns); Drizzle migration generated (0000_risk_objects_unit1.sql — 16 columns, 1 FK, 2 enums); DATA_DICTIONARY.md entry AVAILABLE; ARCH-DEBT-030 RESOLVED with verification.
 
 **Purpose:** Close foundational data-layer gap — create missing Risk Object database schema
 
@@ -421,7 +423,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Unit 1 (Risk Object schema); Unit 6 (Strategy Layer — build-blocking)
+**Blocked by:** Unit 6 (Strategy Layer — build-blocking)
 
 **Purpose:** Build closed-loop case lifecycle engine with 12 states, system-owned transitions only
 
@@ -2182,7 +2184,7 @@ A build unit is complete when:
 ---
 
 **Last Updated:** 2026-05-31  
-**Status:** ACTIVE — readiness state machine. Build only from the READY set (currently Units 1, 2, 4). Status recomputes on debt-resolution / unit-completion.  
+**Status:** ACTIVE — readiness state machine. Build only from the READY set (currently Units 2, 4). Status recomputes on debt-resolution / unit-completion.  
 **Enforcement:** ARCH-006 (build-stream sequencing) + ARCH-007 (blocking-debt prerequisite) in `.kiro/testing/conformance-registry.md`, auto-run via post-task-review. "What's next" query defined in `.kiro/steering/execution-discipline.md`.  
 **Authority:** Derived from SYSTEM_KNOWLEDGE_GRAPH.md, DATA_DICTIONARY.md, REBASELINED_BUILD_SCHEDULE_NOTES.md, baseline source. Decision: `DEC-build-readiness-state-machine` (DECISIONS.md).  
 **Sourcing rule:** Never cite the translation layer — all citations from `docs/99_source_archive/baseline_v2_6_2/`

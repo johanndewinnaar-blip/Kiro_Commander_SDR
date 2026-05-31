@@ -26,3 +26,4 @@ export { identities } from './identities';
 export { cases } from './cases';
 export { connectors } from './connectors';
 export { auditEvents } from './audit-events';
+export { riskObjects, riskObjectTypeEnum, treatmentStateEnum } from './risk-objects';

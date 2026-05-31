@@ -639,15 +639,18 @@ Authority: `.kiro/steering/feature-function-backlog.md` (extended in this update
 - **Scope of fix:** Create `packages/db/src/schema/risk-objects.ts` with Drizzle schema matching the contract. Map 8 RiskObjectType values (coverage_blindspot, ooda_phase_degradation, vulnerability_drift, configuration_drift, exposure_drift, control_gap, identity_risk, policy_gap) and 4 TreatmentState values (open, mitigated, accepted, transferred). Add to schema index exports.
 - **Affected specs / artifacts:** `packages/contracts/src/entities/risk-object.ts`; `packages/contracts/src/fixtures/seed-risk-objects.ts`; `packages/db/src/schema/` (missing file); Spec #29 Universal Risk Object
 - **Scheduled resolution:** Data-layer completion pass (before Phase 2)
-- **Status:** RESOLVED-unverified
+- **Status:** RESOLVED
 - **Date logged:** 2026-05-31
 - **Last reviewed:** 2026-05-31
 - **Resolution date:** 2026-05-31
+
+**Verification:** Checked against Spec #29 Universal Risk Object and Case Binding from `docs/99_source_archive/baseline_v2_6_2/docs/02_child_specs/29_Universal_Risk_Object_and_Case_Binding_Spec.md`. Evidence: (1) typecheck clean (`tsc --noEmit` on schema + contract + fixtures — exit 0); (2) `vitest run tests/06-case-management/case-domain-model.test.ts` — 26/26 pass; (3) field-for-field diff confirmed: 8 RiskObjectType enum values, 4 TreatmentState enum values, all contract fields mapped to schema columns (standard tenant→tenantId FK, source→4 flattened columns per Spec #05 §11.3); (4) Drizzle migration `0000_risk_objects_unit1.sql` generated with risk_objects table (16 columns, 1 FK), risk_object_type and treatment_state enums.
 
 **History**
 - 2026-05-31: OPEN — surfaced from DATA_DICTIONARY.md contract-vs-schema reconciliation
 - 2026-05-31: RESOLVED — Unit 1 created `packages/db/src/schema/risk-objects.ts` with full Drizzle schema matching contract, exported enums and table from schema index, updated DATA_DICTIONARY.md Risk Object entry to mark status AVAILABLE
 - 2026-05-31: RESOLVED → RESOLVED-unverified — ARCH-009 retroactive audit: RESOLVED line lacks baseline spec #N citation and explicit evidence type (test/typecheck/grep). The schema exists and typechecks (confirmed in session), but the verification was not recorded with the required format. Re-status until a formal verification line is added.
+- 2026-05-31: RESOLVED-unverified → RESOLVED — ARCH-009 verification line added with Spec #29 citation and evidence (typecheck + vitest 26/26 + field-for-field diff + migration generation).
 
 ---
 
