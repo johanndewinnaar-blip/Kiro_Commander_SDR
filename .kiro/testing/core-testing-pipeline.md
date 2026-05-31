@@ -73,11 +73,16 @@
 - **ARCH-007** — read the unit's `Status` in `REBASELINED_BUILD_SEQUENCE.md`. FAIL if `Status` is `BLOCKED`. Mechanically verify both cases: every dependency unit is `DONE`, and every chain-mapped ARCH-DEBT in `ARCHITECTURAL_DEBT_REGISTER.md` is `RESOLVED` (a unit's own resolving debt is excluded). Allow build only when `Status` is `READY`.
 
 **Readiness-machine integrity (ARCH-008):** On every pipeline run, validate the state machine itself:
-- **(a) No orphan debt:** every OPEN ARCH-DEBT item must appear in at least one unit's `Blocked by` or be the resolving target of a unit. Grep-based.
+- **(a) No orphan build-debt:** every OPEN ARCH-DEBT item with `Debt class: build-debt` must appear in at least one unit's `Blocked by` or be the resolving target of a unit. Governance-debt is excluded. Grep-based.
 - **(b) No unstatused units:** every `### Unit N:` header must have a `**Status:**` line within 4 lines. Grep-based.
 - **(c) Built-but-blocked:** any unit with `Status: BLOCKED` whose primary deliverable file exists on disk is flagged "built-but-blocked — do not commit as done." File-existence check.
 
-These are mechanical file-existence + grep checks. Readiness/sequencing/integrity violations are Structural Debt (not auto-fixed).
+**Verification-before-done (ARCH-009):** On every pipeline run and when marking a unit DONE or debt RESOLVED:
+- Every unit marked DONE must have a `**Verification:**` line citing baseline spec #N and evidence (test/grep/diff/review/typecheck/migration/pipeline).
+- Every debt item marked RESOLVED must have a History line for the RESOLVED transition citing source and evidence.
+- Items lacking verification are re-statused to `DONE-unverified` or `RESOLVED-unverified`. This enforces that verification was RECORDED — not that it was correct (correctness stays human review).
+
+These are mechanical file-existence + grep checks. Readiness/sequencing/integrity/verification violations are Structural Debt (not auto-fixed).
 
 **Pass Criteria:** All applicable assertions pass.
 

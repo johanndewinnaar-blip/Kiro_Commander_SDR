@@ -270,8 +270,8 @@
 ### ARCH-008: Readiness-Machine Integrity
 **Assertion:** The readiness state machine in `REBASELINED_BUILD_SEQUENCE.md` and `ARCHITECTURAL_DEBT_REGISTER.md` MUST remain internally consistent. Three mechanical checks enforce this:
 
-**(a) No orphan debt:** Every OPEN item in `docs/knowledge/ARCHITECTURAL_DEBT_REGISTER.md` MUST map to at least one unit in `docs/knowledge/REBASELINED_BUILD_SEQUENCE.md` (either as the unit's own resolving debt, or named in a `Blocked by` line). An OPEN ARCH-DEBT item that appears in no unit's `Blocked by` and is not the resolving target of any unit = orphan debt → FAIL.
-**Check:** Grep `ARCHITECTURAL_DEBT_REGISTER.md` for all `### ARCH-DEBT-NNN` entries with `Status: OPEN`. For each, grep `REBASELINED_BUILD_SEQUENCE.md` for that ID. If zero matches → FAIL ("orphan debt: ARCH-DEBT-NNN has no mapped unit").
+**(a) No orphan build-debt:** Every OPEN item in `docs/knowledge/ARCHITECTURAL_DEBT_REGISTER.md` with `Debt class: build-debt` MUST map to at least one unit in `docs/knowledge/REBASELINED_BUILD_SEQUENCE.md` (either as the unit's own resolving debt, or named in a `Blocked by` line). An OPEN build-debt item that appears in no unit's `Blocked by` and is not the resolving target of any unit = orphan build-debt → FAIL. Items with `Debt class: governance-debt` are excluded from this mapping requirement (they are tracked open but resolved by reconciliation/decision, not by building a unit).
+**Check:** Grep `ARCHITECTURAL_DEBT_REGISTER.md` for all `### ARCH-DEBT-NNN` entries with `Status: OPEN` AND `Debt class: build-debt`. For each, grep `REBASELINED_BUILD_SEQUENCE.md` for that ID. If zero matches → FAIL ("orphan build-debt: ARCH-DEBT-NNN has no mapped unit").
 
 **(b) No unstatused units:** Every `### Unit N:` header in `REBASELINED_BUILD_SEQUENCE.md` MUST be followed (within 4 lines) by a `**Status:**` line containing one of `BLOCKED`, `READY`, or `DONE`. A unit header without a status line = unstatused → FAIL.
 **Check:** Grep `REBASELINED_BUILD_SEQUENCE.md` for `### Unit \d+:` headers. For each, read the next 4 lines and confirm a `**Status:** (BLOCKED|READY|DONE)` line exists. If absent → FAIL ("unstatused unit: Unit N").
@@ -281,6 +281,22 @@
 
 **Source:** `DEC-readiness-integrity-check` (DECISIONS.md). Extends ARCH-007 (Blocking-Debt Prerequisite) and `DEC-build-readiness-state-machine`.
 **Debt Type:** Integrity violations are classified as Structural Debt (require manual reconciliation — either map the orphan debt to a unit, add the missing status, or resolve the blocking condition before committing the built code).
+**Enforcement:** Wired into `.kiro/testing/core-testing-pipeline.md` (Stage 2 conformance checks) and auto-run via the `Post-Task Review` hook (postTaskExecution).
+
+### ARCH-009: Verification-Before-Done
+**Assertion:** A unit MUST NOT be marked DONE, and a debt item MUST NOT be marked RESOLVED, without a recorded **Verification** line that cites: (a) the baseline spec #N the deliverable was checked against, and (b) the evidence (test result, grep output, diff output, or explicit review reference). Status (RESOLVED/DONE) is TRUSTED only when a verification record exists; without it, the status is unproven.
+
+**Ceiling (stated explicitly):** This check enforces that verification was **recorded with evidence** — NOT that the verification was correct. Correctness of the evidence remains human review. The check is mechanical: grep for the verification record tied to the unit/debt ID; FAIL if absent.
+
+**Check:** MECHANICAL grep-based:
+1. **For units marked DONE:** grep `REBASELINED_BUILD_SEQUENCE.md` for the unit's section. Confirm a `**Verification:**` line exists within the unit's section containing both (a) a baseline spec citation (pattern: `#\d+` or `Spec #\d+`) and (b) an evidence reference (pattern: one of `test`, `grep`, `diff`, `review`, `typecheck`, `migration`, `pipeline`). If absent → FAIL ("Unit N marked DONE without verification record").
+2. **For debt items marked RESOLVED:** grep `ARCHITECTURAL_DEBT_REGISTER.md` for the debt item's section. Confirm a `**Verification:**` line exists (or a History line containing `RESOLVED` with evidence citation). Pattern: the History line for the RESOLVED transition must contain both a baseline/source citation and an evidence type. If absent → FAIL ("ARCH-DEBT-NNN marked RESOLVED without verification record").
+3. **Unverified status:** items that fail this check are re-statused to `RESOLVED-unverified` (debt) or `DONE-unverified` (units) until a verification line is added. This is a flag, not a revert — the work may be correct but the proof is missing.
+
+**Retroactive application:** On first run, audit all existing RESOLVED/DONE statuses. Any lacking a verification record are flagged and re-statused per rule 3 above.
+
+**Source:** `DEC-verification-before-done` (DECISIONS.md). Extends ARCH-007 (Blocking-Debt Prerequisite) and ARCH-008 (Readiness-Machine Integrity).
+**Debt Type:** Verification-gap violations are classified as Quick Debt (the fix is adding the verification line with evidence — a documentation operation, not a code change).
 **Enforcement:** Wired into `.kiro/testing/core-testing-pipeline.md` (Stage 2 conformance checks) and auto-run via the `Post-Task Review` hook (postTaskExecution).
 
 ---
