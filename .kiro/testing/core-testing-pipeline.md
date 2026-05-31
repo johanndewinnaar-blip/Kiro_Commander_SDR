@@ -72,7 +72,12 @@
 - **ARCH-006** — if the unit is tagged `Team 2`, confirm `USE_CASE_SCHEDULE.md` and `PAGE_INVENTORY.md` exist and `PAGE_INVENTORY.md` lists the unit. FAIL (sequencing violation) otherwise.
 - **ARCH-007** — read the unit's `Status` in `REBASELINED_BUILD_SEQUENCE.md`. FAIL if `Status` is `BLOCKED`. Mechanically verify both cases: every dependency unit is `DONE`, and every chain-mapped ARCH-DEBT in `ARCHITECTURAL_DEBT_REGISTER.md` is `RESOLVED` (a unit's own resolving debt is excluded). Allow build only when `Status` is `READY`.
 
-These are mechanical file-existence + grep checks. Readiness/sequencing violations are Structural Debt (not auto-fixed).
+**Readiness-machine integrity (ARCH-008):** On every pipeline run, validate the state machine itself:
+- **(a) No orphan debt:** every OPEN ARCH-DEBT item must appear in at least one unit's `Blocked by` or be the resolving target of a unit. Grep-based.
+- **(b) No unstatused units:** every `### Unit N:` header must have a `**Status:**` line within 4 lines. Grep-based.
+- **(c) Built-but-blocked:** any unit with `Status: BLOCKED` whose primary deliverable file exists on disk is flagged "built-but-blocked — do not commit as done." File-existence check.
+
+These are mechanical file-existence + grep checks. Readiness/sequencing/integrity violations are Structural Debt (not auto-fixed).
 
 **Pass Criteria:** All applicable assertions pass.
 

@@ -267,6 +267,22 @@
 **Debt Type:** Readiness violations are Structural Debt (cannot be auto-fixed; require the blocking dependency to be built or the blocking debt to be resolved first).  
 **Enforcement:** Wired into `.kiro/testing/core-testing-pipeline.md` (Stage 2 conformance checks) and auto-run via the `Post-Task Review` hook (postTaskExecution).
 
+### ARCH-008: Readiness-Machine Integrity
+**Assertion:** The readiness state machine in `REBASELINED_BUILD_SEQUENCE.md` and `ARCHITECTURAL_DEBT_REGISTER.md` MUST remain internally consistent. Three mechanical checks enforce this:
+
+**(a) No orphan debt:** Every OPEN item in `docs/knowledge/ARCHITECTURAL_DEBT_REGISTER.md` MUST map to at least one unit in `docs/knowledge/REBASELINED_BUILD_SEQUENCE.md` (either as the unit's own resolving debt, or named in a `Blocked by` line). An OPEN ARCH-DEBT item that appears in no unit's `Blocked by` and is not the resolving target of any unit = orphan debt → FAIL.
+**Check:** Grep `ARCHITECTURAL_DEBT_REGISTER.md` for all `### ARCH-DEBT-NNN` entries with `Status: OPEN`. For each, grep `REBASELINED_BUILD_SEQUENCE.md` for that ID. If zero matches → FAIL ("orphan debt: ARCH-DEBT-NNN has no mapped unit").
+
+**(b) No unstatused units:** Every `### Unit N:` header in `REBASELINED_BUILD_SEQUENCE.md` MUST be followed (within 4 lines) by a `**Status:**` line containing one of `BLOCKED`, `READY`, or `DONE`. A unit header without a status line = unstatused → FAIL.
+**Check:** Grep `REBASELINED_BUILD_SEQUENCE.md` for `### Unit \d+:` headers. For each, read the next 4 lines and confirm a `**Status:** (BLOCKED|READY|DONE)` line exists. If absent → FAIL ("unstatused unit: Unit N").
+
+**(c) Built-but-blocked detection:** If a unit's `Status` is `BLOCKED` but the unit's primary deliverable file exists on disk (untracked or modified), flag "built-but-blocked — do not commit as done." This catches the case where code was produced for a BLOCKED unit before the readiness gate was enforced.
+**Check:** For each unit with `Status: BLOCKED`, extract the first deliverable path from the unit's `Deliverables` section (the `packages/db/src/schema/` or `packages/contracts/src/` path). If that file exists on disk (tracked or untracked) → FLAG ("built-but-blocked: Unit N has code on disk at [path] but Status is BLOCKED — do not commit as DONE until status flips READY→DONE through the gate").
+
+**Source:** `DEC-readiness-integrity-check` (DECISIONS.md). Extends ARCH-007 (Blocking-Debt Prerequisite) and `DEC-build-readiness-state-machine`.
+**Debt Type:** Integrity violations are classified as Structural Debt (require manual reconciliation — either map the orphan debt to a unit, add the missing status, or resolve the blocking condition before committing the built code).
+**Enforcement:** Wired into `.kiro/testing/core-testing-pipeline.md` (Stage 2 conformance checks) and auto-run via the `Post-Task Review` hook (postTaskExecution).
+
 ---
 
 ## Decision Record Assertions
