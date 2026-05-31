@@ -69,11 +69,11 @@ A unit is **READY** iff every dependency unit is **DONE** and every mapped chain
 
 Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readiness State Machine above.
 
-**READY (5):** Unit 5 (Normalisation Layer), Unit 7 (Case Lifecycle Engine), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors).
+**READY (6):** Unit 5 (Normalisation Layer), Unit 9 (Case Prioritisation Engine), Unit 10 (Case SLA Engine), Unit 11 (Validation Lifecycle Engine), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors).
 
-**DONE (6):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 6.
+**DONE (8):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 6, Unit 7, Unit 8.
 
-**BLOCKED (39):** Units 8–21, 23–37, 39–49 (except Units 5, 7, 22, 38). Unit 3 blocked on Unit 2. Units 5+ blocked on their dependency chains. All 27 Team 2 units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006.
+**BLOCKED (36):** Units 12–21, 23–37, 39–49 (except Units 5, 22, 38). All 27 Team 2 units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006.
 
 | Unit | Tag | Status | Blocked by |
 |---|---|---|---|
@@ -84,17 +84,17 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 | 4 Connector Layer Foundation | Foundational | **DONE** | — |
 | 5 Normalisation Layer | Foundational | **READY** | — |
 | 6 Strategy Layer Runtime (build-blocking) | Foundational | **DONE** | — |
-| 7 Case Lifecycle Engine | Foundational | **READY** | — |
-| 8 Case Routing Engine | Foundational | BLOCKED | Unit 6; Unit 7 |
-| 9 Case Prioritisation Engine | Foundational | BLOCKED | Unit 6; Unit 7 |
-| 10 Case SLA Engine | Foundational | BLOCKED | Unit 6; Unit 7 |
-| 11 Validation Lifecycle Engine | Foundational | BLOCKED | Unit 6; Unit 7 |
-| 12 Closure Gate Engine | Foundational | BLOCKED | Unit 6; Unit 7; Unit 11 |
-| 13 Reopening Trigger Engine | Foundational | BLOCKED | Unit 6; Unit 7; Unit 12 |
+| 7 Case Lifecycle Engine | Foundational | **DONE** | — |
+| 8 Case Routing Engine | Foundational | **DONE** | — |
+| 9 Case Prioritisation Engine | Foundational | **READY** | — |
+| 10 Case SLA Engine | Foundational | **READY** | — |
+| 11 Validation Lifecycle Engine | Foundational | **READY** | — |
+| 12 Closure Gate Engine | Foundational | BLOCKED | Unit 11 |
+| 13 Reopening Trigger Engine | Foundational | BLOCKED | Unit 12 |
 | 14 Intelligence Layer — Four Streams | Foundational | BLOCKED | Unit 5 |
-| 15 OODA Layer | Foundational | BLOCKED | Unit 14; Units 7–13 |
-| 16 Command Centre | Foundational | BLOCKED | Unit 15; Unit 14; Units 7–13 |
-| 17 Case Management UI | Foundational | BLOCKED | Units 7–13; Unit 16 |
+| 15 OODA Layer | Foundational | BLOCKED | Unit 14; Units 8–13 |
+| 16 Command Centre | Foundational | BLOCKED | Unit 15; Unit 14; Units 8–13 |
+| 17 Case Management UI | Foundational | BLOCKED | Units 8–13; Unit 16 |
 | 18 Identity Intelligence Surface | Foundational | BLOCKED | Unit 14; Unit 5 |
 | 19 Asset Intelligence Surface | Foundational | BLOCKED | Unit 14; Unit 5 |
 | 20 External Operating Picture | Foundational | BLOCKED | Unit 14; Unit 16 |
@@ -429,9 +429,11 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ### Unit 7: Case Lifecycle Engine — Core State Machine
 
-**Status:** READY
+**Status:** DONE
 
-**Blocked by:** — (Unit 1 DONE, Unit 6 DONE; all dependencies satisfied)
+**Blocked by:** — (complete)
+
+**Verification:** Spec #08 Case Management, Spec #29 Universal Risk Object and Case Binding, Spec #30 Universal Validation, Closure and Reopening Lifecycle. Evidence: typecheck clean; vitest 164/164 Unit 7 tests pass (lifecycle-12-state, risk-object-binding, case-ref-generator, case-type-assigner, actor-enforcement, system-owned-enforcement, phase-d1-lifecycle-engine); 12-state transition graph (14 edges); per-transition actor enforcement (7 actors); risk object binding (5 outcomes); case ref generator (CMD-{type}-{seq}-{tenant}); case type assigner (8 risk→12 case types); DB migration 0004; governance Green (100%).
 
 **Purpose:** Build closed-loop case lifecycle engine with 12 states, system-owned transitions only
 
@@ -472,9 +474,11 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ### Unit 8: Case Routing Engine
 
-**Status:** BLOCKED
+**Status:** DONE
 
-**Blocked by:** Unit 7 (Case Lifecycle core)
+**Blocked by:** — (complete)
+
+**Verification:** Spec #08 Case Management §§5, 8, 9 from baseline source. Evidence: typecheck clean; vitest 53/53 phase-d4-assignment-engine tests pass; routing engine consumes Routing Strategy (no hardcoded values); team affinity mapping operational; workload capacity calculator; specialism matcher; anti-hoarding rule (cap from strategy); rank weighting (junior/mid/senior/lead from strategy); escalation timeout detection (hours from strategy); reassignment flow (excludes current owner); audit events on every assignment/reassignment; override governance enforced (throws on missing strategy, no manual paths); governance Green (100%).
 
 **Purpose:** Build case routing engine consuming Routing Strategy from Strategy Layer
 
