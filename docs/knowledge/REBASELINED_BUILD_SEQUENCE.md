@@ -69,9 +69,9 @@ A unit is **READY** iff every dependency unit is **DONE** and every mapped chain
 
 Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readiness State Machine above.
 
-**READY (6):** Unit 5 (Normalisation Layer), Unit 9 (Case Prioritisation Engine), Unit 10 (Case SLA Engine), Unit 11 (Validation Lifecycle Engine), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors).
+**READY (5):** Unit 5 (Normalisation Layer), Unit 10 (Case SLA Engine), Unit 11 (Validation Lifecycle Engine), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors).
 
-**DONE (8):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 6, Unit 7, Unit 8.
+**DONE (9):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 6, Unit 7, Unit 8, Unit 9.
 
 **BLOCKED (36):** Units 12–21, 23–37, 39–49 (except Units 5, 22, 38). All 27 Team 2 units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006.
 
@@ -86,7 +86,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 | 6 Strategy Layer Runtime (build-blocking) | Foundational | **DONE** | — |
 | 7 Case Lifecycle Engine | Foundational | **DONE** | — |
 | 8 Case Routing Engine | Foundational | **DONE** | — |
-| 9 Case Prioritisation Engine | Foundational | **READY** | — |
+| 9 Case Prioritisation Engine | Foundational | **DONE** | — |
 | 10 Case SLA Engine | Foundational | **READY** | — |
 | 11 Validation Lifecycle Engine | Foundational | **READY** | — |
 | 12 Closure Gate Engine | Foundational | BLOCKED | Unit 11 |
@@ -518,9 +518,11 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ### Unit 9: Case Prioritisation Engine
 
-**Status:** BLOCKED
+**Status:** DONE
 
-**Blocked by:** Unit 7 (Case Lifecycle core)
+**Blocked by:** — (complete)
+
+**Verification:** Spec #08 Case Management §5 (Case Action Algorithm). Evidence: typecheck clean; vitest 49/49 Unit 9 tests pass; three deterministic scores (CRS weighted evidence sum, MS mission average, WCS 70/30 blend); priority determination P0–P4 from strategy thresholds (no hardcoded values); NBA list generation per priority level; push preference from automation-boundary strategy; all values consumed from 3 strategy surfaces (prioritisation-weight, threshold, automation-boundary); returns error on missing strategy; governance Green (100%).
 
 **Purpose:** Build case prioritisation engine consuming Prioritisation Weight Strategy from Strategy Layer
 

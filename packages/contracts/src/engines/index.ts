@@ -3,6 +3,7 @@
  *
  * System-owned engines for case lifecycle operations.
  * Source: Unit 7 — Case Lifecycle Engine (Core State Machine)
+ * Source: Unit 9 — Case Prioritisation Engine
  */
 
 export type { BindingOutcome, BindingRequest, BindingResult } from './risk-object-binder';
@@ -13,3 +14,26 @@ export { CASE_TYPE_ABBREVIATIONS, generateCaseRef, parseCaseRef } from './case-r
 
 export type { AssignmentContext, CaseTypeAssignmentRequest, CaseTypeAssignmentResult } from './case-type-assigner';
 export { DEFAULT_RISK_TO_CASE_MAP, SIGNAL_CONTEXT_CASE_TYPES, assignCaseType, getReachableCaseTypes } from './case-type-assigner';
+
+// Unit 9: Case Prioritisation Engine
+export type {
+  CaseEvidenceScores,
+  MissionFactors,
+  PrioritisationScores,
+  NextBestAction,
+  PushPreference,
+  Priority,
+  PriorityThresholds,
+  AutomationConfig,
+  PrioritisationRequest,
+  PrioritisationResult,
+} from './case-prioritisation-engine';
+export {
+  calculateCRS,
+  calculateMS,
+  calculateWCS,
+  determinePriority,
+  generateNBA,
+  determinePushPreference,
+  prioritiseCase,
+} from './case-prioritisation-engine';
