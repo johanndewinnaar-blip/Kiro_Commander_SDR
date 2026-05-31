@@ -28,3 +28,4 @@ export { connectors } from './connectors';
 export { auditEvents } from './audit-events';
 export { riskObjects, riskObjectTypeEnum, treatmentStateEnum } from './risk-objects';
 export { strategies, strategySurfaceTypeEnum, strategyPolicyStatusEnum } from './strategies';
+export { caseStrategyBindings } from './case-strategy-bindings';

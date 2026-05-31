@@ -685,12 +685,16 @@ Authority: `.kiro/steering/feature-function-backlog.md` (extended in this update
 - **Scope of fix:** Create `packages/db/src/schema/case-strategy-bindings.ts` with Drizzle schema. Create `packages/contracts/src/fixtures/seed-case-strategy-bindings.ts` with seed data linking cases to strategy policies. Add both to respective index exports.
 - **Affected specs / artifacts:** `packages/contracts/src/entities/case-strategy-binding.ts`; `packages/db/src/schema/` (missing file); `packages/contracts/src/fixtures/` (missing file); Spec #32 Strategy Layer Runtime Surface; Spec #08 Case Management
 - **Scheduled resolution:** Data-layer completion pass (before Phase 2)
-- **Status:** OPEN
+- **Status:** RESOLVED
 - **Date logged:** 2026-05-31
 - **Last reviewed:** 2026-05-31
+- **Resolution date:** 2026-05-31
+
+**Verification:** Checked against Spec #32 Strategy Layer Runtime Surface from `docs/99_source_archive/baseline_v2_6_2/docs/02_child_specs/32_Strategy_Layer_Runtime_Surface_Spec.md` and Spec #08 Case Management from `docs/99_source_archive/baseline_v2_6_2/docs/02_child_specs/08_Case_Management_Workflow_Spec.md`. Evidence: (1) typecheck clean (`tsc --noEmit` on schema + contract + fixture — exit 0); (2) `vitest run` — 601/601 pass (0 new failures); (3) schema stores 6 JSONB strategy-ref columns matching the 6 surfaces in `CASE_STRATEGY_SURFACES` constant; (4) fixture binds all 3 seed cases to the 6 active strategy policies (strategy-0001/sla, strategy-0004/routing, strategy-0009/prioritisation-weight, strategy-0010/validation-window, strategy-0011/closure-gate, strategy-0012/reopening-trigger); (5) Drizzle migration `0002_case_strategy_bindings_unit3.sql` generated (11 columns, 1 FK).
 
 **History**
 - 2026-05-31: OPEN — surfaced from DATA_DICTIONARY.md contract-vs-schema reconciliation
+- 2026-05-31: RESOLVED — Unit 3 created `packages/db/src/schema/case-strategy-bindings.ts` and `packages/contracts/src/fixtures/seed-case-strategy-bindings.ts`. All 6 strategy surfaces bound. Verification recorded per ARCH-009.
 
 ---
 

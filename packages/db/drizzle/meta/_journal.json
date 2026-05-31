@@ -15,6 +15,13 @@
       "when": 1780242839832,
       "tag": "0001_strategy_policies_unit2",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1780244223913,
+      "tag": "0002_case_strategy_bindings_unit3",
+      "breakpoints": true
     }
   ]
 }

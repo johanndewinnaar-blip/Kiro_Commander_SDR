@@ -295,9 +295,23 @@
 **Source:** Spec #32 Strategy Layer Runtime Surface, Spec #08 Case Management  
 **Coverage:** Partial (Spec #32 base spec read, Spec #08 §§1–15 read)  
 **Contract:** `packages/contracts/src/entities/case-strategy-binding.ts`  
-**DB Schema:** ❌ NOT FOUND in `packages/db/src/schema/`  
-**Fixture:** ❌ NOT FOUND  
-**Status:** FUTURE — **DIVERGENCE: contract exists, db schema missing, fixture missing**
+**DB Schema:** `packages/db/src/schema/case-strategy-bindings.ts` ✅  
+**Fixture:** `packages/contracts/src/fixtures/seed-case-strategy-bindings.ts` ✅  
+**Status:** AVAILABLE (fixture exists, db schema created)
+
+| Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
+|-------|------|----------------------|--------------|---------------------|-------|
+| `caseId` | string | seeded | AVAILABLE | — | Case ID — primary key (one binding row per case) |
+| `tenantId` | string | seeded | AVAILABLE | — | Tenant scope (DB infrastructure column) |
+| `dataClassification` | DataClassification | seeded | AVAILABLE | — | Default: 'configuration' (DB infrastructure column) |
+| `routingStrategy` | StrategyPolicyRef (JSONB) | seeded | AVAILABLE | — | Routing strategy — determines owner/team. Shape: {surfaceType, policyId, policyVersion, evaluatedAt} |
+| `slaStrategy` | StrategyPolicyRef (JSONB) | seeded | AVAILABLE | — | SLA strategy — determines SLA target hours |
+| `prioritisationWeightStrategy` | StrategyPolicyRef (JSONB) | seeded | AVAILABLE | — | Prioritisation weight strategy — determines priority calculation |
+| `closureGateStrategy` | StrategyPolicyRef (JSONB) | seeded | AVAILABLE | — | Closure gate strategy — determines closure gates |
+| `reopeningTriggerStrategy` | StrategyPolicyRef (JSONB) | seeded | AVAILABLE | — | Reopening trigger strategy — determines reopening triggers |
+| `validationWindowStrategy` | StrategyPolicyRef (JSONB) | seeded | AVAILABLE | — | Validation window strategy — determines validation freshness |
+| `createdAt` | string (ISO 8601) | system-calculated | AVAILABLE | — | Record creation timestamp |
+| `updatedAt` | string (ISO 8601) | system-calculated | AVAILABLE | — | Record update timestamp |
 
 **Six Strategy Surfaces Consumed by Case Management:**
 1. Routing Strategy — determines owner/team
@@ -309,7 +323,7 @@
 
 **Doctrine:** All case values are derived from strategy layer; none are hardcoded.
 
-**DB Schema Reconciliation:** ❌ **DIVERGENCE** — Contract exists, DB schema missing, fixture missing. Propose ARCH-DEBT entry.
+**DB Schema Reconciliation:** ✅ Contract and schema aligned. DB schema stores each StrategyPolicyRef as JSONB column (preserving the {surfaceType, policyId, policyVersion, evaluatedAt} shape). DB adds standard infrastructure columns (tenantId, dataClassification, createdAt, updatedAt) — same pattern as other entities.
 
 ---
 
@@ -375,13 +389,13 @@ These are code-conformance debt items (contract field removed, test fixtures not
 3. Identity ✅
 4. Risk Object ✅
 5. Connector ✅
-6. Strategy Policy ✅ (contract + fixture, db schema missing)
+6. Strategy Policy ✅
 7. Audit Event ✅
 8. Case Lifecycle (state machine) ✅
-9. Case Strategy Binding ⚠️ (contract only, db schema + fixture missing)
+9. Case Strategy Binding ✅
 10. Common Fields ✅
 
-### Fixtures Found: 8
+### Fixtures Found: 9
 
 1. `seed-assets.ts` ✅
 2. `seed-cases.ts` ✅
@@ -391,6 +405,7 @@ These are code-conformance debt items (contract field removed, test fixtures not
 6. `seed-strategies.ts` ✅
 7. `seed-events.ts` ✅
 8. `seed-tenant.ts` ✅
+9. `seed-case-strategy-bindings.ts` ✅
 
 ### Resolvers Found: 12
 
@@ -409,7 +424,7 @@ These are code-conformance debt items (contract field removed, test fixtures not
 
 ### Contract vs DB Schema Reconciliation
 
-**Aligned (9):**
+**Aligned (10):**
 - Asset ✅
 - Case ✅
 - Identity ✅
@@ -419,16 +434,18 @@ These are code-conformance debt items (contract field removed, test fixtures not
 - Audit Event ✅
 - Common Fields ✅
 - Case Lifecycle (transitions in audit events) ✅
+- Case Strategy Binding ✅
 
-**Divergences (1):**
-1. **Case Strategy Binding** — Contract exists, DB schema + fixture missing
+**Divergences (0):**
+None.
 
 **Proposed Architectural Debt Entries:**
-- ARCH-DEBT-032: Case Strategy Binding incomplete (contract exists, db schema + fixture missing)
+None.
 
 **Resolved Architectural Debt:**
 - ARCH-DEBT-030: Risk Object DB schema missing (contract + fixture exist) — ✅ RESOLVED (Unit 1)
 - ARCH-DEBT-031: Strategy Policy DB schema missing (contract + fixture exist) — ✅ RESOLVED (Unit 2)
+- ARCH-DEBT-032: Case Strategy Binding incomplete (contract exists, db schema + fixture missing) — ✅ RESOLVED (Unit 3)
 
 ---
 
@@ -442,5 +459,5 @@ These are code-conformance debt items (contract field removed, test fixtures not
 
 ---
 
-**Last Updated:** 2026-05-31 (SourceMetadata rawPayloadRef removal confirmed, authority citation updated)  
+**Last Updated:** 2026-05-31 (Case Strategy Binding DB schema + fixture created — ARCH-DEBT-032 resolved)  
 **Snapshot Commit:** (to be recorded after commit)
