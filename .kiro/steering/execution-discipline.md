@@ -90,6 +90,15 @@ The full execution sequence for a unit build is:
 
 If any step fails, do not proceed to the next — resolve the issue first.
 
+## Hook outcome reporting (mandatory)
+
+After post-task hooks fire (postTaskExecution), explicitly report the outcome of the following two hooks in the unit completion report:
+
+1. **Hook 05 — Performance Compliance:** Report PASS / FLAG / FAIL. Include per-layer band if available, or "N/A — no measurable performance units affected" for data-layer-only changes.
+2. **Post-Task Review:** Report PASS / FLAG (with list of flagged items) / FAIL (with violations).
+
+These outcomes must appear in the unit completion report presented to the operator. If a hook's output is not visible, the governance process is incomplete. The operator must see whether the hooks passed or raised issues — silent processing is not acceptable.
+
 ## Data-layer completion
 
 - Data-layer build units are not "done" until their DATA_DICTIONARY.md entry exists.

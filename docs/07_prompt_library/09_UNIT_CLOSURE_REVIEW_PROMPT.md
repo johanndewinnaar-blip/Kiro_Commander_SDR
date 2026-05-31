@@ -62,6 +62,26 @@ Report each item with ✅ (satisfied), ❌ (not satisfied — block commit), or 
 - [ ] Commit message prepared (format: "Complete Unit N <description>").
 - [ ] Owner approval received before committing.
 
+### 10. Scorecard Impact (per performance-discipline.md §Mandatory)
+Report per-layer scorecard impact using the canonical format:
+
+```
+Scorecard impact:
+  Application Layer: {band} ({delta from prior}) — {flags}
+  Database Layer:    {band} ({delta from prior}) — {flags}
+  Data Layer:        {band} ({delta from prior}) — {flags}
+  Infrastructure:    {band} ({delta from prior}) — {flags}
+```
+
+- [ ] If the unit touches a measurable layer: report current band, delta from previous scorecard, and any flags (new Red unit, regression past tolerance, no change).
+- [ ] If the unit does NOT touch a measurable layer (e.g. data-layer schema with no runtime performance impact): report "N/A — no measurable performance units affected by this unit" with a one-line reason.
+- [ ] If a layer's scorecard does not yet exist (Database, Data, Infrastructure at T1): report "N/A — scorecard not yet instantiated (expected at current tier per PD-1.0 §interim manual discipline)."
+- [ ] If the scorecard runner is not yet machine-runnable: apply interim manual discipline — reason against the layer strategy document and state the expected impact.
+
+### 11. Hook Outcomes
+- [ ] **Hook 05 (Performance Compliance):** PASS / FLAG / FAIL. State per-layer band or "N/A — no measurable units affected."
+- [ ] **Post-Task Review:** PASS / FLAG (list flagged items) / FAIL (list violations).
+
 ---
 
 ## Usage
