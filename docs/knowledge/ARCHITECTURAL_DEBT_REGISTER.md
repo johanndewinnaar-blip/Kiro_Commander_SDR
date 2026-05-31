@@ -229,3 +229,361 @@ Authority: `.kiro/steering/feature-function-backlog.md` (extended in this update
 
 **History**
 - 2026-05-30: IN PROGRESS — seeded from DECISIONS.md DEC-build-plan-replacement; SYSTEM_KNOWLEDGE_GRAPH.md complete; three artefacts pending
+
+
+---
+
+### ARCH-DEBT-009 — Behavioural Signal (signal purpose 7) body truncated — Spec #61 §3.7
+
+- **Source:** `ARCHITECTURAL_FINDINGS.md` §2 F-01; `SYSTEM_KNOWLEDGE_GRAPH.md` §3.2 GAP; Spec #61 §3.7
+- **Description:** The eight-purpose enumeration (Configuration / State / Verdict / Detection / Case / Inventory / Behavioural / Threat) is complete by name. The §3.7 body for Behavioural Signal was truncated in the read pass. Connector → Internal Behavioural Intelligence / External Threat downstream binding for behavioural-class signal is therefore partially specified.
+- **Debt type:** Reference-dangling (read-state GAP)
+- **Scope of fix:** Targeted re-read of Spec #61 §3.7; update the knowledge graph and any downstream artefacts that depend on the full §3.7 body.
+- **Affected specs / artifacts:** Spec #61 §3.7; `SYSTEM_KNOWLEDGE_GRAPH.md` §3.2
+- **Scheduled resolution:** Knowledge-graph completion read pass
+- **Status:** OPEN
+- **Date logged:** 2026-05-31
+- **Last reviewed:** 2026-05-31
+
+**History**
+- 2026-05-31: OPEN — bulk-registered from ARCHITECTURAL_FINDINGS.md §8.2 (severity: Material)
+
+---
+
+### ARCH-DEBT-010 — Connector conformance tier names not enumerated — Spec #61 §4.1
+
+- **Source:** `ARCHITECTURAL_FINDINGS.md` §2 F-02; `SYSTEM_KNOWLEDGE_GRAPH.md` §3.3 GAP; Spec #61 §4.1; Spec #55 v2.6 §V2.6-10
+- **Description:** Per-class conformance tier system is referenced in the §4.1 portion read, but the full four-tier nomenclature (the actual tier labels) was not enumerated. The labels are referenced in Spec #55 v2.6 §V2.6-10 as `connector.conformance.*` parameters but the parameter names alone do not yield the tier vocabulary.
+- **Debt type:** Reference-dangling (read-state GAP)
+- **Scope of fix:** Re-read Spec #61 §4.1; cross-check Spec #55 v2.6 §V2.6-10; record the four-tier vocabulary in the knowledge graph and the connector-contract domain entry.
+- **Affected specs / artifacts:** Spec #61 §4.1; Spec #55 v2.6 §V2.6-10; `SYSTEM_KNOWLEDGE_GRAPH.md` §3.3
+- **Scheduled resolution:** Knowledge-graph completion read pass
+- **Status:** OPEN
+- **Date logged:** 2026-05-31
+- **Last reviewed:** 2026-05-31
+
+**History**
+- 2026-05-31: OPEN — bulk-registered from ARCHITECTURAL_FINDINGS.md §8.2 (severity: Material)
+
+---
+
+### ARCH-DEBT-011 — Full v2.6 risk-object type extension list incomplete — MTS v7.0 §6.3
+
+- **Source:** `ARCHITECTURAL_FINDINGS.md` §2 F-03; `SYSTEM_KNOWLEDGE_GRAPH.md` §7.1 GAP; MTS v7.0 §6.3
+- **Description:** The 17-value base RiskObject enum is verified (Spec #29 v2.0 patch §3). MTS v7.0 §6.3 confirms the v2.6 extension adds `ooda_phase_degradation` and "additional types," but the full extension list was truncated in the read pass. Engine → Case Lifecycle edges may be missing types beyond `ooda_phase_degradation`.
+- **Debt type:** Reference-dangling (read-state GAP)
+- **Scope of fix:** Re-read MTS v7.0 §6.3; update the RiskObject enum coverage in the knowledge graph and any case-lifecycle dependent artefact.
+- **Affected specs / artifacts:** MTS v7.0 §6.3; `SYSTEM_KNOWLEDGE_GRAPH.md` §7.1
+- **Scheduled resolution:** Knowledge-graph completion read pass
+- **Status:** OPEN
+- **Date logged:** 2026-05-31
+- **Last reviewed:** 2026-05-31
+
+**History**
+- 2026-05-31: OPEN — bulk-registered from ARCHITECTURAL_FINDINGS.md §8.2 (severity: Material)
+
+---
+
+### ARCH-DEBT-012 — Workspace bodies for the four middle workspaces not read — MP v5.0 §24
+
+- **Source:** `ARCHITECTURAL_FINDINGS.md` §2 F-04; `SYSTEM_KNOWLEDGE_GRAPH.md` §14.1 GAP; MP v5.0 §24
+- **Description:** Six-workspace structure is confirmed by name (Executive Posture, Drift Operations, Control & Architecture, Identity & Asset Intelligence, Assurance & Audit, Transformation & M&A). The four middle workspace bodies — primary personas, contents, jobs-to-be-done — were not read in this pass.
+- **Debt type:** Reference-dangling (read-state GAP)
+- **Scope of fix:** Re-read MP v5.0 §24; populate workspace persona / contents / jobs-to-be-done in the knowledge graph and surface composition artefacts.
+- **Affected specs / artifacts:** MP v5.0 §24; `SYSTEM_KNOWLEDGE_GRAPH.md` §14.1
+- **Scheduled resolution:** Knowledge-graph completion read pass
+- **Status:** OPEN
+- **Date logged:** 2026-05-31
+- **Last reviewed:** 2026-05-31
+
+**History**
+- 2026-05-31: OPEN — bulk-registered from ARCHITECTURAL_FINDINGS.md §8.2 (severity: Material)
+
+---
+
+### ARCH-DEBT-013 — Full eleven-persona enumeration not read — Spec #17 v2.6
+
+- **Source:** `ARCHITECTURAL_FINDINGS.md` §2 F-05; `SYSTEM_KNOWLEDGE_GRAPH.md` §15.1 GAP; MTS v7.0 §9.1; MP v5.0 §22; Spec #17 v2.6 Persona Expansion Addendum
+- **Description:** MTS v7.0 §9.1 references "eleven personas (nine existing plus Security Analyst and Risk Analyst)." The two new v2.6 personas are confirmed by name. The other nine were not enumerated as a list in the §V2.6 portions read. Persona-to-domain visibility (D-37 RBAC) is partial.
+- **Debt type:** Reference-dangling (read-state GAP)
+- **Scope of fix:** Re-read Spec #17 v2.6 Persona Expansion Addendum; record the full 11-persona list and their domain visibility in the knowledge graph and RBAC-relevant artefacts.
+- **Affected specs / artifacts:** Spec #17 v2.6 Persona Expansion Addendum; MTS v7.0 §9.1; MP v5.0 §22; `SYSTEM_KNOWLEDGE_GRAPH.md` §15.1
+- **Scheduled resolution:** Knowledge-graph completion read pass
+- **Status:** OPEN
+- **Date logged:** 2026-05-31
+- **Last reviewed:** 2026-05-31
+
+**History**
+- 2026-05-31: OPEN — bulk-registered from ARCHITECTURAL_FINDINGS.md §8.2 (severity: Material)
+
+---
+
+### ARCH-DEBT-014 — Spec #08 §5–§15 not read — internal CCHE mechanics partial
+
+- **Source:** `ARCHITECTURAL_FINDINGS.md` §2 F-06; `SYSTEM_KNOWLEDGE_GRAPH.md` §7.8 GAP; Spec #08 §5–§15
+- **Description:** Only ToC + §1–§4 + the v2.6 Extension addendum were read. Sections 5–15 (Case Action Algorithm; Assignment Engine; Case Pulse SOM Command Surface; Teams, Ranks, Specialisms; Operational Passport; Evidence Packs and Rollback Snapshots; Audit and Logging Requirements; Acceptance Criteria) are not yet sourced. Case Lifecycle (D-18) internal mechanics partially mapped.
+- **Debt type:** Reference-dangling (read-state GAP)
+- **Scope of fix:** Re-read Spec #08 §5–§15; populate case-lifecycle internal mechanics, assignment engine, evidence-pack semantics, and audit/logging requirements in the knowledge graph.
+- **Affected specs / artifacts:** Spec #08 §5–§15; `SYSTEM_KNOWLEDGE_GRAPH.md` §7.8
+- **Scheduled resolution:** Knowledge-graph completion read pass
+- **Status:** OPEN
+- **Date logged:** 2026-05-31
+- **Last reviewed:** 2026-05-31
+
+**History**
+- 2026-05-31: OPEN — bulk-registered from ARCHITECTURAL_FINDINGS.md §8.2 (severity: Material)
+
+---
+
+### ARCH-DEBT-015 — Act Phase Dashboard composition body partial — Spec #67 §6
+
+- **Source:** `ARCHITECTURAL_FINDINGS.md` §2 F-07; `SYSTEM_KNOWLEDGE_GRAPH.md` §9 GAP; Spec #67 §6
+- **Description:** Observe / Orient / Decide / Command Tempo dashboards captured. The Act Phase Dashboard composition body (Spec #67 §6) was read by reference in this pass with the full body truncated. Affects OODA → Surface Layer drill paths for the Act phase only.
+- **Debt type:** Reference-dangling (read-state GAP)
+- **Scope of fix:** Re-read Spec #67 §6; record Act Phase Dashboard composition and drill paths in the knowledge graph.
+- **Affected specs / artifacts:** Spec #67 §6; `SYSTEM_KNOWLEDGE_GRAPH.md` §9
+- **Scheduled resolution:** Knowledge-graph completion read pass
+- **Status:** OPEN
+- **Date logged:** 2026-05-31
+- **Last reviewed:** 2026-05-31
+
+**History**
+- 2026-05-31: OPEN — bulk-registered from ARCHITECTURAL_FINDINGS.md §8.2 (severity: Tracking)
+
+---
+
+### ARCH-DEBT-016 — Identity / Asset Intelligence Surface compositions partial — Spec #68 §3+ / Spec #69 §3+
+
+- **Source:** `ARCHITECTURAL_FINDINGS.md` §2 F-08; `SYSTEM_KNOWLEDGE_GRAPH.md` §14.5 GAP; Spec #68 §3+; Spec #69 §3+
+- **Description:** §1–§2 of both surfaces confirmed (purpose, surface statement). Sections 3+ (composition, drill paths, RBAC integration, build readiness) not read. Surface Layer composition edges are therefore partial.
+- **Debt type:** Reference-dangling (read-state GAP)
+- **Scope of fix:** Re-read Spec #68 §3+; re-read Spec #69 §3+; record full surface compositions, drill paths, and RBAC integration in the knowledge graph.
+- **Affected specs / artifacts:** Spec #68 §3+; Spec #69 §3+; `SYSTEM_KNOWLEDGE_GRAPH.md` §14.5
+- **Scheduled resolution:** Knowledge-graph completion read pass
+- **Status:** OPEN
+- **Date logged:** 2026-05-31
+- **Last reviewed:** 2026-05-31
+
+**History**
+- 2026-05-31: OPEN — bulk-registered from ARCHITECTURAL_FINDINGS.md §8.2 (severity: Material)
+
+---
+
+### ARCH-DEBT-017 — OODA phase 4 (Act) §3.4 detail truncated — Spec #58 §3.4
+
+- **Source:** `ARCHITECTURAL_FINDINGS.md` §2 F-09; `SYSTEM_KNOWLEDGE_GRAPH.md` §9.1 GAP; Spec #58 §3.4
+- **Description:** The Act phase row in §9.1 carries an explicit "(full §3.4 body truncated in this read)" annotation. Phase-health metric inventory for Act is partial.
+- **Debt type:** Reference-dangling (read-state GAP)
+- **Scope of fix:** Re-read Spec #58 §3.4; complete the Act-phase health metric inventory in the knowledge graph.
+- **Affected specs / artifacts:** Spec #58 §3.4; `SYSTEM_KNOWLEDGE_GRAPH.md` §9.1
+- **Scheduled resolution:** Knowledge-graph completion read pass
+- **Status:** OPEN
+- **Date logged:** 2026-05-31
+- **Last reviewed:** 2026-05-31
+
+**History**
+- 2026-05-31: OPEN — bulk-registered from ARCHITECTURAL_FINDINGS.md §8.2 (severity: Tracking)
+
+---
+
+### ARCH-DEBT-018 — SDR Control Plane Specification §7–§19 not read
+
+- **Source:** `ARCHITECTURAL_FINDINGS.md` §2 F-10; `SYSTEM_KNOWLEDGE_GRAPH.md` §20 GAP; SDR Control Plane Specification v1.1
+- **Description:** §0–§6 read in a prior session; §7–§19 not yet read in any session. Tenant Admin → Internal Control Plane runtime contract (D-36) is partially mapped.
+- **Debt type:** Reference-dangling (read-state GAP)
+- **Scope of fix:** Re-read SDR Control Plane Specification §7–§19; record the full Tenant Admin → Internal Control Plane runtime contract in the knowledge graph.
+- **Affected specs / artifacts:** SDR Control Plane Specification v1.1 §7–§19; `SYSTEM_KNOWLEDGE_GRAPH.md` §20
+- **Scheduled resolution:** Knowledge-graph completion read pass
+- **Status:** OPEN
+- **Date logged:** 2026-05-31
+- **Last reviewed:** 2026-05-31
+
+**History**
+- 2026-05-31: OPEN — bulk-registered from ARCHITECTURAL_FINDINGS.md §8.2 (severity: Material)
+
+---
+
+### ARCH-DEBT-019 — Insider Risk jurisdictional gate at tenant onboarding — runtime enforcement gap
+
+- **Source:** `ARCHITECTURAL_FINDINGS.md` §3 F-15; Spec #75 §5; Spec #55 v2.6 §V2.6-11
+- **Description:** Internal Behavioural Intelligence (D-15) ingestion is governed by jurisdictional regulation (GDPR Article 88, German Works Council provisions, French employee monitoring, US state-level surveillance, UK ICO). Pilot configuration recommendation (Spec #55 §V2.6-13) is `internal_risk.ingestion_enabled = false` until customer confirms readiness. Architectural risk: a customer that switches ingestion on without local-counsel guidance creates a compliance exposure that Commander cannot detect at runtime.
+- **Debt type:** Boundary-leak (compliance-gating)
+- **Scope of fix:** Add a tenant-onboarding gate that requires explicit jurisdictional acknowledgement (or works-council confirmation, where applicable) before `internal_risk.ingestion_enabled` may flip true. Add the corresponding configuration-governance assertion to the conformance registry.
+- **Affected specs / artifacts:** Spec #75 §5; Spec #55 v2.6 §V2.6-11 / §V2.6-13; tenant-onboarding flow (future); `.kiro/testing/conformance-registry.md`
+- **Scheduled resolution:** To be scheduled — runtime gate work tied to tenant-admin / control-plane build phase
+- **Status:** OPEN
+- **Date logged:** 2026-05-31
+- **Last reviewed:** 2026-05-31
+
+**History**
+- 2026-05-31: OPEN — bulk-registered from ARCHITECTURAL_FINDINGS.md §8.2 (severity: Tracking — governance is in source; runtime needs deployment-time gate)
+
+---
+
+### ARCH-DEBT-020 — SOC-boundary attribution propagation across all surfaces showing External Attack Correlation cases
+
+- **Source:** `ARCHITECTURAL_FINDINGS.md` §3 F-16; Spec #57 §5; Spec #65 §3.4
+- **Description:** SOC boundary is binding doctrine. Visual attribution ("Commander observes · SOC owns") is specified for the External Operating Picture Case Response Board. Other surfaces that may render External Attack Correlation cases (Fusion Map case-centric view, OODA dashboards, Identity / Asset Intelligence Surfaces) must carry equivalent attribution. Not all surfaces explicitly require the attribution in their respective specs in the read pass.
+- **Debt type:** Boundary-leak (cross-surface attribution)
+- **Scope of fix:** Cross-check every surface that may render an External Attack Correlation case and confirm SOC-boundary attribution is required in that spec section. Where missing, propose an addendum to the relevant spec.
+- **Affected specs / artifacts:** Spec #57 §5; Spec #65 §3.4; Fusion Map spec; OODA dashboard specs; Spec #68 / Spec #69 surface specs; any other External Attack Correlation rendering surface
+- **Scheduled resolution:** To be scheduled — surface-by-surface attribution audit
+- **Status:** OPEN
+- **Date logged:** 2026-05-31
+- **Last reviewed:** 2026-05-31
+
+**History**
+- 2026-05-31: OPEN — bulk-registered from ARCHITECTURAL_FINDINGS.md §8.2 (severity: Material)
+
+---
+
+### ARCH-DEBT-021 — Authority precedence stated three times with different tier counts
+
+- **Source:** `ARCHITECTURAL_FINDINGS.md` §5 F-21; `GOVERNANCE_MAP.md` O-01, C-04
+- **Description:** Three statements of authority precedence at different granularities: AGENTS.md (9-step authority read order), AUTHORITY_MODEL.md (8-tier precedence stack), `.kiro/steering/authority-and-precedence.md` (6-tier authority order). Operationally non-conflicting but inconsistent in form.
+- **Debt type:** Cross-document conflict (form, not behaviour)
+- **Scope of fix:** Consolidate into one canonical precedence document; the others become pointers to the canonical statement.
+- **Affected specs / artifacts:** `AGENTS.md`; `docs/00_authority/AUTHORITY_MODEL.md`; `.kiro/steering/authority-and-precedence.md`
+- **Scheduled resolution:** To be scheduled
+- **Status:** OPEN
+- **Date logged:** 2026-05-31
+- **Last reviewed:** 2026-05-31
+
+**History**
+- 2026-05-31: OPEN — bulk-registered from ARCHITECTURAL_FINDINGS.md §8.2 (severity: Tracking)
+
+---
+
+### ARCH-DEBT-022 — Steering's status — guidance or authority — formal contradiction in AUTHORITY_MODEL
+
+- **Source:** `ARCHITECTURAL_FINDINGS.md` §5 F-22; `GOVERNANCE_MAP.md` C-05
+- **Description:** AUTHORITY_MODEL.md Kiro authority rule #1 declares "Steering files are persistent workspace guidance, not independent source authority." The same AUTHORITY_MODEL.md precedence stack tier 5 places "Kiro steering and specs generated in this pack" inside the precedence ladder. Steering is also frontmatter-tagged `inclusion: always`. Operational reality is unambiguous (steering binds); documented framing is internally inconsistent.
+- **Debt type:** Cross-document conflict (formal, not operational)
+- **Scope of fix:** Reconcile the framing — state plainly that steering is binding workspace guidance; update AUTHORITY_MODEL.md tier #1 wording to remove the "not independent source authority" phrasing.
+- **Affected specs / artifacts:** `docs/00_authority/AUTHORITY_MODEL.md`; `.kiro/steering/*` frontmatter tags
+- **Scheduled resolution:** To be scheduled
+- **Status:** OPEN
+- **Date logged:** 2026-05-31
+- **Last reviewed:** 2026-05-31
+
+**History**
+- 2026-05-31: OPEN — bulk-registered from ARCHITECTURAL_FINDINGS.md §8.2 (severity: Tracking)
+
+---
+
+### ARCH-DEBT-023 — UI authority — DS-1.0 vs design-system-contract steering (latent conflict)
+
+- **Source:** `ARCHITECTURAL_FINDINGS.md` §5 F-23; `GOVERNANCE_MAP.md` C-07
+- **Description:** `docs/06_ui_build_reference/DESIGN_SYSTEM.md` (DS-1.0) declares itself authoritative for UI build rules. `.kiro/steering/design-system-contract.md` declares itself "the complete build rulebook for all Commander SDR pages." Both claim authority. Not yet known to contradict on a specific value, but two artefacts with overlapping scope both declaring binding authority is a structural conflict in the making.
+- **Debt type:** Cross-document conflict (latent)
+- **Scope of fix:** Declare precedence between DS-1.0 and the design-system-contract steering (most likely DS-1.0 → steering as scoped detail). Record the precedence in `DECISIONS.md` and in both files' headers.
+- **Affected specs / artifacts:** `docs/06_ui_build_reference/DESIGN_SYSTEM.md` (DS-1.0); `.kiro/steering/design-system-contract.md`; `DECISIONS.md`
+- **Scheduled resolution:** To be scheduled
+- **Status:** OPEN
+- **Date logged:** 2026-05-31
+- **Last reviewed:** 2026-05-31
+
+**History**
+- 2026-05-31: OPEN — bulk-registered from ARCHITECTURAL_FINDINGS.md §8.2 (severity: Tracking — latent)
+
+---
+
+### ARCH-DEBT-024 — Page-layout-standard cites unverified decision IDs
+
+- **Source:** `ARCHITECTURAL_FINDINGS.md` §5 F-24; `GOVERNANCE_MAP.md` C-08
+- **Description:** `.kiro/steering/page-layout-standard.md` cites authority `DEC-pagecontainer-shared-standard` and `DEC-pagecontainer-exceptions` (DECISIONS.md). Run-1 inventory found those decision row IDs were referenced but not pinpoint-verified in `DECISIONS.md`. If they are not formally recorded, the steering's authority basis is dangling.
+- **Debt type:** Reference-dangling
+- **Scope of fix:** Verify the cited decisions exist in `DECISIONS.md`; if missing, record them; if present, add a note to the steering linking to the recorded rows.
+- **Affected specs / artifacts:** `.kiro/steering/page-layout-standard.md`; `DECISIONS.md`
+- **Scheduled resolution:** To be scheduled
+- **Status:** OPEN
+- **Date logged:** 2026-05-31
+- **Last reviewed:** 2026-05-31
+
+**History**
+- 2026-05-31: OPEN — bulk-registered from ARCHITECTURAL_FINDINGS.md §8.2 (severity: Tracking)
+
+---
+
+### ARCH-DEBT-025 — CONVERSION_FINDINGS.md generation — v1.1 stamp but cited as live session log
+
+- **Source:** `ARCHITECTURAL_FINDINGS.md` §5 F-25; `GOVERNANCE_MAP.md` C-09
+- **Description:** `docs/00_authority/CONVERSION_FINDINGS.md` carries header "Pack version: v1.1; v1.1 remediation applied; no application code generated" — three pack-versions out of date (v1.1 → v1.2 → v1.3 → v1.3.1). DAILY_OPERATING_LOOP.md and SESSION_START.md / VERIFY_AND_CLOSE.md prompts treat it as a live append-only session log. Either dual-purpose with no header note, or the operating loop is referencing a log that doesn't exist.
+- **Debt type:** Cross-document conflict (active prompts depend on an undeclared dual purpose)
+- **Scope of fix:** Resolve the dual purpose explicitly — either rename / migrate the conversion-findings document and let the session log live elsewhere, or update the file header to declare the dual purpose and update DAILY_OPERATING_LOOP.md / SESSION_START.md / VERIFY_AND_CLOSE.md references accordingly.
+- **Affected specs / artifacts:** `docs/00_authority/CONVERSION_FINDINGS.md`; `docs/00_authority/DAILY_OPERATING_LOOP.md`; `docs/07_prompt_library/SESSION_START.md`; `docs/07_prompt_library/VERIFY_AND_CLOSE.md`
+- **Scheduled resolution:** To be scheduled
+- **Status:** OPEN
+- **Date logged:** 2026-05-31
+- **Last reviewed:** 2026-05-31
+
+**History**
+- 2026-05-31: OPEN — bulk-registered from ARCHITECTURAL_FINDINGS.md §8.2 (severity: Material)
+
+---
+
+### ARCH-DEBT-026 — Command Centre — "Implemented" vs "Deferred" — scope-boundary unstated
+
+- **Source:** `ARCHITECTURAL_FINDINGS.md` §5 F-26; `GOVERNANCE_MAP.md` C-02
+- **Description:** BUILD_SEQUENCE Gate 1 step 6 names "Command Centre first functional surface." BUILD_VERSION_ROADMAP includes "Command Centre" in v1.1 outcomes. BP-04 self-status declares "Implemented." `command-centre-build-prompt.md` self-status declares "DEFERRED until after functional pages are built" with `DEC-command-centre-deferred`. Conformance registry `DEC-002`: "No Command Centre implementation until data-point-to-metric schedule complete." Likely scope-boundary issue (skeleton vs full Command Centre), not real conflict, but unstated.
+- **Debt type:** Cross-document conflict (scope-boundary unstated)
+- **Scope of fix:** Reconcile explicitly — distinguish "first functional surface" (BP-04 scope) from "full Command Centre" (deferred scope), and record the distinction in `DECISIONS.md` and in both BP-04 and `command-centre-build-prompt.md` headers.
+- **Affected specs / artifacts:** `BUILD_SEQUENCE.md` Gate 1; `BUILD_VERSION_ROADMAP.md` v1.1; `docs/04_build_packs/BP-04-*`; `docs/design-system/command-centre-build-prompt.md`; `DECISIONS.md`; `.kiro/testing/conformance-registry.md` DEC-002
+- **Scheduled resolution:** To be scheduled — likely subsumed by build-plan replacement (`ARCH-DEBT-008`)
+- **Status:** OPEN
+- **Date logged:** 2026-05-31
+- **Last reviewed:** 2026-05-31
+
+**History**
+- 2026-05-31: OPEN — bulk-registered from ARCHITECTURAL_FINDINGS.md §8.2 (severity: Material)
+
+---
+
+### ARCH-DEBT-027 — Spec #21 BAS Connector is staged / Phase 2 (by design)
+
+- **Source:** `ARCHITECTURAL_FINDINGS.md` §6 F-27; Spec #21 §Authority note (Phase 2 strategic / advanced)
+- **Description:** BAS validation is staged Phase 2. Until activation, Spec #20 Coordinated Push Group / D-20 Validation depends on it for empirical validation but it is not online. By-design phasing rather than accidental orphan; tracked here so the dependency is visible.
+- **Debt type:** Decision-blocked (by design — Phase 2 gate)
+- **Scope of fix:** Activation tied to Phase 2 readiness gate; no source-side fix expected before then. The dependency from Spec #20 / D-20 must be tracked so that Phase 2 activation is recognised as the unblocking event.
+- **Affected specs / artifacts:** Spec #21; Spec #20; D-20 Validation domain entry
+- **Scheduled resolution:** Phase 2 readiness gate
+- **Status:** OPEN
+- **Date logged:** 2026-05-31
+- **Last reviewed:** 2026-05-31
+
+**History**
+- 2026-05-31: OPEN — bulk-registered from ARCHITECTURAL_FINDINGS.md §8.2 (severity: Tracking — by design, Phase 2)
+
+---
+
+### ARCH-DEBT-028 — Spec #24 Connector API Reference Framework is template-only
+
+- **Source:** `ARCHITECTURAL_FINDINGS.md` §6 F-28; `RELATIONSHIP_MAP.md` §10; Spec #24 (cited in Spec #61 header)
+- **Description:** Reference framework with no concrete connector references in the v2.6 read pass. Per-vendor implementations not in baseline.
+- **Debt type:** Decision-blocked (Phase 2 / live-vendor activation)
+- **Scope of fix:** Phase 2 / live-vendor work activates concrete references; no source-side fix expected before then.
+- **Affected specs / artifacts:** Spec #24; Spec #61 header reference; `RELATIONSHIP_MAP.md` §10
+- **Scheduled resolution:** Phase 2 readiness gate
+- **Status:** OPEN
+- **Date logged:** 2026-05-31
+- **Last reviewed:** 2026-05-31
+
+**History**
+- 2026-05-31: OPEN — bulk-registered from ARCHITECTURAL_FINDINGS.md §8.2 (severity: Tracking)
+
+---
+
+### ARCH-DEBT-029 — Hook companion files lack canonical-relationship declaration
+
+- **Source:** `ARCHITECTURAL_FINDINGS.md` §6 F-30; `GOVERNANCE_MAP.md` O-05, Orphan-H
+- **Description:** Hooks 01–04 each have three forms (`.md` recipe, `.json` metadata, `.kiro.hook` runtime). Hook 05 has only `.kiro.hook`. No declaration stated the canonical relationship — i.e. that `.kiro.hook` is canonical and the others are companions. Possible orphans relative to runtime form.
+- **Debt type:** Missing-ownership (canonical-relationship declaration)
+- **Scope of fix:** Add a declaration in `.kiro/hooks/README.md` stating ".kiro.hook is canonical; .md is the recipe; .json is metadata-mirror" and the rules that follow from that.
+- **Affected specs / artifacts:** `.kiro/hooks/README.md`; `.kiro/hooks/01-…04-*.{md,json,kiro.hook}`; `.kiro/hooks/05-….kiro.hook`
+- **Scheduled resolution:** Source-side fix shipped in commit 26ec647 (hook build commit) — `.kiro/hooks/README.md` now contains the canonical-relationship declaration. Pending review for promotion to RESOLVED.
+- **Status:** OPEN
+- **Date logged:** 2026-05-31
+- **Last reviewed:** 2026-05-31
+
+**History**
+- 2026-05-31: OPEN — bulk-registered from ARCHITECTURAL_FINDINGS.md §8.2 (severity: Tracking). Note: source-side fix already shipped in commit 26ec647; entry held OPEN pending owner review for promotion to RESOLVED.
