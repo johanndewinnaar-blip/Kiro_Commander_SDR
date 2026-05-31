@@ -241,6 +241,19 @@
 **Check:** Cross-reference entity files against `docs/knowledge/DATA_DICTIONARY.md` catalogue. Flag missing entries.  
 **Source:** `docs/knowledge/DATA_DICTIONARY.md` maintenance rules.
 
+### ARCH-006: Build-Stream Sequencing
+**Assertion:** A unit tagged 'Team 2' in `REBASELINED_BUILD_SEQUENCE.md` MUST NOT be built until `USE_CASE_SCHEDULE.md` and `PAGE_INVENTORY.md` exist AND `PAGE_INVENTORY.md` contains an entry for that unit. Only 'Foundational' units are buildable now.  
+**Check:** MECHANICAL file-existence + grep check:
+1. Read `docs/knowledge/REBASELINED_BUILD_SEQUENCE.md` and extract the unit's schedule tag
+2. If tag is 'Team 2':
+   - Check if `docs/knowledge/USE_CASE_SCHEDULE.md` exists → FAIL if absent
+   - Check if `docs/knowledge/PAGE_INVENTORY.md` exists → FAIL if absent
+   - Grep `PAGE_INVENTORY.md` for the unit's ID or name → FAIL if no match found
+   - If all checks pass, allow build
+3. If tag is 'Foundational', allow build (no prerequisites)
+**Source:** `DEC-build-stream-sequencing-enforced` (DECISIONS.md); `.kiro/steering/execution-discipline.md` §Build-stream sequencing.  
+**Debt Type:** Sequencing violations are classified as Structural Debt (cannot be auto-fixed; requires prerequisite documents to be created first).
+
 ---
 
 ## Decision Record Assertions

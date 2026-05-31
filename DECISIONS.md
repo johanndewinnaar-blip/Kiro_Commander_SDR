@@ -161,6 +161,12 @@
 | DEC-command-centre-design-banked | 2026-05-30 | The full Command Centre build design is complete and saved for later execution. | The design is fully specified: live-ready component architecture, reusable component library (MetricCard, TrendArrow, ScrollableCard, TimeToggle, StatusBadge, DataTable, ProgressMeter, Gauge), vivid-semantic-colour/calm-chrome rule, two time toggles (row-1 and Remediation Performance), full widget layout matching the reference dashboard, Tabler classes + ApexCharts with --data-* tokens. When resumed, the data hook must be a thin presentation-layer adapter over the established data-access pattern, not a new data layer. | Full build prompt saved to `docs/design-system/command-centre-build-prompt.md` for retrieval when resumed. Status: DEFERRED — resume after functional pages built and data-point-to-metric schedule complete. |
 
 
+## Build-stream sequencing enforcement
+
+| Decision ID | Date | Decision | Rationale | Impact |
+|---|---|---|---|---|
+| DEC-build-stream-sequencing-enforced | 2026-05-31 | Build-stream sequencing (Foundational vs Team 2) is enforced at the conformance layer via ARCH-006 mechanical check, NOT at the git gate. The check is file-existence + grep-based (deterministic), not reasoning-based. | Build-order is a state rule (depends on whether prerequisite documents exist), not a commit-content rule. The correct enforcement ceiling for this kind of control is the conformance layer (core testing pipeline), where it can check file existence and content mechanically. Git gates enforce commit-content rules (no secrets, no broken tests); they cannot enforce cross-file state dependencies without becoming brittle. | ARCH-006 added to `.kiro/testing/conformance-registry.md`. Doctrine added to `.kiro/steering/execution-discipline.md` §Build-stream sequencing. The check is MECHANICAL: for any unit being built whose schedule tag is 'Team 2', grep `PAGE_INVENTORY.md` for that unit's ID/name — if the file is absent OR contains no matching entry, FAIL the gate with a sequencing-violation message. This is a file-existence + content check, not a judgment. Sequencing violations are classified as Structural Debt (cannot be auto-fixed; requires prerequisite documents to be created first). |
+
 ## Governance audit findings (Run 2)
 
 | Decision ID | Date | Decision | Rationale | Impact |

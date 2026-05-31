@@ -46,3 +46,10 @@ Standing rules for all build execution in this programme. These apply regardless
 - The `data-dictionary-generation.kiro.hook` fires on contract/schema edits to maintain the dictionary mechanically.
 - ARCH-005 conformance assertion enforces this via the core testing pipeline.
 
+## Build-stream sequencing (Foundational vs Team 2)
+
+- A unit tagged **'Team 2'** in `REBASELINED_BUILD_SEQUENCE.md` MUST NOT be built until `USE_CASE_SCHEDULE.md` and `PAGE_INVENTORY.md` exist AND `PAGE_INVENTORY.md` contains an entry for that unit.
+- Only **'Foundational'** units are buildable now.
+- Building a Team 2 unit early is a sequencing violation.
+- ARCH-006 conformance assertion enforces this via the core testing pipeline (mechanical file-existence + grep check).
+
