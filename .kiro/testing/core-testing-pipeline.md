@@ -68,6 +68,12 @@
 3. Aggregate results
 4. **Classify any failures** (see Debt Typing below)
 
+**Build-readiness / sequencing gate (ARCH-006 + ARCH-007):** Before building any unit, evaluate its readiness state:
+- **ARCH-006** — if the unit is tagged `Team 2`, confirm `USE_CASE_SCHEDULE.md` and `PAGE_INVENTORY.md` exist and `PAGE_INVENTORY.md` lists the unit. FAIL (sequencing violation) otherwise.
+- **ARCH-007** — read the unit's `Status` in `REBASELINED_BUILD_SEQUENCE.md`. FAIL if `Status` is `BLOCKED`. Mechanically verify both cases: every dependency unit is `DONE`, and every chain-mapped ARCH-DEBT in `ARCHITECTURAL_DEBT_REGISTER.md` is `RESOLVED` (a unit's own resolving debt is excluded). Allow build only when `Status` is `READY`.
+
+These are mechanical file-existence + grep checks. Readiness/sequencing violations are Structural Debt (not auto-fixed).
+
 **Pass Criteria:** All applicable assertions pass.
 
 **Fail Action:** Classify failure type, then proceed to Stage 3 (Auto-Fix) or Stage 2b (Register Debt).

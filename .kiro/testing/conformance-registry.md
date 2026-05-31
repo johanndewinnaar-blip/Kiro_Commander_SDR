@@ -254,6 +254,19 @@
 **Source:** `DEC-build-stream-sequencing-enforced` (DECISIONS.md); `.kiro/steering/execution-discipline.md` §Build-stream sequencing.  
 **Debt Type:** Sequencing violations are classified as Structural Debt (cannot be auto-fixed; requires prerequisite documents to be created first).
 
+### ARCH-007: Blocking-Debt Prerequisite (Readiness State Machine)
+**Assertion:** A unit MUST NOT be built unless its computed `Status` in `REBASELINED_BUILD_SEQUENCE.md` is READY. A unit is READY iff (a) every dependency unit is DONE, AND (b) every ARCH-DEBT item mapped to the unit or any unit in its dependency chain has Status RESOLVED. Building a unit whose `Status` is BLOCKED — whether blocked by an unbuilt dependency OR by open chain debt — is a sequencing violation.  
+**Check:** MECHANICAL file-existence + grep check, covering BOTH the unbuilt-dependency case AND the open-debt case:
+1. Read `docs/knowledge/REBASELINED_BUILD_SEQUENCE.md`; locate the unit being built and read its `Status` and `Blocked by` lines.
+2. If `Status` is `BLOCKED` → FAIL with the `Blocked by` contents (names the blocking dependency units and/or ARCH-DEBT IDs).
+3. **Dependency case:** for each dependency unit named in the unit's `Dependencies`/`Blocked by`, grep its `Status` in the sequence → FAIL if any dependency is not `DONE`.
+4. **Open-debt case:** for each ARCH-DEBT ID named in the unit's `Blocked by` (or mapped to its dependency chain), grep that ID's `Status` in `docs/knowledge/ARCHITECTURAL_DEBT_REGISTER.md` → FAIL if any is `OPEN` (not `RESOLVED`).
+5. If `Status` is `READY` (all deps DONE, all chain debt RESOLVED), allow build.
+6. A unit's own resolving debt (the ARCH-DEBT the unit exists to close) is excluded from the chain-debt check (it does not self-block).
+**Source:** `DEC-build-readiness-state-machine` (DECISIONS.md); `.kiro/steering/execution-discipline.md` §Build-readiness state machine. Extends ARCH-006 (build-stream sequencing).  
+**Debt Type:** Readiness violations are Structural Debt (cannot be auto-fixed; require the blocking dependency to be built or the blocking debt to be resolved first).  
+**Enforcement:** Wired into `.kiro/testing/core-testing-pipeline.md` (Stage 2 conformance checks) and auto-run via the `Post-Task Review` hook (postTaskExecution).
+
 ---
 
 ## Decision Record Assertions

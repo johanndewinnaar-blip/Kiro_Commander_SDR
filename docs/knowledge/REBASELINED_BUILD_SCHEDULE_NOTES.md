@@ -126,4 +126,18 @@ When the knowledge graph is used to derive the build sequence:
 ---
 
 **Last Updated:** 2026-05-31  
-**Status:** ACTIVE — to be consumed when REBASELINED_BUILD_SEQUENCE.md is created
+**Status:** ACTIVE — consumed by REBASELINED_BUILD_SEQUENCE.md (now an enforced readiness state machine)
+
+---
+
+## Readiness State Machine (incorporated 2026-05-31)
+
+`REBASELINED_BUILD_SEQUENCE.md` is no longer a static ordered list — it is a **queryable readiness state machine**. The sequencing constraints captured in these notes are now expressed as computed per-unit `Status` (BLOCKED / READY / DONE) with explicit `Blocked by` lines.
+
+- **BLOCKED** — unit has unresolved OPEN ARCH-DEBT in its chain, or dependency units not yet DONE. Not buildable.
+- **READY** — all chain debt RESOLVED and all dependency units DONE. Buildable now. Build only from READY.
+- **DONE** — built and committed.
+
+The data-layer-first and Strategy-Layer-precedence constraints in these notes are preserved as dependency edges feeding that computation. The foundational data-layer gaps (ARCH-DEBT-030/031/032) and the canonical-contract correction (ARCH-DEBT-033, Unit 0) are the current chain blockers; Unit 0 is the single READY unit.
+
+Recompute is mechanical: when an ARCH-DEBT flips RESOLVED or a unit flips DONE, dependent units are recomputed and any now-clear unit flips BLOCKED→READY. Enforced by ARCH-006 (stream sequencing) + ARCH-007 (blocking-debt prerequisite); "what's next" query behaviour is defined in `.kiro/steering/execution-discipline.md`. Authority: `DEC-build-readiness-state-machine` (DECISIONS.md).

@@ -609,12 +609,14 @@ Authority: `.kiro/steering/feature-function-backlog.md` (extended in this update
 - **Scope of fix:** Create `packages/db/src/schema/risk-objects.ts` with Drizzle schema matching the contract. Map 8 RiskObjectType values (coverage_blindspot, ooda_phase_degradation, vulnerability_drift, configuration_drift, exposure_drift, control_gap, identity_risk, policy_gap) and 4 TreatmentState values (open, mitigated, accepted, transferred). Add to schema index exports.
 - **Affected specs / artifacts:** `packages/contracts/src/entities/risk-object.ts`; `packages/contracts/src/fixtures/seed-risk-objects.ts`; `packages/db/src/schema/` (missing file); Spec #29 Universal Risk Object
 - **Scheduled resolution:** Data-layer completion pass (before Phase 2)
-- **Status:** OPEN
+- **Status:** RESOLVED
 - **Date logged:** 2026-05-31
 - **Last reviewed:** 2026-05-31
+- **Resolution date:** 2026-05-31
 
 **History**
 - 2026-05-31: OPEN — surfaced from DATA_DICTIONARY.md contract-vs-schema reconciliation
+- 2026-05-31: RESOLVED — Unit 1 created `packages/db/src/schema/risk-objects.ts` with full Drizzle schema matching contract, exported enums and table from schema index, updated DATA_DICTIONARY.md Risk Object entry to mark status AVAILABLE
 
 ---
 
@@ -649,3 +651,105 @@ Authority: `.kiro/steering/feature-function-backlog.md` (extended in this update
 
 **History**
 - 2026-05-31: OPEN — surfaced from DATA_DICTIONARY.md contract-vs-schema reconciliation
+
+---
+
+### ARCH-DEBT-033 — `SourceMetadata.rawPayloadRef` contract-vs-source shape drift (all canonical entities)
+
+- **Source:** DATA_DICTIONARY.md `rawPayloadRef` disclosure work (2026-05-31); Spec #05 Data Connector & Normalisation Implementation §11.1–11.2, §11.3, §7.4
+- **Description:** The canonical contract `packages/contracts/src/entities/common.ts` defines `SourceMetadata.rawPayloadRef` as a field on every canonical entity. Per Spec #05 §11.3 (Provenance Requirements), the field set a canonical field must carry from source is `source_connector_id`, `source_system`, `source_field`, `source_value_hash where sensitive`, `observed_at`, `authority_type`, `normalisation_version` — `raw_payload_ref` is NOT in that set. Spec #05 §11.2 (Raw Payload Storage) assigns `raw_payload_ref` to the raw-ingestion record held in the separate raw-payload store (object storage with DB pointer, or technical `raw_record` table per P0-06), and §7.4 (Technical Support Records) classes `raw_record_pointer` as a technical record "not a canonical product entity." The contract therefore carries a provenance field on the canonical entity that the source assigns to the raw-ingestion record — a contract-vs-source shape drift affecting all canonical entities (Asset, Identity, Risk Object, Case, Connector, Audit Event, and any future entity using `SourceMetadata`). Note: the **DB schemas are correct** — they already omit `rawPayloadRef` per §11, consistent with `assets.ts` and all sibling schemas. The drift is in the contract, not the schema.
+- **Debt type:** Contract-vs-source shape drift (canonical model over-specification)
+- **Scope of fix:** Either (a) remove `rawPayloadRef` from `SourceMetadata` in `packages/contracts/src/entities/common.ts` so the canonical contract matches Spec #05 §11.3, updating any fixtures/resolvers that populate it and re-establishing the contract↔schema match; OR (b) document an explicit, source-cited decision (DECISIONS.md) for why `rawPayloadRef` is retained on the canonical contract as a convenience denormalisation, with the lineage authority remaining the raw-ingestion store via `normalised_entity_refs`. Decision required before either path ships. Cite Spec #05 §11.3.
+- **Affected specs / artifacts:** `packages/contracts/src/entities/common.ts` (`SourceMetadata`); all canonical entity contracts that extend `CommonFields`; `packages/contracts/src/fixtures/seed-tenant.ts` (`SEED_SOURCE`) and all seed fixtures that populate `rawPayloadRef`; `docs/knowledge/DATA_DICTIONARY.md` Common Fields section; Spec #05 §11.1–11.3, §7.4
+- **Scheduled resolution:** Canonical contract reconciliation pass (before Phase 2 connector integration, since real raw-ingestion store lands in Phase 2)
+- **Status:** OPEN
+- **Date logged:** 2026-05-31
+- **Last reviewed:** 2026-05-31
+
+**History**
+- 2026-05-31: OPEN — surfaced during `rawPayloadRef` non-persistence investigation. Source (Spec #05 §11) confirms DB schemas correctly omit the field; the drift is the contract over-specifying the canonical provenance set per §11.3.
+
+---
+
+### ARCH-DEBT-034 — Unit 41 (AWS Bedrock/AgentCore Evaluation) needs re-sourcing to baseline
+
+- **Source:** REBASELINED_BUILD_SEQUENCE.md placeholder-citation cleanup (2026-05-31); `DEC-translation-layer-structural-finding`
+- **Description:** Unit 41 carried a translation-layer placeholder citation "#21 AWS Bedrock AgentCore Evaluation (from .kiro/specs/ — to be re-sourced from baseline)". Verified against the baseline archive: baseline child spec #21 is **BAS Connector Integration Contract**, not an AWS evaluation spec. No baseline child spec covers AWS Bedrock/AgentCore evaluation. This is Kiro-pack evaluation-lane scope (per `.kiro/steering/aws-alignment.md` and `D-v1.1-AgentCore-evaluation-status` in DECISIONS.md), not a baseline child spec.
+- **Debt type:** Translation-layer contamination (mis-sourced citation) / missing baseline authority
+- **Scope of fix:** Re-source Unit 41 to its true authority — either (a) cite the AWS-alignment steering + the AgentCore evaluation decision as the governing authority and re-tag the unit as evaluation-lane (no baseline child spec), or (b) record a decision that AWS evaluation has no baseline child spec and is governed by roadmap/steering. Until resolved, Unit 41 stays BLOCKED on this debt in addition to its dependency chain and ARCH-006.
+- **Affected specs / artifacts:** `docs/knowledge/REBASELINED_BUILD_SEQUENCE.md` Unit 41; `.kiro/steering/aws-alignment.md`; DECISIONS.md `D-v1.1-AgentCore-evaluation-status`
+- **Scheduled resolution:** Before Unit 41 can flip READY (Phase 2 evaluation lane)
+- **Status:** OPEN
+- **Date logged:** 2026-05-31
+- **Last reviewed:** 2026-05-31
+
+**History**
+- 2026-05-31: OPEN — surfaced during pre-commit gate cleanup of translation-layer citations; baseline #21 confirmed to be BAS Connector, not AWS evaluation.
+
+---
+
+### ARCH-DEBT-035 — Unit 43 (Audit Trail) needs re-sourcing to baseline
+
+- **Source:** REBASELINED_BUILD_SEQUENCE.md placeholder-citation cleanup (2026-05-31); `DEC-translation-layer-structural-finding`
+- **Description:** Unit 43 carried a translation-layer placeholder "#28 Audit Trail (from .kiro/specs/ — to be re-sourced from baseline)". Verified: baseline child spec #28 is **Strategic and Tactical Priority Framework**, not an audit-trail spec. No dedicated baseline audit-trail child spec exists; audit requirements are distributed across baseline #05 §6.4.5 (AuditEntry), #29 v2.0 patch §2 No.10 (audit-first operation), and the RBAC specs (#19/#50).
+- **Debt type:** Translation-layer contamination (mis-sourced citation) / distributed baseline authority needing consolidation
+- **Scope of fix:** Re-source Unit 43 to the distributed baseline authority (#05 §6.4.5, #29 v2.0 patch §2 No.10, #19, #50) and record whether a consolidated audit-trail authority is needed or whether the distributed set is sufficient. Update the Unit 43 Baseline spec line with the verified citations. Until resolved, Unit 43 stays BLOCKED on this debt in addition to its dependency chain.
+- **Affected specs / artifacts:** `docs/knowledge/REBASELINED_BUILD_SEQUENCE.md` Unit 43; baseline #05, #29, #19, #50
+- **Scheduled resolution:** Before Unit 43 can flip READY
+- **Status:** OPEN
+- **Date logged:** 2026-05-31
+- **Last reviewed:** 2026-05-31
+
+**History**
+- 2026-05-31: OPEN — surfaced during pre-commit gate cleanup; baseline #28 confirmed to be Strategic/Tactical Priority Framework, not audit trail.
+
+---
+
+### ARCH-DEBT-036 — Unit 46 (Observability & Tool Health UI) needs re-sourcing to baseline
+
+- **Source:** REBASELINED_BUILD_SEQUENCE.md placeholder-citation cleanup (2026-05-31); `DEC-translation-layer-structural-finding`
+- **Description:** Unit 46 carried a translation-layer placeholder "#33 Observability Tool Health (from .kiro/specs/ — to be re-sourced from baseline)". Verified: baseline child spec #33 is **Multi-Domain Fusion Map**, not an observability/tool-health UI spec. No dedicated baseline child spec for an observability/tool-health UI exists; the surface is a UI over baseline #23 Security Tool Intelligence.
+- **Debt type:** Translation-layer contamination (mis-sourced citation) / missing baseline authority for the UI surface
+- **Scope of fix:** Re-source Unit 46 to baseline #23 (Security Tool Intelligence) as the data authority and record whether a dedicated UI-surface authority is required (cf. the surface specs #65–#69 pattern). Update the Unit 46 Baseline spec line. Until resolved, Unit 46 stays BLOCKED on this debt in addition to its dependency chain and ARCH-006.
+- **Affected specs / artifacts:** `docs/knowledge/REBASELINED_BUILD_SEQUENCE.md` Unit 46; baseline #23
+- **Scheduled resolution:** Before Unit 46 can flip READY
+- **Status:** OPEN
+- **Date logged:** 2026-05-31
+- **Last reviewed:** 2026-05-31
+
+**History**
+- 2026-05-31: OPEN — surfaced during pre-commit gate cleanup; baseline #33 confirmed to be Multi-Domain Fusion Map, not observability UI.
+
+---
+
+### ARCH-DEBT-037 — Unit 47 (DevOps Local/AWS Alignment) needs re-sourcing to baseline
+
+- **Source:** REBASELINED_BUILD_SEQUENCE.md placeholder-citation cleanup (2026-05-31); `DEC-translation-layer-structural-finding`
+- **Description:** Unit 47 carried a translation-layer placeholder "#31 DevOps Local AWS Alignment (from .kiro/specs/ — to be re-sourced from baseline)". Verified: baseline child spec #31 is **Routing Model and Team Affinity**, not a DevOps/AWS-alignment spec. Partial baseline coverage exists in #02 DevOps Environments & CI/CD; the AWS-alignment scope is otherwise governed by `.kiro/steering/aws-alignment.md` and DECISIONS (DEC-004), not a single baseline child spec.
+- **Debt type:** Translation-layer contamination (mis-sourced citation) / partial baseline authority
+- **Scope of fix:** Re-source Unit 47 to baseline #02 (DevOps Environments & CI/CD) plus the AWS-alignment steering and DEC-004, and record whether a consolidated authority is needed. Update the Unit 47 Baseline spec line. Until resolved, Unit 47 stays BLOCKED on this debt in addition to ARCH-006.
+- **Affected specs / artifacts:** `docs/knowledge/REBASELINED_BUILD_SEQUENCE.md` Unit 47; baseline #02; `.kiro/steering/aws-alignment.md`; DECISIONS.md DEC-004
+- **Scheduled resolution:** Before Unit 47 can flip READY (Phase 3)
+- **Status:** OPEN
+- **Date logged:** 2026-05-31
+- **Last reviewed:** 2026-05-31
+
+**History**
+- 2026-05-31: OPEN — surfaced during pre-commit gate cleanup; baseline #31 confirmed to be Routing Model and Team Affinity, not DevOps/AWS.
+
+---
+
+### ARCH-DEBT-038 — Unit 49 (Phase 3 Pilot & Production Hardening) needs re-sourcing to baseline
+
+- **Source:** REBASELINED_BUILD_SEQUENCE.md placeholder-citation cleanup (2026-05-31); `DEC-translation-layer-structural-finding`
+- **Description:** Unit 49 carried a translation-layer placeholder "#30 Phase 3 Pilot Production Hardening (from .kiro/specs/ — to be re-sourced from baseline)". Verified: baseline child spec #30 is **Universal Validation, Closure and Reopening Lifecycle**, not a pilot/production-hardening spec. No baseline child spec covers Phase 3 pilot/production hardening; it is a programme phase governed by the roadmap/phase model, not a child spec.
+- **Debt type:** Translation-layer contamination (mis-sourced citation) / programme-phase scope without a baseline child spec
+- **Scope of fix:** Re-source Unit 49 to the programme phase/roadmap authority and record that it has no baseline child spec (analogous to the Phase 2/3 readiness units). Update the Unit 49 Baseline spec line. Until resolved, Unit 49 stays BLOCKED on this debt in addition to its dependency chain and ARCH-006.
+- **Affected specs / artifacts:** `docs/knowledge/REBASELINED_BUILD_SEQUENCE.md` Unit 49; programme roadmap/phase model
+- **Scheduled resolution:** Before Unit 49 can flip READY (Phase 3)
+- **Status:** OPEN
+- **Date logged:** 2026-05-31
+- **Last reviewed:** 2026-05-31
+
+**History**
+- 2026-05-31: OPEN — surfaced during pre-commit gate cleanup; baseline #30 confirmed to be Universal Validation/Closure/Reopening, not Phase 3 hardening.
