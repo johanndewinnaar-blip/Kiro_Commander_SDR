@@ -161,6 +161,61 @@
 
 ---
 
+## Secure-Coding Assertions
+
+**Source:** `.kiro/steering/security-and-testing.md`; `.kiro/hooks/secure-coding-rbac-enforcement.kiro.hook`.
+
+**Scope note:** During Phase 0 documentation-only work these assertions describe the gate that activates the moment any application code is authorised. They are enforced by the `Secure-Coding and RBAC Enforcement` hook on every postTaskExecution.
+
+### SEC-001: No Hardcoded Secrets
+**Assertion:** No source file MAY contain hardcoded credentials, API keys, tokens, passwords, private keys, OAuth client secrets, HMAC signing keys, or connection strings carrying credentials.
+**Exception:** Documentation snippets that are clearly examples must use placeholders (`<your-key-here>`, `xxxx`, `EXAMPLE_KEY`).
+**Check:** Pattern scan for high-entropy strings, AWS-style `AKIA…`, Bearer tokens, `password=`, `secret=`, `apikey=`, `BEGIN PRIVATE KEY`, real-looking connection strings. Hard FAIL on detection.
+
+### SEC-002: Input Validation on User-Facing and API Inputs
+**Assertion:** Every endpoint, form handler, message processor, or queue consumer MUST validate inputs (type, length, format, allowed values) before use.
+**Check:** New routes / handlers without schema validation, allowlist, or type validation are rejected.
+
+### SEC-003: Authentication on Protected Routes
+**Assertion:** Every route, endpoint, or sensitive read/write operation that is not explicitly public MUST enforce authentication via middleware before reaching handler logic.
+**Check:** Routes lacking auth middleware are rejected. Hard FAIL when introducing a protected route without auth.
+
+### SEC-004: No Secrets or PII in Logs
+**Assertion:** Logging MUST NOT emit secrets, tokens, full request bodies containing credentials, or PII without redaction.
+**Check:** Log calls printing known-sensitive fields (`password`, `token`, `apikey`, `authorization`, `set-cookie`, full request bodies) are flagged.
+
+### SEC-005: Parameterised Queries Only
+**Assertion:** Database operations MUST use parameterised queries or query builders. String-concatenated SQL with user input is forbidden.
+**Check:** Hard FAIL on detection of string-built SQL where the input includes user-derived values.
+
+### SEC-006: Dependency Hygiene
+**Assertion:** New dependencies MUST use exact or pinned versions. Open ranges are flagged. Names that resemble typosquatting variants of well-known packages are flagged.
+**Check:** Manifest changes inspected at addition; unpinned and suspect names raise warnings.
+
+---
+
+## RBAC and Tenant-Isolation Assertions
+
+**Source:** Spec #19 v2.6 (Full RBAC Permission Matrix); Spec #50 (RBAC, Entitlement, Feature Flag Menu Visibility); Spec #75 (Internal Risk Investigation Sub-Lifecycle); Spec #17 §Acceptance Criteria; Spec #29 v2.0 patch §2 No.10. Enforced by the `Secure-Coding and RBAC Enforcement` hook.
+
+### RBAC-001: Backend / API Permission Enforcement Authoritative
+**Assertion:** Per Spec #50 §Backend Enforcement Rule, frontend visibility is presentation, not security. Every privileged operation MUST enforce permission server-side.
+**Check:** Hard FAIL on patterns where a privileged action gates only on UI visibility without backend / API authorisation.
+
+### RBAC-002: Tenant Isolation at Every Layer
+**Assertion:** Per Spec #17 §Acceptance Criteria, tenant isolation MUST be enforced at API, service, repository, worker, and UI layers. Cross-tenant reads are forbidden. Every query, every cache key, every storage path scoped by `tenant_id`.
+**Check:** Hard FAIL on tenant-id-as-user-input patterns where the caller could spoof tenant; on queries lacking tenant scope; on shared cache keys without tenant prefix.
+
+### RBAC-003: Internal Risk Authority Gate on Identity-Level Surfaces
+**Assertion:** Per Spec #75 §4 and Spec #19 v2.6, any code path surfacing identity-level detail on the Internal Operating Picture, Identity Intelligence Surface (behavioural section), Verdict Pattern case full detail, or verdict drill-through MUST require Internal Risk authority and emit audit-of-access events.
+**Check:** Hard FAIL on identity-level surface code without authority gate or without audit-of-access emission.
+
+### RBAC-004: Audit-First Operation
+**Assertion:** Per Spec #29 v2.0 patch §2 No.10, every privileged action MUST emit an audit event with actor, tenant, action, target, and timestamp.
+**Check:** Hard FAIL on new privileged operations lacking audit-event emission.
+
+---
+
 ## Architectural Assertions
 
 **Source:** `docs/00_authority/APPLICATION_LAYER_STRATEGY.md`, `DATABASE_LAYER_STRATEGY.md`, etc.
