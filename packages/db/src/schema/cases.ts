@@ -20,7 +20,7 @@ export const cases = pgTable('cases', {
   caseType: text('case_type').notNull(),
   title: text('title').notNull(),
   /** System-owned lifecycle state */
-  status: caseStatusEnum('status').notNull().default('open'),
+  status: caseStatusEnum('status').notNull().default('detected'),
   priority: priorityEnum('priority').notNull(),
   /** Assigned via routing engine (not manual) */
   owner: text('owner').notNull(),

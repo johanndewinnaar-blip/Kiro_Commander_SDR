@@ -19,7 +19,7 @@ export interface Case extends CommonFields {
   /** Case title */
   title: string;
   /** Current lifecycle state — system-owned transitions only */
-  status: CaseStatus;
+  status: CaseStatusExtended;
   /** Priority level */
   priority: 'P0' | 'P1' | 'P2' | 'P3' | 'P4';
   /** Assigned owner (via routing engine, not manual) */
@@ -89,10 +89,54 @@ export type LegacyCaseType =
 /** Extended case type union including legacy aliases used in seed data */
 export type CaseTypeExtended = CaseType | LegacyCaseType;
 
+/**
+ * 12-state closed-loop case lifecycle.
+ * Source: Spec #08 v2.6, Spec #30 Validation/Closure, Unit 7 rebaseline.
+ *
+ * Transition graph:
+ *   detected → bound → routed → prioritised → action_decomposed → in_progress
+ *   → pending_validation → validation_running → validated_pass / validated_fail
+ *   validated_pass → pending_closure_gates → closed_by_system → reopened_by_system → in_progress
+ *   validated_fail → in_progress (remediation loop)
+ *
+ * Legacy 6-state aliases retained for seed data backward compatibility.
+ */
 export type CaseStatus =
+  | 'detected'
+  | 'bound'
+  | 'routed'
+  | 'prioritised'
+  | 'action_decomposed'
+  | 'in_progress'
+  | 'pending_validation'
+  | 'validation_running'
+  | 'validated_pass'
+  | 'validated_fail'
+  | 'pending_closure_gates'
+  | 'closed_by_system'
+  | 'reopened_by_system';
+
+/**
+ * Legacy 6-state aliases for backward compatibility with existing seed data.
+ * These map to the closest 12-state equivalent.
+ */
+export type LegacyCaseStatus =
   | 'open'
   | 'in-progress'
   | 'awaiting-validation'
   | 'awaiting-closure'
   | 'closed'
   | 'reopened';
+
+/** Extended status union including legacy aliases used in seed data */
+export type CaseStatusExtended = CaseStatus | LegacyCaseStatus;
+
+/** Map legacy statuses to their 12-state equivalents */
+export const LEGACY_STATUS_MAP: Record<LegacyCaseStatus, CaseStatus> = {
+  'open': 'detected',
+  'in-progress': 'in_progress',
+  'awaiting-validation': 'pending_validation',
+  'awaiting-closure': 'pending_closure_gates',
+  'closed': 'closed_by_system',
+  'reopened': 'reopened_by_system',
+};

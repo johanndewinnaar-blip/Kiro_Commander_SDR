@@ -45,14 +45,21 @@ export const surfaceAttributionEnum = pgEnum('surface_attribution', [
   'external_attack_surface',
 ]);
 
-/** Case status enum — system-owned lifecycle */
+/** Case status enum — 12-state system-owned lifecycle (Unit 7) */
 export const caseStatusEnum = pgEnum('case_status', [
-  'open',
+  'detected',
+  'bound',
+  'routed',
+  'prioritised',
+  'action_decomposed',
   'in_progress',
-  'awaiting_validation',
-  'awaiting_closure',
-  'closed',
-  'reopened',
+  'pending_validation',
+  'validation_running',
+  'validated_pass',
+  'validated_fail',
+  'pending_closure_gates',
+  'closed_by_system',
+  'reopened_by_system',
 ]);
 
 /** Priority enum */

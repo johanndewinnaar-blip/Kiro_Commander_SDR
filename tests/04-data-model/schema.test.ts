@@ -81,12 +81,21 @@ describe('Surface Attribution Enum (Spec #60)', () => {
 describe('Case Status Enum (Doctrinal Assertion 1)', () => {
   it('includes system-owned lifecycle states', () => {
     const values = schema.caseStatusEnum.enumValues;
-    expect(values).toContain('open');
+    // 12-state closed-loop lifecycle (Unit 7)
+    expect(values).toContain('detected');
+    expect(values).toContain('bound');
+    expect(values).toContain('routed');
+    expect(values).toContain('prioritised');
+    expect(values).toContain('action_decomposed');
     expect(values).toContain('in_progress');
-    expect(values).toContain('awaiting_validation');
-    expect(values).toContain('awaiting_closure');
-    expect(values).toContain('closed');
-    expect(values).toContain('reopened');
+    expect(values).toContain('pending_validation');
+    expect(values).toContain('validation_running');
+    expect(values).toContain('validated_pass');
+    expect(values).toContain('validated_fail');
+    expect(values).toContain('pending_closure_gates');
+    expect(values).toContain('closed_by_system');
+    expect(values).toContain('reopened_by_system');
+    expect(values.length).toBe(13);
   });
 
   it('does not include manual states', () => {

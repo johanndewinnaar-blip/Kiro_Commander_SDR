@@ -73,7 +73,7 @@
 | `caseRef` | string | system-calculated | AVAILABLE | — | Case reference number (unique) |
 | `caseType` | CaseTypeExtended | system-calculated | AVAILABLE | — | 12 canonical types + 5 legacy aliases |
 | `title` | string | system-calculated | AVAILABLE | — | Case title |
-| `status` | CaseStatus | workflow-derived | AVAILABLE | — | Lifecycle state (open, in-progress, awaiting-validation, awaiting-closure, closed, reopened) — system-owned transitions only |
+| `status` | CaseStatusExtended | workflow-derived | AVAILABLE | — | 12-state closed-loop lifecycle (detected, bound, routed, prioritised, action_decomposed, in_progress, pending_validation, validation_running, validated_pass, validated_fail, pending_closure_gates, closed_by_system, reopened_by_system) + 6 legacy aliases for seed data backward compatibility — system-owned transitions only. DB enum enforces canonical 12 states; legacy aliases mapped before persistence via `LEGACY_STATUS_MAP`. |
 | `priority` | Priority | system-calculated | AVAILABLE | — | P0, P1, P2, P3, P4 (resolver: case-prioritiser.ts) |
 | `owner` | string | system-calculated | AVAILABLE | — | Assigned owner via routing engine (resolver: case-router.ts) |
 | `team` | string | system-calculated | AVAILABLE | — | Assigned team via routing engine |
@@ -272,13 +272,19 @@
 **Fixture:** ❌ NOT APPLICABLE (state machine logic, not data)  
 **Status:** AVAILABLE (resolvers exist)
 
-**Allowed Transitions:**
-- `open → in-progress`
-- `in-progress → awaiting-validation`
-- `awaiting-validation → awaiting-closure`
-- `awaiting-closure → closed`
-- `closed → reopened`
-- `reopened → in-progress`
+**12-State Lifecycle (canonical — Unit 7 rebaseline):**
+- `detected → bound → routed → prioritised → action_decomposed → in_progress`
+- `in_progress → pending_validation → validation_running → validated_pass / validated_fail`
+- `validated_pass → pending_closure_gates → closed_by_system → reopened_by_system → in_progress`
+- `validated_fail → in_progress` (remediation loop)
+
+**Legacy 6-State Aliases (seed data backward compatibility):**
+- `open` → `detected`
+- `in-progress` → `in_progress`
+- `awaiting-validation` → `pending_validation`
+- `awaiting-closure` → `pending_closure_gates`
+- `closed` → `closed_by_system`
+- `reopened` → `reopened_by_system`
 
 **Doctrine:** Cases are system-owned. No manual creation, manual closure, or manual status edit. Actor MUST be 'system' or 'routing-engine'.
 
@@ -377,7 +383,9 @@ These are code-conformance debt items (contract field removed, test fixtures not
 | `BuildStatus` | LIVE, BUILD, SCAFFOLD, STUB, PLANNED | Registry-driven visibility |
 | `DataClassification` | configuration, state, verdict, detection, case, threat_intelligence, audit | Master Technical Specification §11.1 |
 | `DataResidency` | uk, us, eu | Master Technical Specification §11.2 |
-| `CaseStatus` | open, in_progress, awaiting_validation, awaiting_closure, closed, reopened | Spec #08 |
+| `CaseStatus` | detected, bound, routed, prioritised, action_decomposed, in_progress, pending_validation, validation_running, validated_pass, validated_fail, pending_closure_gates, closed_by_system, reopened_by_system | Spec #08, Spec #30, Unit 7 rebaseline |
+| `LegacyCaseStatus` | open, in-progress, awaiting-validation, awaiting-closure, closed, reopened | Seed data backward compatibility |
+| `CaseStatusExtended` | CaseStatus \| LegacyCaseStatus | Union type for contract-level acceptance |
 | `Priority` | P0, P1, P2, P3, P4 | Spec #08 |
 
 ---
@@ -463,5 +471,5 @@ None.
 
 ---
 
-**Last Updated:** 2026-05-31 (Case Strategy Binding DB schema + fixture created — ARCH-DEBT-032 resolved)  
+**Last Updated:** 2026-05-31 (Case entity: 12-state closed-loop lifecycle + legacy status mapping — contract and DB schema aligned)  
 **Snapshot Commit:** (to be recorded after commit)

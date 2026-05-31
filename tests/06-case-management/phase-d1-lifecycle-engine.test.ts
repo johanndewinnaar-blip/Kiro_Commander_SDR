@@ -5,20 +5,23 @@ import {
   executeTransition,
   appendTransitionRecord,
   getCurrentStatusFromHistory,
+  LIFECYCLE_ACTORS,
 } from '../../packages/contracts/src/entities/case-lifecycle';
 import type {
   TransitionRequest,
   TransitionResult,
   CaseTransitionRecord,
   CaseLifecycleHistory,
+  LifecycleActor,
 } from '../../packages/contracts/src/entities/case-lifecycle';
 import type { CaseStatus } from '../../packages/contracts/src/entities/case';
 
 /**
  * Phase D1: Lifecycle Transition Engine Tests — Commander SDR
+ * Updated for 12-state closed-loop lifecycle (Unit 7).
  *
  * Validates:
- * - executeTransition succeeds for all 6 allowed transitions
+ * - executeTransition succeeds for all 14 allowed transitions
  * - executeTransition rejects invalid actors
  * - executeTransition rejects disallowed transitions
  * - executeTransition rejects from-state mismatch
@@ -29,25 +32,33 @@ import type { CaseStatus } from '../../packages/contracts/src/entities/case';
  * - Manual creation/closure paths are impossible
  */
 
-function makeRequest(from: CaseStatus, to: CaseStatus, actor: string = 'system'): TransitionRequest {
+function makeRequest(from: CaseStatus, to: CaseStatus, actor: LifecycleActor = 'system'): TransitionRequest {
   return {
     transition: { from, to },
-    actor: actor as any,
+    actor,
     reason: `Test transition from ${from} to ${to}`,
     auditEventRef: `audit-ref-${from}-${to}`,
   };
 }
 
-describe('executeTransition — allowed transitions', () => {
+describe('executeTransition — allowed transitions (12-state)', () => {
   it.each([
-    ['open', 'in-progress'],
-    ['in-progress', 'awaiting-validation'],
-    ['awaiting-validation', 'awaiting-closure'],
-    ['awaiting-closure', 'closed'],
-    ['closed', 'reopened'],
-    ['reopened', 'in-progress'],
-  ] as [CaseStatus, CaseStatus][])('succeeds for %s → %s', (from, to) => {
-    const request = makeRequest(from, to);
+    ['detected', 'bound', 'binding-engine'],
+    ['bound', 'routed', 'routing-engine'],
+    ['routed', 'prioritised', 'prioritisation-engine'],
+    ['prioritised', 'action_decomposed', 'system'],
+    ['action_decomposed', 'in_progress', 'system'],
+    ['in_progress', 'pending_validation', 'system'],
+    ['pending_validation', 'validation_running', 'validation-engine'],
+    ['validation_running', 'validated_pass', 'validation-engine'],
+    ['validation_running', 'validated_fail', 'validation-engine'],
+    ['validated_pass', 'pending_closure_gates', 'closure-engine'],
+    ['validated_fail', 'in_progress', 'system'],
+    ['pending_closure_gates', 'closed_by_system', 'closure-engine'],
+    ['closed_by_system', 'reopened_by_system', 'reopening-engine'],
+    ['reopened_by_system', 'in_progress', 'system'],
+  ] as [CaseStatus, CaseStatus, LifecycleActor][])('succeeds for %s → %s (actor: %s)', (from, to, actor) => {
+    const request = makeRequest(from, to, actor);
     const result = executeTransition('case-001', from, request);
 
     expect(result.success).toBe(true);
@@ -58,91 +69,100 @@ describe('executeTransition — allowed transitions', () => {
   });
 });
 
-describe('executeTransition — actor validation', () => {
+describe('executeTransition — actor validation (12-state)', () => {
   it('rejects invalid actor (manual-user)', () => {
-    const request = makeRequest('open', 'in-progress', 'manual-user');
-    const result = executeTransition('case-001', 'open', request);
+    const request = makeRequest('detected', 'bound', 'manual-user' as LifecycleActor);
+    const result = executeTransition('case-001', 'detected', request);
 
     expect(result.success).toBe(false);
     expect(result.newStatus).toBeNull();
-    expect(result.previousStatus).toBe('open');
+    expect(result.previousStatus).toBe('detected');
     expect(result.auditEvent).toBeNull();
     expect(result.error).toContain('Invalid actor');
   });
 
   it('rejects invalid actor (admin)', () => {
-    const request = makeRequest('open', 'in-progress', 'admin');
-    const result = executeTransition('case-001', 'open', request);
+    const request = makeRequest('detected', 'bound', 'admin' as LifecycleActor);
+    const result = executeTransition('case-001', 'detected', request);
 
     expect(result.success).toBe(false);
     expect(result.error).toContain('Invalid actor');
   });
 
-  it('accepts system actor', () => {
-    const request = makeRequest('open', 'in-progress', 'system');
-    const result = executeTransition('case-001', 'open', request);
+  it('rejects wrong actor for specific transition', () => {
+    // system cannot perform detected → bound (only binding-engine can)
+    const request = makeRequest('detected', 'bound', 'system');
+    const result = executeTransition('case-001', 'detected', request);
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('not permitted');
+  });
+
+  it('accepts binding-engine for detected → bound', () => {
+    const request = makeRequest('detected', 'bound', 'binding-engine');
+    const result = executeTransition('case-001', 'detected', request);
     expect(result.success).toBe(true);
   });
 
-  it('accepts routing-engine actor', () => {
-    const request = makeRequest('open', 'in-progress', 'routing-engine');
-    const result = executeTransition('case-001', 'open', request);
+  it('accepts routing-engine for bound → routed', () => {
+    const request = makeRequest('bound', 'routed', 'routing-engine');
+    const result = executeTransition('case-001', 'bound', request);
     expect(result.success).toBe(true);
   });
 });
 
-describe('executeTransition — disallowed transitions', () => {
-  it('rejects open → closed (no direct closure)', () => {
-    const request = makeRequest('open', 'closed' as CaseStatus);
-    const result = executeTransition('case-001', 'open', request);
+describe('executeTransition — disallowed transitions (12-state)', () => {
+  it('rejects detected → closed_by_system (no direct closure)', () => {
+    const request = makeRequest('detected', 'closed_by_system' as CaseStatus, 'closure-engine');
+    const result = executeTransition('case-001', 'detected', request);
 
     expect(result.success).toBe(false);
     expect(result.error).toContain('not allowed');
   });
 
-  it('rejects in-progress → closed (no direct closure)', () => {
-    const request = makeRequest('in-progress', 'closed' as CaseStatus);
-    const result = executeTransition('case-001', 'in-progress', request);
+  it('rejects in_progress → closed_by_system (no direct closure)', () => {
+    const request = makeRequest('in_progress', 'closed_by_system' as CaseStatus, 'closure-engine');
+    const result = executeTransition('case-001', 'in_progress', request);
 
     expect(result.success).toBe(false);
     expect(result.error).toContain('not allowed');
   });
 
-  it('rejects closed → open (must go through reopened)', () => {
-    const request = makeRequest('closed', 'open' as CaseStatus);
-    const result = executeTransition('case-001', 'closed', request);
+  it('rejects closed_by_system → detected (must go through reopened)', () => {
+    const request = makeRequest('closed_by_system', 'detected' as CaseStatus, 'system');
+    const result = executeTransition('case-001', 'closed_by_system', request);
 
     expect(result.success).toBe(false);
     expect(result.error).toContain('not allowed');
   });
 });
 
-describe('executeTransition — from-state mismatch', () => {
+describe('executeTransition — from-state mismatch (12-state)', () => {
   it('rejects when request.transition.from does not match currentStatus', () => {
-    const request = makeRequest('in-progress', 'awaiting-validation');
-    // currentStatus is 'open' but request says from is 'in-progress'
-    const result = executeTransition('case-001', 'open', request);
+    const request = makeRequest('bound', 'routed', 'routing-engine');
+    // currentStatus is 'detected' but request says from is 'bound'
+    const result = executeTransition('case-001', 'detected', request);
 
     expect(result.success).toBe(false);
     expect(result.error).toContain('does not match current status');
-    expect(result.previousStatus).toBe('open');
+    expect(result.previousStatus).toBe('detected');
   });
 });
 
-describe('executeTransition — TransitionResult shape', () => {
+describe('executeTransition — TransitionResult shape (12-state)', () => {
   it('returns correct shape on success', () => {
-    const request = makeRequest('open', 'in-progress');
-    const result: TransitionResult = executeTransition('case-001', 'open', request);
+    const request = makeRequest('detected', 'bound', 'binding-engine');
+    const result: TransitionResult = executeTransition('case-001', 'detected', request);
 
     expect(result).toHaveProperty('success', true);
-    expect(result).toHaveProperty('newStatus', 'in-progress');
-    expect(result).toHaveProperty('previousStatus', 'open');
+    expect(result).toHaveProperty('newStatus', 'bound');
+    expect(result).toHaveProperty('previousStatus', 'detected');
     expect(result).toHaveProperty('error', null);
     expect(result.auditEvent).toBeDefined();
     expect(result.auditEvent!.caseId).toBe('case-001');
-    expect(result.auditEvent!.from).toBe('open');
-    expect(result.auditEvent!.to).toBe('in-progress');
-    expect(result.auditEvent!.actor).toBe('system');
+    expect(result.auditEvent!.from).toBe('detected');
+    expect(result.auditEvent!.to).toBe('bound');
+    expect(result.auditEvent!.actor).toBe('binding-engine');
     expect(result.auditEvent!.reason).toBeTruthy();
     expect(result.auditEvent!.auditEventRef).toBeTruthy();
     expect(result.auditEvent!.timestamp).toBeTruthy();
@@ -150,26 +170,26 @@ describe('executeTransition — TransitionResult shape', () => {
   });
 
   it('returns correct shape on failure', () => {
-    const request = makeRequest('open', 'closed' as CaseStatus);
-    const result: TransitionResult = executeTransition('case-001', 'open', request);
+    const request = makeRequest('detected', 'closed_by_system' as CaseStatus, 'closure-engine');
+    const result: TransitionResult = executeTransition('case-001', 'detected', request);
 
     expect(result).toHaveProperty('success', false);
     expect(result).toHaveProperty('newStatus', null);
-    expect(result).toHaveProperty('previousStatus', 'open');
+    expect(result).toHaveProperty('previousStatus', 'detected');
     expect(result).toHaveProperty('auditEvent', null);
     expect(result.error).toBeTruthy();
   });
 });
 
-describe('appendTransitionRecord', () => {
+describe('appendTransitionRecord (12-state)', () => {
   it('adds a record to history immutably', () => {
     const history: CaseLifecycleHistory = { caseId: 'case-001', records: [] };
     const record: CaseTransitionRecord = {
       id: 'txn-001',
       caseId: 'case-001',
-      from: 'open',
-      to: 'in-progress',
-      actor: 'system',
+      from: 'detected',
+      to: 'bound',
+      actor: 'binding-engine',
       reason: 'Test',
       auditEventRef: 'audit-001',
       timestamp: '2026-01-18T10:00:00.000Z',
@@ -187,9 +207,9 @@ describe('appendTransitionRecord', () => {
     const existing: CaseTransitionRecord = {
       id: 'txn-001',
       caseId: 'case-001',
-      from: 'open',
-      to: 'in-progress',
-      actor: 'system',
+      from: 'detected',
+      to: 'bound',
+      actor: 'binding-engine',
       reason: 'First',
       auditEventRef: 'audit-001',
       timestamp: '2026-01-18T10:00:00.000Z',
@@ -198,8 +218,8 @@ describe('appendTransitionRecord', () => {
     const newRecord: CaseTransitionRecord = {
       id: 'txn-002',
       caseId: 'case-001',
-      from: 'in-progress',
-      to: 'awaiting-validation',
+      from: 'bound',
+      to: 'routed',
       actor: 'routing-engine',
       reason: 'Second',
       auditEventRef: 'audit-002',
@@ -214,10 +234,10 @@ describe('appendTransitionRecord', () => {
   });
 });
 
-describe('getCurrentStatusFromHistory', () => {
-  it('returns open for empty history', () => {
+describe('getCurrentStatusFromHistory (12-state)', () => {
+  it('returns detected for empty history', () => {
     const history: CaseLifecycleHistory = { caseId: 'case-001', records: [] };
-    expect(getCurrentStatusFromHistory(history)).toBe('open');
+    expect(getCurrentStatusFromHistory(history)).toBe('detected');
   });
 
   it('returns last transition to-state', () => {
@@ -227,9 +247,9 @@ describe('getCurrentStatusFromHistory', () => {
         {
           id: 'txn-001',
           caseId: 'case-001',
-          from: 'open',
-          to: 'in-progress',
-          actor: 'system',
+          from: 'detected',
+          to: 'bound',
+          actor: 'binding-engine',
           reason: 'Start',
           auditEventRef: 'audit-001',
           timestamp: '2026-01-18T10:00:00.000Z',
@@ -237,34 +257,40 @@ describe('getCurrentStatusFromHistory', () => {
         {
           id: 'txn-002',
           caseId: 'case-001',
-          from: 'in-progress',
-          to: 'awaiting-validation',
-          actor: 'system',
-          reason: 'Validate',
+          from: 'bound',
+          to: 'routed',
+          actor: 'routing-engine',
+          reason: 'Route',
           auditEventRef: 'audit-002',
           timestamp: '2026-01-18T11:00:00.000Z',
         },
       ],
     };
-    expect(getCurrentStatusFromHistory(history)).toBe('awaiting-validation');
+    expect(getCurrentStatusFromHistory(history)).toBe('routed');
   });
 });
 
-describe('Full lifecycle walk', () => {
-  it('open → in-progress → awaiting-validation → awaiting-closure → closed', () => {
+describe('Full lifecycle walk (12-state)', () => {
+  it('detected → ... → closed_by_system (happy path)', () => {
     const caseId = 'case-lifecycle-walk';
     let history: CaseLifecycleHistory = { caseId, records: [] };
-    let status: CaseStatus = 'open';
+    let status: CaseStatus = 'detected';
 
-    const steps: [CaseStatus, CaseStatus][] = [
-      ['open', 'in-progress'],
-      ['in-progress', 'awaiting-validation'],
-      ['awaiting-validation', 'awaiting-closure'],
-      ['awaiting-closure', 'closed'],
+    const steps: [CaseStatus, CaseStatus, LifecycleActor][] = [
+      ['detected', 'bound', 'binding-engine'],
+      ['bound', 'routed', 'routing-engine'],
+      ['routed', 'prioritised', 'prioritisation-engine'],
+      ['prioritised', 'action_decomposed', 'system'],
+      ['action_decomposed', 'in_progress', 'system'],
+      ['in_progress', 'pending_validation', 'system'],
+      ['pending_validation', 'validation_running', 'validation-engine'],
+      ['validation_running', 'validated_pass', 'validation-engine'],
+      ['validated_pass', 'pending_closure_gates', 'closure-engine'],
+      ['pending_closure_gates', 'closed_by_system', 'closure-engine'],
     ];
 
-    for (const [from, to] of steps) {
-      const request = makeRequest(from, to);
+    for (const [from, to, actor] of steps) {
+      const request = makeRequest(from, to, actor);
       const result = executeTransition(caseId, status, request);
       expect(result.success).toBe(true);
       expect(result.newStatus).toBe(to);
@@ -272,43 +298,43 @@ describe('Full lifecycle walk', () => {
       status = result.newStatus!;
     }
 
-    expect(getCurrentStatusFromHistory(history)).toBe('closed');
-    expect(history.records).toHaveLength(4);
+    expect(getCurrentStatusFromHistory(history)).toBe('closed_by_system');
+    expect(history.records).toHaveLength(10);
   });
 
-  it('reopening: closed → reopened → in-progress', () => {
+  it('reopening: closed_by_system → reopened_by_system → in_progress', () => {
     const caseId = 'case-reopen';
     let history: CaseLifecycleHistory = { caseId, records: [] };
-    let status: CaseStatus = 'closed';
+    let status: CaseStatus = 'closed_by_system';
 
-    const steps: [CaseStatus, CaseStatus][] = [
-      ['closed', 'reopened'],
-      ['reopened', 'in-progress'],
+    const steps: [CaseStatus, CaseStatus, LifecycleActor][] = [
+      ['closed_by_system', 'reopened_by_system', 'reopening-engine'],
+      ['reopened_by_system', 'in_progress', 'system'],
     ];
 
-    for (const [from, to] of steps) {
-      const request = makeRequest(from, to);
+    for (const [from, to, actor] of steps) {
+      const request = makeRequest(from, to, actor);
       const result = executeTransition(caseId, status, request);
       expect(result.success).toBe(true);
       history = appendTransitionRecord(history, result.auditEvent!);
       status = result.newStatus!;
     }
 
-    expect(getCurrentStatusFromHistory(history)).toBe('in-progress');
+    expect(getCurrentStatusFromHistory(history)).toBe('in_progress');
   });
 });
 
-describe('Doctrinal enforcement — no manual paths', () => {
-  it('no transition TO open exists (manual creation impossible)', () => {
-    const transitionsToOpen = ALLOWED_TRANSITIONS.filter((t) => t.to === 'open');
-    expect(transitionsToOpen).toHaveLength(0);
+describe('Doctrinal enforcement — no manual paths (12-state)', () => {
+  it('no transition TO detected exists (manual creation impossible)', () => {
+    const transitionsToDetected = ALLOWED_TRANSITIONS.filter((t) => t.to === 'detected');
+    expect(transitionsToDetected).toHaveLength(0);
   });
 
-  it('no direct transition from open to closed (manual closure impossible)', () => {
-    expect(isTransitionAllowed('open', 'closed')).toBe(false);
+  it('no direct transition from detected to closed_by_system (manual closure impossible)', () => {
+    expect(isTransitionAllowed('detected', 'closed_by_system')).toBe(false);
   });
 
-  it('no direct transition from in-progress to closed (manual closure impossible)', () => {
-    expect(isTransitionAllowed('in-progress', 'closed')).toBe(false);
+  it('no direct transition from in_progress to closed_by_system (manual closure impossible)', () => {
+    expect(isTransitionAllowed('in_progress', 'closed_by_system')).toBe(false);
   });
 });
