@@ -69,9 +69,9 @@ A unit is **READY** iff every dependency unit is **DONE** and every mapped chain
 
 Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readiness State Machine above.
 
-**READY (4):** Unit 5 (Normalisation Layer), Unit 12 (Closure Gate Engine), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors).
+**READY (4):** Unit 5 (Normalisation Layer), Unit 13 (Reopening Trigger Engine), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors).
 
-**DONE (11):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11.
+**DONE (12):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12.
 
 **BLOCKED (36):** Units 12–21, 23–37, 39–49 (except Units 5, 22, 38). All 27 Team 2 units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006.
 
@@ -89,8 +89,8 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 | 9 Case Prioritisation Engine | Foundational | **DONE** | — |
 | 10 Case SLA Engine | Foundational | **DONE** | — |
 | 11 Validation Lifecycle Engine | Foundational | **DONE** | — |
-| 12 Closure Gate Engine | Foundational | **READY** | — |
-| 13 Reopening Trigger Engine | Foundational | BLOCKED | Unit 12 |
+| 12 Closure Gate Engine | Foundational | **DONE** | — |
+| 13 Reopening Trigger Engine | Foundational | **READY** | — |
 | 14 Intelligence Layer — Four Streams | Foundational | BLOCKED | Unit 5 |
 | 15 OODA Layer | Foundational | BLOCKED | Unit 14; Units 8–13 |
 | 16 Command Centre | Foundational | BLOCKED | Unit 15; Unit 14; Units 8–13 |
@@ -638,9 +638,11 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ### Unit 12: Closure Gate Engine
 
-**Status:** BLOCKED
+**Status:** DONE
 
-**Blocked by:** Unit 7 (Case Lifecycle core); Unit 11 (Validation Lifecycle)
+**Blocked by:** — (complete)
+
+**Verification:** Spec #30 Universal Validation, Closure and Reopening Lifecycle §7. Evidence: typecheck clean; vitest 65/65 Unit 12 tests pass; 12 closure gates implemented (technical_validation through fusion_map_state_refresh); gate evaluation logic (all configured gates must pass); gate configuration from strategy; gate status tracking per case; system-owned closure enforced (isManualClosureBlocked always true); non-configured gates skipped; invalid gate names filtered; governance Green (100%).
 
 **Purpose:** Build closure gate engine (12 gates) consuming Closure Gate Strategy from Strategy Layer
 

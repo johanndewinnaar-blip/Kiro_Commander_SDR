@@ -76,3 +76,22 @@ export {
   shouldTriggerRevalidation,
   evaluateValidation,
 } from './case-validation-engine';
+
+// Unit 12: Case Closure Gate Engine
+export type {
+  ClosureGateType,
+  GateStatus,
+  GateInput,
+  GateResult,
+  CaseClosureGateState,
+  ClosureGateEvaluationRequest,
+  ClosureGateEvaluationResult,
+} from './case-closure-gate-engine';
+export {
+  CLOSURE_GATE_TYPES,
+  evaluateGate,
+  evaluateAllGates,
+  extractClosureGateConfig,
+  evaluateClosureReadiness,
+  isManualClosureBlocked,
+} from './case-closure-gate-engine';
