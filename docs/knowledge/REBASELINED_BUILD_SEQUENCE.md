@@ -69,9 +69,9 @@ A unit is **READY** iff every dependency unit is **DONE** and every mapped chain
 
 Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readiness State Machine above.
 
-**READY (5):** Unit 5 (Normalisation Layer), Unit 10 (Case SLA Engine), Unit 11 (Validation Lifecycle Engine), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors).
+**READY (4):** Unit 5 (Normalisation Layer), Unit 11 (Validation Lifecycle Engine), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors).
 
-**DONE (9):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 6, Unit 7, Unit 8, Unit 9.
+**DONE (10):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10.
 
 **BLOCKED (36):** Units 12–21, 23–37, 39–49 (except Units 5, 22, 38). All 27 Team 2 units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006.
 
@@ -87,7 +87,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 | 7 Case Lifecycle Engine | Foundational | **DONE** | — |
 | 8 Case Routing Engine | Foundational | **DONE** | — |
 | 9 Case Prioritisation Engine | Foundational | **DONE** | — |
-| 10 Case SLA Engine | Foundational | **READY** | — |
+| 10 Case SLA Engine | Foundational | **DONE** | — |
 | 11 Validation Lifecycle Engine | Foundational | **READY** | — |
 | 12 Closure Gate Engine | Foundational | BLOCKED | Unit 11 |
 | 13 Reopening Trigger Engine | Foundational | BLOCKED | Unit 12 |
@@ -558,9 +558,11 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ### Unit 10: Case SLA Engine
 
-**Status:** BLOCKED
+**Status:** DONE
 
-**Blocked by:** Unit 7 (Case Lifecycle core)
+**Blocked by:** — (complete)
+
+**Verification:** Spec #08 Case Management (SLA calculation). Evidence: typecheck clean; vitest 54/54 Unit 10 tests pass; SLA target calculation from strategy (no hardcoded hours); breach detection (elapsed >= target); notification generation at 75%/90%/100%/150% thresholds; escalation level calculation post-breach (floor((elapsed-target)/cadence)); escalation path from routing strategy; all values strategy-driven; returns error on missing strategy; governance Green (100%).
 
 **Purpose:** Build case SLA engine consuming SLA Strategy from Strategy Layer
 

@@ -37,3 +37,19 @@ export {
   determinePushPreference,
   prioritiseCase,
 } from './case-prioritisation-engine';
+
+// Unit 10: Case SLA Engine
+export type {
+  CaseSlaState,
+  SlaEvaluationRequest,
+  SlaEvaluationResult,
+  SlaNotification,
+  SlaEscalation,
+} from './case-sla-engine';
+export {
+  calculateSlaState,
+  detectBreach,
+  generateNotifications,
+  calculateEscalation,
+  evaluateSla,
+} from './case-sla-engine';
