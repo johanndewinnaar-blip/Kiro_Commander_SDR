@@ -597,3 +597,55 @@ Authority: `.kiro/steering/feature-function-backlog.md` (extended in this update
 
 **History**
 - 2026-05-31: OPEN — bulk-registered from ARCHITECTURAL_FINDINGS.md §8.2 (severity: Tracking). Note: source-side fix already shipped in commit 26ec647; entry held OPEN pending owner review for promotion to RESOLVED.
+
+
+---
+
+### ARCH-DEBT-030 — Risk Object DB schema missing (contract + fixture exist)
+
+- **Source:** DATA_DICTIONARY.md contract-vs-schema reconciliation (2026-05-31)
+- **Description:** `packages/contracts/src/entities/risk-object.ts` contract exists with full type definitions. `packages/contracts/src/fixtures/seed-risk-objects.ts` fixture exists with seed data. BUT `packages/db/src/schema/` has NO corresponding risk-object schema file. Risk objects cannot be persisted without db schema.
+- **Debt type:** Missing-ownership (data-layer incomplete)
+- **Scope of fix:** Create `packages/db/src/schema/risk-objects.ts` with Drizzle schema matching the contract. Map 8 RiskObjectType values (coverage_blindspot, ooda_phase_degradation, vulnerability_drift, configuration_drift, exposure_drift, control_gap, identity_risk, policy_gap) and 4 TreatmentState values (open, mitigated, accepted, transferred). Add to schema index exports.
+- **Affected specs / artifacts:** `packages/contracts/src/entities/risk-object.ts`; `packages/contracts/src/fixtures/seed-risk-objects.ts`; `packages/db/src/schema/` (missing file); Spec #29 Universal Risk Object
+- **Scheduled resolution:** Data-layer completion pass (before Phase 2)
+- **Status:** OPEN
+- **Date logged:** 2026-05-31
+- **Last reviewed:** 2026-05-31
+
+**History**
+- 2026-05-31: OPEN — surfaced from DATA_DICTIONARY.md contract-vs-schema reconciliation
+
+---
+
+### ARCH-DEBT-031 — Strategy Policy DB schema missing (contract + fixture exist)
+
+- **Source:** DATA_DICTIONARY.md contract-vs-schema reconciliation (2026-05-31)
+- **Description:** `packages/contracts/src/entities/strategy.ts` contract exists with full StrategyPolicy type, 13 StrategySurfaceType values, 6 StrategyPolicyStatus values, and RuntimeBindingTrigger types. `packages/contracts/src/fixtures/seed-strategies.ts` fixture exists with seed data. BUT `packages/db/src/schema/` has NO corresponding strategy schema file. Strategy policies cannot be persisted without db schema.
+- **Debt type:** Missing-ownership (data-layer incomplete)
+- **Scope of fix:** Create `packages/db/src/schema/strategies.ts` with Drizzle schema matching the contract. Map 13 StrategySurfaceType values (sla, threshold, automation-boundary, routing, posture, mission-objective, operational-tempo, domain-specific, prioritisation-weight, validation-window, closure-gate, reopening-trigger, evidence-sufficiency) and 6 StrategyPolicyStatus values (draft, pending-approval, approved, active, superseded, rejected). Add to schema index exports.
+- **Affected specs / artifacts:** `packages/contracts/src/entities/strategy.ts`; `packages/contracts/src/fixtures/seed-strategies.ts`; `packages/db/src/schema/` (missing file); Spec #32 Strategy Layer Runtime Surface
+- **Scheduled resolution:** Data-layer completion pass (before Phase 2)
+- **Status:** OPEN
+- **Date logged:** 2026-05-31
+- **Last reviewed:** 2026-05-31
+
+**History**
+- 2026-05-31: OPEN — surfaced from DATA_DICTIONARY.md contract-vs-schema reconciliation
+
+---
+
+### ARCH-DEBT-032 — Case Strategy Binding incomplete (contract exists, db schema + fixture missing)
+
+- **Source:** DATA_DICTIONARY.md contract-vs-schema reconciliation (2026-05-31)
+- **Description:** `packages/contracts/src/entities/case-strategy-binding.ts` contract exists with CaseStrategyBinding type defining 6 strategy surface bindings (routing, sla, prioritisation-weight, closure-gate, reopening-trigger, validation-window). BUT `packages/db/src/schema/` has NO corresponding schema file AND `packages/contracts/src/fixtures/` has NO fixture file. Case strategy bindings cannot be persisted or seeded.
+- **Debt type:** Missing-ownership (data-layer incomplete)
+- **Scope of fix:** Create `packages/db/src/schema/case-strategy-bindings.ts` with Drizzle schema. Create `packages/contracts/src/fixtures/seed-case-strategy-bindings.ts` with seed data linking cases to strategy policies. Add both to respective index exports.
+- **Affected specs / artifacts:** `packages/contracts/src/entities/case-strategy-binding.ts`; `packages/db/src/schema/` (missing file); `packages/contracts/src/fixtures/` (missing file); Spec #32 Strategy Layer Runtime Surface; Spec #08 Case Management
+- **Scheduled resolution:** Data-layer completion pass (before Phase 2)
+- **Status:** OPEN
+- **Date logged:** 2026-05-31
+- **Last reviewed:** 2026-05-31
+
+**History**
+- 2026-05-31: OPEN — surfaced from DATA_DICTIONARY.md contract-vs-schema reconciliation

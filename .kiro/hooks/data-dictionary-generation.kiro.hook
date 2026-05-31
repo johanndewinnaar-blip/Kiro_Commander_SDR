@@ -1,0 +1,16 @@
+{
+  "name": "Data Dictionary Generation",
+  "version": "1.0.0",
+  "description": "Mechanically extracts entity name/fields/types from contracts and db schema, reconciles divergences, derives availability from fixtures/resolvers, checks COVERAGE read-state, and proposes source-classification for new fields. Updates DATA_DICTIONARY.md on data-layer changes.",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "packages/contracts/src/entities/**",
+      "packages/db/src/schema/**"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A data-layer file was edited. Mechanically update DATA_DICTIONARY.md:\n\n1. Extract entity name, fields, types from both packages/contracts/src/entities and packages/db/src/schema.\n2. Reconcile contract vs db schema (divergence → flag and propose ARCHITECTURAL_DEBT_REGISTER.md entry).\n3. Derive availability mechanically:\n   - Entity has fixture in packages/contracts/src/fixtures → seeded data points AVAILABLE\n   - integration-derived fields → FUTURE (blocker: Phase 2 connector integration)\n   - system-calculated fields → AVAILABLE if resolver in packages/contracts/src/resolvers produces it; else FUTURE (blocker: name missing resolver)\n4. Check docs/knowledge/COVERAGE.md for source spec read-state. Source spec fully read → entry complete. Partially read → flag entry 'provisional (source partially read)'.\n5. PROPOSE source-classification for new fields (judgment — do NOT silently write it). Write the mechanical facts only.\n6. Cite baseline spec #N the entity derives from (from docs/99_source_archive/baseline_v2_6_2/, never .kiro/specs per SOURCING_RULE.md).\n7. Update the Data Layer As-Built Snapshot section with entity count, fixture count, resolver count.\n8. Report: entity updated, divergences found (if any), availability changes, COVERAGE provisional flags.\n\nDo NOT guess availability. File-existence check only."
+  }
+}

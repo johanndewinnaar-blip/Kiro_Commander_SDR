@@ -236,6 +236,11 @@
 **Assertion:** Database layer MUST be portable across Postgres family (vanilla, Aurora, Citus, CockroachDB, Yugabyte).  
 **Check:** No engine-specific features that prevent migration.
 
+### ARCH-005: Data Dictionary Completeness
+**Assertion:** An entity in `packages/contracts/src/entities` or `packages/db/src/schema` with no corresponding DATA_DICTIONARY.md entry = INCOMPLETE.  
+**Check:** Cross-reference entity files against `docs/knowledge/DATA_DICTIONARY.md` catalogue. Flag missing entries.  
+**Source:** `docs/knowledge/DATA_DICTIONARY.md` maintenance rules.
+
 ---
 
 ## Decision Record Assertions

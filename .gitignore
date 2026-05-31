@@ -5,3 +5,6 @@ dist/
 .env.*.local
 *.tsbuildinfo
 .next/
+
+# Throwaway inventory and analysis files
+docs/knowledge/_repo_*.txt

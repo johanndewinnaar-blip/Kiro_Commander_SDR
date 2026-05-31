@@ -38,3 +38,11 @@ Standing rules for all build execution in this programme. These apply regardless
 - Commit messages are descriptive and reference the spec/phase/pass.
 - One logical change per commit where practical.
 - Push at session end or when a coherent unit of work is complete.
+
+## Data-layer completion
+
+- Data-layer build units are not "done" until their DATA_DICTIONARY.md entry exists.
+- An entity in `packages/contracts/src/entities` or `packages/db/src/schema` with no corresponding DATA_DICTIONARY.md entry = INCOMPLETE.
+- The `data-dictionary-generation.kiro.hook` fires on contract/schema edits to maintain the dictionary mechanically.
+- ARCH-005 conformance assertion enforces this via the core testing pipeline.
+

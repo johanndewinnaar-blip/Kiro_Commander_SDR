@@ -38,6 +38,7 @@ This declaration closes governance-map finding **O-05** and architectural findin
 | `arch-debt-auto-propose.kiro.hook` | Architectural Debt Auto-Propose | `postTaskExecution` | yes |
 | `translation-layer-leak-prevention.kiro.hook` | Translation-Layer Authority-Leak Prevention | `fileEdited` (knowledge / authority / build-pack / rebaseline patterns) | yes |
 | `knowledge-workspace-sourcing-rule.kiro.hook` | Knowledge-Workspace Sourcing-Rule Enforcement | `fileEdited` (`docs/knowledge/**/*.md`) | yes |
+| `data-dictionary-generation.kiro.hook` | Data Dictionary Generation | `fileEdited` (contracts/entities, db/schema) | yes |
 
 The five `postTaskExecution` hooks fire in sequence after every task: Post-Task Review (general 10-point check), Doctrinal Assertions Check (eleven assertions), Performance Compliance (PD-1.0 scorecards), Secure-Coding and RBAC Enforcement (SEC-001..006 + RBAC-001..004), and Architectural Debt Auto-Propose (propose-don't-write debt entries). They are layered, not redundant — see `docs/knowledge/HOOK_RECONCILIATION.md` for the overlap analysis.
 
