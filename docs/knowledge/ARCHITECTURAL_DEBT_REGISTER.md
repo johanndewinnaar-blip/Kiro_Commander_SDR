@@ -838,12 +838,13 @@ Authority: `.kiro/steering/feature-function-backlog.md` (extended in this update
 - **Scope of fix:** Create Evidence as a first-class entity under build unit **COIM-B** (evidenceType, source, confidence, collectedAt, expiresAt, contentRef, immutabilityHash, caseId, subActionId, validationDecisionId). Separate table; content in object store; metadata queryable. Additive — does not modify existing engine logic. Update DATA_DICTIONARY.md.
 - **Affected specs / artifacts:** `packages/contracts/src/entities/evidence.ts` (new); `packages/db/src/schema/evidence.ts` (new); `docs/knowledge/DATA_DICTIONARY.md` (new entity); COIM-B unit in `REBASELINED_BUILD_SEQUENCE.md`
 - **Scheduled resolution:** COIM-B (NEXT tier)
-- **Status:** OPEN
+- **Status:** RESOLVED
 - **Date logged:** 2026-06-01
 - **Last reviewed:** 2026-06-01
 
 **History**
 - 2026-06-01: OPEN — registered under COIM/OCSF NOW-tier governance registration (owner-authorised). Resolution unit: COIM-B.
+- 2026-06-01: RESOLVED — Evidence entity delivered by COIM-B. Contract: `evidence.ts`. Schema: `evidence.ts`. Fixture: 5 seed artifacts. DATA_DICTIONARY.md entry created. Validation function: `validateEvidence()`. Tests: 37 passing (structural validation, fixture conformance, ownership model).
 
 ---
 

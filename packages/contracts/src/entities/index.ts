@@ -65,3 +65,18 @@ export {
   STRATEGY_CENTRE_VIEWS,
   STRATEGY_CENTRE_VIEW_LABELS,
 } from './strategy';
+export type {
+  Evidence,
+  EvidenceType,
+  EvidenceSource,
+  FreshnessStatus,
+  EvidenceValidation,
+} from './evidence';
+export {
+  EVIDENCE_TYPES,
+  EVIDENCE_SOURCES,
+  FRESHNESS_STATUSES,
+  MAX_CONFIDENCE,
+  MIN_CONFIDENCE,
+  validateEvidence,
+} from './evidence';

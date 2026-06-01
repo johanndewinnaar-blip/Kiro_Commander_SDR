@@ -2156,7 +2156,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's o
 | Unit | Tag | Status | Blocked by | Resolves |
 |---|---|---|---|---|
 | COIM-A Risk Object Source Classification + Timeline | Foundational | **DONE** | — | ARCH-DEBT-039 ✅; 045 (Risk Object) ✅ partial |
-| COIM-B Evidence Entity | Foundational | **READY** | — | ARCH-DEBT-040 |
+| COIM-B Evidence Entity | Foundational | **DONE** | — | ARCH-DEBT-040 ✅ |
 | COIM-C Verdict Entity Promotion | Foundational | **READY** | — | ARCH-DEBT-043 |
 | COIM-D Observable Entity | Foundational | **READY** | — | ARCH-DEBT-041 |
 | COIM-E Analytic Entity | Foundational | **READY** | — | ARCH-DEBT-042 |
@@ -2209,7 +2209,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's o
 
 ### Unit COIM-B: Evidence Entity
 
-**Status:** READY
+**Status:** DONE
 
 **Blocked by:** — (COIM-A DONE; Unit 7, Units 11–13 DONE)
 
@@ -2222,12 +2222,12 @@ Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's o
 **Dependencies:** COIM-A; Unit 7 (Case Lifecycle — DONE); Units 11–13 (validation/closure/reopening — DONE)
 
 **Required entities:**
-- Case ✅; Validation/closure/reopening engines ✅ (consumers); Evidence ❌ (created here)
+- Case ✅; Validation/closure/reopening engines ✅ (consumers); Evidence ✅ (delivered)
 
 **Deliverables (governance registration only):**
-1. Create Evidence entity: evidenceType, source, confidence, collectedAt, expiresAt, contentRef, immutabilityHash, caseId, subActionId, validationDecisionId
-2. Separate table; content in object store (pointer); metadata queryable; indexed bindings
-3. Update DATA_DICTIONARY.md (new entity)
+1. ✅ Create Evidence entity: evidenceType, source, confidence, collectedAt, expiresAt, contentRef, immutabilityHash, caseId, subActionId, validationDecisionId
+2. ✅ Separate table; content in object store (pointer); metadata queryable; indexed bindings
+3. ✅ Update DATA_DICTIONARY.md (new entity)
 
 **Completion gate:**
 - ✅ Evidence contract + schema + fixture exist

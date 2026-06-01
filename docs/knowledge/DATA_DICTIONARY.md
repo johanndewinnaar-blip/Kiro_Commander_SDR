@@ -375,6 +375,53 @@
 
 `rawPayloadRef` has been **removed from `SourceMetadata`** in `packages/contracts/src/entities/common.ts` (ARCH-DEBT-033 resolved). Per Spec #05 §11.3, the canonical provenance set does not include `raw_payload_ref` — it belongs to the raw-ingestion store (§11.2). The contract now matches the DB schemas (which never carried the field) and Spec #05 §11.3. Lineage to raw vendor payloads is preserved at the architecture level via the raw-ingestion store's `normalised_entity_refs` (Phase 2 deliverable).
 
+---
+
+### 11. Evidence
+
+**Source:** COIM v1.0 §4.4; 04_EVIDENCE_MODEL.md; Spec #08 Case Management (Evidence Packs §12); Commander doctrine assertion #1  
+**Coverage:** Full (04_EVIDENCE_MODEL.md read in entirety per COVERAGE.md)  
+**Contract:** `packages/contracts/src/entities/evidence.ts`  
+**DB Schema:** `packages/db/src/schema/evidence.ts` ✅  
+**Fixture:** `packages/contracts/src/fixtures/seed-evidence.ts` ✅ (5 seed artifacts)  
+**Status:** AVAILABLE (fixture exists)  
+**Build unit:** COIM-B (Evidence Entity). Resolves ARCH-DEBT-040.  
+**Doctrine:** Evidence informs but never governs lifecycle, priority, routing, validation or closure. Source-owned fields are immutable after write. Bindings are immutable after write.
+
+| Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
+|-------|------|----------------------|--------------|---------------------|-------|
+| `id` | string | system-calculated | AVAILABLE | — | Deterministic ID (from CommonFields) |
+| `entityType` | `'evidence'` | system-calculated | AVAILABLE | — | Discriminator |
+| `tenant` | TenantContext | seeded | AVAILABLE | — | Tenant scope (tenantId, tenantName) |
+| `evidenceType` | EvidenceType (enum) | integration-derived; seeded in fixtures | AVAILABLE | — | 9 types: log, scan, verdict, screenshot, config, network_capture, file_hash, process_dump, ai_analysis |
+| `evidenceSource` | EvidenceSource (enum) | integration-derived; seeded in fixtures | AVAILABLE | — | 3 sources: connector, analyst, system. Source-owned (immutable after write). |
+| `collectedAt` | string (ISO 8601) / timestamptz | integration-derived; seeded in fixtures | AVAILABLE | — | When evidence was collected (source timestamp). Source-owned (immutable after write). |
+| `contentRef` | string | integration-derived; seeded in fixtures | AVAILABLE | — | Object-store pointer (S3 URI or equivalent). Source-owned (immutable after write). |
+| `immutabilityHash` | string (SHA-256, 64 hex chars) | system-calculated; seeded in fixtures | AVAILABLE | — | SHA-256 hash of evidence content. Integrity verification. Source-owned (immutable after write). |
+| `confidence` | number (0-100) / integer | system-calculated; seeded in fixtures | AVAILABLE | — | Commander-owned. Mutable — may be updated based on validation. |
+| `expiresAt` | string (ISO 8601) / timestamptz | system-calculated | AVAILABLE | — | Optional. Computed from collectedAt + freshness policy. Commander-owned, mutable. |
+| `freshnessStatus` | FreshnessStatus (enum) | system-calculated; seeded in fixtures | AVAILABLE | — | 4 statuses: fresh, aging, stale, expired. Computed at evaluation time. Commander-owned, mutable. |
+| `caseId` | string | system-calculated; seeded in fixtures | AVAILABLE | — | Required binding. FK → cases.id. Immutable after write. |
+| `subActionId` | string (optional) | system-calculated | AVAILABLE | — | Optional binding. Immutable after write. |
+| `validationDecisionId` | string (optional) | system-calculated | AVAILABLE | — | Optional binding. Immutable after write. |
+| `riskObjectId` | string (optional) | system-calculated; seeded in fixtures | AVAILABLE | — | Optional binding. Immutable after write. |
+| `source` | SourceMetadata | seeded | AVAILABLE | — | Provenance (connectorId, importRunId, sourceSystem, sourceTimestamp). Contract↔schema aligned. |
+| `createdAt` | string (ISO 8601) / timestamptz | system-calculated | AVAILABLE | — | Record creation timestamp |
+| `updatedAt` | string (ISO 8601) / timestamptz | system-calculated | AVAILABLE | — | Record update timestamp |
+
+**Ownership model:**
+- Source-owned (immutable after write): evidenceType, evidenceSource, collectedAt, contentRef, immutabilityHash
+- Commander-owned (mutable): confidence, expiresAt, freshnessStatus
+- Immutable bindings: caseId, subActionId, validationDecisionId, riskObjectId
+
+**Validation:** `validateEvidence()` in `evidence.ts` — structural correctness checking (type/source/confidence range/hash format/required bindings/freshness/temporal ordering). No engine-logic dependency.
+
+**DB Schema Reconciliation:** ✅ Contract and schema aligned. DB schema flattens `tenant` to `tenantId` reference (FK → tenants.id) and `source` to individual columns (`source_connector_id`, `source_import_run_id`, `source_system`, `source_timestamp`) — standard pattern. Enum columns: `evidence_type` (9 values), `evidence_source` (3 values), `freshness_status` (4 values). FK binding: `case_id` → cases.id. Additional DB-only column: `data_classification` (default 'case'). No divergences.
+
+**Resolvers:** None (no evidence-specific resolver in `packages/contracts/src/resolvers/`). `freshnessStatus` is computed at evaluation time — no dedicated resolver file yet. `validateEvidence()` is a structural validator, not a resolver.
+
+---
+
 **Authority citation (updated 2026-05-31):** `SourceMetadata` interface doc comment now cites both `v1.3 Req 12` and `Spec #05 §11.3` (previously only `v1.3 Req 12`).
 
 **Stale test reference (flagged 2026-05-31):** Two test files still reference `rawPayloadRef` in source objects — these are stale after the contract removal:
@@ -398,6 +445,9 @@ These are code-conformance debt items (contract field removed, test fixtures not
 | `LegacyCaseStatus` | open, in-progress, awaiting-validation, awaiting-closure, closed, reopened | Seed data backward compatibility |
 | `CaseStatusExtended` | CaseStatus \| LegacyCaseStatus | Union type for contract-level acceptance |
 | `Priority` | P0, P1, P2, P3, P4 | Spec #08 |
+| `EvidenceType` | log, scan, verdict, screenshot, config, network_capture, file_hash, process_dump, ai_analysis | COIM v1.0 §4.4; OCSF evidences.json type taxonomy + Commander ai_analysis extension |
+| `EvidenceSource` | connector, analyst, system | COIM v1.0 §4.4 |
+| `FreshnessStatus` | fresh, aging, stale, expired | COIM v1.0 §4.4; 04_EVIDENCE_MODEL.md (strategy-driven thresholds) |
 
 ---
 
@@ -405,7 +455,7 @@ These are code-conformance debt items (contract field removed, test fixtures not
 
 **Purpose:** Complete surfacing of the data layer built to date. Existing work is explicitly accounted for, not silently assumed complete.
 
-### Entities Catalogued: 10
+### Entities Catalogued: 11
 
 1. Asset ✅
 2. Case ✅
@@ -417,11 +467,12 @@ These are code-conformance debt items (contract field removed, test fixtures not
 8. Case Lifecycle (state machine) ✅
 9. Case Strategy Binding ✅
 10. Common Fields ✅
+11. Evidence ✅ (COIM-B — evidence entity)
 
 **Composed-object modules (catalogued under their consuming entity, no own table):**
 - `coim.ts` — COIM-A source-classification composed objects (FindingClass, SourceSeverity, SourceConfidence, SourceProduct, AttackMapping, ObservableRef, SourceClassification + `validateSourceClassification`). Catalogued under Risk Object (§4). Satisfies the completeness gate for `packages/contracts/src/entities/coim.ts`.
 
-### Fixtures Found: 9
+### Fixtures Found: 10
 
 1. `seed-assets.ts` ✅
 2. `seed-cases.ts` ✅
@@ -432,6 +483,7 @@ These are code-conformance debt items (contract field removed, test fixtures not
 7. `seed-events.ts` ✅
 8. `seed-tenant.ts` ✅
 9. `seed-case-strategy-bindings.ts` ✅
+10. `seed-evidence.ts` ✅
 
 ### Resolvers Found: 12
 
@@ -450,7 +502,7 @@ These are code-conformance debt items (contract field removed, test fixtures not
 
 ### Contract vs DB Schema Reconciliation
 
-**Aligned (10):**
+**Aligned (11):**
 - Asset ✅
 - Case ✅
 - Identity ✅
@@ -461,6 +513,7 @@ These are code-conformance debt items (contract field removed, test fixtures not
 - Common Fields ✅
 - Case Lifecycle (transitions in audit events) ✅
 - Case Strategy Binding ✅
+- Evidence ✅
 
 **Divergences (0):**
 None.
@@ -487,18 +540,47 @@ None.
 
 > **Delivered 2026-06-01 by build unit COIM-A.** Placeholder retired per maintenance rule (a COIM unit's planning placeholder is replaced by its mechanically-derived entry once the unit lands). The COIM-A source-classification and timeline fields are now catalogued in the mechanically-derived **Risk Object** entry (§4 above) — see `sourceClassification`, extracted columns (`finding_class`/`severity_id`/`confidence_score`/`source_finding_uid`), `affectedEntities[]`, and `firstDetectedAt`/`lastConfirmedAt`/`normalisedAt`, plus the COIM-A composed-objects note. Contract: `risk-object.ts` + `coim.ts`. Schema: `risk-objects.ts` (migration `0005_risk_object_coim_a.sql`). Fixture: all 3 seed risk objects populated. Resolves ARCH-DEBT-039; partially resolves ARCH-DEBT-045 (Risk Object portion).
 
-### Evidence (NEW ENTITY — FUTURE — blocker: COIM-B)
+### Evidence (AVAILABLE — delivered by COIM-B)
 
-| Planned Field | Type | Source Classification | Availability | Blocker | Notes |
-|-------|------|----------------------|--------------|---------|-------|
-| `evidenceType` | enum | integration-derived | FUTURE | COIM-B | log/scan/verdict/screenshot/config/network_capture/file_hash/process_dump/ai_analysis |
-| `source` | string | integration-derived | FUTURE | COIM-B | connector/analyst/system |
-| `confidence` | int (0-100) | system-calculated | FUTURE | COIM-B | mutable on validation |
-| `collectedAt` | timestamptz | integration-derived | FUTURE | COIM-B | immutable |
-| `expiresAt` | timestamptz | system-calculated | FUTURE | COIM-B | optional |
-| `contentRef` | string | integration-derived | FUTURE | COIM-B | object-store pointer |
-| `immutabilityHash` | string (SHA-256) | system-calculated | FUTURE | COIM-B | integrity |
-| `caseId` / `subActionId` / `validationDecisionId` | string | system-calculated | FUTURE | COIM-B | bindings (case required) |
+> **Delivered 2026-06-01 by build unit COIM-B.** Placeholder retired per maintenance rule (a COIM unit's planning placeholder is replaced by its mechanically-derived entry once the unit lands). Evidence is a first-class typed evidence artifact supporting evidence-driven validation, evidence-gated closure, and evidence-triggered reopening per Commander doctrine assertion #1. Content stored in object store (S3/equivalent); this entity holds metadata only. Immutability enforced at application layer for source-owned fields. Resolves ARCH-DEBT-040.
+
+**Source:** COIM v1.0 §4.4; 04_EVIDENCE_MODEL.md; Spec #08 Case Management (Evidence Packs); Commander doctrine assertion #1  
+**Coverage:** Full (04_EVIDENCE_MODEL.md read in entirety)  
+**Contract:** `packages/contracts/src/entities/evidence.ts`  
+**DB Schema:** `packages/db/src/schema/evidence.ts`  
+**Fixture:** `packages/contracts/src/fixtures/seed-evidence.ts` ✅ (5 seed artifacts)  
+**Status:** AVAILABLE (fixture exists)  
+**Doctrine:** Evidence informs but never governs lifecycle, priority, routing, validation or closure. Source-owned fields are immutable after write. Bindings are immutable after write.
+
+| Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
+|-------|------|----------------------|--------------|---------------------|-------|
+| `id` | string | system-calculated | AVAILABLE | — | Deterministic ID |
+| `entityType` | `'evidence'` | system-calculated | AVAILABLE | — | Discriminator |
+| `tenant` | TenantContext | seeded | AVAILABLE | — | Tenant scope (tenantId, tenantName) |
+| `evidenceType` | EvidenceType (enum) | integration-derived | AVAILABLE | — | 9 types: log, scan, verdict, screenshot, config, network_capture, file_hash, process_dump, ai_analysis |
+| `evidenceSource` | EvidenceSource (enum) | integration-derived | AVAILABLE | — | 3 sources: connector, analyst, system. Immutable after write. |
+| `collectedAt` | string (ISO 8601) | integration-derived | AVAILABLE | — | When evidence was collected (source timestamp). Immutable after write. |
+| `contentRef` | string | integration-derived | AVAILABLE | — | Object-store pointer (S3 URI). Immutable after write. |
+| `immutabilityHash` | string (SHA-256) | system-calculated | AVAILABLE | — | SHA-256 hash of evidence content. Integrity verification. Immutable after write. |
+| `confidence` | number (0-100) | system-calculated | AVAILABLE | — | Commander-owned. Mutable on validation. |
+| `expiresAt` | string (ISO 8601) | system-calculated | AVAILABLE | — | Optional. Computed from collectedAt + freshness policy. Commander-owned, mutable. |
+| `freshnessStatus` | FreshnessStatus (enum) | system-calculated | AVAILABLE | — | 4 statuses: fresh, aging, stale, expired. Computed at evaluation time. |
+| `caseId` | string | system-calculated | AVAILABLE | — | Required binding. Immutable after write. |
+| `subActionId` | string | system-calculated | AVAILABLE | — | Optional binding. Immutable after write. |
+| `validationDecisionId` | string | system-calculated | AVAILABLE | — | Optional binding. Immutable after write. |
+| `riskObjectId` | string | system-calculated | AVAILABLE | — | Optional binding. Immutable after write. |
+| `source` | SourceMetadata | seeded | AVAILABLE | — | Provenance (connectorId, importRunId, sourceSystem, sourceTimestamp). Contract↔schema aligned. |
+| `createdAt` | string (ISO 8601) | system-calculated | AVAILABLE | — | Record creation timestamp |
+| `updatedAt` | string (ISO 8601) | system-calculated | AVAILABLE | — | Record update timestamp |
+
+**DB Schema Reconciliation:** ✅ Contract and schema aligned. DB schema flattens `tenant` to `tenantId` reference and `source` to individual columns (standard pattern). Indexed bindings: `case_id`, `sub_action_id`, `validation_decision_id`. Enum columns: `evidence_type`, `evidence_source`, `freshness_status`.
+
+**Ownership model:**
+- Source-owned (immutable): evidenceType, evidenceSource, collectedAt, contentRef, immutabilityHash
+- Commander-owned (mutable): confidence, expiresAt, freshnessStatus
+- Immutable bindings: caseId, subActionId, validationDecisionId, riskObjectId
+
+**COIM-B composed-objects note:** Evidence entity is COIM Component 4.4, operating across Layers 4 (operational intelligence metadata), 5 (canonical entity), 6 (case/validation binding), 7 (reporting aggregates), 8 (archive/retention), and 9 (AI grounding). Content stored at Layer 1 (raw source / object store). Validation function `validateEvidence()` provides structural correctness checking without engine-logic dependency.
 
 ### Verdict (NEW CANONICAL ENTITY — promotion — FUTURE — blocker: COIM-C)
 
@@ -573,5 +655,5 @@ None.
 
 ---
 
-**Last Updated:** 2026-06-01 (COIM-A executed: Risk Object Source Classification + Timeline Augmentation — contract + schema (migration 0005) + fixtures + tests; Risk Object COIM fields now AVAILABLE; ARCH-DEBT-039 RESOLVED, ARCH-DEBT-045 partial. Remaining COIM planned entities/fields stay FUTURE pending COIM-B…H.)  
+**Last Updated:** 2026-06-01 (COIM-B executed: Evidence Entity — contract + schema + fixtures (5 seed artifacts) + validateEvidence() structural validator. Evidence entity now AVAILABLE as entry #11. ARCH-DEBT-040 RESOLVED. Remaining COIM planned entities/fields stay FUTURE pending COIM-C…H.)  
 **Snapshot Commit:** (to be recorded after commit)
