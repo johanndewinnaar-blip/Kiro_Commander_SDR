@@ -30,3 +30,4 @@ export { riskObjects, riskObjectTypeEnum, treatmentStateEnum, findingClassEnum }
 export { strategies, strategySurfaceTypeEnum, strategyPolicyStatusEnum } from './strategies';
 export { caseStrategyBindings } from './case-strategy-bindings';
 export { evidence, evidenceTypeEnum, evidenceSourceEnum, freshnessStatusEnum } from './evidence';
+export { verdicts, verdictDispositionEnum } from './verdicts';

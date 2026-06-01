@@ -582,16 +582,41 @@ None.
 
 **COIM-B composed-objects note:** Evidence entity is COIM Component 4.4, operating across Layers 4 (operational intelligence metadata), 5 (canonical entity), 6 (case/validation binding), 7 (reporting aggregates), 8 (archive/retention), and 9 (AI grounding). Content stored at Layer 1 (raw source / object store). Validation function `validateEvidence()` provides structural correctness checking without engine-logic dependency.
 
-### Verdict (NEW CANONICAL ENTITY — promotion — FUTURE — blocker: COIM-C)
+### Verdict (AVAILABLE — delivered by COIM-C)
 
-| Planned Field | Type | Source Classification | Availability | Blocker | Notes |
-|-------|------|----------------------|--------------|---------|-------|
-| `disposition` | VerdictDisposition | integration-derived | FUTURE | COIM-C | semantics unchanged (Spec #62) |
-| `sourceProduct` | JSONB | integration-derived | FUTURE | COIM-C | vendor/name/version/uid/connectorClass |
-| `confidence` | int (0-100) | integration-derived | FUTURE | COIM-C | source confidence |
-| `observedAt` | timestamptz | integration-derived | FUTURE | COIM-C | verdict observation time |
-| `targetEntityType` | string | integration-derived | FUTURE | COIM-C | non-identity verdict support |
-| `policyRef` | JSONB | integration-derived | FUTURE | COIM-C | structured policy reference |
+> **Delivered 2026-06-01 by build unit COIM-C.** Placeholder retired per maintenance rule. Verdict promoted from engine-internal `VerdictRecord` (normalisation-layer.ts) to first-class canonical entity with durable provenance. Disposition semantics and severity ordering unchanged (Spec #62 authority). Resolves ARCH-DEBT-043.
+
+**Source:** COIM v1.0 §6; Spec #62 Verdict Semantics  
+**Coverage:** Full (Spec #62 semantics preserved)  
+**Contract:** `packages/contracts/src/entities/verdict.ts`  
+**DB Schema:** `packages/db/src/schema/verdicts.ts`  
+**Fixture:** `packages/contracts/src/fixtures/seed-verdicts.ts` ✅ (5 seed verdicts)  
+**Status:** AVAILABLE (fixture exists)  
+**Doctrine:** Verdicts are time-bound, confidence-weighted claims. They preserve semantic disposition — NOT binary pass/fail (Doctrinal Assertion 11). Verdicts are immutable source provenance.
+
+| Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
+|-------|------|----------------------|--------------|---------------------|-------|
+| `id` | string | system-calculated | AVAILABLE | — | Deterministic ID |
+| `entityType` | `'verdict'` | system-calculated | AVAILABLE | — | Discriminator |
+| `tenant` | TenantContext | seeded | AVAILABLE | — | Tenant scope |
+| `disposition` | VerdictDisposition | integration-derived | AVAILABLE | — | 8 semantic dispositions: BLOCK, QUARANTINE, REQUIRE_MFA, REQUIRE_COMPLIANT, COACH, MONITOR, AUDIT, ALLOW. Severity ordering preserved (Spec #62). |
+| `sourceProduct` | SourceProduct (JSONB) | integration-derived | AVAILABLE | — | vendor/name/version/uid/connectorClass. Immutable. |
+| `confidence` | number (0-100) | integration-derived | AVAILABLE | — | Source confidence in verdict. Immutable. |
+| `observedAt` | string (ISO 8601) | integration-derived | AVAILABLE | — | When verdict was observed/issued. Immutable. |
+| `targetEntityId` | string | integration-derived | AVAILABLE | — | Target entity (asset, identity, etc.). Immutable. |
+| `targetEntityType` | string | integration-derived | AVAILABLE | — | Supports non-identity verdicts per COIM v1.0 §6. |
+| `policyRef` | VerdictPolicyRef (JSONB) | integration-derived | AVAILABLE | — | Structured: policyId, policyName, policyVersion, policySource. Immutable. |
+| `timeBound` | boolean | integration-derived | AVAILABLE | — | Whether verdict expires. |
+| `expiresAt` | string (ISO 8601) / null | integration-derived | AVAILABLE | — | Expiry timestamp (null if not time-bound). Expired verdicts fall back to ALLOW (Spec #62). |
+| `source` | SourceMetadata | seeded | AVAILABLE | — | Provenance. Contract↔schema aligned. |
+| `createdAt` | string (ISO 8601) | system-calculated | AVAILABLE | — | Record creation timestamp |
+| `updatedAt` | string (ISO 8601) | system-calculated | AVAILABLE | — | Record update timestamp |
+
+**DB Schema Reconciliation:** ✅ Contract and schema aligned. DB schema flattens `tenant` to `tenantId` reference and `source` to individual columns. `sourceProduct` and `policyRef` stored as JSONB. Enum column: `verdict_disposition`.
+
+**Ownership model:** All fields are source-owned (immutable). Commander processes verdicts (expiry, conflict resolution) but does not mutate them.
+
+**Relationship to engine VerdictRecord:** The canonical `Verdict` entity supersedes the engine-internal `VerdictRecord` type for persistence. The engine functions (`processVerdict`, `resolveVerdictConflict`) continue to operate on the same semantic model — no logic change.
 
 ### Observable (NEW ENTITY — FUTURE — blocker: COIM-D)
 

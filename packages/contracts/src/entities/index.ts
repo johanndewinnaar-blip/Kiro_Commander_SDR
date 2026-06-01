@@ -80,3 +80,13 @@ export {
   MIN_CONFIDENCE,
   validateEvidence,
 } from './evidence';
+export type {
+  Verdict,
+  VerdictPolicyRef,
+  VerdictValidation,
+} from './verdict';
+export {
+  DISPOSITION_SEVERITY,
+  DISPOSITIONS_BY_SEVERITY,
+  validateVerdict,
+} from './verdict';

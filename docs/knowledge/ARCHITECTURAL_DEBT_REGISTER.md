@@ -893,12 +893,13 @@ Authority: `.kiro/steering/feature-function-backlog.md` (extended in this update
 - **Scope of fix:** Promote Verdict to a canonical entity under build unit **COIM-C** (sourceProduct, confidence, observedAt, targetEntityType, extended disposition set, structured policyRef). Preserve existing disposition semantics and severity ordering — do NOT change verdict disposition meaning. Additive contract + schema + fixture. Update DATA_DICTIONARY.md.
 - **Affected specs / artifacts:** `packages/contracts/src/entities/verdict.ts` (new); `packages/db/src/schema/verdicts.ts` (new); `packages/contracts/src/engines/normalisation-layer.ts` (`VerdictRecord` to reference canonical type — no logic change); `docs/knowledge/DATA_DICTIONARY.md` (new entity); COIM-C unit in `REBASELINED_BUILD_SEQUENCE.md`
 - **Scheduled resolution:** COIM-C (NEXT tier)
-- **Status:** OPEN
+- **Status:** RESOLVED
 - **Date logged:** 2026-06-01
 - **Last reviewed:** 2026-06-01
 
 **History**
 - 2026-06-01: OPEN — registered under COIM/OCSF NOW-tier governance registration (owner-authorised). Resolution unit: COIM-C. Verdict disposition semantics (Spec #62) explicitly NOT in scope of change.
+- 2026-06-01: RESOLVED — Verdict entity promoted by COIM-C. Contract: `verdict.ts`. Schema: `verdicts.ts`. Fixture: 5 seed verdicts. Disposition semantics and severity ordering unchanged (Spec #62 preserved). Tests: 25 passing. DATA_DICTIONARY.md entry created.
 
 ---
 

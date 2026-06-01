@@ -2157,7 +2157,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's o
 |---|---|---|---|---|
 | COIM-A Risk Object Source Classification + Timeline | Foundational | **DONE** | — | ARCH-DEBT-039 ✅; 045 (Risk Object) ✅ partial |
 | COIM-B Evidence Entity | Foundational | **DONE** | — | ARCH-DEBT-040 ✅ |
-| COIM-C Verdict Entity Promotion | Foundational | **READY** | — | ARCH-DEBT-043 |
+| COIM-C Verdict Entity Promotion | Foundational | **DONE** | — | ARCH-DEBT-043 ✅ |
 | COIM-D Observable Entity | Foundational | **READY** | — | ARCH-DEBT-041 |
 | COIM-E Analytic Entity | Foundational | **READY** | — | ARCH-DEBT-042 |
 | COIM-F Asset / Identity Augmentation | Foundational | **READY** | — | ARCH-DEBT-045 (Asset/Identity) |
@@ -2241,7 +2241,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's o
 
 ### Unit COIM-C: Verdict Entity Promotion
 
-**Status:** READY
+**Status:** DONE
 
 **Blocked by:** — (COIM-A DONE; Unit 5 DONE)
 
@@ -2254,12 +2254,12 @@ Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's o
 **Dependencies:** COIM-A; Unit 5 (Normalisation — DONE, source of `VerdictRecord`)
 
 **Required entities:**
-- Verdict ❌ (promoted here from `normalisation-layer.ts` type)
+- Verdict ✅ (promoted — delivered)
 
 **Deliverables (governance registration only):**
-1. Create canonical Verdict entity: sourceProduct, confidence, observedAt, targetEntityType, extended disposition set, structured policyRef
-2. Point engine `VerdictRecord` at the canonical type (no logic change to disposition/severity/conflict resolution)
-3. Update DATA_DICTIONARY.md (new entity)
+1. ✅ Create canonical Verdict entity: sourceProduct, confidence, observedAt, targetEntityType, extended disposition set, structured policyRef
+2. ✅ Point engine `VerdictRecord` at the canonical type (no logic change to disposition/severity/conflict resolution)
+3. ✅ Update DATA_DICTIONARY.md (new entity)
 
 **Completion gate:**
 - ✅ Verdict contract + schema + fixture exist
