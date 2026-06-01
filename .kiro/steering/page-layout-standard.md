@@ -1,3 +1,8 @@
+---
+inclusion: fileMatch
+fileMatchPattern: "apps/web/**"
+---
+
 # Page Layout Standard Steering
 
 Authority: DEC-pagecontainer-shared-standard, DEC-pagecontainer-exceptions (DECISIONS.md).

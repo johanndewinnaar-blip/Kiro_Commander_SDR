@@ -1,3 +1,8 @@
+---
+inclusion: fileMatch
+fileMatchPattern: "apps/web/**,packages/ui/**"
+---
+
 # Design System Contract — Commander SDR
 
 **Authority:** This is the complete build rulebook for all Commander SDR pages. Every rule documented here with exact Tabler classes and examples. This contract is binding for all future page work.

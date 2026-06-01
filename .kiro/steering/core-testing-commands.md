@@ -1,3 +1,8 @@
+---
+inclusion: fileMatch
+fileMatchPattern: ".kiro/testing/**,docs/00_authority/test-runs/**,docs/00_authority/score-register*,docs/00_authority/debt-register*"
+---
+
 # Core Testing Commands — Commander SDR
 
 **Purpose:** Register trigger commands for invoking the core testing pipeline. When you type these phrases, Kiro runs the full conveyor-belt pipeline automatically with all rules baked in.

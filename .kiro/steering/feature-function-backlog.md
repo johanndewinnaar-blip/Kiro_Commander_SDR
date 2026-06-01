@@ -1,3 +1,8 @@
+---
+inclusion: fileMatch
+fileMatchPattern: "docs/knowledge/FEATURE_FUNCTION_BACKLOG*,docs/knowledge/ARCHITECTURAL_DEBT_REGISTER*"
+---
+
 # Backlog & Architectural Debt — Trigger Phrases and Handling Rules
 
 **Inclusion:** always-on (default).
