@@ -422,6 +422,98 @@
 
 ---
 
+### 12. Verdict
+
+**Source:** COIM v1.0 §6 (Verdict impact); Spec #62 Verdict Semantics  
+**Coverage:** Partial (Spec #62 §1–§6 read; §7+ truncated — entry provisional per COVERAGE.md)  
+**Contract:** `packages/contracts/src/entities/verdict.ts`  
+**DB Schema:** `packages/db/src/schema/verdicts.ts` ✅  
+**Fixture:** `packages/contracts/src/fixtures/seed-verdicts.ts` ✅ (5 seed verdicts)  
+**Status:** AVAILABLE (fixture exists)  
+**Build unit:** COIM-C (Verdict Entity Promotion). Resolves ARCH-DEBT-043.  
+**Doctrine:** Verdicts are time-bound, confidence-weighted claims made by tools. They preserve semantic disposition — NOT binary pass/fail (Doctrinal Assertion 11). Verdicts are immutable source provenance. Commander processes but does not mutate them. Expired verdicts fall back to ALLOW per Spec #62.
+
+| Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
+|-------|------|----------------------|--------------|---------------------|-------|
+| `id` | string | system-calculated | AVAILABLE | — | Deterministic ID (from CommonFields) |
+| `entityType` | `'verdict'` | system-calculated | AVAILABLE | — | Discriminator |
+| `tenant` | TenantContext | seeded | AVAILABLE | — | Tenant scope (tenantId, tenantName) |
+| `disposition` | VerdictDisposition (enum) | integration-derived; seeded in fixtures | AVAILABLE | — | 8 semantic dispositions: BLOCK, QUARANTINE, REQUIRE_MFA, REQUIRE_COMPLIANT, COACH, MONITOR, AUDIT, ALLOW. Severity ordering preserved (Spec #62). NOT binary pass/fail. |
+| `sourceProduct` | SourceProduct (JSONB) | integration-derived; seeded in fixtures | AVAILABLE | — | Structured: vendor, name, version, uid, connectorClass. Source-owned (immutable after write). |
+| `confidence` | number (0-100) / integer | integration-derived; seeded in fixtures | AVAILABLE | — | Source confidence in this verdict. Source-owned (immutable after write). |
+| `observedAt` | string (ISO 8601) / timestamptz | integration-derived; seeded in fixtures | AVAILABLE | — | When verdict was observed/issued (source timestamp). Source-owned (immutable after write). |
+| `targetEntityId` | string | integration-derived; seeded in fixtures | AVAILABLE | — | Target entity ID (asset, identity, etc.). Source-owned (immutable after write). |
+| `targetEntityType` | string | integration-derived; seeded in fixtures | AVAILABLE | — | Target entity type. Supports non-identity verdicts per COIM v1.0 §6. Source-owned (immutable after write). |
+| `policyRef` | VerdictPolicyRef (JSONB) | integration-derived; seeded in fixtures | AVAILABLE | — | Structured: policyId (required), policyName, policyVersion, policySource. Source-owned (immutable after write). |
+| `timeBound` | boolean | integration-derived; seeded in fixtures | AVAILABLE | — | Whether this verdict is time-bound (expires). Source-owned (immutable after write). |
+| `expiresAt` | string (ISO 8601) / timestamptz / null | integration-derived; seeded in fixtures | AVAILABLE | — | Expiry timestamp (null if not time-bound). Expired verdicts fall back to ALLOW (Spec #62). Source-owned (immutable after write). |
+| `source` | SourceMetadata | seeded | AVAILABLE | — | Provenance (connectorId, importRunId, sourceSystem, sourceTimestamp). Contract↔schema aligned. |
+| `createdAt` | string (ISO 8601) / timestamptz | system-calculated | AVAILABLE | — | Record creation timestamp |
+| `updatedAt` | string (ISO 8601) / timestamptz | system-calculated | AVAILABLE | — | Record update timestamp |
+
+**Ownership model:** All entity-specific fields are source-owned (immutable after write). Commander processes verdicts (expiry evaluation, conflict resolution) but does not mutate them. No Commander-owned fields.
+
+**Validation:** `validateVerdict()` in `verdict.ts` — structural correctness checking (disposition validity, confidence range, required fields, timeBound/expiresAt consistency). No engine-logic dependency.
+
+**Exported constants:**
+- `DISPOSITION_SEVERITY` — Record mapping each VerdictDisposition to numeric severity (BLOCK=8 … ALLOW=1)
+- `DISPOSITIONS_BY_SEVERITY` — Array ordered highest-to-lowest
+
+**DB Schema Reconciliation:** ✅ Contract and schema aligned. DB schema flattens `tenant` to `tenantId` reference (FK → tenants.id) and `source` to individual columns (`source_connector_id`, `source_import_run_id`, `source_system`, `source_timestamp`) — standard pattern. `sourceProduct` and `policyRef` stored as JSONB. Enum column: `verdict_disposition` (8 values). Additional DB-only columns: `data_classification` (default 'verdict'). `observedAt` and `expiresAt` as timestamptz with timezone. No divergences.
+
+**Resolvers:** None (no verdict-specific resolver in `packages/contracts/src/resolvers/`). Verdict expiry processing and conflict resolution are engine functions (not canonical resolvers).
+
+**Relationship to engine VerdictRecord:** The canonical `Verdict` entity supersedes the engine-internal `VerdictRecord` type (in `normalisation-layer.ts`) for persistence. Engine functions (`processVerdict`, `resolveVerdictConflict`) continue to operate on the same semantic model — no logic change.
+
+---
+
+### 13. Observable
+
+**Source:** COIM v1.0 §4.5; 03_REUSABLE_OBJECT_CATALOGUE.md §2.5  
+**Coverage:** provisional (COIM v1.0 §4.5 not explicitly tracked in COVERAGE.md — source partially read)  
+**Contract:** `packages/contracts/src/entities/observable.ts`  
+**DB Schema:** `packages/db/src/schema/observables.ts` ✅  
+**Fixture:** `packages/contracts/src/fixtures/seed-observables.ts` ✅  
+**Status:** AVAILABLE (fixture exists)  
+**Build unit:** COIM-D (Observable Entity). Resolves ARCH-DEBT-041.  
+**Doctrine:** Observables are typed indicators (IP, domain, hash, URL, email, certificate, process, file) extracted from findings. They enable threat-intelligence correlation, cross-case matching, and indicator-based search. Deduplicated per tenant+type+value.
+
+| Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
+|-------|------|----------------------|--------------|---------------------|-------|
+| `id` | string | system-calculated | AVAILABLE | — | Deterministic ID (from CommonFields) |
+| `entityType` | `'observable'` | system-calculated | AVAILABLE | — | Discriminator |
+| `tenant` | TenantContext | seeded | AVAILABLE | — | Tenant scope (tenantId, tenantName) |
+| `observableType` | ObservableType (enum) | integration-derived; seeded in fixtures | AVAILABLE | — | 8 types: ip, domain, hash, url, email, certificate, process, file. OCSF-informed type_id taxonomy. |
+| `value` | string / text | integration-derived; seeded in fixtures | AVAILABLE | — | Indicator value (deduplicated per tenant+type+value). |
+| `firstSeen` | string (ISO 8601) / timestamptz | integration-derived; seeded in fixtures | AVAILABLE | — | First observation timestamp. Source-owned (immutable after write). |
+| `lastSeen` | string (ISO 8601) / timestamptz | integration-derived; seeded in fixtures | AVAILABLE | — | Last observation timestamp (updated on re-observation). |
+| `reputation` | number (0-100) / integer | system-calculated | FUTURE | Missing resolver: no observable-reputation resolver | Enrichment-derived; Commander-owned. Optional. |
+| `source` | SourceMetadata | seeded | AVAILABLE | — | Provenance (connectorId, importRunId, sourceSystem, sourceTimestamp). Contract↔schema aligned. |
+| `createdAt` | string (ISO 8601) / timestamptz | system-calculated | AVAILABLE | — | Record creation timestamp |
+| `updatedAt` | string (ISO 8601) / timestamptz | system-calculated | AVAILABLE | — | Record update timestamp |
+
+**Binding table:** `observable_risk_object_bindings` (observableId, riskObjectId, boundAt) — many-to-many deduplication. One observable can be referenced by multiple risk objects.
+
+**Indexes:**
+- Deduplication unique index: `tenant_id` + `observable_type` + `value`
+- Value search index: `value`
+- Type filter index: `observable_type`
+- Tenant scope index: `tenant_id`
+- Binding indexes: `observable_id`, `risk_object_id`
+
+**Ownership model:**
+- Source-owned (immutable after write): observableType, value, firstSeen, lastSeen
+- Commander-owned (mutable): reputation (enrichment-derived)
+- Bindings: many-to-many with Risk Objects (deduplication)
+
+**Validation:** `validateObservable()` in `observable.ts` — structural correctness checking (type validity, non-empty value, timestamp ordering, reputation range). No engine-logic dependency.
+
+**DB Schema Reconciliation:** ✅ Contract and schema aligned. DB schema flattens `tenant` to `tenantId` reference (FK → tenants.id) and `source` to individual columns (`source_connector_id`, `source_import_run_id`, `source_system`, `source_timestamp`) — standard pattern. Enum column: `observable_type` (8 values). Additional DB-only column: `data_classification` (default 'threat_intelligence'). Separate binding table `observable_risk_object_bindings` for many-to-many. No divergences.
+
+**Resolvers:** None (no observable-specific resolver in `packages/contracts/src/resolvers/`). `reputation` is enrichment-derived — no dedicated resolver file yet.
+
+---
+
 **Authority citation (updated 2026-05-31):** `SourceMetadata` interface doc comment now cites both `v1.3 Req 12` and `Spec #05 §11.3` (previously only `v1.3 Req 12`).
 
 **Stale test reference (flagged 2026-05-31):** Two test files still reference `rawPayloadRef` in source objects — these are stale after the contract removal:
@@ -448,6 +540,7 @@ These are code-conformance debt items (contract field removed, test fixtures not
 | `EvidenceType` | log, scan, verdict, screenshot, config, network_capture, file_hash, process_dump, ai_analysis | COIM v1.0 §4.4; OCSF evidences.json type taxonomy + Commander ai_analysis extension |
 | `EvidenceSource` | connector, analyst, system | COIM v1.0 §4.4 |
 | `FreshnessStatus` | fresh, aging, stale, expired | COIM v1.0 §4.4; 04_EVIDENCE_MODEL.md (strategy-driven thresholds) |
+| `ObservableType` | ip, domain, hash, url, email, certificate, process, file | COIM v1.0 §4.5; OCSF observable.json type_id taxonomy |
 
 ---
 
@@ -455,7 +548,7 @@ These are code-conformance debt items (contract field removed, test fixtures not
 
 **Purpose:** Complete surfacing of the data layer built to date. Existing work is explicitly accounted for, not silently assumed complete.
 
-### Entities Catalogued: 11
+### Entities Catalogued: 13
 
 1. Asset ✅
 2. Case ✅
@@ -468,11 +561,13 @@ These are code-conformance debt items (contract field removed, test fixtures not
 9. Case Strategy Binding ✅
 10. Common Fields ✅
 11. Evidence ✅ (COIM-B — evidence entity)
+12. Verdict ✅ (COIM-C — verdict entity promotion)
+13. Observable ✅ (COIM-D — observable entity)
 
 **Composed-object modules (catalogued under their consuming entity, no own table):**
-- `coim.ts` — COIM-A source-classification composed objects (FindingClass, SourceSeverity, SourceConfidence, SourceProduct, AttackMapping, ObservableRef, SourceClassification + `validateSourceClassification`). Catalogued under Risk Object (§4). Satisfies the completeness gate for `packages/contracts/src/entities/coim.ts`.
+- `coim.ts` — COIM-A source-classification composed objects (FindingClass, SourceSeverity, SourceConfidence, SourceProduct, AttackMapping, ObservableRef, SourceClassification + `validateSourceClassification`). Catalogued under Risk Object (§4). Also consumed by Verdict entity (§12) for `SourceProduct` type. Satisfies the completeness gate for `packages/contracts/src/entities/coim.ts`.
 
-### Fixtures Found: 10
+### Fixtures Found: 12
 
 1. `seed-assets.ts` ✅
 2. `seed-cases.ts` ✅
@@ -484,6 +579,8 @@ These are code-conformance debt items (contract field removed, test fixtures not
 8. `seed-tenant.ts` ✅
 9. `seed-case-strategy-bindings.ts` ✅
 10. `seed-evidence.ts` ✅
+11. `seed-verdicts.ts` ✅
+12. `seed-observables.ts` ✅
 
 ### Resolvers Found: 12
 
@@ -502,7 +599,7 @@ These are code-conformance debt items (contract field removed, test fixtures not
 
 ### Contract vs DB Schema Reconciliation
 
-**Aligned (11):**
+**Aligned (13):**
 - Asset ✅
 - Case ✅
 - Identity ✅
@@ -514,6 +611,8 @@ These are code-conformance debt items (contract field removed, test fixtures not
 - Case Lifecycle (transitions in audit events) ✅
 - Case Strategy Binding ✅
 - Evidence ✅
+- Verdict ✅
+- Observable ✅
 
 **Divergences (0):**
 None.
@@ -618,14 +717,9 @@ None.
 
 **Relationship to engine VerdictRecord:** The canonical `Verdict` entity supersedes the engine-internal `VerdictRecord` type for persistence. The engine functions (`processVerdict`, `resolveVerdictConflict`) continue to operate on the same semantic model — no logic change.
 
-### Observable (NEW ENTITY — FUTURE — blocker: COIM-D)
+### Observable (AVAILABLE — delivered by COIM-D)
 
-| Planned Field | Type | Source Classification | Availability | Blocker | Notes |
-|-------|------|----------------------|--------------|---------|-------|
-| `observableType` | enum | integration-derived | FUTURE | COIM-D | ip/domain/hash/url/email/certificate/process/file |
-| `value` | string | integration-derived | FUTURE | COIM-D | indicator value |
-| `firstSeen` / `lastSeen` | timestamptz | integration-derived | FUTURE | COIM-D | optional |
-| `reputation` | int | system-calculated | FUTURE | COIM-D | enrichment-derived |
+> **Delivered 2026-06-02 by build unit COIM-D.** Placeholder retired per maintenance rule (a COIM unit's planning placeholder is replaced by its mechanically-derived entry once the unit lands). Observable is now catalogued as mechanically-derived **Observable** entry (§13 above) — see observableType, value, firstSeen, lastSeen, reputation, deduplication index, many-to-many binding table, and `validateObservable()`. Contract: `observable.ts`. Schema: `observables.ts`. Fixture: `seed-observables.ts`. Resolves ARCH-DEBT-041.
 
 ### Analytic (NEW ENTITY — FUTURE — blocker: COIM-E)
 
@@ -680,5 +774,5 @@ None.
 
 ---
 
-**Last Updated:** 2026-06-01 (COIM-B executed: Evidence Entity — contract + schema + fixtures (5 seed artifacts) + validateEvidence() structural validator. Evidence entity now AVAILABLE as entry #11. ARCH-DEBT-040 RESOLVED. Remaining COIM planned entities/fields stay FUTURE pending COIM-C…H.)  
+**Last Updated:** 2026-06-01 (COIM-C executed: Verdict Entity Promotion — contract + schema + fixtures (5 seed verdicts) + validateVerdict() structural validator + DISPOSITION_SEVERITY/DISPOSITIONS_BY_SEVERITY constants. Verdict entity now AVAILABLE as entry #12. ARCH-DEBT-043 RESOLVED. Remaining COIM planned entities/fields stay FUTURE pending COIM-D…H.)  
 **Snapshot Commit:** (to be recorded after commit)

@@ -31,3 +31,4 @@ export { strategies, strategySurfaceTypeEnum, strategyPolicyStatusEnum } from '.
 export { caseStrategyBindings } from './case-strategy-bindings';
 export { evidence, evidenceTypeEnum, evidenceSourceEnum, freshnessStatusEnum } from './evidence';
 export { verdicts, verdictDispositionEnum } from './verdicts';
+export { observables, observableRiskObjectBindings, observableTypeEnum } from './observables';

@@ -857,12 +857,13 @@ Authority: `.kiro/steering/feature-function-backlog.md` (extended in this update
 - **Scope of fix:** Create Observable under build unit **COIM-D** (observableType, value, firstSeen, lastSeen, reputation). Separate table with many-to-many binding (deduplication) per the data efficiency model; bounded JSONB array overflow on Risk Object. Additive. Update DATA_DICTIONARY.md.
 - **Affected specs / artifacts:** `packages/contracts/src/entities/observable.ts` (new); `packages/db/src/schema/observables.ts` (new); `docs/knowledge/DATA_DICTIONARY.md` (new entity); COIM-D unit in `REBASELINED_BUILD_SEQUENCE.md`
 - **Scheduled resolution:** COIM-D (NEXT tier)
-- **Status:** OPEN
+- **Status:** RESOLVED
 - **Date logged:** 2026-06-01
-- **Last reviewed:** 2026-06-01
+- **Last reviewed:** 2026-06-02
 
 **History**
 - 2026-06-01: OPEN — registered under COIM/OCSF NOW-tier governance registration (owner-authorised). Resolution unit: COIM-D.
+- 2026-06-02: RESOLVED — Observable entity delivered by COIM-D. Contract at `packages/contracts/src/entities/observable.ts`; DB schema at `packages/db/src/schema/observables.ts` (main table + many-to-many binding); fixture at `packages/contracts/src/fixtures/seed-observables.ts` (8 observables, 9 bindings); migration `0006_observable_entity_coim_d.sql`; test 35/35 pass; DATA_DICTIONARY.md updated; deduplication index operational.
 
 ---
 

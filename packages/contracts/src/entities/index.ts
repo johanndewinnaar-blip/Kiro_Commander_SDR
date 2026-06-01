@@ -90,3 +90,14 @@ export {
   DISPOSITIONS_BY_SEVERITY,
   validateVerdict,
 } from './verdict';
+export type {
+  Observable,
+  ObservableRiskObjectBinding,
+  ObservableValidation,
+} from './observable';
+export {
+  OBSERVABLE_TYPES,
+  MAX_REPUTATION,
+  MIN_REPUTATION,
+  validateObservable,
+} from './observable';

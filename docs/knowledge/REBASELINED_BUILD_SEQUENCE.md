@@ -65,17 +65,17 @@ A unit is **READY** iff every dependency unit is **DONE** and every mapped chain
 
 ## Build Units
 
-### Live Status Snapshot (computed 2026-05-31)
+### Live Status Snapshot (computed 2026-06-02)
 
 Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readiness State Machine above.
 
-**READY (10):** Unit 14 (Intelligence Layer — Four Streams), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors), and COIM units **COIM-B, COIM-C, COIM-D, COIM-E, COIM-F, COIM-G, COIM-H** (recomputed READY on COIM-A completion).
+**READY (7):** Unit 14 (Intelligence Layer — Four Streams), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors), and COIM units **COIM-E, COIM-F, COIM-G, COIM-H**.
 
-**DONE (15):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13, **COIM-A**.
+**DONE (18):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13, **COIM-A, COIM-B, COIM-C, COIM-D**.
 
 **BLOCKED (42):** Units 15–21, 23–37, 39–49 (numbered units, except 14, 22, 38). All 27 Team 2 numbered units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006. COIM units are Foundational and NOT ARCH-006-gated; none remain BLOCKED.
 
-> **COIM / OCSF remediation units (COIM-A … COIM-H):** added 2026-06-01 under owner-authorised governance registration for `DEC-coim-ocsf-source-classification-architecture`. **COIM-A is DONE (NOW tier complete)**; COIM-B…COIM-H recomputed to READY. Full definitions and the COIM Live Status Snapshot are in the **"COIM / OCSF Remediation Units"** section below (after Unit 49). Tier mapping: COIM-A = NOW (DONE), COIM-B/C/D/E/F/G = NEXT, COIM-H = LATER.
+> **COIM / OCSF remediation units (COIM-A … COIM-H):** added 2026-06-01 under owner-authorised governance registration for `DEC-coim-ocsf-source-classification-architecture`. **COIM-A/B/C/D are DONE**; COIM-E…COIM-H remain READY. Full definitions and the COIM Live Status Snapshot are in the **"COIM / OCSF Remediation Units"** section below (after Unit 49). Tier mapping: COIM-A = NOW (DONE), COIM-B/C/D/E/F/G = NEXT, COIM-H = LATER.
 
 | Unit | Tag | Status | Blocked by |
 |---|---|---|---|
@@ -2149,16 +2149,16 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's own resolving debt does not self-block it.
 
-**DONE (1):** COIM-A (Risk Object Source Classification + Timeline Augmentation — committed).
+**DONE (4):** COIM-A (Risk Object Source Classification + Timeline Augmentation), COIM-B (Evidence Entity), COIM-C (Verdict Entity Promotion), COIM-D (Observable Entity).
 
-**READY (7):** COIM-B, COIM-C, COIM-D, COIM-E, COIM-F, COIM-G, COIM-H — all recomputed BLOCKED→READY on COIM-A completion (their sole dependency, COIM-A, is now DONE; other deps Unit 5/Unit 7 are DONE; COIM-H's own creating debt ARCH-DEBT-044 does not self-block it).
+**READY (4):** COIM-E, COIM-F, COIM-G, COIM-H.
 
 | Unit | Tag | Status | Blocked by | Resolves |
 |---|---|---|---|---|
 | COIM-A Risk Object Source Classification + Timeline | Foundational | **DONE** | — | ARCH-DEBT-039 ✅; 045 (Risk Object) ✅ partial |
 | COIM-B Evidence Entity | Foundational | **DONE** | — | ARCH-DEBT-040 ✅ |
 | COIM-C Verdict Entity Promotion | Foundational | **DONE** | — | ARCH-DEBT-043 ✅ |
-| COIM-D Observable Entity | Foundational | **READY** | — | ARCH-DEBT-041 |
+| COIM-D Observable Entity | Foundational | **DONE** | — | ARCH-DEBT-041 ✅ |
 | COIM-E Analytic Entity | Foundational | **READY** | — | ARCH-DEBT-042 |
 | COIM-F Asset / Identity Augmentation | Foundational | **READY** | — | ARCH-DEBT-045 (Asset/Identity) |
 | COIM-G Case Aggregation | Foundational | **READY** | — | ARCH-DEBT-045 (Case dwell time) |
@@ -2272,9 +2272,11 @@ Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's o
 
 ### Unit COIM-D: Observable Entity
 
-**Status:** READY
+**Status:** DONE
 
-**Blocked by:** — (COIM-A DONE; Unit 5 DONE)
+**Blocked by:** — (complete)
+
+**Verification:** COIM v1.0 §4.5; 03_REUSABLE_OBJECT_CATALOGUE.md §2.5. Evidence: Observable contract at `packages/contracts/src/entities/observable.ts` (8-type enum, validateObservable, ObservableRiskObjectBinding); DB schema at `packages/db/src/schema/observables.ts` (main table + many-to-many binding, deduplication unique index on tenant+type+value, value/type search indexes); fixture at `packages/contracts/src/fixtures/seed-observables.ts` (8 observables covering all types, 9 bindings demonstrating deduplication); migration `0006_observable_entity_coim_d.sql` (additive only); vitest 35/35 COIM-D tests pass (0 new regressions attributable to COIM-D); typecheck clean for COIM-D files (pre-existing tsconfig deprecation only); DATA_DICTIONARY.md updated; ARCH-DEBT-041 RESOLVED; governance Green.
 
 **Purpose:** Create the Observable entity for typed indicator extraction (ip/domain/hash/url/email/certificate/process/file), enabling threat-intel correlation, cross-case matching, and indicator-based search. Feeds Intelligence Layer (Unit 14) and inverse-discovery (Unit 5).
 
