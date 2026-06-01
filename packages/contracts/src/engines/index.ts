@@ -113,3 +113,25 @@ export {
   evaluateReopeningReadiness,
   isManualReopeningBlocked,
 } from './case-reopening-trigger-engine';
+
+// Unit 5: Normalisation Layer (Canonical Entity Model)
+export type {
+  EntityMatchCandidate,
+  EntityMatchResult,
+  AuthorityClaim,
+  AuthorityResolutionResult,
+  VerdictRecord,
+  VerdictProcessingResult,
+  ThreatIndicator,
+  EstateEntity,
+  InverseDiscoveryMatch,
+  SurfaceAttributionInput,
+} from './normalisation-layer';
+export {
+  matchEntities,
+  resolveAuthority,
+  processVerdict,
+  resolveVerdictConflict,
+  routeInverseDiscovery,
+  assignSurfaceAttribution,
+} from './normalisation-layer';

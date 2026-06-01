@@ -69,9 +69,9 @@ A unit is **READY** iff every dependency unit is **DONE** and every mapped chain
 
 Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readiness State Machine above.
 
-**READY (3):** Unit 5 (Normalisation Layer), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors).
+**READY (3):** Unit 14 (Intelligence Layer — Four Streams), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors).
 
-**DONE (13):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13.
+**DONE (14):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13.
 
 **BLOCKED (36):** Units 12–21, 23–37, 39–49 (except Units 5, 22, 38). All 27 Team 2 units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006.
 
@@ -82,7 +82,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 | 2 Strategy Policy DB Schema | Foundational | **DONE** | — |
 | 3 Case Strategy Binding Schema + Fixture | Foundational | **DONE** | — |
 | 4 Connector Layer Foundation | Foundational | **DONE** | — |
-| 5 Normalisation Layer | Foundational | **READY** | — |
+| 5 Normalisation Layer | Foundational | **DONE** | — |
 | 6 Strategy Layer Runtime (build-blocking) | Foundational | **DONE** | — |
 | 7 Case Lifecycle Engine | Foundational | **DONE** | — |
 | 8 Case Routing Engine | Foundational | **DONE** | — |
@@ -91,21 +91,21 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 | 11 Validation Lifecycle Engine | Foundational | **DONE** | — |
 | 12 Closure Gate Engine | Foundational | **DONE** | — |
 | 13 Reopening Trigger Engine | Foundational | **DONE** | — |
-| 14 Intelligence Layer — Four Streams | Foundational | BLOCKED | Unit 5 |
+| 14 Intelligence Layer — Four Streams | Foundational | **READY** | — |
 | 15 OODA Layer | Foundational | BLOCKED | Unit 14; Units 8–13 |
 | 16 Command Centre | Foundational | BLOCKED | Unit 15; Unit 14; Units 8–13 |
 | 17 Case Management UI | Foundational | BLOCKED | Units 8–13; Unit 16 |
-| 18 Identity Intelligence Surface | Foundational | BLOCKED | Unit 14; Unit 5 |
-| 19 Asset Intelligence Surface | Foundational | BLOCKED | Unit 14; Unit 5 |
+| 18 Identity Intelligence Surface | Foundational | BLOCKED | Unit 14 |
+| 19 Asset Intelligence Surface | Foundational | BLOCKED | Unit 14 |
 | 20 External Operating Picture | Foundational | BLOCKED | Unit 14; Unit 16 |
 | 21 Internal Operating Picture | Foundational | BLOCKED | Unit 14; Unit 16 |
 | 22 Tenant Admin Surface | Foundational | **READY** | — |
 | 23 Commercial Control Plane | Team 2 | BLOCKED | ARCH-006 (USE_CASE_SCHEDULE.md + PAGE_INVENTORY.md absent) |
-| 24 Drift Detection Engine | Team 2 | BLOCKED | ARCH-006; Unit 5; Unit 4 |
-| 25 Identity Intelligence Engine | Team 2 | BLOCKED | ARCH-006; Unit 5; Unit 14 |
-| 26 Architecture Intelligence Engine | Team 2 | BLOCKED | ARCH-006; Unit 5; Unit 14 |
-| 27 Vulnerability Management Engine | Team 2 | BLOCKED | ARCH-006; Unit 5; Unit 14 |
-| 28 Exposure Management Engine | Team 2 | BLOCKED | ARCH-006; Unit 5; Unit 14 |
+| 24 Drift Detection Engine | Team 2 | BLOCKED | ARCH-006; Unit 4 |
+| 25 Identity Intelligence Engine | Team 2 | BLOCKED | ARCH-006; Unit 14 |
+| 26 Architecture Intelligence Engine | Team 2 | BLOCKED | ARCH-006; Unit 14 |
+| 27 Vulnerability Management Engine | Team 2 | BLOCKED | ARCH-006; Unit 14 |
+| 28 Exposure Management Engine | Team 2 | BLOCKED | ARCH-006; Unit 14 |
 | 29 Pre-Warned Classification Engine | Team 2 | BLOCKED | ARCH-006; Unit 14; Units 24–28 |
 | 30 Vulnerability Management UI | Team 2 | BLOCKED | ARCH-006; Unit 27; Unit 16 |
 | 31 Exposure Management UI | Team 2 | BLOCKED | ARCH-006; Unit 28; Unit 16 |
@@ -117,7 +117,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 | 37 Security C2 / War Room | Team 2 | BLOCKED | ARCH-006; Unit 15; Unit 14; Units 7–13 |
 | 38 Mock Connectors | Foundational | **READY** | — |
 | 39 Real Connector Readiness | Team 2 | BLOCKED | ARCH-006; Unit 4; Unit 38 |
-| 40 Commander AI Core | Foundational | BLOCKED | Units 7–13; Unit 14; Unit 5 |
+| 40 Commander AI Core | Foundational | BLOCKED | Units 7–13; Unit 14 |
 | 41 AWS Alignment — Evaluation Lane | Team 2 | BLOCKED | ARCH-006; Unit 40; ARCH-DEBT-034 (needs re-sourcing) |
 | 42 Push Governance — Dry-Run | Team 2 | BLOCKED | ARCH-006; Units 7–13; Unit 6 |
 | 43 Audit Trail | Foundational | BLOCKED | Units 7–13; Unit 6; ARCH-DEBT-035 (needs re-sourcing) |
@@ -338,9 +338,11 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ### Unit 5: Normalisation Layer — Canonical Entity Model
 
-**Status:** READY
+**Status:** DONE
 
-**Blocked by:** — (Unit 4 DONE; all dependencies satisfied)
+**Blocked by:** — (complete)
+
+**Verification:** Spec #12 Architecture Intelligence, Spec #62 Verdict Semantics, Spec #72 Inverse Discovery from `docs/99_source_archive/baseline_v2_6_2/docs/02_child_specs/`. Evidence: vitest 60/60 normalisation-layer tests pass (entity matching, authority resolution, verdict processing, inverse discovery routing, surface attribution); contract code complete at `packages/contracts/src/engines/normalisation-layer.ts`; all 5 deliverables operational.
 
 **Purpose:** Build canonical entity model, authority resolution, entity matching
 
