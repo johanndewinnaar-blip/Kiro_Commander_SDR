@@ -461,6 +461,104 @@ None.
 
 ---
 
+## COIM / OCSF Planned Entities & Fields (FUTURE)
+
+> **Status:** Governance registration only (added 2026-06-01). These entries are **manually maintained planning placeholders**, NOT mechanically-derived catalogue entries — the contracts/schemas do not exist yet. Each becomes a mechanically-derived entity entry (above) when its COIM build unit lands, at which point `data-dictionary-generation.kiro.hook` takes over maintenance and the placeholder is replaced.
+>
+> **Authority:** `DECISIONS.md` `DEC-coim-ocsf-source-classification-architecture`; accepted COIM artefacts at `docs/knowledge/ocsf_assessment/`.
+>
+> **Availability:** All items below are **FUTURE**. Blocker = the named COIM build unit. No code or schema exists yet (no application code authorised in this registration).
+
+### Risk Object — COIM augmentation (FUTURE — blocker: COIM-A)
+
+| Planned Field | Type | Source Classification | Availability | Blocker | Notes |
+|-------|------|----------------------|--------------|---------|-------|
+| `sourceClassification` | JSONB | integration-derived (immutable) | FUTURE | COIM-A | findingClass, sourceSeverity, sourceConfidence, sourceProduct, sourceFindingUid, sourceActivity, attacks[]≤20, observables[]≤50 |
+| `sourceClassification.findingClass` (extracted) | enum | integration-derived | FUTURE | COIM-A | vulnerability/detection/compliance/incident/data_security/iam_analysis/application_security — indexed column |
+| `sourceClassification.severityId` (extracted) | int (1-5) | integration-derived | FUTURE | COIM-A | indexed column |
+| `sourceClassification.confidenceScore` (extracted) | int (0-100) | integration-derived | FUTURE | COIM-A | indexed column |
+| `sourceFindingUid` | string | integration-derived | FUTURE | COIM-A | source-system finding ID; indexed for dedup |
+| `affectedEntities[]` | string[] | system-calculated | FUTURE | COIM-A | plural; retains singular `affectedEntityId` for back-compat |
+| `firstDetectedAt` | timestamptz | integration-derived (source) | FUTURE | COIM-A | required (ARCH-DEBT-045) |
+| `lastConfirmedAt` | timestamptz | integration-derived (source) | FUTURE | COIM-A | recommended (ARCH-DEBT-045) |
+| `normalisedAt` | timestamptz | system-calculated | FUTURE | COIM-A | required (ARCH-DEBT-045) |
+
+### Evidence (NEW ENTITY — FUTURE — blocker: COIM-B)
+
+| Planned Field | Type | Source Classification | Availability | Blocker | Notes |
+|-------|------|----------------------|--------------|---------|-------|
+| `evidenceType` | enum | integration-derived | FUTURE | COIM-B | log/scan/verdict/screenshot/config/network_capture/file_hash/process_dump/ai_analysis |
+| `source` | string | integration-derived | FUTURE | COIM-B | connector/analyst/system |
+| `confidence` | int (0-100) | system-calculated | FUTURE | COIM-B | mutable on validation |
+| `collectedAt` | timestamptz | integration-derived | FUTURE | COIM-B | immutable |
+| `expiresAt` | timestamptz | system-calculated | FUTURE | COIM-B | optional |
+| `contentRef` | string | integration-derived | FUTURE | COIM-B | object-store pointer |
+| `immutabilityHash` | string (SHA-256) | system-calculated | FUTURE | COIM-B | integrity |
+| `caseId` / `subActionId` / `validationDecisionId` | string | system-calculated | FUTURE | COIM-B | bindings (case required) |
+
+### Verdict (NEW CANONICAL ENTITY — promotion — FUTURE — blocker: COIM-C)
+
+| Planned Field | Type | Source Classification | Availability | Blocker | Notes |
+|-------|------|----------------------|--------------|---------|-------|
+| `disposition` | VerdictDisposition | integration-derived | FUTURE | COIM-C | semantics unchanged (Spec #62) |
+| `sourceProduct` | JSONB | integration-derived | FUTURE | COIM-C | vendor/name/version/uid/connectorClass |
+| `confidence` | int (0-100) | integration-derived | FUTURE | COIM-C | source confidence |
+| `observedAt` | timestamptz | integration-derived | FUTURE | COIM-C | verdict observation time |
+| `targetEntityType` | string | integration-derived | FUTURE | COIM-C | non-identity verdict support |
+| `policyRef` | JSONB | integration-derived | FUTURE | COIM-C | structured policy reference |
+
+### Observable (NEW ENTITY — FUTURE — blocker: COIM-D)
+
+| Planned Field | Type | Source Classification | Availability | Blocker | Notes |
+|-------|------|----------------------|--------------|---------|-------|
+| `observableType` | enum | integration-derived | FUTURE | COIM-D | ip/domain/hash/url/email/certificate/process/file |
+| `value` | string | integration-derived | FUTURE | COIM-D | indicator value |
+| `firstSeen` / `lastSeen` | timestamptz | integration-derived | FUTURE | COIM-D | optional |
+| `reputation` | int | system-calculated | FUTURE | COIM-D | enrichment-derived |
+
+### Analytic (NEW ENTITY — FUTURE — blocker: COIM-E)
+
+| Planned Field | Type | Source Classification | Availability | Blocker | Notes |
+|-------|------|----------------------|--------------|---------|-------|
+| `analyticId` | string | integration-derived | FUTURE | COIM-E | reference key |
+| `analyticName` | string | integration-derived | FUTURE | COIM-E | — |
+| `analyticType` | enum | integration-derived | FUTURE | COIM-E | detection_rule/analytic_rule/sigma_rule/yara_rule/ml_model/ueba_model/vendor_model/security_control_analytic |
+| `version` / `state` | string | integration-derived | FUTURE | COIM-E | — |
+| `falsePositiveRate` | int (0-100) | system-calculated | FUTURE | COIM-E | tracked by Commander |
+| `attacks[]` | JSONB | system-calculated | FUTURE | COIM-E | analytic-to-ATT&CK binding |
+
+### Asset / Identity — COIM augmentation (FUTURE — blocker: COIM-F)
+
+| Entity | Planned Fields | Availability | Blocker |
+|--------|----------------|--------------|---------|
+| Asset | lifecycleState, platform (structured), networkPosition, dataClassification, lastConfirmedAt, firstDiscoveredBy; optional sourceClassification | FUTURE | COIM-F |
+| Identity | privilegeLevel, authenticationStrength, lastAuthenticatedAt, entitlementSummary, riskFactors[]; optional sourceClassification | FUTURE | COIM-F |
+
+### Case — COIM aggregation (FUTURE — blocker: COIM-G)
+
+| Planned Field | Type | Source Classification | Availability | Blocker | Notes |
+|-------|------|----------------------|--------------|---------|-------|
+| `attacks[]` (aggregated) | JSONB | system-calculated | FUTURE | COIM-G | aggregated from bound Risk Objects |
+| `affectedEntityCount` | int | system-calculated | FUTURE | COIM-G | computed |
+| `blastRadiusScore` | int | system-calculated | FUTURE | COIM-G | computed |
+| `dwellTimeHours` | number | system-calculated | FUTURE | COIM-G | firstDetectedAt → case creation (ARCH-DEBT-045) |
+| `confidenceAggregate` | int | system-calculated | FUTURE | COIM-G | computed |
+| `findingClassBreakdown` | JSONB | system-calculated | FUTURE | COIM-G | computed |
+
+### Action / Sub-Action (NEW ENTITY + D3FEND — FUTURE — blocker: COIM-H)
+
+| Planned Field | Type | Source Classification | Availability | Blocker | Notes |
+|-------|------|----------------------|--------------|---------|-------|
+| `targetEntity` | string | system-calculated | FUTURE | COIM-H | — |
+| `executionMethod` | string | system-calculated | FUTURE | COIM-H | — |
+| `outcomeClassification` | enum | system-calculated | FUTURE | COIM-H | — |
+| `estimatedEffortHours` / `actualEffortHours` | number | system-calculated | FUTURE | COIM-H | effort tracking |
+| `approvalRef` | string | system-calculated | FUTURE | COIM-H | — |
+| `tacticType` (D3FEND) | enum | integration-derived | FUTURE | COIM-H | isolate/evict/restore/harden/detect (ARCH-DEBT-046) |
+| `countermeasures[]` (D3FEND) | JSONB | integration-derived | FUTURE | COIM-H | bounded ≤10 (ARCH-DEBT-046) |
+
+---
+
 ## Maintenance Rules
 
 1. **This artifact is mechanically derived.** Do NOT manually edit entity entries. Use the data-dictionary-generation.kiro.hook to update.
@@ -471,5 +569,5 @@ None.
 
 ---
 
-**Last Updated:** 2026-05-31 (Case entity: 12-state closed-loop lifecycle + legacy status mapping — contract and DB schema aligned)  
+**Last Updated:** 2026-06-01 (COIM/OCSF NOW-tier governance registration: added COIM/OCSF Planned Entities & Fields FUTURE section — Risk Object augmentation, Evidence, Verdict, Observable, Analytic, Asset/Identity, Case aggregation, Action/Sub-Action+D3FEND; blockers COIM-A…COIM-H. Manual planning placeholders only — no contract/schema yet.)  
 **Snapshot Commit:** (to be recorded after commit)

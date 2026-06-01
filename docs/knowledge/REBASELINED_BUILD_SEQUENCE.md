@@ -69,11 +69,13 @@ A unit is **READY** iff every dependency unit is **DONE** and every mapped chain
 
 Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readiness State Machine above.
 
-**READY (3):** Unit 14 (Intelligence Layer — Four Streams), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors).
+**READY (4):** Unit 14 (Intelligence Layer — Four Streams), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors), **COIM-A** (Risk Object Source Classification + Timeline Augmentation).
 
 **DONE (14):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13.
 
-**BLOCKED (36):** Units 12–21, 23–37, 39–49 (except Units 5, 22, 38). All 27 Team 2 units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006.
+**BLOCKED (43):** Units 15–21, 23–37, 39–49 (numbered units, except 14, 22, 38); plus COIM-B … COIM-H (blocked by COIM-A). All 27 Team 2 numbered units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006. COIM units are Foundational and NOT ARCH-006-gated.
+
+> **COIM / OCSF remediation units (COIM-A … COIM-H):** added 2026-06-01 under owner-authorised governance registration for `DEC-coim-ocsf-source-classification-architecture`. Full definitions and the COIM Live Status Snapshot are in the **"COIM / OCSF Remediation Units"** section below (after Unit 49). COIM-A is READY now; COIM-B…H recompute to READY on COIM-A completion. Tier mapping: COIM-A = NOW, COIM-B/C/D/E/F/G = NEXT, COIM-H = LATER.
 
 | Unit | Tag | Status | Blocked by |
 |---|---|---|---|
@@ -2133,6 +2135,298 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ---
 
+## COIM / OCSF Remediation Units (COIM-A … COIM-H)
+
+**Authority:** `DECISIONS.md` `DEC-coim-ocsf-source-classification-architecture`; accepted COIM artefacts at `docs/knowledge/ocsf_assessment/` (01_COIM_v1_0, 02_SOURCE_CLASSIFICATION_MODEL, 03_REUSABLE_OBJECT_CATALOGUE, 04_EVIDENCE_MODEL, 05_ATTRIBUTE_AND_DATA_EFFICIENCY_MODEL).
+
+**Nature:** These units bring Commander into alignment with the accepted COIM / OCSF architecture. They are **additive** — they augment canonical entities and add new COIM entities. They do NOT modify governance/lifecycle/strategy engine logic, do NOT re-add `SourceMetadata.rawPayloadRef`, and do NOT change verdict disposition semantics or surface attribution rules. All schema changes are additive-only migrations (no drops). Every COIM unit's completion gate includes its `DATA_DICTIONARY.md` entry (ARCH-005).
+
+**Source tag:** Foundational (Team 1) — these augment Foundational entities and are NOT gated by ARCH-006.
+
+**Resolving debt:** COIM-A → ARCH-DEBT-039 (+ ARCH-DEBT-045 Risk Object timeline); COIM-B → ARCH-DEBT-040; COIM-C → ARCH-DEBT-043; COIM-D → ARCH-DEBT-041; COIM-E → ARCH-DEBT-042; COIM-F → ARCH-DEBT-045 (Asset/Identity timeline); COIM-G → ARCH-DEBT-045 (Case dwell time); COIM-H → ARCH-DEBT-044 + ARCH-DEBT-046.
+
+### COIM Live Status Snapshot (computed 2026-06-01)
+
+Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's own resolving debt does not self-block it.
+
+**READY (1):** COIM-A (deps Unit 1 DONE, Unit 5 DONE).
+
+**BLOCKED (7):** COIM-B … COIM-H — each blocked by COIM-A (COIM spine not yet DONE). They recompute to READY once COIM-A flips DONE and their other dependency units are DONE.
+
+| Unit | Tag | Status | Blocked by | Resolves |
+|---|---|---|---|---|
+| COIM-A Risk Object Source Classification + Timeline | Foundational | **READY** | — | ARCH-DEBT-039, 045 (Risk Object) |
+| COIM-B Evidence Entity | Foundational | BLOCKED | COIM-A | ARCH-DEBT-040 |
+| COIM-C Verdict Entity Promotion | Foundational | BLOCKED | COIM-A | ARCH-DEBT-043 |
+| COIM-D Observable Entity | Foundational | BLOCKED | COIM-A | ARCH-DEBT-041 |
+| COIM-E Analytic Entity | Foundational | BLOCKED | COIM-A | ARCH-DEBT-042 |
+| COIM-F Asset / Identity Augmentation | Foundational | BLOCKED | COIM-A | ARCH-DEBT-045 (Asset/Identity) |
+| COIM-G Case Aggregation | Foundational | BLOCKED | COIM-A | ARCH-DEBT-045 (Case dwell time) |
+| COIM-H Action/Sub-Action + D3FEND | Foundational | BLOCKED | COIM-A; ARCH-DEBT-044 (own) | ARCH-DEBT-044, 046 |
+
+> **Tier mapping (owner-authorised plan, 2026-06-01):** COIM-A = **NOW**; COIM-B/C/D/E/F/G = **NEXT**; COIM-H = **LATER**. The state machine enforces this by making COIM-A the sole READY COIM unit; the rest flip READY on COIM-A completion (subject to their own dependency/debt recompute). COIM-H additionally carries its own creating debt (ARCH-DEBT-044) and hosts D3FEND (ARCH-DEBT-046).
+
+---
+
+### Unit COIM-A: Risk Object Source Classification + Timeline Augmentation
+
+**Status:** READY
+
+**Blocked by:** — (Unit 1 DONE, Unit 5 DONE)
+
+**Purpose:** Augment the Risk Object with COIM source-classification metadata and the multi-timestamp model, as immutable provenance captured at ingestion. This is the COIM spine — the highest-leverage augmentation, feeding case binding, reporting, search, and AI grounding.
+
+**Baseline spec:** COIM v1.0 §4.1, §4.12, §6.3; 02_SOURCE_CLASSIFICATION_MODEL §4; Spec #29 Universal Risk Object and Case Binding (entity authority)
+
+**Architectural layer:** Operational Intelligence Layer (COIM Layer 2/4) over Normalisation Layer
+
+**Dependencies:** Unit 1 (Risk Object DB Schema — DONE), Unit 5 (Normalisation Layer — DONE)
+
+**Required entities:**
+- Risk Object contract + schema + fixture ✅ (exist — augmented here, additively)
+
+**Deliverables (governance registration only — code/schema implementation pending separate owner authorisation):**
+1. Add `sourceClassification` (JSONB) to Risk Object: findingClass, sourceSeverity, sourceConfidence, sourceProduct, sourceFindingUid, sourceActivity, attacks[] (≤20), observables[] (≤50)
+2. Extract high-frequency fields to indexed columns (severityId, confidenceScore, findingClass)
+3. Add timeline fields: `firstDetectedAt` (required), `normalisedAt` (required), `lastConfirmedAt` (recommended)
+4. Add `sourceFindingUid`; pluralise to `affectedEntities[]` (retain `affectedEntityId` for back-compat)
+5. Additive-only Drizzle migration (no drops); preserve all Unit 1 tests
+6. Update DATA_DICTIONARY.md Risk Object entry (COIM fields, FUTURE → AVAILABLE on completion)
+
+**Completion gate:**
+- ✅ `sourceClassification`, timeline fields, `affectedEntities[]` present on contract + schema (additive)
+- ✅ Existing Unit 1 migration/tests intact (no regression)
+- ✅ Additive migration generated and tested
+- ✅ DATA_DICTIONARY.md Risk Object entry updated
+- ✅ ARCH-DEBT-039 marked RESOLVED; ARCH-DEBT-045 (Risk Object portion) marked RESOLVED
+- ✅ Governance runner Green; no engine-logic change
+
+**Source tag:** Foundational
+
+---
+
+### Unit COIM-B: Evidence Entity
+
+**Status:** BLOCKED
+
+**Blocked by:** COIM-A
+
+**Purpose:** Create Evidence as a first-class entity so closed-loop doctrine (assertion #1) is structurally supported — evidence-driven validation, evidence-gated closure, evidence-triggered reopening. Retro-enriches the already-built validation/closure/reopening engines (Units 11–13) without changing their logic.
+
+**Baseline spec:** COIM v1.0 §4.4; 04_EVIDENCE_MODEL (full); Spec #08 Case Management (Evidence Packs)
+
+**Architectural layer:** COIM Layer 4/5 (first-class entity)
+
+**Dependencies:** COIM-A; Unit 7 (Case Lifecycle — DONE); Units 11–13 (validation/closure/reopening — DONE)
+
+**Required entities:**
+- Case ✅; Validation/closure/reopening engines ✅ (consumers); Evidence ❌ (created here)
+
+**Deliverables (governance registration only):**
+1. Create Evidence entity: evidenceType, source, confidence, collectedAt, expiresAt, contentRef, immutabilityHash, caseId, subActionId, validationDecisionId
+2. Separate table; content in object store (pointer); metadata queryable; indexed bindings
+3. Update DATA_DICTIONARY.md (new entity)
+
+**Completion gate:**
+- ✅ Evidence contract + schema + fixture exist
+- ✅ Bindings (case/sub-action/validation) indexed
+- ✅ DATA_DICTIONARY.md entry created; ARCH-DEBT-040 RESOLVED
+- ✅ No change to validation/closure/reopening engine logic
+
+**Source tag:** Foundational
+
+---
+
+### Unit COIM-C: Verdict Entity Promotion
+
+**Status:** BLOCKED
+
+**Blocked by:** COIM-A
+
+**Purpose:** Promote Verdict from an engine-internal `VerdictRecord` type to a canonical entity with durable provenance, preserving existing disposition semantics and severity ordering (Spec #62 unchanged).
+
+**Baseline spec:** COIM v1.0 §6 (Verdict impact); Spec #62 Verdict Semantics (semantics authority — NOT changed)
+
+**Architectural layer:** COIM Layer 4/5 (entity promotion)
+
+**Dependencies:** COIM-A; Unit 5 (Normalisation — DONE, source of `VerdictRecord`)
+
+**Required entities:**
+- Verdict ❌ (promoted here from `normalisation-layer.ts` type)
+
+**Deliverables (governance registration only):**
+1. Create canonical Verdict entity: sourceProduct, confidence, observedAt, targetEntityType, extended disposition set, structured policyRef
+2. Point engine `VerdictRecord` at the canonical type (no logic change to disposition/severity/conflict resolution)
+3. Update DATA_DICTIONARY.md (new entity)
+
+**Completion gate:**
+- ✅ Verdict contract + schema + fixture exist
+- ✅ Disposition semantics and severity ordering unchanged (Spec #62 preserved)
+- ✅ DATA_DICTIONARY.md entry created; ARCH-DEBT-043 RESOLVED
+
+**Source tag:** Foundational
+
+---
+
+### Unit COIM-D: Observable Entity
+
+**Status:** BLOCKED
+
+**Blocked by:** COIM-A
+
+**Purpose:** Create the Observable entity for typed indicator extraction (ip/domain/hash/url/email/certificate/process/file), enabling threat-intel correlation, cross-case matching, and indicator-based search. Feeds Intelligence Layer (Unit 14) and inverse-discovery (Unit 5).
+
+**Baseline spec:** COIM v1.0 §4.5; 03_REUSABLE_OBJECT_CATALOGUE §2.5
+
+**Architectural layer:** COIM Layer 4 (composed object / entity)
+
+**Dependencies:** COIM-A (observables[] overflow on Risk Object); Unit 5 (Normalisation — DONE)
+
+**Required entities:**
+- Observable ❌ (created here)
+
+**Deliverables (governance registration only):**
+1. Create Observable: observableType, value, firstSeen, lastSeen, reputation (enrichment-derived)
+2. Separate table with many-to-many binding (deduplication); bounded JSONB overflow on Risk Object
+3. Update DATA_DICTIONARY.md (new entity)
+
+**Completion gate:**
+- ✅ Observable contract + schema + fixture exist
+- ✅ Deduplication binding indexed
+- ✅ DATA_DICTIONARY.md entry created; ARCH-DEBT-041 RESOLVED
+
+**Source tag:** Foundational
+
+---
+
+### Unit COIM-E: Analytic Entity
+
+**Status:** BLOCKED
+
+**Blocked by:** COIM-A
+
+**Purpose:** Create the Analytic reference entity (broad concept spanning detection_rule / analytic_rule / sigma_rule / yara_rule / ml_model / ueba_model / vendor_model / security_control_analytic), enabling detection-engineering metrics, false-positive tracking, analytic-to-ATT&CK binding, and model-vs-rule attribution.
+
+**Baseline spec:** COIM v1.0 §4.8; 03_REUSABLE_OBJECT_CATALOGUE §2.7
+
+**Architectural layer:** COIM Layer 4 (reference entity)
+
+**Dependencies:** COIM-A; Unit 5 (Normalisation — DONE)
+
+**Required entities:**
+- Analytic ❌ (created here)
+
+**Deliverables (governance registration only):**
+1. Create Analytic: analyticId, analyticName, analyticType, version, state, falsePositiveRate, attacks[]
+2. Referenced from Risk Object/Verdict by analyticId + analyticType; full metadata in separate table
+3. Update DATA_DICTIONARY.md (new entity)
+
+**Completion gate:**
+- ✅ Analytic contract + schema + fixture exist
+- ✅ Reference fields wired on Risk Object/Verdict (additive)
+- ✅ DATA_DICTIONARY.md entry created; ARCH-DEBT-042 RESOLVED
+
+**Source tag:** Foundational
+
+---
+
+### Unit COIM-F: Asset / Identity Augmentation
+
+**Status:** BLOCKED
+
+**Blocked by:** COIM-A
+
+**Purpose:** Augment Asset and Identity with COIM operational-intelligence fields and timeline semantics, additively.
+
+**Baseline spec:** COIM v1.0 §6.1, §6.2; 05_ATTRIBUTE_AND_DATA_EFFICIENCY_MODEL §13; Spec #05 (Asset/Identity authority), Spec #18 (Identity)
+
+**Architectural layer:** COIM Layer 4/5 (entity augmentation)
+
+**Dependencies:** COIM-A; Unit 5 (Normalisation — DONE)
+
+**Required entities:**
+- Asset ✅, Identity ✅ (augmented here, additively)
+
+**Deliverables (governance registration only):**
+1. Asset: lifecycleState, platform (structured), networkPosition, dataClassification, lastConfirmedAt, firstDiscoveredBy
+2. Identity: privilegeLevel, authenticationStrength, lastAuthenticatedAt, entitlementSummary, riskFactors[]
+3. Optional sourceClassification on discovery/IAM signals
+4. Additive-only migration; preserve existing Asset/Identity tests
+5. Update DATA_DICTIONARY.md (Asset, Identity)
+
+**Completion gate:**
+- ✅ Asset/Identity augmented (additive); existing tests intact
+- ✅ DATA_DICTIONARY.md entries updated; ARCH-DEBT-045 (Asset/Identity portion) RESOLVED
+
+**Source tag:** Foundational
+
+---
+
+### Unit COIM-G: Case Aggregation
+
+**Status:** BLOCKED
+
+**Blocked by:** COIM-A
+
+**Purpose:** Add computed/cached COIM aggregates to Case from bound Risk Objects, additively. Includes dwell time, blast radius, finding-class breakdown, confidence aggregate, ATT&CK aggregation.
+
+**Baseline spec:** COIM v1.0 §6 (Case impact); 02_SOURCE_CLASSIFICATION_MODEL §10.4; Spec #08 Case Management
+
+**Architectural layer:** COIM Layer 6/7 (computed aggregates)
+
+**Dependencies:** COIM-A (Risk Object source classification to aggregate); Unit 7 (Case Lifecycle — DONE)
+
+**Required entities:**
+- Case ✅ (augmented here, additively); Risk Object (COIM-A augmented)
+
+**Deliverables (governance registration only):**
+1. Case computed fields: attacks[] (aggregated), affectedEntityCount, blastRadiusScore, dwellTimeHours, confidenceAggregate, findingClassBreakdown
+2. Computed at case creation/update; cached on Case (no governance-logic change)
+3. Update DATA_DICTIONARY.md (Case)
+
+**Completion gate:**
+- ✅ Case aggregates computed/cached (additive); case lifecycle logic unchanged
+- ✅ DATA_DICTIONARY.md Case entry updated; ARCH-DEBT-045 (Case dwell time) RESOLVED
+
+**Source tag:** Foundational
+
+---
+
+### Unit COIM-H: Action/Sub-Action + D3FEND
+
+**Status:** BLOCKED
+
+**Blocked by:** COIM-A; ARCH-DEBT-044 (own creating debt — does not self-block, but entity must be built before D3FEND fields)
+
+**Purpose:** Create the Action/Sub-Action canonical entity and add D3FEND tactic classification on remediation sub-actions. Enables remediation posture analytics, D3FEND coverage measurement, and value reporting. LATER tier.
+
+**Baseline spec:** COIM v1.0 §4.3, §6 (Action/Sub-Action impact); 03_REUSABLE_OBJECT_CATALOGUE §2.3; Spec #08 Case Management (sub-actions)
+
+**Architectural layer:** COIM Layer 5/6 (entity + classification)
+
+**Dependencies:** COIM-A; Unit 7 (Case Lifecycle — DONE, references `action_decomposed`)
+
+**Required entities:**
+- Action/Sub-Action ❌ (created here); hosts D3FEND fields
+
+**Deliverables (governance registration only):**
+1. Create Action/Sub-Action: targetEntity, executionMethod, outcomeClassification, estimatedEffortHours, actualEffortHours, approvalRef
+2. Add D3FEND `tacticType` (isolate/evict/restore/harden/detect) and `countermeasures[]` (≤10) to Sub-Action
+3. Additive — does not modify case lifecycle engine logic
+4. Update DATA_DICTIONARY.md (new entity)
+
+**Completion gate:**
+- ✅ Action/Sub-Action contract + schema + fixture exist
+- ✅ D3FEND fields present on Sub-Action
+- ✅ DATA_DICTIONARY.md entry created; ARCH-DEBT-044 + ARCH-DEBT-046 RESOLVED
+- ✅ Case lifecycle engine logic unchanged
+
+**Source tag:** Foundational
+
+---
+
+---
+
 ## Summary
 
 **Total build units:** 50 (Unit 0 foundation-correction + Units 1–49)
@@ -2207,8 +2501,8 @@ A build unit is complete when:
 
 ---
 
-**Last Updated:** 2026-05-31  
-**Status:** ACTIVE — readiness state machine. Build only from the READY set (currently Units 5, 7, 22, 38). Status recomputes on debt-resolution / unit-completion.  
+**Last Updated:** 2026-06-01  
+**Status:** ACTIVE — readiness state machine. Build only from the READY set (currently Units 14, 22, 38 and COIM-A). Status recomputes on debt-resolution / unit-completion.  
 **Enforcement:** ARCH-006 (build-stream sequencing) + ARCH-007 (blocking-debt prerequisite) in `.kiro/testing/conformance-registry.md`, auto-run via post-task-review. "What's next" query defined in `.kiro/steering/execution-discipline.md`.  
 **Authority:** Derived from SYSTEM_KNOWLEDGE_GRAPH.md, DATA_DICTIONARY.md, REBASELINED_BUILD_SCHEDULE_NOTES.md, baseline source. Decision: `DEC-build-readiness-state-machine` (DECISIONS.md).  
 **Sourcing rule:** Never cite the translation layer — all citations from `docs/99_source_archive/baseline_v2_6_2/`

@@ -807,3 +807,147 @@ Authority: `.kiro/steering/feature-function-backlog.md` (extended in this update
 
 **History**
 - 2026-05-31: OPEN — surfaced during pre-commit gate cleanup; baseline #30 confirmed to be Universal Validation/Closure/Reopening, not Phase 3 hardening.
+
+---
+
+### ARCH-DEBT-039 — Risk Object source-classification gap (COIM)
+
+- **Source:** `DECISIONS.md` `DEC-coim-ocsf-source-classification-architecture`; `docs/knowledge/ocsf_assessment/01_COIM_v1_0.md` §4.1, §6.3; `02_SOURCE_CLASSIFICATION_MODEL.md` §4; COIM/OCSF NOW-tier remediation (owner-authorised 2026-06-01)
+- **Description:** The Risk Object contract (`packages/contracts/src/entities/risk-object.ts`) and schema (`packages/db/src/schema/risk-objects.ts`) carry no `sourceClassification` object (findingClass, sourceSeverity, sourceConfidence, sourceProduct, sourceFindingUid, sourceActivity, attacks[], observables[]). Per accepted COIM architecture, source classification must be captured at ingestion time as immutable provenance — it cannot be retrospectively reconstructed. Commander currently knows what it decided but not what the source reported. Risk Object also carries singular `affectedEntityId` where COIM requires plural `affectedEntities[]` (retaining the singular for back-compat).
+- **Debt type:** Missing-ownership (COIM metadata layer absent on canonical entity)
+- **Debt class:** build-debt
+- **Scope of fix:** Additive contract + schema augmentation under build unit **COIM-A**. Add `sourceClassification` (JSONB, high-frequency fields extracted to indexed columns), `sourceFindingUid`, and pluralised `affectedEntities[]`. Additive-only migration (no drops); preserve Unit 1 tests; update DATA_DICTIONARY.md.
+- **Affected specs / artifacts:** `packages/contracts/src/entities/risk-object.ts`; `packages/db/src/schema/risk-objects.ts`; `docs/knowledge/DATA_DICTIONARY.md` (Risk Object); COIM-A unit in `REBASELINED_BUILD_SEQUENCE.md`
+- **Scheduled resolution:** COIM-A (NOW tier) — code/schema implementation pending separate owner authorisation
+- **Status:** OPEN
+- **Date logged:** 2026-06-01
+- **Last reviewed:** 2026-06-01
+
+**History**
+- 2026-06-01: OPEN — registered under COIM/OCSF NOW-tier governance registration (owner-authorised). Resolution unit: COIM-A.
+
+---
+
+### ARCH-DEBT-040 — Evidence entity absence (COIM)
+
+- **Source:** `DECISIONS.md` `DEC-coim-ocsf-source-classification-architecture`; `docs/knowledge/ocsf_assessment/04_EVIDENCE_MODEL.md`; `01_COIM_v1_0.md` §4.4; Commander doctrine assertion #1 (closed-loop case model requires evidence-driven validation)
+- **Description:** No first-class Evidence entity exists in the contract model (`packages/contracts/src/entities/`) or schema (`packages/db/src/schema/`). Closed-loop doctrine requires evidence-driven validation, evidence-gated closure, and evidence-triggered reopening — but the closure/reopening/validation engines (Units 11–13, DONE) have no queryable typed evidence artifact to bind to. Evidence is currently scattered across audit events and provenance JSONB with no type, confidence, freshness, immutability hash, or case/sub-action/validation binding.
+- **Debt type:** Missing-ownership (first-class entity absent)
+- **Debt class:** build-debt
+- **Scope of fix:** Create Evidence as a first-class entity under build unit **COIM-B** (evidenceType, source, confidence, collectedAt, expiresAt, contentRef, immutabilityHash, caseId, subActionId, validationDecisionId). Separate table; content in object store; metadata queryable. Additive — does not modify existing engine logic. Update DATA_DICTIONARY.md.
+- **Affected specs / artifacts:** `packages/contracts/src/entities/evidence.ts` (new); `packages/db/src/schema/evidence.ts` (new); `docs/knowledge/DATA_DICTIONARY.md` (new entity); COIM-B unit in `REBASELINED_BUILD_SEQUENCE.md`
+- **Scheduled resolution:** COIM-B (NEXT tier)
+- **Status:** OPEN
+- **Date logged:** 2026-06-01
+- **Last reviewed:** 2026-06-01
+
+**History**
+- 2026-06-01: OPEN — registered under COIM/OCSF NOW-tier governance registration (owner-authorised). Resolution unit: COIM-B.
+
+---
+
+### ARCH-DEBT-041 — Observable entity absence (COIM)
+
+- **Source:** `DECISIONS.md` `DEC-coim-ocsf-source-classification-architecture`; `docs/knowledge/ocsf_assessment/01_COIM_v1_0.md` §4.5; `03_REUSABLE_OBJECT_CATALOGUE.md` §2.5
+- **Description:** No Observable entity or composed object exists for typed indicator extraction (ip/domain/hash/url/email/certificate/process/file). Threat-intelligence correlation, cross-case matching, and indicator-based search have no canonical home. The normalisation engine's inverse-discovery routing (Unit 5) matches threat indicators to estate entities at runtime but does not persist typed, deduplicated observables for downstream search/correlation.
+- **Debt type:** Missing-ownership (entity / composed object absent)
+- **Debt class:** build-debt
+- **Scope of fix:** Create Observable under build unit **COIM-D** (observableType, value, firstSeen, lastSeen, reputation). Separate table with many-to-many binding (deduplication) per the data efficiency model; bounded JSONB array overflow on Risk Object. Additive. Update DATA_DICTIONARY.md.
+- **Affected specs / artifacts:** `packages/contracts/src/entities/observable.ts` (new); `packages/db/src/schema/observables.ts` (new); `docs/knowledge/DATA_DICTIONARY.md` (new entity); COIM-D unit in `REBASELINED_BUILD_SEQUENCE.md`
+- **Scheduled resolution:** COIM-D (NEXT tier)
+- **Status:** OPEN
+- **Date logged:** 2026-06-01
+- **Last reviewed:** 2026-06-01
+
+**History**
+- 2026-06-01: OPEN — registered under COIM/OCSF NOW-tier governance registration (owner-authorised). Resolution unit: COIM-D.
+
+---
+
+### ARCH-DEBT-042 — Analytic entity absence (COIM)
+
+- **Source:** `DECISIONS.md` `DEC-coim-ocsf-source-classification-architecture`; `docs/knowledge/ocsf_assessment/01_COIM_v1_0.md` §4.8; `03_REUSABLE_OBJECT_CATALOGUE.md` §2.7
+- **Description:** No Analytic reference entity exists. Commander cannot attribute a finding or verdict to the analytic that produced it (detection_rule / analytic_rule / sigma_rule / yara_rule / ml_model / ueba_model / vendor_model / security_control_analytic). Detection engineering metrics, false-positive tracking, analytic-to-ATT&CK binding, and model-vs-rule attribution are unsupported. Analytic is the broad reusable COIM concept; DetectionRule is a narrower specialisation (`analyticType = detection_rule`).
+- **Debt type:** Missing-ownership (reference entity absent)
+- **Debt class:** build-debt
+- **Scope of fix:** Create Analytic under build unit **COIM-E** (analyticId, analyticName, analyticType, version, state, falsePositiveRate, attacks[]). Referenced from Risk Object/Verdict by analyticId + analyticType; full metadata in separate table (deduplication). Additive. Update DATA_DICTIONARY.md.
+- **Affected specs / artifacts:** `packages/contracts/src/entities/analytic.ts` (new); `packages/db/src/schema/analytics.ts` (new); `docs/knowledge/DATA_DICTIONARY.md` (new entity); COIM-E unit in `REBASELINED_BUILD_SEQUENCE.md`
+- **Scheduled resolution:** COIM-E (NEXT tier)
+- **Status:** OPEN
+- **Date logged:** 2026-06-01
+- **Last reviewed:** 2026-06-01
+
+**History**
+- 2026-06-01: OPEN — registered under COIM/OCSF NOW-tier governance registration (owner-authorised). Resolution unit: COIM-E.
+
+---
+
+### ARCH-DEBT-043 — Verdict not canonical (COIM)
+
+- **Source:** `DECISIONS.md` `DEC-coim-ocsf-source-classification-architecture`; `docs/knowledge/ocsf_assessment/01_COIM_v1_0.md` §6 (Verdict entity impact); Spec #62 Verdict Semantics
+- **Description:** Verdict exists only as a transient `VerdictRecord` type inside `packages/contracts/src/engines/normalisation-layer.ts` (processing-time structure), not as a canonical entity in `packages/contracts/src/entities/` with a schema and fixture. Verdicts are time-bound, confidence-weighted claims requiring preserved identity, time, disposition, policy reference, and source. Without a canonical Verdict entity, verdict provenance (sourceProduct, confidence, observedAt, targetEntityType) is not durably stored, and non-identity verdict analytics / multi-tool verdict analysis are unsupported.
+- **Debt type:** Boundary-leak (entity modelled only as an engine-internal type)
+- **Debt class:** build-debt
+- **Scope of fix:** Promote Verdict to a canonical entity under build unit **COIM-C** (sourceProduct, confidence, observedAt, targetEntityType, extended disposition set, structured policyRef). Preserve existing disposition semantics and severity ordering — do NOT change verdict disposition meaning. Additive contract + schema + fixture. Update DATA_DICTIONARY.md.
+- **Affected specs / artifacts:** `packages/contracts/src/entities/verdict.ts` (new); `packages/db/src/schema/verdicts.ts` (new); `packages/contracts/src/engines/normalisation-layer.ts` (`VerdictRecord` to reference canonical type — no logic change); `docs/knowledge/DATA_DICTIONARY.md` (new entity); COIM-C unit in `REBASELINED_BUILD_SEQUENCE.md`
+- **Scheduled resolution:** COIM-C (NEXT tier)
+- **Status:** OPEN
+- **Date logged:** 2026-06-01
+- **Last reviewed:** 2026-06-01
+
+**History**
+- 2026-06-01: OPEN — registered under COIM/OCSF NOW-tier governance registration (owner-authorised). Resolution unit: COIM-C. Verdict disposition semantics (Spec #62) explicitly NOT in scope of change.
+
+---
+
+### ARCH-DEBT-044 — Action/Sub-Action absence (COIM)
+
+- **Source:** `DECISIONS.md` `DEC-coim-ocsf-source-classification-architecture`; `docs/knowledge/ocsf_assessment/01_COIM_v1_0.md` §6 (Action/Sub-Action entity impact); `COMMANDER_DATA_OCSF_OPERATIONAL_INTELLIGENCE_PROPOSAL.md` §7 (Action/Sub-Action)
+- **Description:** No Action or Sub-Action canonical entity exists in the contract model or schema. The case lifecycle (Unit 7, DONE) references `action_decomposed` as a state, but there is no entity persisting sub-actions, target entity, execution method, outcome classification, effort tracking, approval reference, or remediation posture. Remediation posture analytics and value reporting are unsupported, and there is no host for D3FEND tactic classification (see ARCH-DEBT-046).
+- **Debt type:** Missing-ownership (entity absent)
+- **Debt class:** build-debt
+- **Scope of fix:** Create Action/Sub-Action under build unit **COIM-H** (targetEntity, executionMethod, outcomeClassification, estimatedEffortHours, actualEffortHours, approvalRef). Additive — does not modify case lifecycle engine logic. Update DATA_DICTIONARY.md. Prerequisite for ARCH-DEBT-046 (D3FEND fields ride on this entity).
+- **Affected specs / artifacts:** `packages/contracts/src/entities/action.ts` (new); `packages/db/src/schema/actions.ts` (new); `docs/knowledge/DATA_DICTIONARY.md` (new entity); COIM-H unit in `REBASELINED_BUILD_SEQUENCE.md`
+- **Scheduled resolution:** COIM-H (LATER tier)
+- **Status:** OPEN
+- **Date logged:** 2026-06-01
+- **Last reviewed:** 2026-06-01
+
+**History**
+- 2026-06-01: OPEN — registered under COIM/OCSF NOW-tier governance registration (owner-authorised). Resolution unit: COIM-H.
+
+---
+
+### ARCH-DEBT-045 — Timeline-field gap (COIM)
+
+- **Source:** `DECISIONS.md` `DEC-coim-ocsf-source-classification-architecture`; `docs/knowledge/ocsf_assessment/01_COIM_v1_0.md` §4.12; `02_SOURCE_CLASSIFICATION_MODEL.md` §4.6; `05_ATTRIBUTE_AND_DATA_EFFICIENCY_MODEL.md` §13
+- **Description:** Canonical entities carry only `createdAt`/`updatedAt` (system record timestamps) and `source.sourceTimestamp`. The COIM multi-timestamp model with distinct semantics is absent: `firstDetectedAt` (source), `lastConfirmedAt` (source), `normalisedAt` (system). Without these, dwell-time calculation, staleness detection, freshness evaluation, and SLA accuracy are degraded or impossible. Source timestamps can only be captured at ingestion time.
+- **Debt type:** Missing-ownership (temporal semantics absent)
+- **Debt class:** build-debt
+- **Scope of fix:** Add timeline fields under build unit **COIM-A** for Risk Object (`firstDetectedAt`, `normalisedAt` required; `lastConfirmedAt` recommended) and under **COIM-F** for Asset/Identity (`lastConfirmedAt`/`lastAuthenticatedAt` recommended). Indexed timestamp columns; additive. `dwellTimeHours` computed on Case (COIM-G). Update DATA_DICTIONARY.md.
+- **Affected specs / artifacts:** `packages/contracts/src/entities/risk-object.ts`, `asset.ts`, `identity.ts`; corresponding schemas; `docs/knowledge/DATA_DICTIONARY.md`; COIM-A / COIM-F / COIM-G units in `REBASELINED_BUILD_SEQUENCE.md`
+- **Scheduled resolution:** COIM-A (NOW, Risk Object timeline) + COIM-F/COIM-G (NEXT, Asset/Identity/Case)
+- **Status:** OPEN
+- **Date logged:** 2026-06-01
+- **Last reviewed:** 2026-06-01
+
+**History**
+- 2026-06-01: OPEN — registered under COIM/OCSF NOW-tier governance registration (owner-authorised). Resolution units: COIM-A (Risk Object), COIM-F/COIM-G (Asset/Identity/Case).
+
+---
+
+### ARCH-DEBT-046 — D3FEND-on-sub-action gap (COIM)
+
+- **Source:** `DECISIONS.md` `DEC-coim-ocsf-source-classification-architecture`; `docs/knowledge/ocsf_assessment/01_COIM_v1_0.md` §4.3; `03_REUSABLE_OBJECT_CATALOGUE.md` §2.3
+- **Description:** No D3FEND tactic classification (isolate/evict/restore/harden/detect) or countermeasures[] exists on remediation actions — because no Action/Sub-Action entity exists yet (ARCH-DEBT-044). Remediation posture analytics, D3FEND coverage measurement, and defence-effectiveness reporting are unsupported.
+- **Debt type:** Missing-ownership (classification absent; dependent on entity absence)
+- **Debt class:** build-debt
+- **Scope of fix:** Add `tacticType` (D3FEND enum) and `countermeasures[]` (bounded ≤10) to the Sub-Action entity under build unit **COIM-H**, after ARCH-DEBT-044 establishes the entity. Additive. Update DATA_DICTIONARY.md.
+- **Affected specs / artifacts:** `packages/contracts/src/entities/action.ts` (new, from COIM-H); `packages/db/src/schema/actions.ts` (new); `docs/knowledge/DATA_DICTIONARY.md`; COIM-H unit in `REBASELINED_BUILD_SEQUENCE.md`
+- **Scheduled resolution:** COIM-H (LATER tier) — gated behind ARCH-DEBT-044
+- **Status:** OPEN
+- **Date logged:** 2026-06-01
+- **Last reviewed:** 2026-06-01
+
+**History**
+- 2026-06-01: OPEN — registered under COIM/OCSF NOW-tier governance registration (owner-authorised). Resolution unit: COIM-H (depends on ARCH-DEBT-044).
