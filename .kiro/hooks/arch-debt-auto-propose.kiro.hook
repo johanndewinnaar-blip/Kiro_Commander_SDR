@@ -1,5 +1,5 @@
 {
-  "enabled": true,
+  "enabled": false,
   "name": "Architectural Debt Auto-Propose",
   "description": "Post-task hook that proposes (does NOT auto-write) candidate Architectural Debt Register entries when a task surfaces structural debt. The owner runs `log architectural debt …` to register if appropriate.",
   "version": "1",

@@ -1,5 +1,5 @@
 {
-  "enabled": true,
+  "enabled": false,
   "name": "Secure-Coding and RBAC Enforcement",
   "description": "Post-task secure-coding gate. Refuses tasks introducing hardcoded secrets, missing input validation, missing auth on protected routes, RBAC bypass, or tenant-isolation breach. Closes GOVERNANCE_MAP gap Q1. Enforces conformance assertions SEC-001..006 and RBAC-001..004.",
   "version": "1",

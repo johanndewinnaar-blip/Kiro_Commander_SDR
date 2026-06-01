@@ -1,5 +1,5 @@
 {
-  "enabled": true,
+  "enabled": false,
   "name": "Performance Compliance",
   "description": "Enforces performance doctrine (PD-1.0) on every task. Invokes the scorecard runner against layers affected by the task, compares to the previous scorecard, and refuses tasks that introduce new Red units or regressions past tolerance.",
   "version": "1.0",

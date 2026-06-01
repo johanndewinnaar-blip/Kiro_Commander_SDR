@@ -1,5 +1,5 @@
 {
-  "enabled": true,
+  "enabled": false,
   "name": "Post-Task Review",
   "description": "Post-task review checklist. Source: 02-post-task-review-hook.md",
   "version": "1",

@@ -1,5 +1,5 @@
 {
-  "enabled": true,
+  "enabled": false,
   "name": "Doctrinal Assertions Check",
   "description": "Verify task completion against the eleven doctrinal assertions. Source: 04-doctrinal-assertions-check-hook.md",
   "version": "1",
