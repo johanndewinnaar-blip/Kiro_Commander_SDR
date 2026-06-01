@@ -15,5 +15,6 @@ export { seedRiskObjects } from './seed-risk-objects';
 export { seedEvidence } from './seed-evidence';
 export { seedVerdicts } from './seed-verdicts';
 export { seedObservables, seedObservableBindings } from './seed-observables';
+export { seedAnalytics } from './seed-analytics';
 export { seedEvents } from './seed-events';
 export type { SeedEvent } from './seed-events';

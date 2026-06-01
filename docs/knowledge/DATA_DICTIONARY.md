@@ -721,16 +721,34 @@ None.
 
 > **Delivered 2026-06-02 by build unit COIM-D.** Placeholder retired per maintenance rule (a COIM unit's planning placeholder is replaced by its mechanically-derived entry once the unit lands). Observable is now catalogued as mechanically-derived **Observable** entry (§13 above) — see observableType, value, firstSeen, lastSeen, reputation, deduplication index, many-to-many binding table, and `validateObservable()`. Contract: `observable.ts`. Schema: `observables.ts`. Fixture: `seed-observables.ts`. Resolves ARCH-DEBT-041.
 
-### Analytic (NEW ENTITY — FUTURE — blocker: COIM-E)
+### Analytic (AVAILABLE — delivered by COIM-E)
 
-| Planned Field | Type | Source Classification | Availability | Blocker | Notes |
-|-------|------|----------------------|--------------|---------|-------|
-| `analyticId` | string | integration-derived | FUTURE | COIM-E | reference key |
-| `analyticName` | string | integration-derived | FUTURE | COIM-E | — |
-| `analyticType` | enum | integration-derived | FUTURE | COIM-E | detection_rule/analytic_rule/sigma_rule/yara_rule/ml_model/ueba_model/vendor_model/security_control_analytic |
-| `version` / `state` | string | integration-derived | FUTURE | COIM-E | — |
-| `falsePositiveRate` | int (0-100) | system-calculated | FUTURE | COIM-E | tracked by Commander |
-| `attacks[]` | JSONB | system-calculated | FUTURE | COIM-E | analytic-to-ATT&CK binding |
+| Field | Type | Source Classification | Availability | Notes |
+|-------|------|----------------------|--------------|-------|
+| `id` | text (PK) | system-generated | AVAILABLE | Deterministic seed ID |
+| `tenantId` | text (FK → tenants) | system-scoped | AVAILABLE | Tenant scope |
+| `dataClassification` | enum | system-assigned | AVAILABLE | Default: configuration |
+| `analyticId` | text | integration-derived | AVAILABLE | Source-provided or Commander-generated unique ID (deduplicated per tenant) |
+| `analyticName` | text | integration-derived | AVAILABLE | Human-readable analytic name |
+| `analyticType` | enum | integration-derived | AVAILABLE | detection_rule / analytic_rule / sigma_rule / yara_rule / ml_model / ueba_model / vendor_model / security_control_analytic |
+| `version` | text | integration-derived | AVAILABLE | Analytic version |
+| `state` | enum | system-tracked | AVAILABLE | active / deprecated / testing. Commander-owned lifecycle. |
+| `falsePositiveRate` | integer (0-100) | system-calculated | AVAILABLE | Commander-tracked. Optional — populated where source provides or Commander measures. |
+| `attacks` | JSONB (bounded ≤20) | system-calculated | AVAILABLE | ATT&CK bindings for this analytic. Optional. |
+| `sourceConnectorId` / `sourceImportRunId` / `sourceSystem` / `sourceTimestamp` | text / timestamptz | system-tracked | AVAILABLE | Source provenance |
+| `createdAt` / `updatedAt` | timestamptz | system-calculated | AVAILABLE | Record timestamps |
+
+**Reference shape (AnalyticRef):** Risk Object and Verdict reference Analytic by `(analyticId, analyticType)` — lightweight key pair only; full metadata lives in this table.
+
+**Indexes:** Deduplication unique index (tenant_id + analytic_id); type filter index; state filter index; tenant scope index.
+
+**Contract:** `packages/contracts/src/entities/analytic.ts`
+**DB Schema:** `packages/db/src/schema/analytics.ts`
+**Fixture:** `packages/contracts/src/fixtures/seed-analytics.ts` (8 seed analytics, all 8 types covered)
+**Migration:** `packages/db/drizzle/0007_analytic_entity_coim_e.sql`
+**Test:** `tests/coim-e-analytic-entity/coim-e-analytic.test.ts` (41 assertions)
+
+**DB Schema Reconciliation:** ✅ Contract and schema aligned. Separate reference table with deduplication. ARCH-DEBT-042 RESOLVED.
 
 ### Asset / Identity — COIM augmentation (FUTURE — blocker: COIM-F)
 

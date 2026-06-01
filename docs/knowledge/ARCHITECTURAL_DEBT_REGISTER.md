@@ -876,12 +876,13 @@ Authority: `.kiro/steering/feature-function-backlog.md` (extended in this update
 - **Scope of fix:** Create Analytic under build unit **COIM-E** (analyticId, analyticName, analyticType, version, state, falsePositiveRate, attacks[]). Referenced from Risk Object/Verdict by analyticId + analyticType; full metadata in separate table (deduplication). Additive. Update DATA_DICTIONARY.md.
 - **Affected specs / artifacts:** `packages/contracts/src/entities/analytic.ts` (new); `packages/db/src/schema/analytics.ts` (new); `docs/knowledge/DATA_DICTIONARY.md` (new entity); COIM-E unit in `REBASELINED_BUILD_SEQUENCE.md`
 - **Scheduled resolution:** COIM-E (NEXT tier)
-- **Status:** OPEN
+- **Status:** RESOLVED
 - **Date logged:** 2026-06-01
-- **Last reviewed:** 2026-06-01
+- **Last reviewed:** 2026-06-02
 
 **History**
 - 2026-06-01: OPEN — registered under COIM/OCSF NOW-tier governance registration (owner-authorised). Resolution unit: COIM-E.
+- 2026-06-02: RESOLVED — Analytic entity delivered by COIM-E. Contract at `packages/contracts/src/entities/analytic.ts` (8-type enum, 3-state enum, validateAnalytic, AnalyticRef); DB schema at `packages/db/src/schema/analytics.ts` (deduplication unique index on tenant+analyticId, type/state filter indexes); fixture at `packages/contracts/src/fixtures/seed-analytics.ts` (8 analytics covering all types and all states); migration `0007_analytic_entity_coim_e.sql` (additive only); vitest 41/41 COIM-E tests pass (0 regressions); DATA_DICTIONARY.md updated; ARCH-DEBT-042 RESOLVED.
 
 ---
 

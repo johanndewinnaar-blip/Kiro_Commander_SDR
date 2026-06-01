@@ -101,3 +101,18 @@ export {
   MIN_REPUTATION,
   validateObservable,
 } from './observable';
+export type {
+  Analytic,
+  AnalyticType,
+  AnalyticState,
+  AnalyticRef,
+  AnalyticValidation,
+} from './analytic';
+export {
+  ANALYTIC_TYPES,
+  ANALYTIC_STATES,
+  MAX_FALSE_POSITIVE_RATE,
+  MIN_FALSE_POSITIVE_RATE,
+  MAX_ANALYTIC_ATTACK_BINDINGS,
+  validateAnalytic,
+} from './analytic';
