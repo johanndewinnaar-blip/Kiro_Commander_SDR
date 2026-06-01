@@ -69,13 +69,13 @@ A unit is **READY** iff every dependency unit is **DONE** and every mapped chain
 
 Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readiness State Machine above.
 
-**READY (4):** Unit 14 (Intelligence Layer — Four Streams), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors), **COIM-A** (Risk Object Source Classification + Timeline Augmentation).
+**READY (10):** Unit 14 (Intelligence Layer — Four Streams), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors), and COIM units **COIM-B, COIM-C, COIM-D, COIM-E, COIM-F, COIM-G, COIM-H** (recomputed READY on COIM-A completion).
 
-**DONE (14):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13.
+**DONE (15):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13, **COIM-A**.
 
-**BLOCKED (43):** Units 15–21, 23–37, 39–49 (numbered units, except 14, 22, 38); plus COIM-B … COIM-H (blocked by COIM-A). All 27 Team 2 numbered units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006. COIM units are Foundational and NOT ARCH-006-gated.
+**BLOCKED (42):** Units 15–21, 23–37, 39–49 (numbered units, except 14, 22, 38). All 27 Team 2 numbered units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006. COIM units are Foundational and NOT ARCH-006-gated; none remain BLOCKED.
 
-> **COIM / OCSF remediation units (COIM-A … COIM-H):** added 2026-06-01 under owner-authorised governance registration for `DEC-coim-ocsf-source-classification-architecture`. Full definitions and the COIM Live Status Snapshot are in the **"COIM / OCSF Remediation Units"** section below (after Unit 49). COIM-A is READY now; COIM-B…H recompute to READY on COIM-A completion. Tier mapping: COIM-A = NOW, COIM-B/C/D/E/F/G = NEXT, COIM-H = LATER.
+> **COIM / OCSF remediation units (COIM-A … COIM-H):** added 2026-06-01 under owner-authorised governance registration for `DEC-coim-ocsf-source-classification-architecture`. **COIM-A is DONE (NOW tier complete)**; COIM-B…COIM-H recomputed to READY. Full definitions and the COIM Live Status Snapshot are in the **"COIM / OCSF Remediation Units"** section below (after Unit 49). Tier mapping: COIM-A = NOW (DONE), COIM-B/C/D/E/F/G = NEXT, COIM-H = LATER.
 
 | Unit | Tag | Status | Blocked by |
 |---|---|---|---|
@@ -2145,34 +2145,36 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Resolving debt:** COIM-A → ARCH-DEBT-039 (+ ARCH-DEBT-045 Risk Object timeline); COIM-B → ARCH-DEBT-040; COIM-C → ARCH-DEBT-043; COIM-D → ARCH-DEBT-041; COIM-E → ARCH-DEBT-042; COIM-F → ARCH-DEBT-045 (Asset/Identity timeline); COIM-G → ARCH-DEBT-045 (Case dwell time); COIM-H → ARCH-DEBT-044 + ARCH-DEBT-046.
 
-### COIM Live Status Snapshot (computed 2026-06-01)
+### COIM Live Status Snapshot (recomputed 2026-06-01 — post COIM-A)
 
 Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's own resolving debt does not self-block it.
 
-**READY (1):** COIM-A (deps Unit 1 DONE, Unit 5 DONE).
+**DONE (1):** COIM-A (Risk Object Source Classification + Timeline Augmentation — committed).
 
-**BLOCKED (7):** COIM-B … COIM-H — each blocked by COIM-A (COIM spine not yet DONE). They recompute to READY once COIM-A flips DONE and their other dependency units are DONE.
+**READY (7):** COIM-B, COIM-C, COIM-D, COIM-E, COIM-F, COIM-G, COIM-H — all recomputed BLOCKED→READY on COIM-A completion (their sole dependency, COIM-A, is now DONE; other deps Unit 5/Unit 7 are DONE; COIM-H's own creating debt ARCH-DEBT-044 does not self-block it).
 
 | Unit | Tag | Status | Blocked by | Resolves |
 |---|---|---|---|---|
-| COIM-A Risk Object Source Classification + Timeline | Foundational | **READY** | — | ARCH-DEBT-039, 045 (Risk Object) |
-| COIM-B Evidence Entity | Foundational | BLOCKED | COIM-A | ARCH-DEBT-040 |
-| COIM-C Verdict Entity Promotion | Foundational | BLOCKED | COIM-A | ARCH-DEBT-043 |
-| COIM-D Observable Entity | Foundational | BLOCKED | COIM-A | ARCH-DEBT-041 |
-| COIM-E Analytic Entity | Foundational | BLOCKED | COIM-A | ARCH-DEBT-042 |
-| COIM-F Asset / Identity Augmentation | Foundational | BLOCKED | COIM-A | ARCH-DEBT-045 (Asset/Identity) |
-| COIM-G Case Aggregation | Foundational | BLOCKED | COIM-A | ARCH-DEBT-045 (Case dwell time) |
-| COIM-H Action/Sub-Action + D3FEND | Foundational | BLOCKED | COIM-A; ARCH-DEBT-044 (own) | ARCH-DEBT-044, 046 |
+| COIM-A Risk Object Source Classification + Timeline | Foundational | **DONE** | — | ARCH-DEBT-039 ✅; 045 (Risk Object) ✅ partial |
+| COIM-B Evidence Entity | Foundational | **READY** | — | ARCH-DEBT-040 |
+| COIM-C Verdict Entity Promotion | Foundational | **READY** | — | ARCH-DEBT-043 |
+| COIM-D Observable Entity | Foundational | **READY** | — | ARCH-DEBT-041 |
+| COIM-E Analytic Entity | Foundational | **READY** | — | ARCH-DEBT-042 |
+| COIM-F Asset / Identity Augmentation | Foundational | **READY** | — | ARCH-DEBT-045 (Asset/Identity) |
+| COIM-G Case Aggregation | Foundational | **READY** | — | ARCH-DEBT-045 (Case dwell time) |
+| COIM-H Action/Sub-Action + D3FEND | Foundational | **READY** | — | ARCH-DEBT-044, 046 |
 
-> **Tier mapping (owner-authorised plan, 2026-06-01):** COIM-A = **NOW**; COIM-B/C/D/E/F/G = **NEXT**; COIM-H = **LATER**. The state machine enforces this by making COIM-A the sole READY COIM unit; the rest flip READY on COIM-A completion (subject to their own dependency/debt recompute). COIM-H additionally carries its own creating debt (ARCH-DEBT-044) and hosts D3FEND (ARCH-DEBT-046).
+> **Tier mapping (owner-authorised plan, 2026-06-01):** COIM-A = **NOW** (DONE); COIM-B/C/D/E/F/G = **NEXT** (now READY); COIM-H = **LATER** (now READY — owner may still elect to defer per tier plan). The NOW tier is complete. NEXT/LATER units await separate owner build authorisation.
 
 ---
 
 ### Unit COIM-A: Risk Object Source Classification + Timeline Augmentation
 
-**Status:** READY
+**Status:** DONE
 
-**Blocked by:** — (Unit 1 DONE, Unit 5 DONE)
+**Blocked by:** — (complete)
+
+**Verification:** COIM v1.0 §4.1, §4.12; 02_SOURCE_CLASSIFICATION_MODEL §4; Spec #29 (entity authority). Evidence: `SourceClassification` composed object created at `packages/contracts/src/entities/coim.ts` (FindingClass, SourceSeverity, SourceConfidence, SourceProduct, AttackMapping≤20, ObservableRef≤50, `validateSourceClassification`); Risk Object contract augmented additively with `sourceClassification?`, `sourceFindingUid` (in SC), `affectedEntities[]` (singular `affectedEntityId` retained), `firstDetectedAt`/`lastConfirmedAt`/`normalisedAt`; schema augmented additively (migration `0005_risk_object_coim_a.sql` — new `finding_class` enum + nullable `source_classification` jsonb, extracted indexed columns `finding_class`/`severity_id`/`source_finding_uid`, `confidence_score`, `affected_entities` jsonb, three timestamptz columns; **no drops, no changes to existing columns**); all 3 seed risk-object fixtures enriched; new test `tests/coim-a-risk-object-source-classification/coim-a-source-classification.test.ts` (15 assertions) + Unit 7 risk-object tests pass (130/130 in scope); typecheck clean for COIM-A files (pre-existing unrelated tsconfig/UI/rawPayloadRef errors excluded); full suite regressions = 0 attributable to COIM-A (33 pre-existing UI/DS-1.0 failures confirmed present on clean baseline via stash); governance Green (100%, ARCH-005 PASS). Resolves ARCH-DEBT-039; partially resolves ARCH-DEBT-045 (Risk Object portion).
 
 **Purpose:** Augment the Risk Object with COIM source-classification metadata and the multi-timestamp model, as immutable provenance captured at ingestion. This is the COIM spine — the highest-leverage augmentation, feeding case binding, reporting, search, and AI grounding.
 
@@ -2207,9 +2209,9 @@ Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's o
 
 ### Unit COIM-B: Evidence Entity
 
-**Status:** BLOCKED
+**Status:** READY
 
-**Blocked by:** COIM-A
+**Blocked by:** — (COIM-A DONE; Unit 7, Units 11–13 DONE)
 
 **Purpose:** Create Evidence as a first-class entity so closed-loop doctrine (assertion #1) is structurally supported — evidence-driven validation, evidence-gated closure, evidence-triggered reopening. Retro-enriches the already-built validation/closure/reopening engines (Units 11–13) without changing their logic.
 
@@ -2239,9 +2241,9 @@ Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's o
 
 ### Unit COIM-C: Verdict Entity Promotion
 
-**Status:** BLOCKED
+**Status:** READY
 
-**Blocked by:** COIM-A
+**Blocked by:** — (COIM-A DONE; Unit 5 DONE)
 
 **Purpose:** Promote Verdict from an engine-internal `VerdictRecord` type to a canonical entity with durable provenance, preserving existing disposition semantics and severity ordering (Spec #62 unchanged).
 
@@ -2270,9 +2272,9 @@ Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's o
 
 ### Unit COIM-D: Observable Entity
 
-**Status:** BLOCKED
+**Status:** READY
 
-**Blocked by:** COIM-A
+**Blocked by:** — (COIM-A DONE; Unit 5 DONE)
 
 **Purpose:** Create the Observable entity for typed indicator extraction (ip/domain/hash/url/email/certificate/process/file), enabling threat-intel correlation, cross-case matching, and indicator-based search. Feeds Intelligence Layer (Unit 14) and inverse-discovery (Unit 5).
 
@@ -2301,9 +2303,9 @@ Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's o
 
 ### Unit COIM-E: Analytic Entity
 
-**Status:** BLOCKED
+**Status:** READY
 
-**Blocked by:** COIM-A
+**Blocked by:** — (COIM-A DONE; Unit 5 DONE)
 
 **Purpose:** Create the Analytic reference entity (broad concept spanning detection_rule / analytic_rule / sigma_rule / yara_rule / ml_model / ueba_model / vendor_model / security_control_analytic), enabling detection-engineering metrics, false-positive tracking, analytic-to-ATT&CK binding, and model-vs-rule attribution.
 
@@ -2332,9 +2334,9 @@ Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's o
 
 ### Unit COIM-F: Asset / Identity Augmentation
 
-**Status:** BLOCKED
+**Status:** READY
 
-**Blocked by:** COIM-A
+**Blocked by:** — (COIM-A DONE; Unit 5 DONE)
 
 **Purpose:** Augment Asset and Identity with COIM operational-intelligence fields and timeline semantics, additively.
 
@@ -2364,9 +2366,9 @@ Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's o
 
 ### Unit COIM-G: Case Aggregation
 
-**Status:** BLOCKED
+**Status:** READY
 
-**Blocked by:** COIM-A
+**Blocked by:** — (COIM-A DONE; Unit 7 DONE)
 
 **Purpose:** Add computed/cached COIM aggregates to Case from bound Risk Objects, additively. Includes dwell time, blast radius, finding-class breakdown, confidence aggregate, ATT&CK aggregation.
 
@@ -2394,9 +2396,9 @@ Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's o
 
 ### Unit COIM-H: Action/Sub-Action + D3FEND
 
-**Status:** BLOCKED
+**Status:** READY
 
-**Blocked by:** COIM-A; ARCH-DEBT-044 (own creating debt — does not self-block, but entity must be built before D3FEND fields)
+**Blocked by:** — (COIM-A DONE; Unit 7 DONE; own creating debt ARCH-DEBT-044 does not self-block). LATER tier — owner may elect to defer.
 
 **Purpose:** Create the Action/Sub-Action canonical entity and add D3FEND tactic classification on remediation sub-actions. Enables remediation posture analytics, D3FEND coverage measurement, and value reporting. LATER tier.
 
@@ -2502,7 +2504,7 @@ A build unit is complete when:
 ---
 
 **Last Updated:** 2026-06-01  
-**Status:** ACTIVE — readiness state machine. Build only from the READY set (currently Units 14, 22, 38 and COIM-A). Status recomputes on debt-resolution / unit-completion.  
+**Status:** ACTIVE — readiness state machine. Build only from the READY set (currently Units 14, 22, 38 and COIM-B…COIM-H; COIM-A DONE). Status recomputes on debt-resolution / unit-completion.  
 **Enforcement:** ARCH-006 (build-stream sequencing) + ARCH-007 (blocking-debt prerequisite) in `.kiro/testing/conformance-registry.md`, auto-run via post-task-review. "What's next" query defined in `.kiro/steering/execution-discipline.md`.  
 **Authority:** Derived from SYSTEM_KNOWLEDGE_GRAPH.md, DATA_DICTIONARY.md, REBASELINED_BUILD_SCHEDULE_NOTES.md, baseline source. Decision: `DEC-build-readiness-state-machine` (DECISIONS.md).  
 **Sourcing rule:** Never cite the translation layer — all citations from `docs/99_source_archive/baseline_v2_6_2/`

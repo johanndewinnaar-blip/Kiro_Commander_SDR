@@ -819,12 +819,13 @@ Authority: `.kiro/steering/feature-function-backlog.md` (extended in this update
 - **Scope of fix:** Additive contract + schema augmentation under build unit **COIM-A**. Add `sourceClassification` (JSONB, high-frequency fields extracted to indexed columns), `sourceFindingUid`, and pluralised `affectedEntities[]`. Additive-only migration (no drops); preserve Unit 1 tests; update DATA_DICTIONARY.md.
 - **Affected specs / artifacts:** `packages/contracts/src/entities/risk-object.ts`; `packages/db/src/schema/risk-objects.ts`; `docs/knowledge/DATA_DICTIONARY.md` (Risk Object); COIM-A unit in `REBASELINED_BUILD_SEQUENCE.md`
 - **Scheduled resolution:** COIM-A (NOW tier) — code/schema implementation pending separate owner authorisation
-- **Status:** OPEN
+- **Status:** RESOLVED
 - **Date logged:** 2026-06-01
 - **Last reviewed:** 2026-06-01
 
 **History**
 - 2026-06-01: OPEN — registered under COIM/OCSF NOW-tier governance registration (owner-authorised). Resolution unit: COIM-A.
+- 2026-06-01: RESOLVED — COIM-A executed (owner-authorised "EXECUTE COIM-A"). Added `SourceClassification` composed object (`packages/contracts/src/entities/coim.ts`), augmented Risk Object contract with `sourceClassification`, `sourceFindingUid`, `affectedEntities[]` (singular `affectedEntityId` retained for back-compat); augmented schema additively (migration `0005_risk_object_coim_a.sql` — new `finding_class` enum, nullable columns + extracted indexed columns `finding_class`/`severity_id`/`source_finding_uid`, no drops); enriched all 3 seed fixtures; new test suite `coim-a-source-classification.test.ts` (15 assertions) passes; Unit 7 risk-object tests preserved (130/130 in scope); typecheck clean for COIM-A files; governance Green (100%, ARCH-005 PASS).
 
 ---
 
@@ -927,12 +928,13 @@ Authority: `.kiro/steering/feature-function-backlog.md` (extended in this update
 - **Scope of fix:** Add timeline fields under build unit **COIM-A** for Risk Object (`firstDetectedAt`, `normalisedAt` required; `lastConfirmedAt` recommended) and under **COIM-F** for Asset/Identity (`lastConfirmedAt`/`lastAuthenticatedAt` recommended). Indexed timestamp columns; additive. `dwellTimeHours` computed on Case (COIM-G). Update DATA_DICTIONARY.md.
 - **Affected specs / artifacts:** `packages/contracts/src/entities/risk-object.ts`, `asset.ts`, `identity.ts`; corresponding schemas; `docs/knowledge/DATA_DICTIONARY.md`; COIM-A / COIM-F / COIM-G units in `REBASELINED_BUILD_SEQUENCE.md`
 - **Scheduled resolution:** COIM-A (NOW, Risk Object timeline) + COIM-F/COIM-G (NEXT, Asset/Identity/Case)
-- **Status:** OPEN
+- **Status:** OPEN (partially resolved — Risk Object timeline delivered by COIM-A; Asset/Identity/Case timeline pending COIM-F/COIM-G)
 - **Date logged:** 2026-06-01
 - **Last reviewed:** 2026-06-01
 
 **History**
 - 2026-06-01: OPEN — registered under COIM/OCSF NOW-tier governance registration (owner-authorised). Resolution units: COIM-A (Risk Object), COIM-F/COIM-G (Asset/Identity/Case).
+- 2026-06-01: PARTIAL — COIM-A delivered the Risk Object timeline model (`firstDetectedAt`, `lastConfirmedAt`, `normalisedAt`) on contract + schema (migration `0005`) + seed fixtures + tests. Remains OPEN for the Asset/Identity portion (COIM-F) and Case `dwellTimeHours` (COIM-G).
 
 ---
 

@@ -25,6 +25,26 @@ export type { Case, CaseType, CaseTypeExtended, LegacyCaseType, CaseStatus, Lega
 export { CASE_TYPES, LEGACY_STATUS_MAP } from './case';
 export type { RiskObject, RiskObjectType, TreatmentState } from './risk-object';
 export { RISK_OBJECT_TYPES } from './risk-object';
+export type {
+  FindingClass,
+  SourceSeverityLevel,
+  SourceSeverity,
+  SourceConfidenceLevel,
+  SourceConfidence,
+  SourceProduct,
+  AttackMapping,
+  ObservableType,
+  ObservableRef,
+  SourceClassification,
+  SourceClassificationValidation,
+} from './coim';
+export {
+  FINDING_CLASSES,
+  SEVERITY_ID,
+  MAX_ATTACK_BINDINGS,
+  MAX_OBSERVABLES,
+  validateSourceClassification,
+} from './coim';
 export type { LifecycleActor, CaseTransition, TransitionRequest, TransitionResult, CaseTransitionRecord, CaseLifecycleHistory } from './case-lifecycle';
 export { LIFECYCLE_ACTORS, ALLOWED_TRANSITIONS, isTransitionAllowed, getNextStates, getPermittedActors, executeTransition, appendTransitionRecord, getCurrentStatusFromHistory } from './case-lifecycle';
 export type { CaseStrategyBinding, StrategyPolicyRef } from './case-strategy-binding';

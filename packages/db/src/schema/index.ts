@@ -26,6 +26,6 @@ export { identities } from './identities';
 export { cases } from './cases';
 export { connectors, conformanceTierEnum, connectorStateEnum, lastRunStatusEnum } from './connectors';
 export { auditEvents } from './audit-events';
-export { riskObjects, riskObjectTypeEnum, treatmentStateEnum } from './risk-objects';
+export { riskObjects, riskObjectTypeEnum, treatmentStateEnum, findingClassEnum } from './risk-objects';
 export { strategies, strategySurfaceTypeEnum, strategyPolicyStatusEnum } from './strategies';
 export { caseStrategyBindings } from './case-strategy-bindings';

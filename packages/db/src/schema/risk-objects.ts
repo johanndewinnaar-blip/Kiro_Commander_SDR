@@ -8,7 +8,7 @@
  * Data classification: State
  */
 
-import { pgTable, text, timestamp, pgEnum } from 'drizzle-orm/pg-core';
+import { pgTable, text, integer, timestamp, jsonb, pgEnum } from 'drizzle-orm/pg-core';
 import { dataClassificationEnum } from './common';
 import { tenants } from './tenants';
 
@@ -30,6 +30,20 @@ export const treatmentStateEnum = pgEnum('treatment_state', [
   'mitigated',
   'accepted',
   'transferred',
+]);
+
+/**
+ * Finding class enum — COIM-A source-classification (extracted column).
+ * Source: COIM v1.0 §4.1; 02_SOURCE_CLASSIFICATION_MODEL §4.1.
+ */
+export const findingClassEnum = pgEnum('finding_class', [
+  'vulnerability',
+  'detection',
+  'compliance',
+  'incident',
+  'data_security',
+  'iam_analysis',
+  'application_security',
 ]);
 
 export const riskObjects = pgTable('risk_objects', {
@@ -55,6 +69,23 @@ export const riskObjects = pgTable('risk_objects', {
   sourceImportRunId: text('source_import_run_id').notNull(),
   sourceSystem: text('source_system').notNull(),
   sourceTimestamp: timestamp('source_timestamp', { withTimezone: true }).notNull(),
+  // ─── COIM-A augmentation (additive, nullable) ──────────────────────────────
+  // Source: DEC-coim-ocsf-source-classification-architecture; COIM v1.0 §4.1, §4.12.
+  // Immutable source provenance. Resolves ARCH-DEBT-039 + ARCH-DEBT-045 (Risk Object).
+  /** Full immutable source-classification object (JSONB). */
+  sourceClassification: jsonb('source_classification'),
+  /** Extracted high-frequency fields (indexed for filtering). */
+  findingClass: findingClassEnum('finding_class'),
+  severityId: integer('severity_id'),
+  confidenceScore: integer('confidence_score'),
+  /** Source-provided unique finding identifier (deduplication). */
+  sourceFindingUid: text('source_finding_uid'),
+  /** Plural affected entities (singular affected_entity_id retained above). */
+  affectedEntities: jsonb('affected_entities').default('[]'),
+  /** Timeline model — distinct semantics. */
+  firstDetectedAt: timestamp('first_detected_at', { withTimezone: true }),
+  lastConfirmedAt: timestamp('last_confirmed_at', { withTimezone: true }),
+  normalisedAt: timestamp('normalised_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });

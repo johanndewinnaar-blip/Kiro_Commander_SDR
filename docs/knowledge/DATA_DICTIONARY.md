@@ -138,12 +138,12 @@
 
 ### 4. Risk Object
 
-**Source:** Spec #29 Universal Risk Object and Case Binding  
-**Coverage:** Partial (Spec #29 base spec read)  
-**Contract:** `packages/contracts/src/entities/risk-object.ts`  
-**DB Schema:** `packages/db/src/schema/risk-objects.ts` ✅  
-**Fixture:** `packages/contracts/src/fixtures/seed-risk-objects.ts` ✅  
-**Status:** AVAILABLE (fixture exists, db schema created)
+**Source:** Spec #29 Universal Risk Object and Case Binding (base entity); COIM-A source-classification + timeline augmentation per `DECISIONS.md` `DEC-coim-ocsf-source-classification-architecture` (accepted COIM artefacts at `docs/knowledge/ocsf_assessment/`, OCSF as schema-engineering reference only)  
+**Coverage:** Partial (Spec #29 base spec read; COIM v1.0 §4 + `02_SOURCE_CLASSIFICATION_MODEL.md` §4–§5 accepted)  
+**Contract:** `packages/contracts/src/entities/risk-object.ts` + `packages/contracts/src/entities/coim.ts`  
+**DB Schema:** `packages/db/src/schema/risk-objects.ts` ✅ (migration `0005_risk_object_coim_a.sql`)  
+**Fixture:** `packages/contracts/src/fixtures/seed-risk-objects.ts` ✅ (all 3 seed objects populate `sourceClassification`)  
+**Status:** AVAILABLE (fixture exists, db schema created, COIM-A delivered)
 
 | Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
 |-------|------|----------------------|--------------|---------------------|-------|
@@ -158,10 +158,21 @@
 | `treatmentState` | TreatmentState | seeded | AVAILABLE | — | open, mitigated, accepted, transferred |
 | `expiryOrReviewTrigger` | string | seeded | AVAILABLE | — | Expiry or review trigger condition |
 | `source` | SourceMetadata | seeded | AVAILABLE | — | Provenance. Contract↔schema aligned per Spec #05 §11.3 (rawPayloadRef removed). |
+| `sourceClassification` | SourceClassification (JSONB) | integration-derived (immutable); seeded in fixtures | AVAILABLE | — | COIM-A composed object (`coim.ts`). Immutable source provenance: findingClass, sourceSeverity, sourceConfidence, sourceProduct, sourceFindingUid, sourceActivity, attacks[]≤20, observables[]≤50. Optional at type level for back-compat; populated by normalisation at ingestion. Informs but never governs lifecycle/priority/routing/closure. |
+| `sourceClassification.findingClass` (extracted) | FindingClass enum | integration-derived; seeded | AVAILABLE | — | vulnerability/detection/compliance/incident/data_security/iam_analysis/application_security — indexed column `finding_class` |
+| `sourceClassification.severityId` (extracted) | integer (1-5) | integration-derived; seeded | AVAILABLE | — | indexed column `severity_id` |
+| `sourceClassification.confidenceScore` (extracted) | integer (0-100) | integration-derived; seeded | AVAILABLE | — | column `confidence_score` |
+| `sourceFindingUid` (extracted) | string | integration-derived; seeded | AVAILABLE | — | source-system finding ID for deduplication; indexed column `source_finding_uid` |
+| `affectedEntities` | string[] (JSONB) | system-calculated; seeded | AVAILABLE | — | COIM-aligned plural form; singular `affectedEntityId` retained above for back-compat |
+| `firstDetectedAt` | string (ISO 8601) / timestamptz | integration-derived (source); seeded | AVAILABLE | — | Timeline model (COIM-A); resolves ARCH-DEBT-045 (Risk Object portion) |
+| `lastConfirmedAt` | string (ISO 8601) / timestamptz | integration-derived (source); seeded | AVAILABLE | — | Timeline model (COIM-A); resolves ARCH-DEBT-045 (Risk Object portion) |
+| `normalisedAt` | string (ISO 8601) / timestamptz | system-calculated; seeded | AVAILABLE | — | Timeline model (COIM-A); resolves ARCH-DEBT-045 (Risk Object portion) |
 | `createdAt` | string (ISO 8601) | system-calculated | AVAILABLE | — | Record creation timestamp |
 | `updatedAt` | string (ISO 8601) | system-calculated | AVAILABLE | — | Record update timestamp |
 
-**DB Schema Reconciliation:** ✅ Contract and schema aligned. DB schema flattens `tenant` to `tenantId` reference and `source` to individual columns (standard pattern).
+**COIM-A composed objects** (`packages/contracts/src/entities/coim.ts`, consumed by Risk Object — not standalone canonical entities, no own table): `FindingClass`, `SourceSeverityLevel`/`SourceSeverity` (+ `SEVERITY_ID` 1-5), `SourceConfidenceLevel`/`SourceConfidence` (score 0-100), `SourceProduct` (vendor/name/version/uid/connectorClass), `AttackMapping` (tactic/technique/subTechnique/version, max `MAX_ATTACK_BINDINGS`=20), `ObservableType`/`ObservableRef` (max `MAX_OBSERVABLES`=50), `SourceClassification`, and validation helper `validateSourceClassification()` → `SourceClassificationValidation` (structural provenance-shape validation only; does NOT participate in governance/lifecycle/priority/routing). OCSF is a schema-engineering reference only (finding_info, attack, observable, product, severity_id, confidence_id) — NOT Commander authority. Source: `DEC-coim-ocsf-source-classification-architecture`; `02_SOURCE_CLASSIFICATION_MODEL.md` §4–§5; COIM v1.0 §4.
+
+**DB Schema Reconciliation:** ✅ Contract and schema aligned. DB schema flattens `tenant` to `tenantId` reference and `source` to individual columns (standard pattern). COIM-A adds `sourceClassification` JSONB + extracted indexed columns (`finding_class` enum, `severity_id`, `confidence_score`, `source_finding_uid`), `affected_entities` JSONB, and `first_detected_at`/`last_confirmed_at`/`normalised_at` timestamptz columns (migration `0005_risk_object_coim_a.sql`). Resolves ARCH-DEBT-039; ARCH-DEBT-045 (Risk Object portion).
 
 ---
 
@@ -399,13 +410,16 @@ These are code-conformance debt items (contract field removed, test fixtures not
 1. Asset ✅
 2. Case ✅
 3. Identity ✅
-4. Risk Object ✅
+4. Risk Object ✅ (incl. COIM-A source-classification + timeline augmentation)
 5. Connector ✅
 6. Strategy Policy ✅
 7. Audit Event ✅
 8. Case Lifecycle (state machine) ✅
 9. Case Strategy Binding ✅
 10. Common Fields ✅
+
+**Composed-object modules (catalogued under their consuming entity, no own table):**
+- `coim.ts` — COIM-A source-classification composed objects (FindingClass, SourceSeverity, SourceConfidence, SourceProduct, AttackMapping, ObservableRef, SourceClassification + `validateSourceClassification`). Catalogued under Risk Object (§4). Satisfies the completeness gate for `packages/contracts/src/entities/coim.ts`.
 
 ### Fixtures Found: 9
 
@@ -469,19 +483,9 @@ None.
 >
 > **Availability:** All items below are **FUTURE**. Blocker = the named COIM build unit. No code or schema exists yet (no application code authorised in this registration).
 
-### Risk Object — COIM augmentation (FUTURE — blocker: COIM-A)
+### Risk Object — COIM augmentation (AVAILABLE — delivered by COIM-A)
 
-| Planned Field | Type | Source Classification | Availability | Blocker | Notes |
-|-------|------|----------------------|--------------|---------|-------|
-| `sourceClassification` | JSONB | integration-derived (immutable) | FUTURE | COIM-A | findingClass, sourceSeverity, sourceConfidence, sourceProduct, sourceFindingUid, sourceActivity, attacks[]≤20, observables[]≤50 |
-| `sourceClassification.findingClass` (extracted) | enum | integration-derived | FUTURE | COIM-A | vulnerability/detection/compliance/incident/data_security/iam_analysis/application_security — indexed column |
-| `sourceClassification.severityId` (extracted) | int (1-5) | integration-derived | FUTURE | COIM-A | indexed column |
-| `sourceClassification.confidenceScore` (extracted) | int (0-100) | integration-derived | FUTURE | COIM-A | indexed column |
-| `sourceFindingUid` | string | integration-derived | FUTURE | COIM-A | source-system finding ID; indexed for dedup |
-| `affectedEntities[]` | string[] | system-calculated | FUTURE | COIM-A | plural; retains singular `affectedEntityId` for back-compat |
-| `firstDetectedAt` | timestamptz | integration-derived (source) | FUTURE | COIM-A | required (ARCH-DEBT-045) |
-| `lastConfirmedAt` | timestamptz | integration-derived (source) | FUTURE | COIM-A | recommended (ARCH-DEBT-045) |
-| `normalisedAt` | timestamptz | system-calculated | FUTURE | COIM-A | required (ARCH-DEBT-045) |
+> **Delivered 2026-06-01 by build unit COIM-A.** Placeholder retired per maintenance rule (a COIM unit's planning placeholder is replaced by its mechanically-derived entry once the unit lands). The COIM-A source-classification and timeline fields are now catalogued in the mechanically-derived **Risk Object** entry (§4 above) — see `sourceClassification`, extracted columns (`finding_class`/`severity_id`/`confidence_score`/`source_finding_uid`), `affectedEntities[]`, and `firstDetectedAt`/`lastConfirmedAt`/`normalisedAt`, plus the COIM-A composed-objects note. Contract: `risk-object.ts` + `coim.ts`. Schema: `risk-objects.ts` (migration `0005_risk_object_coim_a.sql`). Fixture: all 3 seed risk objects populated. Resolves ARCH-DEBT-039; partially resolves ARCH-DEBT-045 (Risk Object portion).
 
 ### Evidence (NEW ENTITY — FUTURE — blocker: COIM-B)
 
@@ -569,5 +573,5 @@ None.
 
 ---
 
-**Last Updated:** 2026-06-01 (COIM/OCSF NOW-tier governance registration: added COIM/OCSF Planned Entities & Fields FUTURE section — Risk Object augmentation, Evidence, Verdict, Observable, Analytic, Asset/Identity, Case aggregation, Action/Sub-Action+D3FEND; blockers COIM-A…COIM-H. Manual planning placeholders only — no contract/schema yet.)  
+**Last Updated:** 2026-06-01 (COIM-A executed: Risk Object Source Classification + Timeline Augmentation — contract + schema (migration 0005) + fixtures + tests; Risk Object COIM fields now AVAILABLE; ARCH-DEBT-039 RESOLVED, ARCH-DEBT-045 partial. Remaining COIM planned entities/fields stay FUTURE pending COIM-B…H.)  
 **Snapshot Commit:** (to be recorded after commit)
