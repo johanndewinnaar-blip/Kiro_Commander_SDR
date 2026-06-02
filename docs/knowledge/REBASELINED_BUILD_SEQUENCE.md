@@ -69,11 +69,11 @@ A unit is **READY** iff every dependency unit is **DONE** and every mapped chain
 
 Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readiness State Machine above.
 
-**READY (4):** Unit 14 (Intelligence Layer — Four Streams), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors), and COIM unit **COIM-H**.
+**READY (7):** Unit 15 (OODA Layer), Unit 18 (Identity Intelligence Surface), Unit 19 (Asset Intelligence Surface), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors), Unit 40 (Commander AI Core), and COIM unit **COIM-H**.
 
-**DONE (21):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13, **COIM-A, COIM-B, COIM-C, COIM-D, COIM-E, COIM-F, COIM-G**.
+**DONE (22):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13, Unit 14, **COIM-A, COIM-B, COIM-C, COIM-D, COIM-E, COIM-F, COIM-G**.
 
-**BLOCKED (42):** Units 15–21, 23–37, 39–49 (numbered units, except 14, 22, 38). All 27 Team 2 numbered units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006. COIM units are Foundational and NOT ARCH-006-gated; none remain BLOCKED.
+**BLOCKED (38):** Units 15–21 (except 15, 18, 19), 23–37, 39–49 (numbered units, except 22, 38, 40). All 27 Team 2 numbered units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006. COIM units are Foundational and NOT ARCH-006-gated; none remain BLOCKED.
 
 > **COIM / OCSF remediation units (COIM-A … COIM-H):** added 2026-06-01 under owner-authorised governance registration for `DEC-coim-ocsf-source-classification-architecture`. **COIM-A/B/C/D/E/F/G are DONE**; COIM-H remains READY. Full definitions and the COIM Live Status Snapshot are in the **"COIM / OCSF Remediation Units"** section below (after Unit 49). Tier mapping: COIM-A = NOW (DONE), COIM-B/C/D/E/F/G = NEXT (DONE), COIM-H = LATER (READY).
 
@@ -93,12 +93,12 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 | 11 Validation Lifecycle Engine | Foundational | **DONE** | — |
 | 12 Closure Gate Engine | Foundational | **DONE** | — |
 | 13 Reopening Trigger Engine | Foundational | **DONE** | — |
-| 14 Intelligence Layer — Four Streams | Foundational | **READY** | — |
-| 15 OODA Layer | Foundational | BLOCKED | Unit 14; Units 8–13 |
+| 14 Intelligence Layer — Four Streams | Foundational | **DONE** | — |
+| 15 OODA Layer | Foundational | **READY** | — |
 | 16 Command Centre | Foundational | BLOCKED | Unit 15; Unit 14; Units 8–13 |
 | 17 Case Management UI | Foundational | BLOCKED | Units 8–13; Unit 16 |
-| 18 Identity Intelligence Surface | Foundational | BLOCKED | Unit 14 |
-| 19 Asset Intelligence Surface | Foundational | BLOCKED | Unit 14 |
+| 18 Identity Intelligence Surface | Foundational | **READY** | — |
+| 19 Asset Intelligence Surface | Foundational | **READY** | — |
 | 20 External Operating Picture | Foundational | BLOCKED | Unit 14; Unit 16 |
 | 21 Internal Operating Picture | Foundational | BLOCKED | Unit 14; Unit 16 |
 | 22 Tenant Admin Surface | Foundational | **READY** | — |
@@ -119,7 +119,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 | 37 Security C2 / War Room | Team 2 | BLOCKED | ARCH-006; Unit 15; Unit 14; Units 7–13 |
 | 38 Mock Connectors | Foundational | **READY** | — |
 | 39 Real Connector Readiness | Team 2 | BLOCKED | ARCH-006; Unit 4; Unit 38 |
-| 40 Commander AI Core | Foundational | BLOCKED | Units 7–13; Unit 14 |
+| 40 Commander AI Core | Foundational | **READY** | — |
 | 41 AWS Alignment — Evaluation Lane | Team 2 | BLOCKED | ARCH-006; Unit 40; ARCH-DEBT-034 (needs re-sourcing) |
 | 42 Push Governance — Dry-Run | Team 2 | BLOCKED | ARCH-006; Units 7–13; Unit 6 |
 | 43 Audit Trail | Foundational | BLOCKED | Units 7–13; Unit 6; ARCH-DEBT-035 (needs re-sourcing) |
@@ -722,9 +722,11 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ### Unit 14: Intelligence Layer — Four Streams Integration
 
-**Status:** BLOCKED
+**Status:** DONE
 
-**Blocked by:** Unit 5 (Normalisation Layer)
+**Blocked by:** — (complete)
+
+**Verification:** Spec #59 Intelligence Layer Architecture from `docs/99_source_archive/baseline_v2_6_2/docs/02_child_specs/59_Intelligence_Layer_Architecture_Spec.md`. Evidence: vitest 45/45 intelligence-layer tests pass (150/150 across Unit 14 + dependency suites, 0 new regressions); four intelligence streams (external_threat, external_attack, internal_behavioural, posture) mapped 1:1 to connector classes (D, A, B, C); Estate Intelligence Picture composition (always 4 stream summaries, distinct entity count, unbound signal tracking, freshness tracking); six cross-stream correlations (Pre-Warned/Protected/Novel classification, Verdict Disagreement detection, Inverse Discovery evaluation, Behavioural Anomaly detection with configurable sensitivity, Threat Relevance Scoring with estate-match + KEV + exposure scoring, Silent Defence Aggregation); pure functions with no hardcoded thresholds; Doctrinal Assertions 9/10/11 enforced (exactly 4 streams, surface attribution preserved, connector classes A/B/C/D only); engine code at `packages/contracts/src/engines/intelligence-layer.ts`; governance Green (100%).
 
 **Purpose:** Build Intelligence Layer integrating four streams (External Threat, External Attack, Internal Behavioural, Posture) into Estate Intelligence Picture
 
@@ -765,9 +767,9 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ### Unit 15: OODA Layer — Programme-Level OODA Tempo
 
-**Status:** BLOCKED
+**Status:** READY
 
-**Blocked by:** Unit 14 (Intelligence Layer — EIP); Units 7–13 (Case Layer)
+**Blocked by:** — (Unit 14 DONE; Units 7–13 DONE — recomputed 2026-06-02 per recompute-on-resolution rule)
 
 **Purpose:** Build OODA Layer with four-phase tempo (Observe, Orient, Decide, Act) and phase health metrics
 
@@ -2512,7 +2514,7 @@ A build unit is complete when:
 ---
 
 **Last Updated:** 2026-06-01  
-**Status:** ACTIVE — readiness state machine. Build only from the READY set (currently Units 14, 22, 38 and COIM-H; COIM-A…COIM-G DONE). Status recomputes on debt-resolution / unit-completion.  
+**Status:** ACTIVE — readiness state machine. Build only from the READY set (currently Units 15, 18, 19, 22, 38, 40 and COIM-H; Units 0–14 + COIM-A…COIM-G DONE). Status recomputes on debt-resolution / unit-completion.  
 **Enforcement:** ARCH-006 (build-stream sequencing) + ARCH-007 (blocking-debt prerequisite) in `.kiro/testing/conformance-registry.md`, auto-run via post-task-review. "What's next" query defined in `.kiro/steering/execution-discipline.md`.  
 **Authority:** Derived from SYSTEM_KNOWLEDGE_GRAPH.md, DATA_DICTIONARY.md, REBASELINED_BUILD_SCHEDULE_NOTES.md, baseline source. Decision: `DEC-build-readiness-state-machine` (DECISIONS.md).  
 **Sourcing rule:** Never cite the translation layer — all citations from `docs/99_source_archive/baseline_v2_6_2/`

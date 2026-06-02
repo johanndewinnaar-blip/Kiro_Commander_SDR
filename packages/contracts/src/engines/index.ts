@@ -135,3 +135,39 @@ export {
   routeInverseDiscovery,
   assignSurfaceAttribution,
 } from './normalisation-layer';
+
+// Unit 14: Intelligence Layer (Four Streams + Estate Intelligence Picture)
+export type {
+  IntelligenceStream,
+  StreamSignal,
+  StreamSummary,
+  EstateIntelligencePicture,
+  PreWarnedClassification,
+  PriorPostureKnowledge,
+  PreWarnedResult,
+  ToolVerdict,
+  VerdictDisagreementResult,
+  InverseDiscoveryRootCause,
+  InverseDiscoveryFinding,
+  BehaviouralProfile,
+  BehaviouralAnomalyResult,
+  ThreatRelevanceInput,
+  ThreatRelevanceResult,
+  DefensiveAction,
+  SilentDefenceAggregate,
+} from './intelligence-layer';
+export {
+  INTELLIGENCE_STREAMS,
+  STREAM_LABELS,
+  CLASS_TO_STREAM,
+  STREAM_SURFACE_AFFINITY,
+  resolveStreamForClass,
+  routeClassesToStreams,
+  composeEstateIntelligencePicture,
+  classifyPreWarned,
+  detectVerdictDisagreement,
+  evaluateInverseDiscovery,
+  detectBehaviouralAnomaly,
+  scoreThreatRelevance,
+  aggregateSilentDefence,
+} from './intelligence-layer';
