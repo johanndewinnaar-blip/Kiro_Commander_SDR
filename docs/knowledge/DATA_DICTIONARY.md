@@ -514,6 +514,60 @@
 
 ---
 
+---
+
+### 14. Analytic
+
+**Source:** COIM v1.0 §4.8; 03_REUSABLE_OBJECT_CATALOGUE.md §2.7  
+**Coverage:** provisional (COIM v1.0 §4.8; 03_REUSABLE_OBJECT_CATALOGUE.md §2.7 — source partially read)  
+**Contract:** `packages/contracts/src/entities/analytic.ts`  
+**DB Schema:** `packages/db/src/schema/analytics.ts` ✅  
+**Migration:** `packages/db/drizzle/0007_analytic_entity_coim_e.sql` ✅  
+**Fixture:** `packages/contracts/src/fixtures/seed-analytics.ts` ✅ (8 seed analytics — all 8 analytic types covered)  
+**Test:** `tests/coim-e-analytic-entity/coim-e-analytic.test.ts` ✅  
+**Status:** AVAILABLE (fixture exists, DB schema created, COIM-E delivered)  
+**Build unit:** COIM-E (Analytic Entity). Resolves ARCH-DEBT-042.  
+**Doctrine:** Analytic is the broad reusable COIM concept spanning detection rules, ML models, UEBA models, vendor models, Sigma rules, YARA rules, and security control analytics. Enables detection-engineering metrics, false-positive tracking, analytic-to-ATT&CK binding, and model-vs-rule attribution. Source-owned fields are immutable after write; Commander-owned fields (state, falsePositiveRate, attacks[]) are mutable. OCSF is a schema-engineering reference only (analytic.json type_id enum informs AnalyticType taxonomy) — NOT Commander authority.
+
+| Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
+|-------|------|----------------------|--------------|---------------------|-------|
+| `id` | string | system-calculated | AVAILABLE | — | Deterministic ID (from CommonFields) |
+| `entityType` | `'analytic'` | system-calculated | AVAILABLE | — | Discriminator |
+| `tenant` | TenantContext | seeded | AVAILABLE | — | Tenant scope (tenantId, tenantName) |
+| `analyticId` | string / text | integration-derived; seeded in fixtures | AVAILABLE | — | Source-provided or Commander-generated unique identifier. Deduplicated per tenant (unique index: tenant_id + analytic_id). Source-owned (immutable after write). |
+| `analyticName` | string / text | integration-derived; seeded in fixtures | AVAILABLE | — | Human-readable analytic name. Source-owned (immutable after write). |
+| `analyticType` | AnalyticType (enum) | integration-derived; seeded in fixtures | AVAILABLE | — | 8 types: detection_rule, analytic_rule, sigma_rule, yara_rule, ml_model, ueba_model, vendor_model, security_control_analytic. OCSF-informed taxonomy. Source-owned (immutable after write). |
+| `version` | string / text | integration-derived; seeded in fixtures | AVAILABLE | — | Analytic version (semantic versioning recommended). Source-owned (immutable after write). |
+| `state` | AnalyticState (enum) | system-tracked; seeded in fixtures | AVAILABLE | — | 3 states: active, deprecated, testing. Commander-owned (mutable). DB default: active. |
+| `falsePositiveRate` | number (0-100) / integer | system-tracked; seeded in fixtures | AVAILABLE | — | Optional. Commander-owned (mutable). Populated where source provides or Commander measures. Range 0-100 enforced by validateAnalytic(). Seeded with real values for 6 of 8 fixtures; undefined for 2 (vendor_model, security_control_analytic — unscored at ingestion). |
+| `attacks` | AttackMapping[] (JSONB, bounded ≤20) | integration-derived; seeded in fixtures | AVAILABLE | — | Optional. ATT&CK bindings for this analytic. Commander-owned (mutable). Bounded by MAX_ANALYTIC_ATTACK_BINDINGS=20. Seeded for 5 of 8 fixtures; undefined for 3. |
+| `source.connectorId` | string / text | seeded | AVAILABLE | — | Connector that produced this record |
+| `source.importRunId` | string / text | seeded | AVAILABLE | — | Import run identifier |
+| `source.sourceSystem` | string / text | seeded | AVAILABLE | — | Source system identifier |
+| `source.sourceTimestamp` | string (ISO 8601) / timestamptz | seeded | AVAILABLE | — | Timestamp of source extraction |
+| `createdAt` | string (ISO 8601) / timestamptz | system-calculated | AVAILABLE | — | Record creation timestamp |
+| `updatedAt` | string (ISO 8601) / timestamptz | system-calculated | AVAILABLE | — | Record update timestamp |
+
+**Ownership model:**
+- Source-owned (immutable after write): analyticId, analyticName, analyticType, version
+- Commander-owned (mutable): state, falsePositiveRate, attacks[]
+
+**Reference shape (AnalyticRef):** Risk Object and Verdict reference Analytic by the lightweight key pair `(analyticId, analyticType)` only. Full metadata lives in the Analytic reference table. Shape: `{ analyticId: string; analyticType: AnalyticType }`.
+
+**Validation:** `validateAnalytic()` in `analytic.ts` — structural correctness checking (non-empty required fields, analyticType validity, state validity, falsePositiveRate 0-100 range, attacks[] max-20 bound). No engine-logic dependency.
+
+**Indexes:**
+- Deduplication unique index: `tenant_id` + `analytic_id`
+- Type filter index: `analytic_type`
+- State filter index: `state`
+- Tenant scope index: `tenant_id`
+
+**DB Schema Reconciliation:** ✅ Contract and schema aligned. DB schema flattens `tenant` to `tenantId` reference (FK → tenants.id) and `source` to individual columns (`source_connector_id`, `source_import_run_id`, `source_system`, `source_timestamp`) — standard pattern. `attacks` stored as JSONB (bounded). Enum columns: `analytic_type` (8 values), `analytic_state` (3 values). Additional DB-only column: `data_classification` (default 'configuration'). No divergences.
+
+**Resolvers:** None. No analytic-specific resolver in `packages/contracts/src/resolvers/`. `state`, `falsePositiveRate`, and `attacks[]` are directly written Commander-owned fields requiring no computed resolver. `validateAnalytic()` is a structural validator, not a resolver.
+
+---
+
 **Authority citation (updated 2026-05-31):** `SourceMetadata` interface doc comment now cites both `v1.3 Req 12` and `Spec #05 §11.3` (previously only `v1.3 Req 12`).
 
 **Stale test reference (flagged 2026-05-31):** Two test files still reference `rawPayloadRef` in source objects — these are stale after the contract removal:
@@ -541,6 +595,8 @@ These are code-conformance debt items (contract field removed, test fixtures not
 | `EvidenceSource` | connector, analyst, system | COIM v1.0 §4.4 |
 | `FreshnessStatus` | fresh, aging, stale, expired | COIM v1.0 §4.4; 04_EVIDENCE_MODEL.md (strategy-driven thresholds) |
 | `ObservableType` | ip, domain, hash, url, email, certificate, process, file | COIM v1.0 §4.5; OCSF observable.json type_id taxonomy |
+| `AnalyticType` | detection_rule, analytic_rule, sigma_rule, yara_rule, ml_model, ueba_model, vendor_model, security_control_analytic | COIM v1.0 §4.8; OCSF analytic.json type_id (Rule/Behavioral/Statistical/ML) + Commander extensions (sigma_rule, yara_rule, ueba_model, security_control_analytic) |
+| `AnalyticState` | active, deprecated, testing | COIM v1.0 §4.8; Commander-owned lifecycle tracking |
 
 ---
 
@@ -548,7 +604,7 @@ These are code-conformance debt items (contract field removed, test fixtures not
 
 **Purpose:** Complete surfacing of the data layer built to date. Existing work is explicitly accounted for, not silently assumed complete.
 
-### Entities Catalogued: 13
+### Entities Catalogued: 14
 
 1. Asset ✅
 2. Case ✅
@@ -563,11 +619,12 @@ These are code-conformance debt items (contract field removed, test fixtures not
 11. Evidence ✅ (COIM-B — evidence entity)
 12. Verdict ✅ (COIM-C — verdict entity promotion)
 13. Observable ✅ (COIM-D — observable entity)
+14. Analytic ✅ (COIM-E — analytic entity)
 
 **Composed-object modules (catalogued under their consuming entity, no own table):**
 - `coim.ts` — COIM-A source-classification composed objects (FindingClass, SourceSeverity, SourceConfidence, SourceProduct, AttackMapping, ObservableRef, SourceClassification + `validateSourceClassification`). Catalogued under Risk Object (§4). Also consumed by Verdict entity (§12) for `SourceProduct` type. Satisfies the completeness gate for `packages/contracts/src/entities/coim.ts`.
 
-### Fixtures Found: 12
+### Fixtures Found: 13
 
 1. `seed-assets.ts` ✅
 2. `seed-cases.ts` ✅
@@ -581,6 +638,7 @@ These are code-conformance debt items (contract field removed, test fixtures not
 10. `seed-evidence.ts` ✅
 11. `seed-verdicts.ts` ✅
 12. `seed-observables.ts` ✅
+13. `seed-analytics.ts` ✅
 
 ### Resolvers Found: 12
 
@@ -599,7 +657,7 @@ These are code-conformance debt items (contract field removed, test fixtures not
 
 ### Contract vs DB Schema Reconciliation
 
-**Aligned (13):**
+**Aligned (14):**
 - Asset ✅
 - Case ✅
 - Identity ✅
@@ -613,6 +671,7 @@ These are code-conformance debt items (contract field removed, test fixtures not
 - Evidence ✅
 - Verdict ✅
 - Observable ✅
+- Analytic ✅
 
 **Divergences (0):**
 None.
@@ -624,6 +683,7 @@ None.
 - ARCH-DEBT-030: Risk Object DB schema missing (contract + fixture exist) — ✅ RESOLVED (Unit 1)
 - ARCH-DEBT-031: Strategy Policy DB schema missing (contract + fixture exist) — ✅ RESOLVED (Unit 2)
 - ARCH-DEBT-032: Case Strategy Binding incomplete (contract exists, db schema + fixture missing) — ✅ RESOLVED (Unit 3)
+- ARCH-DEBT-042: Analytic entity absence — ✅ RESOLVED (COIM-E)
 
 ---
 
@@ -723,32 +783,7 @@ None.
 
 ### Analytic (AVAILABLE — delivered by COIM-E)
 
-| Field | Type | Source Classification | Availability | Notes |
-|-------|------|----------------------|--------------|-------|
-| `id` | text (PK) | system-generated | AVAILABLE | Deterministic seed ID |
-| `tenantId` | text (FK → tenants) | system-scoped | AVAILABLE | Tenant scope |
-| `dataClassification` | enum | system-assigned | AVAILABLE | Default: configuration |
-| `analyticId` | text | integration-derived | AVAILABLE | Source-provided or Commander-generated unique ID (deduplicated per tenant) |
-| `analyticName` | text | integration-derived | AVAILABLE | Human-readable analytic name |
-| `analyticType` | enum | integration-derived | AVAILABLE | detection_rule / analytic_rule / sigma_rule / yara_rule / ml_model / ueba_model / vendor_model / security_control_analytic |
-| `version` | text | integration-derived | AVAILABLE | Analytic version |
-| `state` | enum | system-tracked | AVAILABLE | active / deprecated / testing. Commander-owned lifecycle. |
-| `falsePositiveRate` | integer (0-100) | system-calculated | AVAILABLE | Commander-tracked. Optional — populated where source provides or Commander measures. |
-| `attacks` | JSONB (bounded ≤20) | system-calculated | AVAILABLE | ATT&CK bindings for this analytic. Optional. |
-| `sourceConnectorId` / `sourceImportRunId` / `sourceSystem` / `sourceTimestamp` | text / timestamptz | system-tracked | AVAILABLE | Source provenance |
-| `createdAt` / `updatedAt` | timestamptz | system-calculated | AVAILABLE | Record timestamps |
-
-**Reference shape (AnalyticRef):** Risk Object and Verdict reference Analytic by `(analyticId, analyticType)` — lightweight key pair only; full metadata lives in this table.
-
-**Indexes:** Deduplication unique index (tenant_id + analytic_id); type filter index; state filter index; tenant scope index.
-
-**Contract:** `packages/contracts/src/entities/analytic.ts`
-**DB Schema:** `packages/db/src/schema/analytics.ts`
-**Fixture:** `packages/contracts/src/fixtures/seed-analytics.ts` (8 seed analytics, all 8 types covered)
-**Migration:** `packages/db/drizzle/0007_analytic_entity_coim_e.sql`
-**Test:** `tests/coim-e-analytic-entity/coim-e-analytic.test.ts` (41 assertions)
-
-**DB Schema Reconciliation:** ✅ Contract and schema aligned. Separate reference table with deduplication. ARCH-DEBT-042 RESOLVED.
+> **Delivered 2026-06-02 by build unit COIM-E.** Placeholder retired per maintenance rule (a COIM unit's planning placeholder is replaced by its mechanically-derived entry once the unit lands). The Analytic entity is now catalogued in the mechanically-derived **Analytic** entry (§14 above). Contract: `analytic.ts`. Schema: `analytics.ts` (migration `0007_analytic_entity_coim_e.sql`). Fixture: 8 seed analytics (all types covered). Test: `tests/coim-e-analytic-entity/coim-e-analytic.test.ts`. Resolves ARCH-DEBT-042.
 
 ### Asset / Identity — COIM augmentation (AVAILABLE — delivered by COIM-F)
 
@@ -815,5 +850,5 @@ None.
 
 ---
 
-**Last Updated:** 2026-06-01 (COIM-C executed: Verdict Entity Promotion — contract + schema + fixtures (5 seed verdicts) + validateVerdict() structural validator + DISPOSITION_SEVERITY/DISPOSITIONS_BY_SEVERITY constants. Verdict entity now AVAILABLE as entry #12. ARCH-DEBT-043 RESOLVED. Remaining COIM planned entities/fields stay FUTURE pending COIM-D…H.)  
+**Last Updated:** 2026-06-02 (COIM-E executed: Analytic Entity — contract `analytic.ts` + schema `analytics.ts` (migration `0007_analytic_entity_coim_e.sql`) + fixture `seed-analytics.ts` (8 seed analytics, all 8 types) + `validateAnalytic()` structural validator + `AnalyticRef` reference shape. Analytic entity now AVAILABLE as entry #14. ARCH-DEBT-042 RESOLVED. Remaining COIM planned entities/fields stay FUTURE pending COIM-F…H.)  
 **Snapshot Commit:** (to be recorded after commit)
