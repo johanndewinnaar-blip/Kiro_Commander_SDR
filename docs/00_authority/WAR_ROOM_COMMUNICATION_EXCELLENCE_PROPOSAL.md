@@ -67,7 +67,66 @@ The War Room becomes a **first-class entity** in the canonical data model — bu
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-### 2.3 Why Not a Case Type?
+### 2.3 War Room as the Primary Working Surface (Full Case Access)
+
+A critical architectural principle: **the War Room is not a notification dashboard that links out to cases**. It is the **primary working surface** during a P0 event. Bound cases are fully accessible, drillable, and workable from within the War Room — analysts do not leave the War Room to progress their assigned cases.
+
+#### 2.3.1 What "Full Case Access" Means
+
+Every bound case is rendered within the War Room with complete operational capability:
+
+| Case Capability | Available in War Room? | How |
+|---|---|---|
+| View case detail (lifecycle, SLA, owner, routing) | ✅ Yes | Inline case panels within War Room |
+| Progress sub-actions | ✅ Yes | Sub-Action Board directly workable |
+| Add/review evidence | ✅ Yes | Evidence Chain Panel with upload/link |
+| Send case-bound email | ✅ Yes | Communication Panel per case |
+| View/request validation | ✅ Yes | Validation Cadence Panel |
+| View risk objects and COIM data | ✅ Yes | Fusion Map Slice + Evidence Chain |
+| View routing rationale | ✅ Yes | Emergency Routing Panel |
+| View SLA countdown | ✅ Yes | SLA Countdown Rail |
+| Trigger containment/push actions | ✅ Yes | Mitigation Options Panel (via dry-run governance) |
+
+#### 2.3.2 Dual Attribution
+
+When an analyst performs a case action from within the War Room context, the action is recorded in **two places**:
+
+1. **On the case** — the normal case audit trail records the action exactly as if performed from the case detail page
+2. **On the War Room** — the War Room audit timeline records that this action was taken in War Room context, by which member, at which War Room state
+
+This dual attribution means the close-out audit report (§5) can reconstruct exactly which actions were taken during the War Room's lifetime — without the case losing its own independent audit integrity.
+
+#### 2.3.3 Case Queue Relationship
+
+The analyst's case queue **still shows the case assigned to them**. The War Room does not "steal" cases from queues. The relationship is:
+
+```
+Analyst's Case Queue:
+  └─ CASE-2026-0001 (P0) ← still assigned, still tracked, still SLA'd
+
+War Room WR-2026-0001:
+  └─ CASE-2026-0001 (P0) ← same case, elevated context, full access
+  └─ CASE-2026-0042 (P1) ← related case, cross-case visibility
+```
+
+During an active War Room, the analyst's **primary working surface** is the War Room — but the case remains independently addressable. If the analyst navigates to `/cases/CASE-2026-0001` directly, they see normal case detail with a prominent banner: *"This case is part of active War Room WR-2026-0001 — [Go to War Room]"*.
+
+#### 2.3.4 Cross-Case Coordination (What the Overlay Adds Beyond Individual Case Access)
+
+The value of the War Room over simply working cases individually is **cross-case situational awareness**:
+
+| Coordination Capability | Not Available on Individual Case | Available in War Room |
+|---|---|---|
+| See all related P0/P1 cases in one view | ❌ | ✅ |
+| See what OTHER analysts are doing on related cases | ❌ | ✅ |
+| See decisions made across the cluster | ❌ | ✅ (Decision Log) |
+| See Commander AI orientation across all cases | ❌ | ✅ |
+| See combined blast radius / Fusion Map | ❌ | ✅ (unified Fusion Map) |
+| See aggregated communication state (who's been notified, who hasn't responded) | ❌ | ✅ |
+| Handoff context when shift changes | ❌ | ✅ (Handoff Ceremony) |
+| Subscribe to coordinated updates | ❌ | ✅ |
+
+### 2.5 Why Not a Case Type?
 
 A case type represents a discrete risk condition requiring treatment. The War Room is a **coordination mechanism** across one or more cases. Making it a case type would:
 - Conflate coordination with risk treatment
@@ -75,7 +134,7 @@ A case type represents a discrete risk condition requiring treatment. The War Ro
 - Make it subject to routing/prioritisation/SLA engines (War Rooms aren't assigned to analysts)
 - Violate the principle that cases are system-born from risk objects (War Rooms are activated by condition/rule)
 
-### 2.4 War Room Lifecycle (4-State)
+### 2.6 War Room Lifecycle (4-State)
 
 ```
 activated → monitoring → winding_down → closed
@@ -93,7 +152,7 @@ activated → monitoring → winding_down → closed
 - All other transitions: senior owner only (SOC Manager, CISO, Deputy CISO)
 - `closed`: requires close-out report generation + senior approval
 
-### 2.5 War Room Entity Contract
+### 2.7 War Room Entity Contract
 
 ```typescript
 export interface WarRoom extends CommonFields {
