@@ -72,3 +72,20 @@ export type { CorrelationPolicy, CorrelationFinding, CorrelationGroup, Correlati
 
 export { computeEffectivenessMetrics, DEFAULT_EFFECTIVENESS_TARGETS } from './effectiveness-metrics';
 export type { EffectivenessTargets, CaseResolutionRecord, EffectivenessMetrics, ThresholdBreach, EffectivenessResult } from './effectiveness-metrics';
+
+// ─── Communications Excellence Phase 1 ──────────────────────────────────────
+
+export { evaluatePlaybookTrigger, evaluateStepCondition, computeNextStep, advanceExecution } from './playbook-engine';
+export type { PlaybookCaseData, PlaybookConditionContext, NextStepResult, StepResult } from './playbook-engine';
+
+export { computeThreadEffectiveness, computeCaseEffectiveness, aggregateEffectiveness, EFFECTIVENESS_WEIGHTS } from './communication-effectiveness';
+export type { EffectivenessSignals, ThreadEffectivenessResult, CaseEffectivenessResult, EffectivenessAggregation } from './communication-effectiveness';
+
+export { parseStixBundle, mapStixToCommander, scoreRelevance } from './stix-bundle-parser';
+export type { StixObject, StixParseResult, ObservableMapping, IocMapping, AttackPatternMapping, StixMappingResult, EstateAsset, EstateIdentity, RelevanceScoreResult } from './stix-bundle-parser';
+
+export { routeDetonationVerdict } from './detonation-router';
+export type { DetonationRoute, DetonationRoutingResult } from './detonation-router';
+
+export { processPhishingReport } from './phishing-report-pipeline';
+export type { ObservableInventoryEntry, RiskObjectRecommendation, CaseRecommendation, PhishingPipelineResult } from './phishing-report-pipeline';

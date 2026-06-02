@@ -72,6 +72,14 @@ export const seedStrategies: StrategyPolicy[] = [
       approvalRequired: ['case-closure', 'push-governance', 'baseline-change'],
       dryRunOnly: ['push-to-vendor'],
       forbidden: ['manual-case-creation', 'manual-lifecycle-override'],
+      /** Detonation trust source — which verdict source is trusted */
+      detonationTrustSource: 'microsoft_defender',
+      /** Auto-route clean detonation verdicts without analyst review */
+      autoRouteClean: true,
+      /** Auto-route malicious verdicts to risk object creation */
+      autoRouteMalicious: true,
+      /** Suspicious verdicts always require analyst review */
+      suspiciousRequiresAnalyst: true,
     },
     proposedBy: 'System (baseline)',
     proposedAt: '2026-01-10T00:00:00.000Z',
@@ -367,6 +375,10 @@ export const seedStrategies: StrategyPolicy[] = [
       attackChainMinLength: 2,
       /** CVE dedup — treat same CVE across different assets as correlated */
       cveDedupEnabled: true,
+      /** STIX auto-ingest — automatically process inbound STIX bundles */
+      stixBundleAutoIngest: true,
+      /** Minimum confidence for case creation from STIX intelligence */
+      minimumConfidenceForCaseCreation: 0.7,
     },
     proposedBy: 'System (baseline)',
     proposedAt: '2026-01-10T00:00:00.000Z',
@@ -437,6 +449,35 @@ export const seedStrategies: StrategyPolicy[] = [
     proposedBy: 'System (baseline)',
     proposedAt: '2026-01-10T00:00:00.000Z',
     approval: { approvedBy: 'Tenant Admin', approvedAt: '2026-01-10T00:00:00.000Z', condition: 'baseline-default', rationale: 'Initial SSVC decision tree for vulnerability prioritisation' },
+    effectiveFrom: '2026-01-10T00:00:00.000Z',
+    effectiveUntil: null,
+    simulationRef: null,
+  },
+  {
+    id: seedId('strategy', 18),
+    entityType: 'strategy-policy',
+    tenant: SEED_TENANT,
+    createdAt: '2026-01-10T00:00:00.000Z',
+    updatedAt: '2026-01-15T09:00:00.000Z',
+    source: { ...SEED_SOURCE, sourceSystem: 'commander-strategy-engine' },
+    surfaceType: 'communication-playbook',
+    policyVersion: '1.0.0',
+    status: 'active',
+    configuration: {
+      /** Default communication SLA response hours by priority */
+      defaultResponseHours: { P0: 1, P1: 4, P2: 24, P3: 48, P4: 72 },
+      /** Maximum escalation count before auto-close */
+      maxEscalations: 3,
+      /** Stale threshold hours — threads without response become stale */
+      staleThresholdHours: 48,
+      /** Auto-trigger playbooks on case creation */
+      autoTriggerOnCaseCreation: true,
+      /** Channels enabled for communication */
+      enabledChannels: ['email', 'teams'],
+    },
+    proposedBy: 'System (baseline)',
+    proposedAt: '2026-01-10T00:00:00.000Z',
+    approval: { approvedBy: 'Tenant Admin', approvedAt: '2026-01-10T00:00:00.000Z', condition: 'baseline-default', rationale: 'Initial communication playbook strategy for Communications Excellence' },
     effectiveFrom: '2026-01-10T00:00:00.000Z',
     effectiveUntil: null,
     simulationRef: null,

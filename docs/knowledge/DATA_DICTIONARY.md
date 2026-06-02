@@ -224,7 +224,7 @@
 | `id` | string | seeded | AVAILABLE | — | Deterministic ID |
 | `entityType` | `'strategy-policy'` | seeded | AVAILABLE | — | Discriminator |
 | `tenant` | TenantContext | seeded | AVAILABLE | — | Tenant scope |
-| `surfaceType` | StrategySurfaceType | seeded | AVAILABLE | — | 13 types: sla, threshold, automation-boundary, routing, posture, mission-objective, operational-tempo, domain-specific, prioritisation-weight, validation-window, closure-gate, reopening-trigger, evidence-sufficiency |
+| `surfaceType` | StrategySurfaceType | seeded | AVAILABLE | — | 17 types: sla, threshold, automation-boundary, routing, posture, mission-objective, operational-tempo, domain-specific, prioritisation-weight, validation-window, closure-gate, reopening-trigger, evidence-sufficiency, sla-modifier, correlation-policy, effectiveness-targets, ssvc-decision-tree. Original 13 seeded; 4 CMEP-1.0 types (sla-modifier, correlation-policy, effectiveness-targets, ssvc-decision-tree) contract-defined but NOT yet seeded in fixture and NOT yet in DB enum — see divergence note below. |
 | `policyVersion` | string | seeded | AVAILABLE | — | Policy version (semantic) |
 | `status` | StrategyPolicyStatus | seeded | AVAILABLE | — | draft, pending-approval, approved, active, superseded, rejected |
 | `configuration` | Record<string, unknown> | seeded | AVAILABLE | — | Policy configuration (JSON — shape varies by surface type) |
@@ -238,7 +238,9 @@
 | `createdAt` | string (ISO 8601) | system-calculated | AVAILABLE | — | Record creation timestamp |
 | `updatedAt` | string (ISO 8601) | system-calculated | AVAILABLE | — | Record update timestamp |
 
-**DB Schema Reconciliation:** ✅ Contract and schema aligned. DB schema flattens `tenant` to `tenantId` reference, `source` to individual columns, `approval` to JSONB, `proposedAt`/`effectiveFrom`/`effectiveUntil` to timestamptz.
+**DB Schema Reconciliation:** ⚠️ DIVERGENT — Contract declares 17 `StrategySurfaceType` values (CMEP-1.0 extension adds `sla-modifier`, `correlation-policy`, `effectiveness-targets`, `ssvc-decision-tree`). DB schema `strategySurfaceTypeEnum` still declares only 13 values. A migration is required to add the 4 new enum values. DB flattens `tenant` to `tenantId` reference, `source` to individual columns, `approval` to JSONB, `proposedAt`/`effectiveFrom`/`effectiveUntil` to timestamptz.
+
+**Fixture gap:** `seed-strategies.ts` seeds 13 policies (one per original surface). The 4 CMEP-1.0 surface types (`sla-modifier`, `correlation-policy`, `effectiveness-targets`, `ssvc-decision-tree`) have NO seed fixture entries yet.
 
 ---
 
@@ -283,6 +285,21 @@
 **Fixture:** ❌ NOT APPLICABLE (state machine logic, not data)  
 **Status:** AVAILABLE (resolvers exist)
 
+**LifecycleActor type union (11 members):**
+- `system` — general system transitions
+- `routing-engine` — routing transitions
+- `binding-engine` — binding transitions
+- `prioritisation-engine` — prioritisation transitions
+- `validation-engine` — validation transitions
+- `closure-engine` — closure transitions
+- `reopening-engine` — reopening transitions
+- `reassessment-engine` — ⚠️ type-declared only; NOT in `LIFECYCLE_ACTORS` runtime constant; no transitions wired; no resolver
+- `correlation-engine` — ⚠️ type-declared only; NOT in `LIFECYCLE_ACTORS` runtime constant; no transitions wired; no resolver
+- `enrichment-engine` — ⚠️ type-declared only; NOT in `LIFECYCLE_ACTORS` runtime constant; no transitions wired; no resolver
+- `effectiveness-engine` — ⚠️ type-declared only; NOT in `LIFECYCLE_ACTORS` runtime constant; no transitions wired; no resolver
+
+**⚠️ DIVERGENCE: `LifecycleActor` type (11 members) vs `LIFECYCLE_ACTORS` runtime constant (7 members).** The runtime constant does not include the 4 new engine actors. `executeTransition()` validates against `LIFECYCLE_ACTORS` (the constant), so transitions by new actors will be rejected at runtime until the constant is updated and corresponding `ALLOWED_TRANSITIONS` entries are added. PROPOSED: register in ARCHITECTURAL_DEBT_REGISTER.md as divergence requiring resolution.
+
 **12-State Lifecycle (canonical — Unit 7 rebaseline):**
 - `detected → bound → routed → prioritised → action_decomposed → in_progress`
 - `in_progress → pending_validation → validation_running → validated_pass / validated_fail`
@@ -297,7 +314,7 @@
 - `closed` → `closed_by_system`
 - `reopened` → `reopened_by_system`
 
-**Doctrine:** Cases are system-owned. No manual creation, manual closure, or manual status edit. Actor MUST be 'system' or 'routing-engine'.
+**Doctrine:** Cases are system-owned. No manual creation, manual closure, or manual status edit. Actor MUST be in the permitted actor set for the specific transition.
 
 **Resolvers:**
 - `case-closure-evaluator.ts` — closure gate evaluation
@@ -306,6 +323,10 @@
 - `closure-gate-enforcer.ts` — closure gate enforcement
 - `reopening-trigger-enforcer.ts` — reopening trigger enforcement
 - `validation-window-enforcer.ts` — validation window enforcement
+- ❌ No resolver for `reassessment-engine` (FUTURE)
+- ❌ No resolver for `correlation-engine` (FUTURE)
+- ❌ No resolver for `enrichment-engine` (FUTURE)
+- ❌ No resolver for `effectiveness-engine` (FUTURE)
 
 **DB Schema Reconciliation:** ✅ Lifecycle transitions recorded in audit events (standard pattern).
 
@@ -692,7 +713,7 @@ These are code-conformance debt items (contract field removed, test fixtures not
 3. Identity ✅
 4. Risk Object ✅ (incl. COIM-A source-classification + timeline augmentation)
 5. Connector ✅
-6. Strategy Policy ✅
+6. Strategy Policy ⚠️ (contract↔schema divergent — CMEP-1.0 enum gap)
 7. Audit Event ✅
 8. Case Lifecycle (state machine) ✅
 9. Case Strategy Binding ✅
@@ -774,13 +795,12 @@ These are code-conformance debt items (contract field removed, test fixtures not
 
 ### Contract vs DB Schema Reconciliation
 
-**Aligned (20):**
+**Aligned (19):**
 - Asset ✅
 - Case ✅
 - Identity ✅
 - Risk Object ✅
 - Connector ✅
-- Strategy Policy ✅
 - Audit Event ✅
 - Common Fields ✅
 - Case Lifecycle (transitions in audit events) ✅
@@ -796,11 +816,11 @@ These are code-conformance debt items (contract field removed, test fixtures not
 - ControlEvaluation ✅ (CFM)
 - ControlMapping ✅ (CFM)
 
-**Divergences (0):**
-None.
+**Divergences (1):**
+- Strategy Policy ⚠️ — Contract `StrategySurfaceType` has 17 values (CMEP-1.0 extension); DB `strategySurfaceTypeEnum` has 13. Migration required to add: `sla-modifier`, `correlation-policy`, `effectiveness-targets`, `ssvc-decision-tree`.
 
 **Proposed Architectural Debt Entries:**
-None.
+- ARCH-DEBT-NEW: Strategy Policy DB enum out of sync with contract (17 vs 13 surface types). Blocker: DB migration required before CMEP-1.0 surface policies can be persisted. Additionally, `seed-strategies.ts` lacks fixture entries for the 4 new surface types.
 
 **Resolved Architectural Debt:**
 - ARCH-DEBT-030: Risk Object DB schema missing (contract + fixture exist) — ✅ RESOLVED (Unit 1)
@@ -1439,5 +1459,5 @@ Five entities forming the compliance/control-framework mapping layer:
 
 ---
 
-**Last Updated:** 2026-06-03 (Platform Intelligence Closure Conveyor: 16 intelligence entities + 2 shared value objects registered. Entity count 20→35. Fixture count 15→26. Composed-object module count unchanged at 2. Intelligence domain fully catalogued — evaluation engine + priority signal engine added to packages/rules/.)  
+**Last Updated:** 2026-06-03 (Case Lifecycle: LifecycleActor type expanded 7→11 members — 4 new engine actors type-declared but NOT wired into LIFECYCLE_ACTORS constant or ALLOWED_TRANSITIONS. Divergence flagged. Entity count unchanged at 35. Fixture count unchanged at 26. Composed-object module count unchanged at 2.)  
 **Snapshot Commit:** (to be recorded after commit)

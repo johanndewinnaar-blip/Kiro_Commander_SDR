@@ -36,3 +36,11 @@ export { seedVulnerabilityCaseLinks } from './seed-vulnerability-case-links';
 export { seedThreatHunts } from './seed-threat-hunts';
 export { seedPushActionIntents } from './seed-push-action-intents';
 export { seedInboundEmailSubmissions } from './seed-inbound-email-submissions';
+
+// ─── Communications Excellence Fixtures ──────────────────────────────────────
+export { seedCommunicationThreads } from './seed-communication-threads';
+export { seedCommunicationPlaybooks } from './seed-communication-playbooks';
+export { seedDetonationVerdicts } from './seed-detonation-verdicts';
+export { seedPhishingReports } from './seed-phishing-reports';
+export { seedStixBundleIngests } from './seed-stix-bundles';
+export { seedTeamsDecisionEvents } from './seed-teams-decision-events';

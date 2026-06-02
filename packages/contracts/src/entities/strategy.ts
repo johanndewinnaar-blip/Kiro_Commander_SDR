@@ -5,7 +5,7 @@
  * v1.3.1 lineage closure: 24 EARS requirements
  * CMEP-1.0: Extended from 13 to 17 surfaces
  *
- * Seventeen named strategy surfaces:
+ * Eighteen named strategy surfaces:
  * 1. SLA Strategy
  * 2. Threshold Strategy
  * 3. Automation Boundary Strategy
@@ -23,11 +23,12 @@
  * 15. Correlation Policy Strategy (CMEP-1.0)
  * 16. Effectiveness Targets Strategy (CMEP-1.0)
  * 17. SSVC Decision Tree Strategy (CMEP-1.0)
+ * 18. Communication Playbook Strategy (Communications Excellence)
  */
 
 import type { CommonFields } from './common';
 
-/** The seventeen named strategy surface types per Spec #32 + Phase E1 + CMEP-1.0 extension */
+/** The eighteen named strategy surface types per Spec #32 + Phase E1 + CMEP-1.0 + Communications Excellence */
 export type StrategySurfaceType =
   | 'sla'
   | 'threshold'
@@ -45,9 +46,10 @@ export type StrategySurfaceType =
   | 'sla-modifier'
   | 'correlation-policy'
   | 'effectiveness-targets'
-  | 'ssvc-decision-tree';
+  | 'ssvc-decision-tree'
+  | 'communication-playbook';
 
-/** All seventeen strategy surface types as a constant array */
+/** All eighteen strategy surface types as a constant array */
 export const STRATEGY_SURFACE_TYPES: StrategySurfaceType[] = [
   'sla',
   'threshold',
@@ -66,6 +68,7 @@ export const STRATEGY_SURFACE_TYPES: StrategySurfaceType[] = [
   'correlation-policy',
   'effectiveness-targets',
   'ssvc-decision-tree',
+  'communication-playbook',
 ];
 
 /** Strategy surface labels for UI display */
@@ -87,6 +90,7 @@ export const STRATEGY_SURFACE_LABELS: Record<StrategySurfaceType, string> = {
   'correlation-policy': 'Correlation Policy Strategy',
   'effectiveness-targets': 'Effectiveness Targets Strategy',
   'ssvc-decision-tree': 'SSVC Decision Tree Strategy',
+  'communication-playbook': 'Communication Playbook Strategy',
 };
 
 /** Strategy policy status */

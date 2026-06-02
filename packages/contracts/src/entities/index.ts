@@ -271,3 +271,102 @@ export { validatePushActionIntent } from './push-action-intent';
 // ─── Inbound Email Submission ────────────────────────────────────────────────
 export type { InboundEmailSubmission, ParsedEmailIoc, InboundEmailSubmissionValidation } from './inbound-email-submission';
 export { validateInboundEmailSubmission } from './inbound-email-submission';
+
+// ─── Communications Excellence (Phase 1) ─────────────────────────────────────
+export type {
+  CaseCommunicationThread,
+  CommunicationChannel,
+  CommunicationThreadStatus,
+  CommunicationSla,
+  ThreadParticipant,
+  CaseCommunicationThreadValidation,
+} from './case-communication-thread';
+export {
+  COMMUNICATION_CHANNELS,
+  COMMUNICATION_THREAD_STATUSES,
+  validateCaseCommunicationThread,
+} from './case-communication-thread';
+
+export type {
+  CommunicationPlaybook,
+  PlaybookStatus,
+  PlaybookStepAction,
+  PlaybookCondition,
+  PlaybookTrigger,
+  PlaybookStep,
+  CommunicationPlaybookValidation,
+} from './communication-playbook';
+export {
+  PLAYBOOK_STATUSES,
+  PLAYBOOK_STEP_ACTIONS,
+  isValidBoundedCondition,
+  validateCommunicationPlaybook,
+} from './communication-playbook';
+
+export type {
+  PlaybookExecution,
+  PlaybookStepExecutionStatus,
+  PlaybookExecutionStatus,
+  StepExecutionStatus,
+  PlaybookExecutionValidation,
+} from './playbook-execution';
+export {
+  PLAYBOOK_STEP_EXECUTION_STATUSES,
+  PLAYBOOK_EXECUTION_STATUSES,
+  validatePlaybookExecution,
+} from './playbook-execution';
+
+export type {
+  DetonationVerdict,
+  DetonationSource,
+  DetonationOverallVerdict,
+  DetonationCheckType,
+  DetonationCheckResult,
+  DetonationCheck,
+  DetonationVerdictValidation,
+} from './detonation-verdict';
+export {
+  DETONATION_SOURCES,
+  DETONATION_OVERALL_VERDICTS,
+  DETONATION_CHECK_TYPES,
+  DETONATION_CHECK_RESULTS,
+  validateDetonationVerdict,
+} from './detonation-verdict';
+
+export type {
+  PhishingReport,
+  PhishingTriageVerdict,
+  PhishingNotificationStatus,
+  PhishingReportStatus,
+  PhishingReportValidation,
+} from './phishing-report';
+export {
+  PHISHING_TRIAGE_VERDICTS,
+  PHISHING_NOTIFICATION_STATUSES,
+  PHISHING_REPORT_STATUSES,
+  validatePhishingReport,
+} from './phishing-report';
+
+export type {
+  StixBundleIngest,
+  StixObjectType,
+  StixIngestStatus,
+  StixBundleIngestValidation,
+} from './stix-bundle-ingest';
+export {
+  STIX_OBJECT_TYPES,
+  STIX_INGEST_STATUSES,
+  validateStixBundleIngest,
+} from './stix-bundle-ingest';
+
+export type {
+  TeamsDecisionEvent,
+  TeamsRequestType,
+  TeamsDecision,
+  TeamsDecisionEventValidation,
+} from './teams-decision-event';
+export {
+  TEAMS_REQUEST_TYPES,
+  TEAMS_DECISIONS,
+  validateTeamsDecisionEvent,
+} from './teams-decision-event';

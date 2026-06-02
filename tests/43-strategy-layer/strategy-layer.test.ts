@@ -21,8 +21,8 @@ import { allRoutes } from '../../apps/web/src/registry/index';
  */
 
 describe('Twelve Named Strategy Surfaces (Reqs 1-12)', () => {
-  it('defines exactly 17 strategy surface types (12 baseline + evidence-sufficiency + 4 CMEP-1.0)', () => {
-    expect(STRATEGY_SURFACE_TYPES.length).toBe(17);
+  it('defines exactly 18 strategy surface types (12 baseline + evidence-sufficiency + 4 CMEP-1.0 + communication-playbook)', () => {
+    expect(STRATEGY_SURFACE_TYPES.length).toBe(18);
   });
 
   it('includes SLA Strategy (Req 1)', () => {
@@ -143,8 +143,8 @@ describe('Runtime Binding Events (Reqs 18-23)', () => {
 });
 
 describe('Seed Strategy Fixtures', () => {
-  it('has exactly 17 seed strategy policies (one per surface)', () => {
-    expect(seedStrategies.length).toBe(17);
+  it('has exactly 18 seed strategy policies (one per surface)', () => {
+    expect(seedStrategies.length).toBe(18);
   });
 
   it('covers all 13 surface types', () => {
@@ -206,9 +206,9 @@ describe('Route Registry — Strategy Centre', () => {
 describe('Build-Blocking Gate (Req 24)', () => {
   it('strategy surfaces are defined before case management can ship', () => {
     // This test validates that the strategy layer exists as a prerequisite
-    expect(STRATEGY_SURFACE_TYPES.length).toBe(17);
+    expect(STRATEGY_SURFACE_TYPES.length).toBe(18);
     expect(RUNTIME_BINDING_EVENTS.length).toBe(6);
-    expect(seedStrategies.length).toBe(17);
+    expect(seedStrategies.length).toBe(18);
   });
 });
 
