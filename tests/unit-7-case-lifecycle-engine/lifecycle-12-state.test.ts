@@ -282,8 +282,8 @@ describe('12-State Lifecycle — getCurrentStatusFromHistory', () => {
 });
 
 describe('12-State Lifecycle — LIFECYCLE_ACTORS', () => {
-  it('contains all 11 actors', () => {
-    expect(LIFECYCLE_ACTORS).toHaveLength(11);
+  it('contains all 15 actors', () => {
+    expect(LIFECYCLE_ACTORS).toHaveLength(15);
     expect(LIFECYCLE_ACTORS).toContain('system');
     expect(LIFECYCLE_ACTORS).toContain('routing-engine');
     expect(LIFECYCLE_ACTORS).toContain('binding-engine');
@@ -295,5 +295,9 @@ describe('12-State Lifecycle — LIFECYCLE_ACTORS', () => {
     expect(LIFECYCLE_ACTORS).toContain('correlation-engine');
     expect(LIFECYCLE_ACTORS).toContain('enrichment-engine');
     expect(LIFECYCLE_ACTORS).toContain('effectiveness-engine');
+    expect(LIFECYCLE_ACTORS).toContain('war-room-activation-engine');
+    expect(LIFECYCLE_ACTORS).toContain('war-room-communication-engine');
+    expect(LIFECYCLE_ACTORS).toContain('close-out-engine');
+    expect(LIFECYCLE_ACTORS).toContain('war-room-ai-engine');
   });
 });

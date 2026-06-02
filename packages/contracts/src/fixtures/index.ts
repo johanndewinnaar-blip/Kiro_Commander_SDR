@@ -44,3 +44,6 @@ export { seedDetonationVerdicts } from './seed-detonation-verdicts';
 export { seedPhishingReports } from './seed-phishing-reports';
 export { seedStixBundleIngests } from './seed-stix-bundles';
 export { seedTeamsDecisionEvents } from './seed-teams-decision-events';
+
+// ─── War Room Communication Excellence Fixtures (WRCEP-1.0) ─────────────────
+export { seedWarRooms } from './seed-war-rooms';

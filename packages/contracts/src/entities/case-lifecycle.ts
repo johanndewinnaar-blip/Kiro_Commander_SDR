@@ -42,7 +42,11 @@ export type LifecycleActor =
   | 'reassessment-engine'
   | 'correlation-engine'
   | 'enrichment-engine'
-  | 'effectiveness-engine';
+  | 'effectiveness-engine'
+  | 'war-room-activation-engine'
+  | 'war-room-communication-engine'
+  | 'close-out-engine'
+  | 'war-room-ai-engine';
 
 /** All valid lifecycle actors */
 export const LIFECYCLE_ACTORS: readonly LifecycleActor[] = [
@@ -57,6 +61,10 @@ export const LIFECYCLE_ACTORS: readonly LifecycleActor[] = [
   'correlation-engine',
   'enrichment-engine',
   'effectiveness-engine',
+  'war-room-activation-engine',
+  'war-room-communication-engine',
+  'close-out-engine',
+  'war-room-ai-engine',
 ] as const;
 
 /** A single allowed state transition with permitted actors */
@@ -137,6 +145,8 @@ export interface CaseTransitionRecord {
   reason: string;
   auditEventRef: string;
   timestamp: string; // ISO 8601
+  /** War Room dual-attribution — links transition to coordinating War Room if applicable */
+  warRoomId?: string | null;
 }
 
 /** Result of executing a lifecycle transition */

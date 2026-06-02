@@ -370,3 +370,25 @@ export {
   TEAMS_DECISIONS,
   validateTeamsDecisionEvent,
 } from './teams-decision-event';
+
+// ─── War Room Communication Excellence (WRCEP-1.0 Phase 1) ──────────────────
+export type {
+  WarRoom,
+  WarRoomStatus,
+  WarRoomMemberRole,
+  WarRoomMember,
+  SubscriptionChannel,
+  SubscriptionCadence,
+  WarRoomSubscriber,
+  CommunicationCadenceProfile,
+  WarRoomActivationSource,
+  WarRoomAiOrientationState,
+  WarRoomValidation,
+} from './war-room';
+export {
+  WAR_ROOM_STATUSES,
+  WAR_ROOM_MEMBER_ROLES,
+  SUBSCRIPTION_CHANNELS,
+  SUBSCRIPTION_CADENCES,
+  validateWarRoom,
+} from './war-room';

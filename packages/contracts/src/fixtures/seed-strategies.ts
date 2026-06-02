@@ -1,10 +1,11 @@
 /**
  * Seed Strategy Policies — Commander SDR Test Fixtures
  *
- * Synthetic strategy policy data for all seventeen surfaces.
+ * Synthetic strategy policy data for all nineteen surfaces.
  * Source: Spec #32 Strategy Layer Runtime Surface
  * v1.3.1 lineage closure: Requirements 1-12
  * CMEP-1.0: Added sla-modifier, correlation-policy, effectiveness-targets, ssvc-decision-tree
+ * WRCEP-1.0: Added war-room-cadence (surface #19)
  */
 
 import type { StrategyPolicy } from '../entities/strategy';
@@ -478,6 +479,41 @@ export const seedStrategies: StrategyPolicy[] = [
     proposedBy: 'System (baseline)',
     proposedAt: '2026-01-10T00:00:00.000Z',
     approval: { approvedBy: 'Tenant Admin', approvedAt: '2026-01-10T00:00:00.000Z', condition: 'baseline-default', rationale: 'Initial communication playbook strategy for Communications Excellence' },
+    effectiveFrom: '2026-01-10T00:00:00.000Z',
+    effectiveUntil: null,
+    simulationRef: null,
+  },
+  {
+    id: seedId('strategy', 19),
+    entityType: 'strategy-policy',
+    tenant: SEED_TENANT,
+    createdAt: '2026-01-10T00:00:00.000Z',
+    updatedAt: '2026-01-15T09:00:00.000Z',
+    source: { ...SEED_SOURCE, sourceSystem: 'commander-strategy-engine' },
+    surfaceType: 'war-room-cadence',
+    policyVersion: '1.0.0',
+    status: 'active',
+    configuration: {
+      /** Cadence minutes when War Room is in activated state */
+      activatedCadenceMinutes: 30,
+      /** Cadence minutes when War Room is in monitoring state */
+      monitoringCadenceMinutes: 60,
+      /** Cadence minutes when War Room is in winding_down state */
+      windingDownCadenceMinutes: 240,
+      /** Executive update cadence minutes */
+      execUpdateCadenceMinutes: 120,
+      /** Stalling threshold minutes — inactivity beyond this triggers escalation */
+      stallingThresholdMinutes: 45,
+      /** Maximum War Room duration hours before mandatory review */
+      maxDurationHoursBeforeReview: 72,
+      /** Auto-subscribe CISO on activation */
+      autoSubscribeCisoOnActivation: true,
+      /** Default subscriber cadence */
+      defaultSubscriberCadence: 'four_hourly',
+    },
+    proposedBy: 'System (baseline)',
+    proposedAt: '2026-01-10T00:00:00.000Z',
+    approval: { approvedBy: 'Tenant Admin', approvedAt: '2026-01-10T00:00:00.000Z', condition: 'baseline-default', rationale: 'Initial War Room cadence strategy for WRCEP-1.0' },
     effectiveFrom: '2026-01-10T00:00:00.000Z',
     effectiveUntil: null,
     simulationRef: null,

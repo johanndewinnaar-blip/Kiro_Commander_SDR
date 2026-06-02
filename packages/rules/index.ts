@@ -89,3 +89,20 @@ export type { DetonationRoute, DetonationRoutingResult } from './detonation-rout
 
 export { processPhishingReport } from './phishing-report-pipeline';
 export type { ObservableInventoryEntry, RiskObjectRecommendation, CaseRecommendation, PhishingPipelineResult } from './phishing-report-pipeline';
+
+// ─── WRCEP-1.0: War Room Communication Excellence Phase 1 ───────────────────
+
+export { transitionWarRoom, isWarRoomTransitionAllowed, getWarRoomNextStatuses, WAR_ROOM_TRANSITIONS } from './war-room-lifecycle';
+export type { WarRoomTransitionDef, WarRoomTransitionResult } from './war-room-lifecycle';
+
+export { evaluateActivationCondition, createWarRoom, bindCaseToWarRoom, DEFAULT_CADENCE_PROFILE } from './war-room-activation';
+export type { WarRoomPrioritySignal, ActivationConditionResult } from './war-room-activation';
+
+export { computeNextUpdateTime, getCadenceForStatus, detectStalling, generateStructuredUpdate } from './war-room-cadence';
+export type { NextUpdateResult, StallingResult, WarRoomUpdate, ActionSummary, OpenBlocker, RecentAction, BoundCaseSummary } from './war-room-cadence';
+
+export { generateOrientationBriefing, updateBriefingOnEvent, deriveConfidence, WAR_ROOM_AI_ACTOR } from './war-room-ai-orientation';
+export type { OrientationBriefing, OrientationEvent, OrientationCaseSummary, OrientationRiskObject, OrientationIntelligence, OrientationPrioritySignal, ExploitAnalysis, BlastRadius, RecommendedAction, UncertaintyGap, ConfidenceLevel } from './war-room-ai-orientation';
+
+export { generateCloseOutReport } from './war-room-closeout';
+export type { CloseOutReport, CloseOutCaseSummary, AuditTimelineEntry, MemberParticipation, CommunicationRecord, AiRecord, DecisionRecord, EvidenceChainEntry, LessonRecommendation } from './war-room-closeout';

@@ -4,8 +4,9 @@
  * Source: Spec #32 Strategy Layer Runtime Surface Specification
  * v1.3.1 lineage closure: 24 EARS requirements
  * CMEP-1.0: Extended from 13 to 17 surfaces
+ * WRCEP-1.0: Extended to 19 surfaces
  *
- * Eighteen named strategy surfaces:
+ * Nineteen named strategy surfaces:
  * 1. SLA Strategy
  * 2. Threshold Strategy
  * 3. Automation Boundary Strategy
@@ -24,11 +25,16 @@
  * 16. Effectiveness Targets Strategy (CMEP-1.0)
  * 17. SSVC Decision Tree Strategy (CMEP-1.0)
  * 18. Communication Playbook Strategy (Communications Excellence)
+ * 19. War Room Cadence Strategy (WRCEP-1.0)
  */
 
 import type { CommonFields } from './common';
 
-/** The eighteen named strategy surface types per Spec #32 + Phase E1 + CMEP-1.0 + Communications Excellence */
+/**
+ * Nineteen named strategy surface types per Spec #32 + Phase E1 + CMEP-1.0 + Communications Excellence + WRCEP-1.0
+ *
+ * 19. War Room Cadence Strategy (WRCEP-1.0)
+ */
 export type StrategySurfaceType =
   | 'sla'
   | 'threshold'
@@ -47,9 +53,10 @@ export type StrategySurfaceType =
   | 'correlation-policy'
   | 'effectiveness-targets'
   | 'ssvc-decision-tree'
-  | 'communication-playbook';
+  | 'communication-playbook'
+  | 'war-room-cadence';
 
-/** All eighteen strategy surface types as a constant array */
+/** All nineteen strategy surface types as a constant array */
 export const STRATEGY_SURFACE_TYPES: StrategySurfaceType[] = [
   'sla',
   'threshold',
@@ -69,6 +76,7 @@ export const STRATEGY_SURFACE_TYPES: StrategySurfaceType[] = [
   'effectiveness-targets',
   'ssvc-decision-tree',
   'communication-playbook',
+  'war-room-cadence',
 ];
 
 /** Strategy surface labels for UI display */
@@ -91,6 +99,7 @@ export const STRATEGY_SURFACE_LABELS: Record<StrategySurfaceType, string> = {
   'effectiveness-targets': 'Effectiveness Targets Strategy',
   'ssvc-decision-tree': 'SSVC Decision Tree Strategy',
   'communication-playbook': 'Communication Playbook Strategy',
+  'war-room-cadence': 'War Room Cadence Strategy',
 };
 
 /** Strategy policy status */
