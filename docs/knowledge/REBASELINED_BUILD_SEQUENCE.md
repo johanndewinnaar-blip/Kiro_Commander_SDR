@@ -69,13 +69,13 @@ A unit is **READY** iff every dependency unit is **DONE** and every mapped chain
 
 Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readiness State Machine above.
 
-**READY (2 numbered + COIM-H — all HELD or separately-gated):** Unit 17 (Case Management UI — HELD pending Unit-44 descope + token doctrine), Unit 22 (Tenant Admin Surface — HELD for scoped pass), and COIM unit **COIM-H** (separately authorised only). **No cleanly-buildable un-held READY unit remains in the conveyor chain.**
+**READY (1 numbered + COIM-H — HELD or separately-gated):** Unit 17 (Case Management UI — HELD pending Unit-44 descope + token doctrine), and COIM unit **COIM-H** (separately authorised only). **No cleanly-buildable un-held READY unit remains in the conveyor chain.**
 
-**DONE (30):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13, Unit 14, Unit 15, **Unit 16a**, **Unit 18**, **Unit 19**, **Unit 20**, **Unit 21**, **Unit 38**, **Unit 40**, **COIM-A, COIM-B, COIM-C, COIM-D, COIM-E, COIM-F, COIM-G**.
+**DONE (31):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13, Unit 14, Unit 15, **Unit 16a**, **Unit 18**, **Unit 19**, **Unit 20**, **Unit 21**, **Unit 22 (v1)**, **Unit 38**, **Unit 40**, **COIM-A, COIM-B, COIM-C, COIM-D, COIM-E, COIM-F, COIM-G**.
 
 **BLOCKED (21):** Unit 16b (Aggregate/Posture Command Centre), Units 23–37, 39, 41–49. All 27 Team 2 numbered units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006. COIM units are Foundational and NOT ARCH-006-gated; none remain BLOCKED.
 
-> **Recompute (2026-06-02, post Unit 21 DONE):** Unit 21 (Internal Operating Picture) marked DONE. No unit depends on Unit 21, so no new units flip to READY. **Conveyor chain exhausted again** — the entire Operational App Surface Layer foundational set (16a, 18, 19, 20, 21) is now DONE; every remaining Foundational READY unit is HELD pending an owner decision (17: Unit-44 comms-thread descope + token doctrine; 22: scoped pass for auth/entitlement runtime). Unit 16b stays BLOCKED (functional pages + data-point-to-metric artifact). Team-2 units stay BLOCKED on ARCH-006.
+> **Recompute (2026-06-02, post Unit 22 v1 DONE):** Unit 22 (Tenant Admin Surface) marked DONE for its v1 (display + mock-backed) scope under `DEC-unit22-tenant-admin-v1-deferrals`; live enforcement is formally deferred via ARCH-DEBT-047..050 (+ ARCH-DEBT-019). Unit 48 (Platform Security Hardening) depends on Unit 22 but stays BLOCKED on ARCH-006 (Team 2). No new units flip to READY. The only remaining Foundational READY unit is **Unit 17 (Case Management UI)**, which stays HELD pending the Unit-44 comms-thread descope + token-doctrine decision. The full Operational App + Tenant Admin foundational surface set is now built.
 
 > **Conveyor holds (2026-06-02):** **Unit 18 (Identity Intelligence Surface)** and **Unit 21 (Internal Operating Picture)** are dependency-READY but HELD pending owner resolution of `DEC-sec-c2-internal-cop-rbac-tbd` (Internal-Risk authority/RBAC role model). Their gates require "RBAC gating enforced (Internal Risk authority)" which is owner-gated and must not be invented or deferred with placeholders. **Unit 17 (Case Management UI)** is HELD pending two decisions: deliverable 5 (communication thread) belongs to Team-2 Unit 44, and a token-doctrine conflict in the case tests. **Unit 19 marked DONE** (no unit depends on it; no new units unblocked).
 
@@ -108,7 +108,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 | 19 Asset Intelligence Surface | Foundational | **DONE** | — |
 | 20 External Operating Picture | Foundational | **DONE** | — |
 | 21 Internal Operating Picture | Foundational | **DONE** | — |
-| 22 Tenant Admin Surface | Foundational | READY — HELD | Owner-directed scoped pass (auth/entitlement runtime; RBAC/user-mgmt; connector mutation gating; shell-reference decision) |
+| 22 Tenant Admin Surface | Foundational | **DONE** | — (v1 display + mock; live enforcement deferred — ARCH-DEBT-047..050, ARCH-DEBT-019) |
 | 23 Commercial Control Plane | Team 2 | BLOCKED | ARCH-006 (USE_CASE_SCHEDULE.md + PAGE_INVENTORY.md absent) |
 | 24 Drift Detection Engine | Team 2 | BLOCKED | ARCH-006; Unit 4 |
 | 25 Identity Intelligence Engine | Team 2 | BLOCKED | ARCH-006; Unit 14 |
@@ -1113,11 +1113,15 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ---
 
-### Unit 22: Tenant Admin Surface — Foundation
+### Unit 22: Tenant Admin Surface — Foundation (v1: display + mock-backed)
 
-**Status:** READY — HELD (owner-directed scoped pass required, 2026-06-02)
+**Status:** DONE (v1 — display + local/mock configuration; live enforcement formally deferred)
 
-**Blocked by:** — (dependency-READY: Unit 4 DONE, Unit 6 DONE). **HELD pending a scoped pre-build pass** (owner direction, conveyor run 2026-06-02): the unit's gate includes operational/enforcement deliverables that are not truthfully buildable on the current platform. Required before build: (1) **auth/entitlement runtime** (no user-context/provider exists — only the pure `isRouteVisible` helper); (2) **RBAC / user-management boundary** (owned by spec `19-rbac-entitlement-feature-flags`, SCAFFOLD; no platform-user/entitlement fixture); (3) **connector mutation gating** (add/configure/pause/decommission are mutation verbs vs the Phase-2 real-connector gate and the display-only mock-data pattern); (4) **shell-reference decision** (`DEC-v1.3.2-tenant-admin-shell-pending-reference` — Tenant Admin visual language is provisional). Building a display-only shell was explicitly declined by the owner. This is the second application boundary (Assertion 3) and must not be descoped unilaterally.
+**Blocked by:** — (complete for v1 scope). The prior HELD condition is resolved by owner authorisation `DEC-unit22-tenant-admin-v1-deferrals` (2026-06-02), which scopes Unit 22 v1 to display + mock-backed configuration with **explicit recorded deferral** of all runtime enforcement.
+
+**Verification:** Spec #39 Commander Application Boundary, SDR Control Plane Spec v1.1, Spec #47 Tenant Admin from `docs/99_source_archive/baseline_v2_6_2/` (+ derived control-plane spec). Evidence: diagnostics clean on `apps/web/src/app/tenant-admin/{page.tsx,mock-tenant-config.ts}`; vitest `tests/22-tenant-admin-surface/tenant-admin-surface.test.ts` (passing) + shells; full run 1575/1595 (the 20 residual failures are pre-existing Unit 17 / Cluster B deferral flags, none from Unit 22); governance runner `--unit 22` Green (after orphan-debt resolution). Built v1: tenant profile, users, roles, authority overlays, MFA policy, SSO readiness/config, connector settings, tenant security posture, all over app-level mock config; intensity ceiling Level 2; three-application boundary (Assertion 3) preserved (distinct tenant-admin layout/chrome). **Every displayed capability carries an explicit on-surface enforcement badge (`Configured (mock)` / `Not live`) and a formal deferral owner** — no hidden deferral.
+
+**Deferred-enforcement records (critical-rule compliance):** `DEC-unit22-tenant-admin-v1-deferrals` (DECISIONS.md); **ARCH-DEBT-047** (auth/entitlement + RBAC/user-mgmt/MFA/profile runtime); **ARCH-DEBT-048** (authority-overlay grant lifecycle + audit-of-access pipeline); **ARCH-DEBT-049** (live SSO provider integration — Phase 2); **ARCH-DEBT-050** (tenant connector mutation — Phase 2 / Unit 39); plus existing **ARCH-DEBT-019** (Internal Risk jurisdictional onboarding gate). These are the build-debt items owning the not-live capabilities; resolution is the auth/entitlement runtime pass (ARCH-DEBT-047/048) and Phase-2 integration (ARCH-DEBT-049/050).
 
 **Purpose:** Build Tenant Admin Surface foundation (second application boundary)
 
@@ -2582,7 +2586,7 @@ A build unit is complete when:
 ---
 
 **Last Updated:** 2026-06-02  
-**Status:** ACTIVE — readiness state machine. Build only from the READY set. **As of 2026-06-02:** Units 0–15 + 16a + 18 + 19 + 20 + 21 + 38 + 40 + COIM-A…COIM-G DONE (the Operational App Surface Layer foundational set is complete); Units 17 and 22 remain READY-but-HELD pending their own owner decisions; COIM-H READY but separately authorised. Status recomputes on debt-resolution / unit-completion.  
+**Status:** ACTIVE — readiness state machine. Build only from the READY set. **As of 2026-06-02:** Units 0–15 + 16a + 18 + 19 + 20 + 21 + 22(v1) + 38 + 40 + COIM-A…COIM-G DONE (Operational App + Tenant Admin foundational surface set complete); Unit 17 remains READY-but-HELD pending its own owner decision; COIM-H READY but separately authorised. Status recomputes on debt-resolution / unit-completion.  
 **Enforcement:** ARCH-006 (build-stream sequencing) + ARCH-007 (blocking-debt prerequisite) in `.kiro/testing/conformance-registry.md`, auto-run via post-task-review. "What's next" query defined in `.kiro/steering/execution-discipline.md`.  
 **Authority:** Derived from SYSTEM_KNOWLEDGE_GRAPH.md, DATA_DICTIONARY.md, REBASELINED_BUILD_SCHEDULE_NOTES.md, baseline source. Decision: `DEC-build-readiness-state-machine` (DECISIONS.md).  
 **Sourcing rule:** Never cite the translation layer — all citations from `docs/99_source_archive/baseline_v2_6_2/`

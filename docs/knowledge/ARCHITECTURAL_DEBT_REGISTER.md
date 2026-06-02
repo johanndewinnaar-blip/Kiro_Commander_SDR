@@ -960,3 +960,75 @@ Authority: `.kiro/steering/feature-function-backlog.md` (extended in this update
 
 **History**
 - 2026-06-01: OPEN — registered under COIM/OCSF NOW-tier governance registration (owner-authorised). Resolution unit: COIM-H (depends on ARCH-DEBT-044).
+
+---
+
+### ARCH-DEBT-047 — Tenant Admin auth/entitlement runtime absent (RBAC, user-management, MFA, tenant-profile not enforced)
+
+- **Source:** `DECISIONS.md` `DEC-unit22-tenant-admin-v1-deferrals` (2026-06-02); Unit 22 build; Spec #47 Tenant Admin; Spec #50 RBAC/Entitlement/Feature-Flag
+- **Description:** Tenant Admin Surface v1 (Unit 22) displays tenant profile, users, roles and MFA policy from app-level mock config (`apps/web/src/app/tenant-admin/mock-tenant-config.ts`), but there is NO auth/entitlement runtime: no user-context/provider, no current-user, no user CRUD/invitation, no role authoring or permission-scope binding, no runtime RBAC enforcement, no MFA enforcement at authentication time, no tenant-record persistence/mutation, residency not enforced at the query layer. Frontend visibility is presentation only; backend enforcement (Spec #50 §Backend Enforcement Rule; Spec #56 §8) does not yet exist.
+- **Debt type:** Missing-ownership (runtime-enforcement gap)
+- **Debt class:** build-debt
+- **Scope of fix:** Build the auth/entitlement runtime (user context/provider, session, backend-authoritative RBAC + entitlement evaluation per Spec #50, MFA enforcement, tenant-record persistence). Then re-point the Tenant Admin surface from mock config to the runtime and flip the affected capability-ledger rows from `not-live`/`configured-mock` to enforced.
+- **Affected specs / artifacts:** `apps/web/src/app/tenant-admin/*`; spec `19-rbac-entitlement-feature-flags`; Spec #50; future `apps/api`; `.kiro/testing/conformance-registry.md`
+- **Scheduled resolution:** Tenant Admin / auth-runtime scoped pass (owner-directed; follow-on to Unit 22 v1)
+- **Status:** OPEN
+- **Date logged:** 2026-06-02
+- **Last reviewed:** 2026-06-02
+
+**History**
+- 2026-06-02: OPEN — registered with Unit 22 v1 (DEC-unit22-tenant-admin-v1-deferrals). Surfaced on the Tenant Admin Capability Status ledger as the owner of Tenant Profile / Users / Roles / MFA Policy enforcement.
+
+---
+
+### ARCH-DEBT-048 — Authority-overlay grant lifecycle + audit-of-access pipeline not built
+
+- **Source:** `DECISIONS.md` `DEC-unit22-tenant-admin-v1-deferrals` (2026-06-02); `DEC-sec-c2-internal-cop-rbac` (2026-06-02); Spec #75 §4
+- **Description:** The five authority overlays (Administrative, Investigation, Approval, Reporting, Internal Risk) are displayed in Tenant Admin v1 with their grant models, but there is no grant lifecycle (issue / time-bounded expiry / scoped / revoke) and no audit-of-access pipeline. The Internal Risk overlay specifically requires per-investigation/persistent/scoped grants with audit-of-access (accessor, accessed identity, timestamp, purpose, section) per `DEC-sec-c2-internal-cop-rbac` — Units 18 and 21 render the gated tiers as aggregate-only placeholders precisely because this pipeline does not exist.
+- **Debt type:** Missing-ownership (runtime-enforcement gap)
+- **Debt class:** build-debt
+- **Scope of fix:** Build the overlay grant store + lifecycle (issue/expire/revoke, scoping) and the audit-of-access event pipeline; wire the Internal Operating Picture (Unit 21) and Identity Intelligence Surface (Unit 18) per-identity tiers to it; enforce backend-authoritatively.
+- **Affected specs / artifacts:** `apps/web/src/app/operating-picture/internal/page.tsx`; `apps/web/src/app/identity/page.tsx`; `apps/web/src/app/tenant-admin/*`; Spec #75 §4; Spec #19/#50; `DEC-sec-c2-internal-cop-rbac`
+- **Scheduled resolution:** Tied to the auth/entitlement runtime pass (ARCH-DEBT-047) and the v1.4 Internal Risk build
+- **Status:** OPEN
+- **Date logged:** 2026-06-02
+- **Last reviewed:** 2026-06-02
+
+**History**
+- 2026-06-02: OPEN — registered with Unit 22 v1. Owns Authority-Overlay enforcement on the Tenant Admin Capability Status ledger; complements ARCH-DEBT-019 (jurisdictional gate).
+
+---
+
+### ARCH-DEBT-049 — Live SSO provider integration deferred (readiness/config only)
+
+- **Source:** `DECISIONS.md` `DEC-unit22-tenant-admin-v1-deferrals` (2026-06-02); Unit 22 build (owner constraint: no live SSO provider calls)
+- **Description:** Tenant Admin v1 displays SSO protocol, identity-provider name and readiness state and offers a local/mock configuration form, but performs NO live SSO provider calls — no SAML/OIDC handshake, no metadata exchange, no verification. This is readiness/configuration only, by explicit owner constraint and Phase-2 gating.
+- **Debt type:** Boundary-leak (real-integration gating)
+- **Debt class:** build-debt
+- **Scope of fix:** Implement live SSO (SAML 2.0 / OIDC) provider integration with verification, behind Phase-2 readiness approval and real-vendor-integration authorisation. Flip the SSO capability-ledger row to enforced on completion.
+- **Affected specs / artifacts:** `apps/web/src/app/tenant-admin/*`; future `apps/api` auth; Phase-2 readiness gate
+- **Scheduled resolution:** Phase 2 (real integration readiness) — not before Phase-2 approval
+- **Status:** OPEN
+- **Date logged:** 2026-06-02
+- **Last reviewed:** 2026-06-02
+
+**History**
+- 2026-06-02: OPEN — registered with Unit 22 v1. Owns SSO Readiness/Configuration enforcement on the Tenant Admin Capability Status ledger.
+
+---
+
+### ARCH-DEBT-050 — Tenant connector mutation not enforced (Phase-2 gated)
+
+- **Source:** `DECISIONS.md` `DEC-unit22-tenant-admin-v1-deferrals` (2026-06-02); Unit 22 build; Spec #16 Connector Framework; Spec #61
+- **Description:** Tenant Admin v1 lists tenant connectors (class/state) from the Unit 38 mock connectors but does not enforce connector mutation — add, configure, pause, decommission are display-only (`mutationEnforced: false`). Real connector management and any live vendor calls are Phase-2 gated.
+- **Debt type:** Boundary-leak (real-integration gating)
+- **Debt class:** build-debt
+- **Scope of fix:** Implement tenant connector mutation against the connector framework (Spec #16) with backend enforcement; real vendor connectivity remains gated by Unit 39 (Real Connector Readiness, Phase 2). Flip the connector-settings capability-ledger row to enforced on completion.
+- **Affected specs / artifacts:** `apps/web/src/app/tenant-admin/*`; spec `16-connector-framework`; Unit 39 (Phase 2); `packages/connectors`
+- **Scheduled resolution:** Tenant-admin runtime pass for mutation; live connectivity at Phase 2 (Unit 39)
+- **Status:** OPEN
+- **Date logged:** 2026-06-02
+- **Last reviewed:** 2026-06-02
+
+**History**
+- 2026-06-02: OPEN — registered with Unit 22 v1. Owns Connector Settings enforcement on the Tenant Admin Capability Status ledger.
