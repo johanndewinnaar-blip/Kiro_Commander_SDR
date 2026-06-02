@@ -915,12 +915,13 @@ Authority: `.kiro/steering/feature-function-backlog.md` (extended in this update
 - **Scope of fix:** Create Action/Sub-Action under build unit **COIM-H** (targetEntity, executionMethod, outcomeClassification, estimatedEffortHours, actualEffortHours, approvalRef). Additive — does not modify case lifecycle engine logic. Update DATA_DICTIONARY.md. Prerequisite for ARCH-DEBT-046 (D3FEND fields ride on this entity).
 - **Affected specs / artifacts:** `packages/contracts/src/entities/action.ts` (new); `packages/db/src/schema/actions.ts` (new); `docs/knowledge/DATA_DICTIONARY.md` (new entity); COIM-H unit in `REBASELINED_BUILD_SEQUENCE.md`
 - **Scheduled resolution:** COIM-H (LATER tier)
-- **Status:** OPEN
+- **Status:** RESOLVED
 - **Date logged:** 2026-06-01
-- **Last reviewed:** 2026-06-01
+- **Last reviewed:** 2026-06-02
 
 **History**
 - 2026-06-01: OPEN — registered under COIM/OCSF NOW-tier governance registration (owner-authorised). Resolution unit: COIM-H.
+- 2026-06-02: RESOLVED — COIM-H delivered Action/Sub-Action entity. Contract `action.ts` (Action + SubAction interfaces, ActionStatus enum, OutcomeClassification enum, D3FENDTacticType enum, D3FENDCountermeasure interface, validateAction + validateSubAction functions). Schema `actions.ts` (actions + sub_actions tables with action_status, outcome_classification, d3fend_tactic_type enums + countermeasures JSONB). Migration `0010_action_sub_action_coim_h.sql`. Seed `seed-actions.ts` (3 actions, 5 sub-actions covering all 5 D3FEND tactics). 38 tests pass. DATA_DICTIONARY.md updated. Case lifecycle engine logic unchanged. Verification: vitest 38/38 COIM-H pass; typecheck clean (pre-existing baseUrl deprecation only); full suite 1630/1630 pass.
 
 ---
 
@@ -954,12 +955,13 @@ Authority: `.kiro/steering/feature-function-backlog.md` (extended in this update
 - **Scope of fix:** Add `tacticType` (D3FEND enum) and `countermeasures[]` (bounded ≤10) to the Sub-Action entity under build unit **COIM-H**, after ARCH-DEBT-044 establishes the entity. Additive. Update DATA_DICTIONARY.md.
 - **Affected specs / artifacts:** `packages/contracts/src/entities/action.ts` (new, from COIM-H); `packages/db/src/schema/actions.ts` (new); `docs/knowledge/DATA_DICTIONARY.md`; COIM-H unit in `REBASELINED_BUILD_SEQUENCE.md`
 - **Scheduled resolution:** COIM-H (LATER tier) — gated behind ARCH-DEBT-044
-- **Status:** OPEN
+- **Status:** RESOLVED
 - **Date logged:** 2026-06-01
-- **Last reviewed:** 2026-06-01
+- **Last reviewed:** 2026-06-02
 
 **History**
 - 2026-06-01: OPEN — registered under COIM/OCSF NOW-tier governance registration (owner-authorised). Resolution unit: COIM-H (depends on ARCH-DEBT-044).
+- 2026-06-02: RESOLVED — COIM-H delivered D3FEND tactic classification on Sub-Action. `tacticType` (d3fend_tactic_type enum: isolate/evict/restore/harden/detect) and `countermeasures[]` (JSONB, bounded ≤10, D3FENDCountermeasure interface with techniqueId + techniqueName + artifactRef) on contract + schema. Seed sub-actions cover all 5 tactic types. 38 tests pass including D3FEND-specific validations. DATA_DICTIONARY.md updated. Verification: vitest 38/38 COIM-H pass; typecheck clean; full suite 1630/1630 pass.
 
 ---
 

@@ -2484,7 +2484,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's o
 
 ### Unit COIM-H: Action/Sub-Action + D3FEND
 
-**Status:** READY
+**Status:** DONE
 
 **Blocked by:** — (COIM-A DONE; Unit 7 DONE; own creating debt ARCH-DEBT-044 does not self-block). LATER tier — owner may elect to defer.
 
@@ -2497,19 +2497,21 @@ Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's o
 **Dependencies:** COIM-A; Unit 7 (Case Lifecycle — DONE, references `action_decomposed`)
 
 **Required entities:**
-- Action/Sub-Action ❌ (created here); hosts D3FEND fields
+- Action/Sub-Action ✅ (created here); hosts D3FEND fields
 
 **Deliverables (governance registration only):**
-1. Create Action/Sub-Action: targetEntity, executionMethod, outcomeClassification, estimatedEffortHours, actualEffortHours, approvalRef
-2. Add D3FEND `tacticType` (isolate/evict/restore/harden/detect) and `countermeasures[]` (≤10) to Sub-Action
-3. Additive — does not modify case lifecycle engine logic
-4. Update DATA_DICTIONARY.md (new entity)
+1. Create Action/Sub-Action: targetEntity, executionMethod, outcomeClassification, estimatedEffortHours, actualEffortHours, approvalRef ✅
+2. Add D3FEND `tacticType` (isolate/evict/restore/harden/detect) and `countermeasures[]` (≤10) to Sub-Action ✅
+3. Additive — does not modify case lifecycle engine logic ✅
+4. Update DATA_DICTIONARY.md (new entity) ✅
 
 **Completion gate:**
 - ✅ Action/Sub-Action contract + schema + fixture exist
 - ✅ D3FEND fields present on Sub-Action
 - ✅ DATA_DICTIONARY.md entry created; ARCH-DEBT-044 + ARCH-DEBT-046 RESOLVED
 - ✅ Case lifecycle engine logic unchanged
+
+**Verification:** vitest 38/38 COIM-H pass; full suite 1630/1630 pass; typecheck clean (pre-existing baseUrl deprecation only); governance Green 100%; ARCH-DEBT-044 RESOLVED; ARCH-DEBT-046 RESOLVED; additive-only gate confirmed (case-lifecycle exports unchanged, action_decomposed transition preserved).
 
 **Source tag:** Foundational
 

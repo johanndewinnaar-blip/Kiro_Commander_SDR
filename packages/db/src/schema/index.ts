@@ -33,3 +33,4 @@ export { evidence, evidenceTypeEnum, evidenceSourceEnum, freshnessStatusEnum } f
 export { verdicts, verdictDispositionEnum } from './verdicts';
 export { observables, observableRiskObjectBindings, observableTypeEnum } from './observables';
 export { analytics, analyticTypeEnum, analyticStateEnum } from './analytics';
+export { actions, subActions, actionStatusEnum, outcomeClassificationEnum, d3fendTacticTypeEnum } from './actions';

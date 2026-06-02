@@ -118,3 +118,20 @@ export {
   MAX_ANALYTIC_ATTACK_BINDINGS,
   validateAnalytic,
 } from './analytic';
+export type {
+  Action,
+  ActionStatus,
+  SubAction,
+  OutcomeClassification,
+  D3FENDTacticType,
+  D3FENDCountermeasure,
+  ActionValidation,
+} from './action';
+export {
+  ACTION_STATUSES,
+  OUTCOME_CLASSIFICATIONS,
+  D3FEND_TACTIC_TYPES,
+  MAX_COUNTERMEASURES,
+  validateAction,
+  validateSubAction,
+} from './action';

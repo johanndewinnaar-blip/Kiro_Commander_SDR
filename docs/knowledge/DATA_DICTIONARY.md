@@ -837,17 +837,55 @@ None.
 | `confidenceAggregate` | int (0-100) | system-calculated | AVAILABLE | — | Rounded average of source confidence across bound Risk Objects; undefined when none carry a score |
 | `findingClassBreakdown` | JSONB (Record<string,number>) | system-calculated | AVAILABLE | — | Count of bound Risk Objects per FindingClass |
 
-### Action / Sub-Action (NEW ENTITY + D3FEND — FUTURE — blocker: COIM-H)
+### Action / Sub-Action (COIM-H — AVAILABLE)
 
-| Planned Field | Type | Source Classification | Availability | Blocker | Notes |
-|-------|------|----------------------|--------------|---------|-------|
-| `targetEntity` | string | system-calculated | FUTURE | COIM-H | — |
-| `executionMethod` | string | system-calculated | FUTURE | COIM-H | — |
-| `outcomeClassification` | enum | system-calculated | FUTURE | COIM-H | — |
-| `estimatedEffortHours` / `actualEffortHours` | number | system-calculated | FUTURE | COIM-H | effort tracking |
-| `approvalRef` | string | system-calculated | FUTURE | COIM-H | — |
-| `tacticType` (D3FEND) | enum | integration-derived | FUTURE | COIM-H | isolate/evict/restore/harden/detect (ARCH-DEBT-046) |
-| `countermeasures[]` (D3FEND) | JSONB | integration-derived | FUTURE | COIM-H | bounded ≤10 (ARCH-DEBT-046) |
+**Entity file:** `packages/contracts/src/entities/action.ts`  
+**Schema file:** `packages/db/src/schema/actions.ts`  
+**Migration:** `packages/db/drizzle/0010_action_sub_action_coim_h.sql`  
+**Fixture file:** `packages/contracts/src/fixtures/seed-actions.ts`  
+**Build unit:** COIM-H (Action/Sub-Action + D3FEND)  
+**Resolves:** ARCH-DEBT-044 (entity absence), ARCH-DEBT-046 (D3FEND gap)
+
+#### Action Fields
+
+| Field | Type | Source Classification | Availability | Notes |
+|-------|------|----------------------|--------------|-------|
+| `id` | string | system-generated | AVAILABLE | deterministic |
+| `entityType` | literal 'action' | system-generated | AVAILABLE | — |
+| `tenant` | TenantContext | system-generated | AVAILABLE | — |
+| `createdAt` / `updatedAt` | string (ISO) | system-generated | AVAILABLE | — |
+| `source` | SourceMetadata | system-generated | AVAILABLE | — |
+| `caseId` | string | system-calculated | AVAILABLE | owning case reference |
+| `title` | string | system-calculated | AVAILABLE | human-readable |
+| `description` | string | system-calculated | AVAILABLE | remediation objective |
+| `estimatedEffortHours` | number | system-calculated | AVAILABLE | total planned effort |
+| `actualEffortHours` | number | system-calculated | AVAILABLE | total recorded effort |
+| `status` | enum | system-calculated | AVAILABLE | planned/in_progress/completed/cancelled |
+| `approvalRef` | string | system-calculated | AVAILABLE | system-generated approval reference |
+| `owner` | string | system-calculated | AVAILABLE | assigned via routing engine |
+
+#### Sub-Action Fields
+
+| Field | Type | Source Classification | Availability | Notes |
+|-------|------|----------------------|--------------|-------|
+| `id` | string | system-generated | AVAILABLE | deterministic |
+| `entityType` | literal 'sub_action' | system-generated | AVAILABLE | — |
+| `tenant` | TenantContext | system-generated | AVAILABLE | — |
+| `createdAt` / `updatedAt` | string (ISO) | system-generated | AVAILABLE | — |
+| `source` | SourceMetadata | system-generated | AVAILABLE | — |
+| `actionId` | string | system-calculated | AVAILABLE | parent action reference |
+| `caseId` | string | system-calculated | AVAILABLE | denormalised case reference |
+| `targetEntity` | string | system-calculated | AVAILABLE | target entity ID |
+| `targetEntityType` | string | system-calculated | AVAILABLE | asset/identity/analytic/etc. |
+| `executionMethod` | string | system-calculated | AVAILABLE | how remediation is executed |
+| `outcomeClassification` | enum | system-calculated | AVAILABLE | successful/partial/failed/cancelled/pending |
+| `estimatedEffortHours` | number | system-calculated | AVAILABLE | effort tracking |
+| `actualEffortHours` | number | system-calculated | AVAILABLE | effort tracking |
+| `approvalRef` | string | system-calculated | AVAILABLE | approval reference |
+| `owner` | string | system-calculated | AVAILABLE | assigned via routing engine |
+| `sequenceOrder` | number | system-calculated | AVAILABLE | ordering within parent |
+| `tacticType` (D3FEND) | enum | integration-derived | AVAILABLE | isolate/evict/restore/harden/detect (ARCH-DEBT-046) |
+| `countermeasures[]` (D3FEND) | D3FENDCountermeasure[] | integration-derived | AVAILABLE | bounded ≤10, techniqueId+techniqueName+artifactRef (ARCH-DEBT-046) |
 
 ---
 
@@ -861,5 +899,5 @@ None.
 
 ---
 
-**Last Updated:** 2026-06-02 (COIM-G executed: Case Aggregation — additive COIM aggregate fields on Case (`attacks[]`, `affectedEntityCount`, `blastRadiusScore`, `dwellTimeHours`, `confidenceAggregate`, `findingClassBreakdown`) on contract `case.ts` + schema `cases.ts` (migration `0009_case_coim_g.sql`, additive nullable columns) + resolver `case-aggregation-resolver.ts` (`computeCaseAggregation`, pure/non-governing) + seed case-0001 carries self-consistent cached aggregates + 29 tests. Case COIM aggregation now AVAILABLE. ARCH-DEBT-045 fully RESOLVED (Case dwell-time portion closed; Risk Object + Asset/Identity portions previously closed by COIM-A/COIM-F). Governance logic unchanged — Doctrinal Assertion 1 preserved. Remaining COIM planned entity stays FUTURE pending COIM-H (Action/Sub-Action + D3FEND, LATER tier).)  
+**Last Updated:** 2026-06-02 (COIM-H executed: Action/Sub-Action + D3FEND — new entity `action.ts` (Action + SubAction interfaces, D3FENDTacticType enum, D3FENDCountermeasure, validation functions) + schema `actions.ts` (actions + sub_actions tables with D3FEND tactic_type enum + countermeasures JSONB) + migration `0010_action_sub_action_coim_h.sql` + seed fixture `seed-actions.ts` (3 actions, 5 sub-actions covering all 5 D3FEND tactics) + 38 tests. ARCH-DEBT-044 RESOLVED (entity created). ARCH-DEBT-046 RESOLVED (D3FEND fields on Sub-Action). Case lifecycle engine logic unchanged — Doctrinal Assertion 1 preserved. All COIM entities now AVAILABLE.)  
 **Snapshot Commit:** (to be recorded after commit)
