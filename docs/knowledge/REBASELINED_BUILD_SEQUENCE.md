@@ -69,11 +69,11 @@ A unit is **READY** iff every dependency unit is **DONE** and every mapped chain
 
 Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readiness State Machine above.
 
-**READY (7):** Unit 15 (OODA Layer), Unit 18 (Identity Intelligence Surface), Unit 19 (Asset Intelligence Surface), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors), Unit 40 (Commander AI Core), and COIM unit **COIM-H**.
+**READY (7):** Unit 15 (OODA Layer), Unit 16 (Command Centre), Unit 18 (Identity Intelligence Surface), Unit 19 (Asset Intelligence Surface), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors), Unit 40 (Commander AI Core), and COIM unit **COIM-H**.
 
-**DONE (22):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13, Unit 14, **COIM-A, COIM-B, COIM-C, COIM-D, COIM-E, COIM-F, COIM-G**.
+**DONE (23):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13, Unit 14, Unit 15, **COIM-A, COIM-B, COIM-C, COIM-D, COIM-E, COIM-F, COIM-G**.
 
-**BLOCKED (38):** Units 15–21 (except 15, 18, 19), 23–37, 39–49 (numbered units, except 22, 38, 40). All 27 Team 2 numbered units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006. COIM units are Foundational and NOT ARCH-006-gated; none remain BLOCKED.
+**BLOCKED (37):** Units 16–21 (except 16, 18, 19), 23–37, 39–49 (numbered units, except 22, 38, 40). All 27 Team 2 numbered units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006. COIM units are Foundational and NOT ARCH-006-gated; none remain BLOCKED.
 
 > **COIM / OCSF remediation units (COIM-A … COIM-H):** added 2026-06-01 under owner-authorised governance registration for `DEC-coim-ocsf-source-classification-architecture`. **COIM-A/B/C/D/E/F/G are DONE**; COIM-H remains READY. Full definitions and the COIM Live Status Snapshot are in the **"COIM / OCSF Remediation Units"** section below (after Unit 49). Tier mapping: COIM-A = NOW (DONE), COIM-B/C/D/E/F/G = NEXT (DONE), COIM-H = LATER (READY).
 
@@ -94,8 +94,8 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 | 12 Closure Gate Engine | Foundational | **DONE** | — |
 | 13 Reopening Trigger Engine | Foundational | **DONE** | — |
 | 14 Intelligence Layer — Four Streams | Foundational | **DONE** | — |
-| 15 OODA Layer | Foundational | **READY** | — |
-| 16 Command Centre | Foundational | BLOCKED | Unit 15; Unit 14; Units 8–13 |
+| 15 OODA Layer | Foundational | **DONE** | — |
+| 16 Command Centre | Foundational | **READY** | — |
 | 17 Case Management UI | Foundational | BLOCKED | Units 8–13; Unit 16 |
 | 18 Identity Intelligence Surface | Foundational | **READY** | — |
 | 19 Asset Intelligence Surface | Foundational | **READY** | — |
@@ -767,9 +767,11 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ### Unit 15: OODA Layer — Programme-Level OODA Tempo
 
-**Status:** READY
+**Status:** DONE
 
-**Blocked by:** — (Unit 14 DONE; Units 7–13 DONE — recomputed 2026-06-02 per recompute-on-resolution rule)
+**Blocked by:** — (complete)
+
+**Verification:** Spec #58 Security OODA Loop from `docs/99_source_archive/baseline_v2_6_2/docs/02_child_specs/58_Security_OODA_Loop_Spec.md`; Spec #67 OODA Phase Dashboards. Evidence: vitest 30/30 ooda-layer tests pass (224/224 across dependency suites, 0 new regressions); four OODA phases (observe/orient/decide/act) with weighted health metrics (§3.1–§3.4); phase degradation detection with caller-supplied threshold (no hardcoded values); degradation risk-object template creation (ooda_phase_degradation type); Command Tempo dashboard model (cross-phase overall score + degraded-phase list); pure functions, no side effects; engine code at `packages/contracts/src/engines/ooda-layer.ts`; governance Green (100%).
 
 **Purpose:** Build OODA Layer with four-phase tempo (Observe, Orient, Decide, Act) and phase health metrics
 
@@ -2514,7 +2516,7 @@ A build unit is complete when:
 ---
 
 **Last Updated:** 2026-06-01  
-**Status:** ACTIVE — readiness state machine. Build only from the READY set (currently Units 15, 18, 19, 22, 38, 40 and COIM-H; Units 0–14 + COIM-A…COIM-G DONE). Status recomputes on debt-resolution / unit-completion.  
+**Status:** ACTIVE — readiness state machine. Build only from the READY set (currently Units 16, 18, 19, 22, 38, 40 and COIM-H; Units 0–15 + COIM-A…COIM-G DONE). Status recomputes on debt-resolution / unit-completion.  
 **Enforcement:** ARCH-006 (build-stream sequencing) + ARCH-007 (blocking-debt prerequisite) in `.kiro/testing/conformance-registry.md`, auto-run via post-task-review. "What's next" query defined in `.kiro/steering/execution-discipline.md`.  
 **Authority:** Derived from SYSTEM_KNOWLEDGE_GRAPH.md, DATA_DICTIONARY.md, REBASELINED_BUILD_SCHEDULE_NOTES.md, baseline source. Decision: `DEC-build-readiness-state-machine` (DECISIONS.md).  
 **Sourcing rule:** Never cite the translation layer — all citations from `docs/99_source_archive/baseline_v2_6_2/`

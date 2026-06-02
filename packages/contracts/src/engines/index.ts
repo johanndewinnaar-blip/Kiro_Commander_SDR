@@ -171,3 +171,29 @@ export {
   scoreThreatRelevance,
   aggregateSilentDefence,
 } from './intelligence-layer';
+
+// Unit 15: OODA Layer (Programme-Level OODA Tempo)
+export type {
+  OodaPhase,
+  ObservePhaseMetrics,
+  OrientPhaseMetrics,
+  DecidePhaseMetrics,
+  ActPhaseMetrics,
+  PhaseHealthScore,
+  HealthThresholds,
+  PhaseDegradation,
+  DegradationCaseRequest,
+  DegradationRiskObjectTemplate,
+  CommandTempo,
+} from './ooda-layer';
+export {
+  OODA_PHASES,
+  OODA_PHASE_LABELS,
+  calculateObserveHealth,
+  calculateOrientHealth,
+  calculateDecideHealth,
+  calculateActHealth,
+  detectPhaseDegradation,
+  createDegradationRiskObject,
+  composeCommandTempo,
+} from './ooda-layer';
