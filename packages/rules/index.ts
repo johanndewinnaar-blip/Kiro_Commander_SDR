@@ -55,3 +55,20 @@ export type { SubscriptionEvaluationResult, TenantEvaluationInput } from './subs
 
 export { computeIntelligencePrioritySignal } from './priority-signal';
 export type { PrioritySignal, VulnerabilitySignalInput, TenantEvaluationContext, UrgencyLevel } from './priority-signal';
+
+// ─── CMEP-1.0: Case Management Excellence Engines ────────────────────────────
+
+export { computeRoutingDecision, DEFAULT_ROUTING_WEIGHTS } from './multi-factor-routing';
+export type { RoutingWeights, RoutingCandidate, RoutingDecision, ScoredCandidate } from './multi-factor-routing';
+
+export { evaluateReassessment, scoreToPriority, DEFAULT_PRIORITY_THRESHOLDS } from './priority-reassessment';
+export type { ReassessmentInput, ReassessmentResult, PriorityLevel, PriorityThresholds } from './priority-reassessment';
+
+export { computeAdaptiveSla, DEFAULT_ADAPTIVE_SLA_CONFIG } from './adaptive-sla';
+export type { AdaptiveSlaInput, AdaptiveSlaResult, AdaptiveSlaConfig, ActiveSlaModifier } from './adaptive-sla';
+
+export { correlateFindings, DEFAULT_CORRELATION_POLICY } from './correlation-engine';
+export type { CorrelationPolicy, CorrelationFinding, CorrelationGroup, CorrelationType, CorrelationResult } from './correlation-engine';
+
+export { computeEffectivenessMetrics, DEFAULT_EFFECTIVENESS_TARGETS } from './effectiveness-metrics';
+export type { EffectivenessTargets, CaseResolutionRecord, EffectivenessMetrics, ThresholdBreach, EffectivenessResult } from './effectiveness-metrics';

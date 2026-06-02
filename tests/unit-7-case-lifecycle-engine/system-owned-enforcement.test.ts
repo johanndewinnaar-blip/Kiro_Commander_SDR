@@ -99,10 +99,11 @@ describe('System-Owned Enforcement — no manual status edit', () => {
     expect(isTransitionAllowed('routed', 'in_progress')).toBe(false);
   });
 
-  it('cannot jump backward (except validated_fail → in_progress and reopened → in_progress)', () => {
-    // Only two backward transitions exist:
+  it('cannot jump backward (except validated_fail → in_progress, reopened → in_progress, and in_progress → prioritised reassessment)', () => {
+    // Backward transitions exist for:
     // validated_fail → in_progress (remediation loop)
     // reopened_by_system → in_progress (reopen loop)
+    // in_progress → prioritised (priority reassessment loop — CMEP-1.0)
     const backwardTransitions = ALLOWED_TRANSITIONS.filter((t) => {
       const states: CaseStatus[] = [
         'detected', 'bound', 'routed', 'prioritised', 'action_decomposed',
@@ -115,11 +116,11 @@ describe('System-Owned Enforcement — no manual status edit', () => {
       return toIdx < fromIdx;
     });
 
-    // Only validated_fail → in_progress and reopened_by_system → in_progress go backward
-    expect(backwardTransitions).toHaveLength(2);
+    expect(backwardTransitions).toHaveLength(3);
     const backwardPairs = backwardTransitions.map((t) => `${t.from}→${t.to}`);
     expect(backwardPairs).toContain('validated_fail→in_progress');
     expect(backwardPairs).toContain('reopened_by_system→in_progress');
+    expect(backwardPairs).toContain('in_progress→prioritised');
   });
 });
 

@@ -38,7 +38,11 @@ export type LifecycleActor =
   | 'prioritisation-engine'
   | 'validation-engine'
   | 'closure-engine'
-  | 'reopening-engine';
+  | 'reopening-engine'
+  | 'reassessment-engine'
+  | 'correlation-engine'
+  | 'enrichment-engine'
+  | 'effectiveness-engine';
 
 /** All valid lifecycle actors */
 export const LIFECYCLE_ACTORS: readonly LifecycleActor[] = [
@@ -49,6 +53,10 @@ export const LIFECYCLE_ACTORS: readonly LifecycleActor[] = [
   'validation-engine',
   'closure-engine',
   'reopening-engine',
+  'reassessment-engine',
+  'correlation-engine',
+  'enrichment-engine',
+  'effectiveness-engine',
 ] as const;
 
 /** A single allowed state transition with permitted actors */
@@ -83,6 +91,7 @@ export const ALLOWED_TRANSITIONS: readonly CaseTransition[] = [
   { from: 'prioritised', to: 'action_decomposed', permittedActors: ['system'] },
   { from: 'action_decomposed', to: 'in_progress', permittedActors: ['system'] },
   { from: 'in_progress', to: 'pending_validation', permittedActors: ['system'] },
+  { from: 'in_progress', to: 'prioritised', permittedActors: ['prioritisation-engine'] },
   { from: 'pending_validation', to: 'validation_running', permittedActors: ['validation-engine'] },
   { from: 'validation_running', to: 'validated_pass', permittedActors: ['validation-engine'] },
   { from: 'validation_running', to: 'validated_fail', permittedActors: ['validation-engine'] },

@@ -1,9 +1,10 @@
 /**
  * Seed Strategy Policies — Commander SDR Test Fixtures
  *
- * Synthetic strategy policy data for all twelve surfaces.
+ * Synthetic strategy policy data for all seventeen surfaces.
  * Source: Spec #32 Strategy Layer Runtime Surface
  * v1.3.1 lineage closure: Requirements 1-12
+ * CMEP-1.0: Added sla-modifier, correlation-policy, effectiveness-targets, ssvc-decision-tree
  */
 
 import type { StrategyPolicy } from '../entities/strategy';
@@ -312,6 +313,130 @@ export const seedStrategies: StrategyPolicy[] = [
     proposedBy: 'System (baseline)',
     proposedAt: '2026-01-10T00:00:00.000Z',
     approval: { approvedBy: 'Tenant Admin', approvedAt: '2026-01-10T00:00:00.000Z', condition: 'baseline-default', rationale: 'Initial evidence sufficiency rules for closed-loop case model' },
+    effectiveFrom: '2026-01-10T00:00:00.000Z',
+    effectiveUntil: null,
+    simulationRef: null,
+  },
+  {
+    id: seedId('strategy', 14),
+    entityType: 'strategy-policy',
+    tenant: SEED_TENANT,
+    createdAt: '2026-01-10T00:00:00.000Z',
+    updatedAt: '2026-01-15T09:00:00.000Z',
+    source: { ...SEED_SOURCE, sourceSystem: 'commander-strategy-engine' },
+    surfaceType: 'sla-modifier',
+    policyVersion: '1.0.0',
+    status: 'active',
+    configuration: {
+      /** Minimum SLA hours — hard floor regardless of modifiers */
+      minimumSlaHours: 1,
+      /** Maximum SLA multiplier cap */
+      maxMultiplier: 3.0,
+      /** Domain-specific SLA modifiers */
+      domainModifiers: {
+        vulnerability: { exploitMaturityActive: 0.5, kevListed: 0.4, compensatingControl: 1.5, internetFacing: 0.6 },
+        identity: { privilegedAccount: 0.5, serviceAccount: 0.7 },
+        exposure: { internetFacing: 0.5, internalOnly: 1.2 },
+      },
+    },
+    proposedBy: 'System (baseline)',
+    proposedAt: '2026-01-10T00:00:00.000Z',
+    approval: { approvedBy: 'Tenant Admin', approvedAt: '2026-01-10T00:00:00.000Z', condition: 'baseline-default', rationale: 'Initial SLA modifier strategy for adaptive SLA computation' },
+    effectiveFrom: '2026-01-10T00:00:00.000Z',
+    effectiveUntil: null,
+    simulationRef: null,
+  },
+  {
+    id: seedId('strategy', 15),
+    entityType: 'strategy-policy',
+    tenant: SEED_TENANT,
+    createdAt: '2026-01-10T00:00:00.000Z',
+    updatedAt: '2026-01-15T09:00:00.000Z',
+    source: { ...SEED_SOURCE, sourceSystem: 'commander-strategy-engine' },
+    surfaceType: 'correlation-policy',
+    policyVersion: '1.0.0',
+    status: 'active',
+    configuration: {
+      /** Temporal clustering window in hours */
+      temporalWindowHours: 24,
+      /** Minimum blast radius score for aggregation */
+      blastRadiusThreshold: 3,
+      /** Maximum CVEs in a single correlation group */
+      maxCorrelationGroupSize: 50,
+      /** Attack chain detection — minimum technique sequence length */
+      attackChainMinLength: 2,
+      /** CVE dedup — treat same CVE across different assets as correlated */
+      cveDedupEnabled: true,
+    },
+    proposedBy: 'System (baseline)',
+    proposedAt: '2026-01-10T00:00:00.000Z',
+    approval: { approvedBy: 'Tenant Admin', approvedAt: '2026-01-10T00:00:00.000Z', condition: 'baseline-default', rationale: 'Initial correlation policy for pre-binding correlation engine' },
+    effectiveFrom: '2026-01-10T00:00:00.000Z',
+    effectiveUntil: null,
+    simulationRef: null,
+  },
+  {
+    id: seedId('strategy', 16),
+    entityType: 'strategy-policy',
+    tenant: SEED_TENANT,
+    createdAt: '2026-01-10T00:00:00.000Z',
+    updatedAt: '2026-01-15T09:00:00.000Z',
+    source: { ...SEED_SOURCE, sourceSystem: 'commander-strategy-engine' },
+    surfaceType: 'effectiveness-targets',
+    policyVersion: '1.0.0',
+    status: 'active',
+    configuration: {
+      /** Target MTTR hours by priority */
+      mttrTargetHours: { P0: 4, P1: 24, P2: 72, P3: 168, P4: 336 },
+      /** SLA compliance rate threshold (percentage) */
+      slaComplianceTarget: 95,
+      /** Maximum acceptable reopen rate (percentage) */
+      maxReopenRate: 10,
+      /** Maximum acceptable noise ratio (percentage) */
+      maxNoiseRatio: 15,
+      /** Maximum mean dwell time hours */
+      maxMeanDwellTimeHours: 48,
+      /** Routing accuracy target (percentage) */
+      routingAccuracyTarget: 90,
+      /** OODA tempo degradation threshold — triggers case creation */
+      oodaDegradationThreshold: 0.7,
+    },
+    proposedBy: 'System (baseline)',
+    proposedAt: '2026-01-10T00:00:00.000Z',
+    approval: { approvedBy: 'Tenant Admin', approvedAt: '2026-01-10T00:00:00.000Z', condition: 'baseline-default', rationale: 'Initial effectiveness targets for operational metrics engine' },
+    effectiveFrom: '2026-01-10T00:00:00.000Z',
+    effectiveUntil: null,
+    simulationRef: null,
+  },
+  {
+    id: seedId('strategy', 17),
+    entityType: 'strategy-policy',
+    tenant: SEED_TENANT,
+    createdAt: '2026-01-10T00:00:00.000Z',
+    updatedAt: '2026-01-15T09:00:00.000Z',
+    source: { ...SEED_SOURCE, sourceSystem: 'commander-strategy-engine' },
+    surfaceType: 'ssvc-decision-tree',
+    policyVersion: '1.0.0',
+    status: 'active',
+    configuration: {
+      /** SSVC decision points and their values */
+      decisionPoints: {
+        exploitation: ['none', 'poc', 'active'],
+        automatable: ['no', 'yes'],
+        technicalImpact: ['partial', 'total'],
+        missionImpact: ['low', 'medium', 'high'],
+      },
+      /** Decision outcomes */
+      outcomes: ['track', 'track*', 'attend', 'act'],
+      /** Override rules — specific combinations that force an outcome */
+      overrides: [
+        { exploitation: 'active', automatable: 'yes', outcome: 'act' },
+        { exploitation: 'active', missionImpact: 'high', outcome: 'act' },
+      ],
+    },
+    proposedBy: 'System (baseline)',
+    proposedAt: '2026-01-10T00:00:00.000Z',
+    approval: { approvedBy: 'Tenant Admin', approvedAt: '2026-01-10T00:00:00.000Z', condition: 'baseline-default', rationale: 'Initial SSVC decision tree for vulnerability prioritisation' },
     effectiveFrom: '2026-01-10T00:00:00.000Z',
     effectiveUntil: null,
     simulationRef: null,

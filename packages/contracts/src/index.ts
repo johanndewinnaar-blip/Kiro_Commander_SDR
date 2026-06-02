@@ -9,3 +9,4 @@ export * from './entities/index';
 export * from './fixtures/index';
 export * from './resolvers/index';
 export * from './engines/index';
+export * from './profiles/index';

@@ -43,8 +43,8 @@ function makeRequest(from: CaseStatus, to: CaseStatus, actor: LifecycleActor): T
 }
 
 describe('12-State Lifecycle — ALLOWED_TRANSITIONS structure', () => {
-  it('has exactly 14 transitions', () => {
-    expect(ALLOWED_TRANSITIONS).toHaveLength(14);
+  it('has exactly 15 transitions', () => {
+    expect(ALLOWED_TRANSITIONS).toHaveLength(15);
   });
 
   it('covers all 12 states as source (from) at least once except terminal validated_pass/validated_fail which have outgoing edges', () => {
@@ -133,8 +133,8 @@ describe('12-State Lifecycle — getNextStates', () => {
     expect(next).toHaveLength(2);
   });
 
-  it('in_progress → [pending_validation]', () => {
-    expect(getNextStates('in_progress')).toEqual(['pending_validation']);
+  it('in_progress → [pending_validation, prioritised]', () => {
+    expect(getNextStates('in_progress')).toEqual(['pending_validation', 'prioritised']);
   });
 });
 
@@ -282,8 +282,8 @@ describe('12-State Lifecycle — getCurrentStatusFromHistory', () => {
 });
 
 describe('12-State Lifecycle — LIFECYCLE_ACTORS', () => {
-  it('contains all 7 actors', () => {
-    expect(LIFECYCLE_ACTORS).toHaveLength(7);
+  it('contains all 11 actors', () => {
+    expect(LIFECYCLE_ACTORS).toHaveLength(11);
     expect(LIFECYCLE_ACTORS).toContain('system');
     expect(LIFECYCLE_ACTORS).toContain('routing-engine');
     expect(LIFECYCLE_ACTORS).toContain('binding-engine');
@@ -291,5 +291,9 @@ describe('12-State Lifecycle — LIFECYCLE_ACTORS', () => {
     expect(LIFECYCLE_ACTORS).toContain('validation-engine');
     expect(LIFECYCLE_ACTORS).toContain('closure-engine');
     expect(LIFECYCLE_ACTORS).toContain('reopening-engine');
+    expect(LIFECYCLE_ACTORS).toContain('reassessment-engine');
+    expect(LIFECYCLE_ACTORS).toContain('correlation-engine');
+    expect(LIFECYCLE_ACTORS).toContain('enrichment-engine');
+    expect(LIFECYCLE_ACTORS).toContain('effectiveness-engine');
   });
 });

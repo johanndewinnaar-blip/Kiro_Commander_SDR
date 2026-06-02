@@ -3,8 +3,9 @@
  *
  * Source: Spec #32 Strategy Layer Runtime Surface Specification
  * v1.3.1 lineage closure: 24 EARS requirements
+ * CMEP-1.0: Extended from 13 to 17 surfaces
  *
- * Thirteen named strategy surfaces:
+ * Seventeen named strategy surfaces:
  * 1. SLA Strategy
  * 2. Threshold Strategy
  * 3. Automation Boundary Strategy
@@ -18,11 +19,15 @@
  * 11. Closure Gate Strategy
  * 12. Reopening Trigger Strategy
  * 13. Evidence Sufficiency Strategy (Phase E1 precursor)
+ * 14. SLA Modifier Strategy (CMEP-1.0)
+ * 15. Correlation Policy Strategy (CMEP-1.0)
+ * 16. Effectiveness Targets Strategy (CMEP-1.0)
+ * 17. SSVC Decision Tree Strategy (CMEP-1.0)
  */
 
 import type { CommonFields } from './common';
 
-/** The thirteen named strategy surface types per Spec #32 + Phase E1 extension */
+/** The seventeen named strategy surface types per Spec #32 + Phase E1 + CMEP-1.0 extension */
 export type StrategySurfaceType =
   | 'sla'
   | 'threshold'
@@ -36,9 +41,13 @@ export type StrategySurfaceType =
   | 'validation-window'
   | 'closure-gate'
   | 'reopening-trigger'
-  | 'evidence-sufficiency';
+  | 'evidence-sufficiency'
+  | 'sla-modifier'
+  | 'correlation-policy'
+  | 'effectiveness-targets'
+  | 'ssvc-decision-tree';
 
-/** All thirteen strategy surface types as a constant array */
+/** All seventeen strategy surface types as a constant array */
 export const STRATEGY_SURFACE_TYPES: StrategySurfaceType[] = [
   'sla',
   'threshold',
@@ -53,6 +62,10 @@ export const STRATEGY_SURFACE_TYPES: StrategySurfaceType[] = [
   'closure-gate',
   'reopening-trigger',
   'evidence-sufficiency',
+  'sla-modifier',
+  'correlation-policy',
+  'effectiveness-targets',
+  'ssvc-decision-tree',
 ];
 
 /** Strategy surface labels for UI display */
@@ -70,6 +83,10 @@ export const STRATEGY_SURFACE_LABELS: Record<StrategySurfaceType, string> = {
   'closure-gate': 'Closure Gate Strategy',
   'reopening-trigger': 'Reopening Trigger Strategy',
   'evidence-sufficiency': 'Evidence Sufficiency Strategy',
+  'sla-modifier': 'SLA Modifier Strategy',
+  'correlation-policy': 'Correlation Policy Strategy',
+  'effectiveness-targets': 'Effectiveness Targets Strategy',
+  'ssvc-decision-tree': 'SSVC Decision Tree Strategy',
 };
 
 /** Strategy policy status */
