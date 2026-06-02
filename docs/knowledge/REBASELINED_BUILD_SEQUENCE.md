@@ -69,13 +69,13 @@ A unit is **READY** iff every dependency unit is **DONE** and every mapped chain
 
 Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readiness State Machine above.
 
-**READY (8 numbered + COIM-H):** Unit 17 (Case Management UI), Unit 18 (Identity Intelligence Surface), Unit 19 (Asset Intelligence Surface), Unit 20 (External Operating Picture), Unit 21 (Internal Operating Picture), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors), Unit 40 (Commander AI Core), and COIM unit **COIM-H**.
+**READY (7 numbered + COIM-H):** Unit 17 (Case Management UI), Unit 18 (Identity Intelligence Surface), Unit 19 (Asset Intelligence Surface), Unit 21 (Internal Operating Picture), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors), Unit 40 (Commander AI Core), and COIM unit **COIM-H**.
 
-**DONE (24):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13, Unit 14, Unit 15, **Unit 16a**, **COIM-A, COIM-B, COIM-C, COIM-D, COIM-E, COIM-F, COIM-G**.
+**DONE (25):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13, Unit 14, Unit 15, **Unit 16a**, **Unit 20**, **COIM-A, COIM-B, COIM-C, COIM-D, COIM-E, COIM-F, COIM-G**.
 
-**BLOCKED (27):** Unit 16b (Aggregate/Posture Command Centre), Units 23–37, 39, 41–49. All 27 Team 2 numbered units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006. COIM units are Foundational and NOT ARCH-006-gated; none remain BLOCKED.
+**BLOCKED (26):** Unit 16b (Aggregate/Posture Command Centre), Units 23–37, 39, 41–49. All 27 Team 2 numbered units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006. COIM units are Foundational and NOT ARCH-006-gated; none remain BLOCKED.
 
-> **Recompute (2026-06-02, post Unit 16a DONE):** Unit 16a marked DONE. Per the recompute rule, dependents whose chains are now fully DONE flip BLOCKED→READY: **Unit 17** (deps Units 8–13 + 16a all DONE), **Unit 20** (deps Unit 14 + 16a all DONE), **Unit 21** (deps Unit 14 + 16a all DONE). Unit 16b remains BLOCKED (functional pages 17/30–33 not DONE + data-point-to-metric mapping artifact absent).
+> **Recompute (2026-06-02, post Unit 20 DONE):** Unit 20 (External Operating Picture) marked DONE. No unit depends on Unit 20, so no new units flip to READY. Unit 17 remains READY but is held pending owner decisions (deliverable 5 = Team-2 Unit 44 scope; token-doctrine conflict) and was skipped by owner instruction. Unit 21 (Internal Operating Picture) is the next buildable surface in the priority chain.
 
 > **Unit 16 split (`DEC-command-centre-split-16a-16b`, 2026-06-02):** Unit 16 (Command Centre) was split into **16a (Operational Command Centre — READY)** and **16b (Aggregate/Posture Command Centre — BLOCKED)** to resolve ARCH-DEBT-026. The metric-deferral control formerly in `DEC-command-centre-deferred` now applies ONLY to 16b. All units that previously depended on "Unit 16" now depend on **16a**. Full definitions in the Unit 16a / Unit 16b sections below.
 
@@ -104,7 +104,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 | 17 Case Management UI | Foundational | **READY** | — |
 | 18 Identity Intelligence Surface | Foundational | **READY** | — |
 | 19 Asset Intelligence Surface | Foundational | **READY** | — |
-| 20 External Operating Picture | Foundational | **READY** | — |
+| 20 External Operating Picture | Foundational | **DONE** | — |
 | 21 Internal Operating Picture | Foundational | **READY** | — |
 | 22 Tenant Admin Surface | Foundational | **READY** | — |
 | 23 Commercial Control Plane | Team 2 | BLOCKED | ARCH-006 (USE_CASE_SCHEDULE.md + PAGE_INVENTORY.md absent) |
@@ -1021,9 +1021,11 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ### Unit 20: Surface Layer — External Operating Picture
 
-**Status:** READY
+**Status:** DONE
 
-**Blocked by:** — (dependencies Unit 14 and Unit 16a all DONE; recomputed 2026-06-02 on Unit 16a completion)
+**Blocked by:** — (complete)
+
+**Verification:** Spec #65 External Operating Picture, #60 Internal/External Attack Surface Framework from `docs/99_source_archive/baseline_v2_6_2/`. Evidence: diagnostics clean on `apps/web/src/app/operating-picture/external/page.tsx`; vitest `tests/20-external-operating-picture/external-operating-picture.test.ts` (12 tests) passing; full run 1485/1505 (the 20 residual failures are pre-existing Unit 17 / Cluster B deferral flags, none from Unit 20); governance runner `--unit 20` Green 100% (ARCH-005–009). Surface attribution strictly external (`external_attack_surface` filter); External Attack Intelligence stream sourced via Unit 14 `CLASS_TO_STREAM` (Class A connectors); external case queue + risk objects + drill paths to cases/assets/identities and the Internal Operating Picture. Replaces the SCAFFOLD placeholder created during Unit 16a.
 
 **Purpose:** Build External Operating Picture (external attack surface view)
 
@@ -2564,7 +2566,7 @@ A build unit is complete when:
 ---
 
 **Last Updated:** 2026-06-02  
-**Status:** ACTIVE — readiness state machine. Build only from the READY set (currently Units 17, 18, 19, 20, 21, 22, 38, 40 and COIM-H; Units 0–15 + 16a + COIM-A…COIM-G DONE). Status recomputes on debt-resolution / unit-completion.  
+**Status:** ACTIVE — readiness state machine. Build only from the READY set (currently Units 17, 18, 19, 21, 22, 38, 40 and COIM-H; Units 0–15 + 16a + 20 + COIM-A…COIM-G DONE). Status recomputes on debt-resolution / unit-completion.  
 **Enforcement:** ARCH-006 (build-stream sequencing) + ARCH-007 (blocking-debt prerequisite) in `.kiro/testing/conformance-registry.md`, auto-run via post-task-review. "What's next" query defined in `.kiro/steering/execution-discipline.md`.  
 **Authority:** Derived from SYSTEM_KNOWLEDGE_GRAPH.md, DATA_DICTIONARY.md, REBASELINED_BUILD_SCHEDULE_NOTES.md, baseline source. Decision: `DEC-build-readiness-state-machine` (DECISIONS.md).  
 **Sourcing rule:** Never cite the translation layer — all citations from `docs/99_source_archive/baseline_v2_6_2/`
