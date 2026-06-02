@@ -63,7 +63,7 @@ describe('Route Registry', () => {
     });
 
     it('contains v1.2 SCAFFOLD routes for all core domains', () => {
-      const expected = ['/vulnerabilities', '/exposure', '/identity', '/controls', '/architecture', '/governance', '/ciso'];
+      const expected = ['/vulnerabilities', '/exposure', '/controls', '/architecture', '/governance', '/ciso'];
       for (const path of expected) {
         const route = allRoutes.find((r) => r.path === path);
         expect(route, `Missing route: ${path}`).toBeDefined();
@@ -76,6 +76,15 @@ describe('Route Registry', () => {
       expect(route, 'Missing route: /assets').toBeDefined();
       expect(route!.status).toBe('BUILD');
       expect(route!.owningSpec).toContain('19');
+    });
+
+    it('contains /identity as a BUILD route (Identity Intelligence Surface — Unit 18)', () => {
+      const route = allRoutes.find((r) => r.path === '/identity');
+      expect(route, 'Missing route: /identity').toBeDefined();
+      expect(route!.status).toBe('BUILD');
+      expect(route!.owningSpec).toContain('18');
+      // Aggregate-tier RBAC recorded on the route (DEC-sec-c2-internal-cop-rbac).
+      expect(route!.rbac.length).toBeGreaterThan(0);
     });
 
     it('contains tenant admin routes per Spec #47', () => {

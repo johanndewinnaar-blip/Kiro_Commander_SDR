@@ -1,0 +1,19 @@
+# Governance Run: 2026-06-02 (de0a329)
+
+**Scope:** Unit 18
+**Method:** Automated runner (scripts/governance-check.cjs)
+**Score:** Green (100% — 5/5 pass)
+
+## Results
+
+- **ARCH-005:** ✅ PASS — All entities have dictionary entries
+- **ARCH-006:** ✅ PASS — Unit is Foundational — ARCH-006 gate not applicable
+- **ARCH-007:** ✅ PASS — Unit 18 Status is DONE
+- **ARCH-008:** ✅ PASS — (a) PASS: No orphan build-debt; (b) PASS: All 51 units statused; (c) PASS: No built-but-blocked
+- **ARCH-009:** ✅ PASS — All 23 DONE units have verification
+
+## Score
+
+| Band | Pass Rate | Passed | Total |
+|------|-----------|--------|-------|
+| Green | 100% | 5 | 5 |
