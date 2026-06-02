@@ -33,6 +33,23 @@ Standing rules for all build execution in this programme. These apply regardless
 - Follow the authority read order in AGENTS.md before any change.
 - If a hook or guardrail refuses an action, stop and report. Do not work around it.
 
+## Scoped-read pre-flight discipline
+
+For READY unit execution, Kiro MUST use scoped reads by default. The large governance state documents (`REBASELINED_BUILD_SEQUENCE.md`, `ARCHITECTURAL_DEBT_REGISTER.md`, `DATA_DICTIONARY.md`) are read by section/line-range or by targeted grep — never wholesale — unless a documented exception below applies. This reduces conveyor context loading; it does not change what is enforced.
+
+**Scoped-read rules (default for every READY unit build):**
+
+1. **Build sequence** — read only the target unit's `### Unit N:` section (its Status, Blocked-by, Dependencies, Deliverables, Completion gate) plus the Live Status Snapshot table. Do not read the other unit definitions or the COIM appendix unless the target unit cites them.
+2. **Dependencies** — read only the Status/Verification lines of the units the target depends on (available from the snapshot table), not their full sections or their source code, unless the target unit consumes their code directly.
+3. **Debt register** — read only the specific ARCH-DEBT IDs mapped to the target unit's chain (grep by ID). Do not read the full register. If no debt is mapped, a grep confirming none is sufficient.
+4. **Data dictionary** — read only the entity sections (`### N. <Entity>`) the target unit consumes or modifies. Do not read unrelated entity entries.
+5. **Design / UI files** — read only the design-system, route-registry, and `apps/web` files relevant to the target surface. Do not load the whole UI tree.
+6. **Full-file reads** — permitted ONLY when (a) the file itself is being modified, or (b) scoped reading is demonstrably insufficient (e.g. a cross-cutting change, an index/anchor is missing, or a grep cannot isolate the needed content). When a full-file read is used, the reason is recorded in the closure report.
+
+**Scoped reads never substitute for enforcement.** The governance runner still reads whatever it needs in full (it is unchanged), and ARCH-005–009, the scorecard, run logs, and the pre-commit gate operate exactly as before. Scoped reads govern *what the agent loads into working context to plan and implement* — not what the mechanical gates inspect.
+
+This rule does NOT weaken: authority preflight, the governance runner, ARCH-005 through ARCH-009, scorecard updates, run-log creation, the pre-commit gate, or the closure review. Any one of those that needs a full file still gets it.
+
 ## READY unit auto-commit lifecycle
 
 When the owner instructs execution of a READY build unit, the default lifecycle is autonomous end-to-end:
@@ -48,7 +65,7 @@ When the owner instructs execution of a READY build unit, the default lifecycle 
    - Recompute READY set
    - Commit (through pre-commit gate)
    - Push to origin
-   - Report final state (commit hash, DONE set, READY set)
+   - Report final state (commit hash, DONE set, READY set), including the scoped-read disclosure (see Unit closure review Step 2)
 
 **Stop for owner review only if:**
 
@@ -109,6 +126,10 @@ The pipeline run produces the **evidence** that the Unit Closure Review reports 
 ### Step 2: Run Unit Closure Review checklist
 
 Run the full checklist from `docs/07_prompt_library/09_UNIT_CLOSURE_REVIEW_PROMPT.md` and report each item factually. Item 7 (Tests/Conformance) must now include the pipeline outcome from Step 1.
+
+**Mandatory scoped-read disclosure.** The closure report MUST state:
+- **Scoped reads used: yes/no** — whether the scoped-read pre-flight discipline was followed for this unit.
+- **Full-file reads used and why** — list any full-file reads of `REBASELINED_BUILD_SEQUENCE.md`, `ARCHITECTURAL_DEBT_REGISTER.md`, `DATA_DICTIONARY.md`, or the UI tree, each with its justification (file-being-modified, or scoped-read-insufficient with reason). State "none" if no full-file reads were used.
 
 ### Step 3: Owner review
 
