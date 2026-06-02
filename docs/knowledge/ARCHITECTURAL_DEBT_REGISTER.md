@@ -566,12 +566,13 @@ Authority: `.kiro/steering/feature-function-backlog.md` (extended in this update
 - **Scope of fix:** Reconcile explicitly — distinguish "first functional surface" (BP-04 scope) from "full Command Centre" (deferred scope), and record the distinction in `DECISIONS.md` and in both BP-04 and `command-centre-build-prompt.md` headers.
 - **Affected specs / artifacts:** `BUILD_SEQUENCE.md` Gate 1; `BUILD_VERSION_ROADMAP.md` v1.1; `docs/04_build_packs/BP-04-*`; `docs/design-system/command-centre-build-prompt.md`; `DECISIONS.md`; `.kiro/testing/conformance-registry.md` DEC-002
 - **Scheduled resolution:** To be scheduled — likely subsumed by build-plan replacement (`ARCH-DEBT-008`)
-- **Status:** OPEN
+- **Status:** RESOLVED
 - **Date logged:** 2026-05-31
-- **Last reviewed:** 2026-05-31
+- **Last reviewed:** 2026-06-02
 
 **History**
 - 2026-05-31: OPEN — bulk-registered from ARCHITECTURAL_FINDINGS.md §8.2 (severity: Material)
+- 2026-06-02: RESOLVED — reconciled via `DEC-command-centre-split-16a-16b` (DECISIONS.md). The scope-boundary defect was confirmed real: the name "Command Centre" denoted two artifacts — the operational entry-point surface (now **Unit 16a**, READY) and the aggregate/posture summary dashboard (now **Unit 16b**, BLOCKED, carrying the metric-deferral control). Build Unit 16 was formally split in `REBASELINED_BUILD_SEQUENCE.md`; `DEC-command-centre-deferred` superseded and re-scoped to 16b only; conformance `DEC-002` re-scoped to 16b; dependency edges (Units 17, 20, 21, 30–34, 46) re-pointed to 16a, eliminating the latent circular dependency. Evidence: a literal reading of the prior deferral required Unit 16 to follow the same functional pages that depend on it (cycle); the deferral was authored against the retired BP-04 regime (`DEC-build-plan-replacement`); its resume trigger referenced a non-existent artifact (GOVERNANCE_MAP Orphan-F); and the committed Command Centre page already hardcoded posture/SLA/coverage percentages — the exact waste the deferral guarded against, now correctly confined to 16b's gate.
 
 ---
 

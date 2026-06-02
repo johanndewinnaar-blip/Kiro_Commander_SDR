@@ -130,8 +130,8 @@ function checkArch008() {
   results.push({ sub: 'a', pass: orphans.length === 0, detail: orphans.length === 0 ? 'No orphan build-debt' : `Orphans: ${orphans.join(', ')}` });
 
   // (b) All units statused
-  const unitHeaders = [...seq.matchAll(/^### Unit (\d+):/gm)];
-  const units = seq.split(/(?=^### Unit \d+:)/m).filter(u => /^### Unit \d+:/.test(u));
+  const unitHeaders = [...seq.matchAll(/^### Unit (\d+[a-z]?):/gm)];
+  const units = seq.split(/(?=^### Unit \d+[a-z]?:)/m).filter(u => /^### Unit \d+[a-z]?:/.test(u));
   const unstatused = units.filter(u => !/\*\*Status:\*\* (BLOCKED|READY|DONE)/.test(u));
   results.push({ sub: 'b', pass: unstatused.length === 0, detail: unstatused.length === 0 ? `All ${unitHeaders.length} units statused` : `${unstatused.length} unstatused` });
 
@@ -146,7 +146,7 @@ function checkArch008() {
   const blocked = units.filter(u => u.includes('**Status:** BLOCKED'));
   const builtButBlocked = [];
   for (const u of blocked) {
-    const m = u.match(/^### Unit (\d+):/);
+    const m = u.match(/^### Unit (\d+[a-z]?):/);
     if (!m) continue;
     const p = deliverablePaths[m[1]];
     if (p && fs.existsSync(path.join(ROOT, p))) builtButBlocked.push(`Unit ${m[1]}`);
@@ -161,12 +161,12 @@ function checkArch008() {
 
 function checkArch009() {
   const seq = readFile(SEQ_PATH);
-  const units = seq.split(/(?=^### Unit \d+:)/m).filter(u => /^### Unit \d+:/.test(u));
+  const units = seq.split(/(?=^### Unit \d+[a-z]?:)/m).filter(u => /^### Unit \d+[a-z]?:/.test(u));
   const doneUnits = units.filter(u => u.includes('**Status:** DONE'));
   const unverified = [];
 
   for (const u of doneUnits) {
-    const m = u.match(/^### Unit (\d+):/);
+    const m = u.match(/^### Unit (\d+[a-z]?):/);
     if (!m) continue;
     const hasVerification = /\*\*Verification:\*\*/.test(u);
     const hasSpec = /#\d+|Spec #\d+|§/.test(u.slice(u.indexOf('**Verification:**') || 0));
@@ -180,7 +180,8 @@ function checkArch009() {
 // ─── Unit Section Helper ─────────────────────────────────────────────────────
 
 function getUnitSection(seq, num) {
-  const sections = seq.split(/(?=^### Unit \d+:)/m);
+  // Unit IDs may carry an alpha suffix (e.g. 16a, 16b) after a governance split.
+  const sections = seq.split(/(?=^### Unit \d+[a-z]?:)/m);
   return sections.find(s => new RegExp(`^### Unit ${num}:`).test(s)) || null;
 }
 
@@ -277,7 +278,16 @@ function updateScoreRegister(score, unitNum) {
 function main() {
   const args = process.argv.slice(2);
   const unitArg = args.find(a => a.startsWith('--unit'));
-  const unitNum = unitArg ? parseInt(args[args.indexOf(unitArg) + 1] || args[0].split('=')[1], 10) : undefined;
+  // Unit IDs may carry an alpha suffix (e.g. 16a, 16b) after a governance split,
+  // so the unit token is parsed as an alphanumeric string, not a bare integer.
+  let unitNum;
+  if (unitArg) {
+    const raw = unitArg.includes('=')
+      ? unitArg.split('=')[1]
+      : args[args.indexOf(unitArg) + 1];
+    const m = raw != null ? String(raw).match(/^\d+[a-z]?/i) : null;
+    unitNum = m ? m[0].toLowerCase() : undefined;
+  }
   const isPreCommit = args.includes('--pre-commit');
 
   // Pre-commit mode: lightweight (ARCH-007 only for the unit being committed)

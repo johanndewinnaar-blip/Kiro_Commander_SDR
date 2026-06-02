@@ -69,11 +69,13 @@ A unit is **READY** iff every dependency unit is **DONE** and every mapped chain
 
 Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readiness State Machine above.
 
-**READY (7):** Unit 15 (OODA Layer), Unit 16 (Command Centre), Unit 18 (Identity Intelligence Surface), Unit 19 (Asset Intelligence Surface), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors), Unit 40 (Commander AI Core), and COIM unit **COIM-H**.
+**READY (6 numbered + COIM-H):** Unit 16a (Operational Command Centre), Unit 18 (Identity Intelligence Surface), Unit 19 (Asset Intelligence Surface), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors), Unit 40 (Commander AI Core), and COIM unit **COIM-H**. (Unit 15 is DONE — corrected here; it had been erroneously listed as READY in the pre-split snapshot prose while the table and footer correctly showed it DONE.)
 
 **DONE (23):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13, Unit 14, Unit 15, **COIM-A, COIM-B, COIM-C, COIM-D, COIM-E, COIM-F, COIM-G**.
 
-**BLOCKED (37):** Units 16–21 (except 16, 18, 19), 23–37, 39–49 (numbered units, except 22, 38, 40). All 27 Team 2 numbered units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006. COIM units are Foundational and NOT ARCH-006-gated; none remain BLOCKED.
+**BLOCKED (29):** Unit 16b (Aggregate/Posture Command Centre), Units 17, 20, 21, 23–37, 39, 41–49. All 27 Team 2 numbered units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006. COIM units are Foundational and NOT ARCH-006-gated; none remain BLOCKED.
+
+> **Unit 16 split (`DEC-command-centre-split-16a-16b`, 2026-06-02):** Unit 16 (Command Centre) was split into **16a (Operational Command Centre — READY)** and **16b (Aggregate/Posture Command Centre — BLOCKED)** to resolve ARCH-DEBT-026. The metric-deferral control formerly in `DEC-command-centre-deferred` now applies ONLY to 16b. All units that previously depended on "Unit 16" now depend on **16a**. Full definitions in the Unit 16a / Unit 16b sections below.
 
 > **COIM / OCSF remediation units (COIM-A … COIM-H):** added 2026-06-01 under owner-authorised governance registration for `DEC-coim-ocsf-source-classification-architecture`. **COIM-A/B/C/D/E/F/G are DONE**; COIM-H remains READY. Full definitions and the COIM Live Status Snapshot are in the **"COIM / OCSF Remediation Units"** section below (after Unit 49). Tier mapping: COIM-A = NOW (DONE), COIM-B/C/D/E/F/G = NEXT (DONE), COIM-H = LATER (READY).
 
@@ -95,12 +97,13 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 | 13 Reopening Trigger Engine | Foundational | **DONE** | — |
 | 14 Intelligence Layer — Four Streams | Foundational | **DONE** | — |
 | 15 OODA Layer | Foundational | **DONE** | — |
-| 16 Command Centre | Foundational | **READY** | — |
-| 17 Case Management UI | Foundational | BLOCKED | Units 8–13; Unit 16 |
+| 16a Operational Command Centre | Foundational | **READY** | — |
+| 16b Aggregate/Posture Command Centre | Foundational | BLOCKED | Units 17, 30–33 (functional pages); data-point-to-metric mapping artifact (absent); Unit 16a |
+| 17 Case Management UI | Foundational | BLOCKED | Units 8–13; Unit 16a |
 | 18 Identity Intelligence Surface | Foundational | **READY** | — |
 | 19 Asset Intelligence Surface | Foundational | **READY** | — |
-| 20 External Operating Picture | Foundational | BLOCKED | Unit 14; Unit 16 |
-| 21 Internal Operating Picture | Foundational | BLOCKED | Unit 14; Unit 16 |
+| 20 External Operating Picture | Foundational | BLOCKED | Unit 14; Unit 16a |
+| 21 Internal Operating Picture | Foundational | BLOCKED | Unit 14; Unit 16a |
 | 22 Tenant Admin Surface | Foundational | **READY** | — |
 | 23 Commercial Control Plane | Team 2 | BLOCKED | ARCH-006 (USE_CASE_SCHEDULE.md + PAGE_INVENTORY.md absent) |
 | 24 Drift Detection Engine | Team 2 | BLOCKED | ARCH-006; Unit 4 |
@@ -109,11 +112,11 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 | 27 Vulnerability Management Engine | Team 2 | BLOCKED | ARCH-006; Unit 14 |
 | 28 Exposure Management Engine | Team 2 | BLOCKED | ARCH-006; Unit 14 |
 | 29 Pre-Warned Classification Engine | Team 2 | BLOCKED | ARCH-006; Unit 14; Units 24–28 |
-| 30 Vulnerability Management UI | Team 2 | BLOCKED | ARCH-006; Unit 27; Unit 16 |
-| 31 Exposure Management UI | Team 2 | BLOCKED | ARCH-006; Unit 28; Unit 16 |
-| 32 Architecture Topology UI | Team 2 | BLOCKED | ARCH-006; Unit 26; Unit 16 |
-| 33 Control Coverage & Editable Baselines UI | Team 2 | BLOCKED | ARCH-006; Unit 24; Unit 16 |
-| 34 Direction Boards UI | Team 2 | BLOCKED | ARCH-006; Unit 15; Unit 14; Unit 16 |
+| 30 Vulnerability Management UI | Team 2 | BLOCKED | ARCH-006; Unit 27; Unit 16a |
+| 31 Exposure Management UI | Team 2 | BLOCKED | ARCH-006; Unit 28; Unit 16a |
+| 32 Architecture Topology UI | Team 2 | BLOCKED | ARCH-006; Unit 26; Unit 16a |
+| 33 Control Coverage & Editable Baselines UI | Team 2 | BLOCKED | ARCH-006; Unit 24; Unit 16a |
+| 34 Direction Boards UI | Team 2 | BLOCKED | ARCH-006; Unit 15; Unit 14; Unit 16a |
 | 35 Governance & Reporting UI | Team 2 | BLOCKED | ARCH-006; Units 7–13; Unit 14; Unit 15 |
 | 36 CISO Dashboard | Team 2 | BLOCKED | ARCH-006; Unit 15; Unit 14; Units 7–13 |
 | 37 Security C2 / War Room | Team 2 | BLOCKED | ARCH-006; Unit 15; Unit 14; Units 7–13 |
@@ -125,7 +128,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 | 43 Audit Trail | Foundational | BLOCKED | Units 7–13; Unit 6; ARCH-DEBT-035 (needs re-sourcing) |
 | 44 Email Case Communication | Team 2 | BLOCKED | ARCH-006; Units 7–13; Unit 12 |
 | 45 Security Tool Intelligence | Team 2 | BLOCKED | ARCH-006; Unit 4; Unit 14 |
-| 46 Observability & Tool Health UI | Team 2 | BLOCKED | ARCH-006; Unit 45; Unit 16; ARCH-DEBT-036 (needs re-sourcing) |
+| 46 Observability & Tool Health UI | Team 2 | BLOCKED | ARCH-006; Unit 45; Unit 16a; ARCH-DEBT-036 (needs re-sourcing) |
 | 47 DevOps — Local/AWS Alignment | Team 2 | BLOCKED | ARCH-006 (no unit deps); ARCH-DEBT-037 (needs re-sourcing) |
 | 48 Platform Security Hardening | Team 2 | BLOCKED | ARCH-006; Unit 22; Unit 23 |
 | 49 Phase 3 Pilot & Production Hardening | Team 2 | BLOCKED | ARCH-006; Unit 47; Unit 48; ARCH-DEBT-038 (needs re-sourcing) |
@@ -809,29 +812,29 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ---
 
-### Unit 16: Surface Layer — Command Centre (Operational App Entry Point)
+### Unit 16a: Surface Layer — Operational Command Centre (Operational App Entry Point)
 
-**Status:** BLOCKED
+**Status:** READY
 
-**Blocked by:** Unit 15 (OODA Layer); Unit 14 (Intelligence Layer); Units 7–13 (Case Layer)
+**Blocked by:** — (dependencies Units 7–15 all DONE; no mapped build-debt)
 
-**Purpose:** Build Command Centre as the operational entry point for Commander SDR Operational Application
+**Purpose:** Build the Command Centre operational entry-point surface for the Commander SDR Operational Application — the landing surface and drill hub. This is the surface that other operational surfaces depend on for navigation/drill-in. It presents *overviews* sourced from already-built engines and seed fixtures; it does NOT compute the cross-page aggregate posture rollup (that is Unit 16b).
 
 **Baseline spec:** #41 Visual Language and Intensity Ceiling, #65 External Operating Picture, #66 Internal Operating Picture
 
 **Architectural layer:** Surface Layer (Layer 7)
 
-**Dependencies:** Unit 15 (OODA Layer), Unit 14 (Intelligence Layer), Unit 7-13 (Case Layer)
+**Dependencies:** Unit 15 (OODA Layer — DONE), Unit 14 (Intelligence Layer — DONE), Units 7-13 (Case Layer — DONE)
 
 **Required entities:**
 - Case ✅ (exists)
 - Risk Object ✅ (exists)
-- OODA phase health metrics (created in Unit 15)
-- Estate Intelligence Picture (created in Unit 14)
+- OODA phase health metrics ✅ (created in Unit 15 — DONE)
+- Estate Intelligence Picture ✅ (created in Unit 14 — DONE)
 
 **Deliverables:**
-1. Command Centre dashboard (operational entry point)
-2. OODA phase health gauges (Observe, Orient, Decide, Act)
+1. Command Centre dashboard shell (operational entry point)
+2. OODA phase health gauges (Observe, Orient, Decide, Act — from Unit 15 `composeCommandTempo`)
 3. Case queue overview (by priority, by status, by surface attribution)
 4. Risk object overview (by type, by treatment state)
 5. Connector health overview
@@ -840,7 +843,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 8. Drill paths to External Operating Picture and Internal Operating Picture
 
 **Completion gate:**
-- ✅ Command Centre dashboard operational
+- ✅ Command Centre dashboard shell operational
 - ✅ OODA phase health gauges working
 - ✅ Case queue overview displayed
 - ✅ Risk object overview displayed
@@ -852,13 +855,52 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Source tag:** Foundational
 
+**Split note:** Formerly the operational scope of Unit 16. Split from the aggregate/posture scope (Unit 16b) under `DEC-command-centre-split-16a-16b` (2026-06-02), resolving ARCH-DEBT-026. Units that previously depended on "Unit 16" (17, 20, 21, 30, 31, 32, 33, 34, 46) depend on **this unit (16a)**, not the deferred 16b.
+
+---
+
+### Unit 16b: Surface Layer — Aggregate/Posture Command Centre (Summary Rollup)
+
+**Status:** BLOCKED
+
+**Blocked by:** Functional pages that define confirmed data points (Units 17, 30, 31, 32, 33 — not yet DONE); AND the data-point-to-metric mapping artifact (does not yet exist — must be authored or the resume trigger redefined). Carries the metric-deferral control formerly held by `DEC-command-centre-deferred`.
+
+**Purpose:** Build the Command Centre aggregate/posture rollup — the summary KPI layer (Posture Score, SLA Compliance, Coverage and other cross-page aggregates) that must map to *confirmed* data points produced by the functional pages, not seeded guesses.
+
+**Baseline spec:** #41 Visual Language and Intensity Ceiling, #65 External Operating Picture, #66 Internal Operating Picture; MP §24 (Workspace Model — posture rollups)
+
+**Architectural layer:** Surface Layer (Layer 7)
+
+**Dependencies:** Unit 16a (Operational Command Centre — entry-point surface to host the rollup); the functional pages that define real data points (Units 17, 30, 31, 32, 33); the data-point-to-metric mapping artifact.
+
+**Required entities:**
+- Confirmed per-page data points (produced by the functional pages — pending)
+- Data-point-to-metric mapping artifact (pending — see resume trigger)
+
+**Deliverables:**
+1. Aggregate posture rollup widgets (Posture Score, SLA Compliance, Coverage, and cross-page aggregates) — live-ready, sourced from confirmed data points
+2. Data hook as a thin presentation-layer adapter over the established data-access pattern (NOT a new data layer)
+3. Time-toggle controls per the banked design (`DEC-command-centre-design-banked`)
+
+**Completion gate:**
+- ✅ Aggregate posture rollups map to confirmed data points (no seeded/guessed metric values)
+- ✅ Data-point-to-metric mapping artifact exists and is honoured
+- ✅ Rollup widgets rendered within the 16a entry-point surface
+- ✅ Tests: metric mapping accuracy, rollup rendering, no-hardcoded-metric assertion
+
+**Resume trigger (metric-deferral control — preserved from `DEC-command-centre-deferred`, now scoped to 16b only):** functional pages built AND a data-point-to-metric mapping artifact authored. Until both hold, 16b remains BLOCKED.
+
+**Source tag:** Foundational
+
+**Split note:** Formerly the deferred/aggregate scope of Unit 16. Split under `DEC-command-centre-split-16a-16b` (2026-06-02), resolving ARCH-DEBT-026 and superseding `DEC-command-centre-deferred` (the deferral now applies ONLY to this unit).
+
 ---
 
 ### Unit 17: Surface Layer — Case Management UI
 
 **Status:** BLOCKED
 
-**Blocked by:** Units 7–13 (Case Layer); Unit 16 (Command Centre)
+**Blocked by:** Units 7–13 (Case Layer); Unit 16a (Operational Command Centre)
 
 **Purpose:** Build Case Management UI for viewing and progressing cases (system-owned lifecycle only)
 
@@ -866,7 +908,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Architectural layer:** Surface Layer (Layer 7)
 
-**Dependencies:** Unit 7-13 (Case Layer — case lifecycle must be complete), Unit 16 (Command Centre)
+**Dependencies:** Unit 7-13 (Case Layer — case lifecycle must be complete), Unit 16a (Operational Command Centre)
 
 **Required entities:**
 - Case ✅ (exists)
@@ -975,7 +1017,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Unit 14 (Intelligence Layer — External Attack stream); Unit 16 (Command Centre)
+**Blocked by:** Unit 14 (Intelligence Layer — External Attack stream); Unit 16a (Operational Command Centre)
 
 **Purpose:** Build External Operating Picture (external attack surface view)
 
@@ -983,7 +1025,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Architectural layer:** Surface Layer (Layer 7)
 
-**Dependencies:** Unit 14 (Intelligence Layer — External Attack Intelligence stream), Unit 16 (Command Centre)
+**Dependencies:** Unit 14 (Intelligence Layer — External Attack Intelligence stream), Unit 16a (Operational Command Centre)
 
 **Required entities:**
 - Asset ✅ (exists — with surfaceAttribution: external_attack_surface)
@@ -1014,7 +1056,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Unit 14 (Intelligence Layer — Internal Behavioural stream); Unit 16 (Command Centre)
+**Blocked by:** Unit 14 (Intelligence Layer — Internal Behavioural stream); Unit 16a (Operational Command Centre)
 
 **Purpose:** Build Internal Operating Picture (internal attack surface view)
 
@@ -1022,7 +1064,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Architectural layer:** Surface Layer (Layer 7)
 
-**Dependencies:** Unit 14 (Intelligence Layer — Internal Behavioural Intelligence stream), Unit 16 (Command Centre)
+**Dependencies:** Unit 14 (Intelligence Layer — Internal Behavioural Intelligence stream), Unit 16a (Operational Command Centre)
 
 **Required entities:**
 - Asset ✅ (exists — with surfaceAttribution: internal_attack_surface)
@@ -1368,7 +1410,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** ARCH-006 (Team 2 gate); Unit 27 (Vulnerability Management Engine); Unit 16 (Command Centre)
+**Blocked by:** ARCH-006 (Team 2 gate); Unit 27 (Vulnerability Management Engine); Unit 16a (Operational Command Centre)
 
 **Purpose:** Build Vulnerability Management UI
 
@@ -1376,7 +1418,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Architectural layer:** Surface Layer (Layer 7)
 
-**Dependencies:** Unit 27 (Vulnerability Management Engine), Unit 16 (Command Centre)
+**Dependencies:** Unit 27 (Vulnerability Management Engine), Unit 16a (Operational Command Centre)
 
 **Required entities:**
 - Vulnerability risk objects (created in Unit 27)
@@ -1403,7 +1445,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** ARCH-006 (Team 2 gate); Unit 28 (Exposure Management Engine); Unit 16 (Command Centre)
+**Blocked by:** ARCH-006 (Team 2 gate); Unit 28 (Exposure Management Engine); Unit 16a (Operational Command Centre)
 
 **Purpose:** Build Exposure Management UI
 
@@ -1411,7 +1453,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Architectural layer:** Surface Layer (Layer 7)
 
-**Dependencies:** Unit 28 (Exposure Management Engine), Unit 16 (Command Centre)
+**Dependencies:** Unit 28 (Exposure Management Engine), Unit 16a (Operational Command Centre)
 
 **Required entities:**
 - Exposure risk objects (created in Unit 28)
@@ -1438,7 +1480,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** ARCH-006 (Team 2 gate); Unit 26 (Architecture Intelligence Engine); Unit 16 (Command Centre)
+**Blocked by:** ARCH-006 (Team 2 gate); Unit 26 (Architecture Intelligence Engine); Unit 16a (Operational Command Centre)
 
 **Purpose:** Build Architecture Topology UI
 
@@ -1446,7 +1488,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Architectural layer:** Surface Layer (Layer 7)
 
-**Dependencies:** Unit 26 (Architecture Intelligence Engine), Unit 16 (Command Centre)
+**Dependencies:** Unit 26 (Architecture Intelligence Engine), Unit 16a (Operational Command Centre)
 
 **Required entities:**
 - Architecture risk objects (created in Unit 26)
@@ -1473,7 +1515,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** ARCH-006 (Team 2 gate); Unit 24 (Drift Detection Engine); Unit 16 (Command Centre)
+**Blocked by:** ARCH-006 (Team 2 gate); Unit 24 (Drift Detection Engine); Unit 16a (Operational Command Centre)
 
 **Purpose:** Build Control Coverage & Editable Baselines UI
 
@@ -1481,7 +1523,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Architectural layer:** Surface Layer (Layer 7)
 
-**Dependencies:** Unit 24 (Drift Detection Engine), Unit 16 (Command Centre)
+**Dependencies:** Unit 24 (Drift Detection Engine), Unit 16a (Operational Command Centre)
 
 **Required entities:**
 - Drift risk objects (created in Unit 24)
@@ -1512,7 +1554,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** ARCH-006 (Team 2 gate); Unit 15 (OODA Layer); Unit 14 (Intelligence Layer); Unit 16 (Command Centre)
+**Blocked by:** ARCH-006 (Team 2 gate); Unit 15 (OODA Layer); Unit 14 (Intelligence Layer); Unit 16a (Operational Command Centre)
 
 **Purpose:** Build Direction Boards UI (strategic guidance surfaces)
 
@@ -1520,7 +1562,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Architectural layer:** Surface Layer (Layer 7)
 
-**Dependencies:** Unit 15 (OODA Layer), Unit 14 (Intelligence Layer), Unit 16 (Command Centre)
+**Dependencies:** Unit 15 (OODA Layer), Unit 14 (Intelligence Layer), Unit 16a (Operational Command Centre)
 
 **Required entities:**
 - OODA phase health metrics (created in Unit 15)
@@ -1981,7 +2023,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** ARCH-006 (Team 2 gate); Unit 45 (Security Tool Intelligence); Unit 16 (Command Centre); **ARCH-DEBT-036 (needs re-sourcing to baseline — no dedicated baseline observability/tool-health UI spec)**
+**Blocked by:** ARCH-006 (Team 2 gate); Unit 45 (Security Tool Intelligence); Unit 16a (Operational Command Centre); **ARCH-DEBT-036 (needs re-sourcing to baseline — no dedicated baseline observability/tool-health UI spec)**
 
 **Purpose:** Build Observability & Tool Health UI
 
@@ -1989,7 +2031,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Architectural layer:** Surface Layer (Layer 7)
 
-**Dependencies:** Unit 45 (Security Tool Intelligence), Unit 16 (Command Centre)
+**Dependencies:** Unit 45 (Security Tool Intelligence), Unit 16a (Operational Command Centre)
 
 **Required entities:**
 - Tool health risk objects (created in Unit 45)
@@ -2443,7 +2485,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's o
 
 ## Summary
 
-**Total build units:** 50 (Unit 0 foundation-correction + Units 1–49)
+**Total build units:** 51 (Unit 0 foundation-correction + Units 1–49, with Unit 16 split into 16a + 16b per `DEC-command-centre-split-16a-16b`)
 
 **Readiness state (computed 2026-05-31):** READY = 3 (Units 1, 2, 4). DONE = 1 (Unit 0). BLOCKED = 46. See the Live Status Snapshot near the top for the full per-unit table.
 
@@ -2463,7 +2505,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's o
 
 **OODA Layer:** Unit 15 (programme-level OODA tempo)
 
-**Surface Layer (Operational App):** Units 16-21 (Command Centre, Case Management, Identity Intelligence, Asset Intelligence, External Operating Picture, Internal Operating Picture)
+**Surface Layer (Operational App):** Units 16a, 16b, 17-21 (Operational Command Centre [16a], Aggregate/Posture Command Centre [16b], Case Management, Identity Intelligence, Asset Intelligence, External Operating Picture, Internal Operating Picture)
 
 **Tenant Admin Surface:** Unit 22
 
@@ -2515,8 +2557,8 @@ A build unit is complete when:
 
 ---
 
-**Last Updated:** 2026-06-01  
-**Status:** ACTIVE — readiness state machine. Build only from the READY set (currently Units 16, 18, 19, 22, 38, 40 and COIM-H; Units 0–15 + COIM-A…COIM-G DONE). Status recomputes on debt-resolution / unit-completion.  
+**Last Updated:** 2026-06-02  
+**Status:** ACTIVE — readiness state machine. Build only from the READY set (currently Units 16a, 18, 19, 22, 38, 40 and COIM-H; Units 0–15 + COIM-A…COIM-G DONE). Status recomputes on debt-resolution / unit-completion.  
 **Enforcement:** ARCH-006 (build-stream sequencing) + ARCH-007 (blocking-debt prerequisite) in `.kiro/testing/conformance-registry.md`, auto-run via post-task-review. "What's next" query defined in `.kiro/steering/execution-discipline.md`.  
 **Authority:** Derived from SYSTEM_KNOWLEDGE_GRAPH.md, DATA_DICTIONARY.md, REBASELINED_BUILD_SCHEDULE_NOTES.md, baseline source. Decision: `DEC-build-readiness-state-machine` (DECISIONS.md).  
 **Sourcing rule:** Never cite the translation layer — all citations from `docs/99_source_archive/baseline_v2_6_2/`

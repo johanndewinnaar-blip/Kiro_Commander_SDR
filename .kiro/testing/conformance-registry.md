@@ -310,9 +310,10 @@
 **Exceptions:** Full-bleed emergency surfaces, master-detail views, auth screens.  
 **Check:** Any page not using PageContainer MUST have decision record.
 
-### DEC-002: Command Centre Deferred
-**Assertion:** Command Centre full build is deferred until functional pages built.  
-**Check:** No Command Centre implementation until data-point-to-metric schedule complete.
+### DEC-002: Command Centre Deferred (scoped to Unit 16b)
+**Assertion:** The Command Centre **aggregate/posture rollup (Unit 16b)** full build is deferred until functional pages built. The **operational entry-point surface (Unit 16a)** is NOT deferred.  
+**Check:** No Unit 16b aggregate/posture-metric implementation until the data-point-to-metric mapping artifact exists (resume trigger). Unit 16a (operational entry-point surface) is unaffected by this assertion.  
+**Authority:** `DEC-command-centre-split-16a-16b` (DECISIONS.md, 2026-06-02), resolving ARCH-DEBT-026; supersedes the prior single-Command-Centre scope of this assertion.
 
 ---
 
