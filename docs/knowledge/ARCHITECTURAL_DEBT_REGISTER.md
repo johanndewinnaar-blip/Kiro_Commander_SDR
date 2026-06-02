@@ -932,13 +932,14 @@ Authority: `.kiro/steering/feature-function-backlog.md` (extended in this update
 - **Scope of fix:** Add timeline fields under build unit **COIM-A** for Risk Object (`firstDetectedAt`, `normalisedAt` required; `lastConfirmedAt` recommended) and under **COIM-F** for Asset/Identity (`lastConfirmedAt`/`lastAuthenticatedAt` recommended). Indexed timestamp columns; additive. `dwellTimeHours` computed on Case (COIM-G). Update DATA_DICTIONARY.md.
 - **Affected specs / artifacts:** `packages/contracts/src/entities/risk-object.ts`, `asset.ts`, `identity.ts`; corresponding schemas; `docs/knowledge/DATA_DICTIONARY.md`; COIM-A / COIM-F / COIM-G units in `REBASELINED_BUILD_SEQUENCE.md`
 - **Scheduled resolution:** COIM-A (NOW, Risk Object timeline) + COIM-F/COIM-G (NEXT, Asset/Identity/Case)
-- **Status:** OPEN (partially resolved — Risk Object timeline delivered by COIM-A; Asset/Identity/Case timeline pending COIM-F/COIM-G)
+- **Status:** OPEN (partially resolved — Risk Object timeline (COIM-A) + Asset/Identity COIM-F augmentation delivered; Case `dwellTimeHours` pending COIM-G)
 - **Date logged:** 2026-06-01
-- **Last reviewed:** 2026-06-01
+- **Last reviewed:** 2026-06-02
 
 **History**
 - 2026-06-01: OPEN — registered under COIM/OCSF NOW-tier governance registration (owner-authorised). Resolution units: COIM-A (Risk Object), COIM-F/COIM-G (Asset/Identity/Case).
 - 2026-06-01: PARTIAL — COIM-A delivered the Risk Object timeline model (`firstDetectedAt`, `lastConfirmedAt`, `normalisedAt`) on contract + schema (migration `0005`) + seed fixtures + tests. Remains OPEN for the Asset/Identity portion (COIM-F) and Case `dwellTimeHours` (COIM-G).
+- 2026-06-02: PARTIAL — COIM-F delivered Asset (`lastConfirmedAt`, `firstDiscoveredBy` + full COIM operational-intelligence augmentation) and Identity (`lastAuthenticatedAt`, `privilegeLevel`, `authenticationStrength`, `entitlementSummary`, `riskFactors[]`, `sourceClassification`) on contract + schema (migration `0008`, additive nullable columns). Asset/Identity portion RESOLVED. Remains open only for Case `dwellTimeHours` (COIM-G).
 
 ---
 

@@ -750,12 +750,35 @@ None.
 
 **DB Schema Reconciliation:** ✅ Contract and schema aligned. Separate reference table with deduplication. ARCH-DEBT-042 RESOLVED.
 
-### Asset / Identity — COIM augmentation (FUTURE — blocker: COIM-F)
+### Asset / Identity — COIM augmentation (AVAILABLE — delivered by COIM-F)
 
-| Entity | Planned Fields | Availability | Blocker |
-|--------|----------------|--------------|---------|
-| Asset | lifecycleState, platform (structured), networkPosition, dataClassification, lastConfirmedAt, firstDiscoveredBy; optional sourceClassification | FUTURE | COIM-F |
-| Identity | privilegeLevel, authenticationStrength, lastAuthenticatedAt, entitlementSummary, riskFactors[]; optional sourceClassification | FUTURE | COIM-F |
+**Asset — COIM-F additive fields (all optional, backward-compatible):**
+
+| Field | Type | Source Classification | Availability | Notes |
+|-------|------|----------------------|--------------|-------|
+| `lifecycleState` | enum | system-tracked | AVAILABLE | active / decommissioned / maintenance / unknown. Commander-tracked. |
+| `platform` | JSONB (AssetPlatform) | integration-derived | AVAILABLE | Structured: os, version, cloudProvider, architecture. OCSF: device.json. |
+| `networkPosition` | enum | integration-derived | AVAILABLE | internet-facing / dmz / internal / isolated / unknown. |
+| `assetDataClassification` | enum | integration-derived | AVAILABLE | public / internal / confidential / restricted. Distinct from DB infra column. |
+| `lastConfirmedAt` | timestamptz | integration-derived | AVAILABLE | Timeline: when asset last confirmed active by a source. |
+| `firstDiscoveredBy` | text | system-tracked | AVAILABLE | Which connector first discovered this asset. |
+| `sourceClassification` | JSONB (SourceClassification) | integration-derived | AVAILABLE | Optional; recommended for discovery signals. Immutable. |
+
+**Identity — COIM-F additive fields (all optional, backward-compatible):**
+
+| Field | Type | Source Classification | Availability | Notes |
+|-------|------|----------------------|--------------|-------|
+| `privilegeLevel` | enum | integration-derived | AVAILABLE | standard / elevated / privileged / super-privileged. |
+| `authenticationStrength` | enum | integration-derived | AVAILABLE | password-only / mfa-enabled / phishing-resistant-mfa / certificate-based / unknown. |
+| `lastAuthenticatedAt` | timestamptz | integration-derived | AVAILABLE | Timeline: last authentication timestamp from IAM source. |
+| `entitlementSummary` | JSONB (IdentityEntitlementSummary) | system-calculated | AVAILABLE | totalEntitlements, privilegedEntitlements, staleEntitlements, hasAdminAccess. |
+| `riskFactors` | JSONB array (IdentityRiskFactor[]) | system-calculated | AVAILABLE | Explains riskScore: type, contribution (0-100), description. |
+| `sourceClassification` | JSONB (SourceClassification) | integration-derived | AVAILABLE | Optional; recommended for IAM signals. Immutable. |
+
+**Migration:** `packages/db/drizzle/0008_asset_identity_coim_f.sql` (additive — nullable columns only)
+**Test:** `tests/coim-f-asset-identity-augmentation/coim-f-asset-identity.test.ts` (29 assertions)
+
+**DB Schema Reconciliation:** ✅ Additive augmentation. All new columns nullable. Existing tests intact. ARCH-DEBT-045 (Asset/Identity portion) RESOLVED.
 
 ### Case — COIM aggregation (FUTURE — blocker: COIM-G)
 

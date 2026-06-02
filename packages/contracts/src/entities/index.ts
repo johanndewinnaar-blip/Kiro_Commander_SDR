@@ -17,8 +17,10 @@ export type {
 
 export { CONNECTOR_CLASS_LABELS } from './common';
 
-export type { Asset, AssetClassification } from './asset';
-export type { Identity, IdentityClassification } from './identity';
+export type { Asset, AssetClassification, AssetLifecycleState, AssetPlatform, AssetNetworkPosition, AssetDataClassification } from './asset';
+export { ASSET_LIFECYCLE_STATES, ASSET_NETWORK_POSITIONS, ASSET_DATA_CLASSIFICATIONS } from './asset';
+export type { Identity, IdentityClassification, IdentityPrivilegeLevel, IdentityAuthStrength, IdentityEntitlementSummary, IdentityRiskFactor, IdentityRiskFactorType } from './identity';
+export { IDENTITY_PRIVILEGE_LEVELS, IDENTITY_AUTH_STRENGTHS, IDENTITY_RISK_FACTOR_TYPES } from './identity';
 export type { Connector, ConnectorState } from './connector';
 export type { AuditEvent, AuditActor } from './audit-event';
 export type { Case, CaseType, CaseTypeExtended, LegacyCaseType, CaseStatus, LegacyCaseStatus, CaseStatusExtended } from './case';

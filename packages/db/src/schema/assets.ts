@@ -43,6 +43,23 @@ export const assets = pgTable('assets', {
   sourceImportRunId: text('source_import_run_id').notNull(),
   sourceSystem: text('source_system').notNull(),
   sourceTimestamp: timestamp('source_timestamp', { withTimezone: true }).notNull(),
+  // ─── COIM-F augmentation (additive, nullable) ────────────────────────────
+  // Source: COIM v1.0 §6.1; 05_ATTRIBUTE_AND_DATA_EFFICIENCY_MODEL §13.
+  // Recommended operational-intelligence fields. No drops; no changes to existing columns.
+  /** Asset lifecycle state (active/decommissioned/maintenance/unknown). */
+  lifecycleState: text('lifecycle_state'),
+  /** Structured platform information (OS, version, cloud provider, arch). JSONB. */
+  platform: jsonb('platform'),
+  /** Network position classification. */
+  networkPosition: text('network_position'),
+  /** Data classification for data held by this asset. */
+  assetDataClassification: text('asset_data_classification'),
+  /** When this asset was last confirmed active by a source. */
+  lastConfirmedAt: timestamp('last_confirmed_at', { withTimezone: true }),
+  /** Which connector/source first discovered this asset. */
+  firstDiscoveredBy: text('first_discovered_by'),
+  /** Optional source classification for discovery signals (JSONB). */
+  sourceClassification: jsonb('source_classification'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });

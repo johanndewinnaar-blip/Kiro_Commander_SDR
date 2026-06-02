@@ -69,13 +69,13 @@ A unit is **READY** iff every dependency unit is **DONE** and every mapped chain
 
 Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readiness State Machine above.
 
-**READY (6):** Unit 14 (Intelligence Layer — Four Streams), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors), and COIM units **COIM-F, COIM-G, COIM-H**.
+**READY (5):** Unit 14 (Intelligence Layer — Four Streams), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors), and COIM units **COIM-G, COIM-H**.
 
-**DONE (19):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13, **COIM-A, COIM-B, COIM-C, COIM-D, COIM-E**.
+**DONE (20):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13, **COIM-A, COIM-B, COIM-C, COIM-D, COIM-E, COIM-F**.
 
 **BLOCKED (42):** Units 15–21, 23–37, 39–49 (numbered units, except 14, 22, 38). All 27 Team 2 numbered units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006. COIM units are Foundational and NOT ARCH-006-gated; none remain BLOCKED.
 
-> **COIM / OCSF remediation units (COIM-A … COIM-H):** added 2026-06-01 under owner-authorised governance registration for `DEC-coim-ocsf-source-classification-architecture`. **COIM-A/B/C/D/E are DONE**; COIM-F…COIM-H remain READY. Full definitions and the COIM Live Status Snapshot are in the **"COIM / OCSF Remediation Units"** section below (after Unit 49). Tier mapping: COIM-A = NOW (DONE), COIM-B/C/D/E/F/G = NEXT, COIM-H = LATER.
+> **COIM / OCSF remediation units (COIM-A … COIM-H):** added 2026-06-01 under owner-authorised governance registration for `DEC-coim-ocsf-source-classification-architecture`. **COIM-A/B/C/D/E/F are DONE**; COIM-G/H remain READY. Full definitions and the COIM Live Status Snapshot are in the **"COIM / OCSF Remediation Units"** section below (after Unit 49). Tier mapping: COIM-A = NOW (DONE), COIM-B/C/D/E/F/G = NEXT, COIM-H = LATER.
 
 | Unit | Tag | Status | Blocked by |
 |---|---|---|---|
@@ -2149,9 +2149,9 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's own resolving debt does not self-block it.
 
-**DONE (5):** COIM-A (Risk Object Source Classification + Timeline Augmentation), COIM-B (Evidence Entity), COIM-C (Verdict Entity Promotion), COIM-D (Observable Entity), COIM-E (Analytic Entity).
+**DONE (6):** COIM-A, COIM-B, COIM-C, COIM-D, COIM-E, COIM-F.
 
-**READY (3):** COIM-F, COIM-G, COIM-H.
+**READY (2):** COIM-G, COIM-H.
 
 | Unit | Tag | Status | Blocked by | Resolves |
 |---|---|---|---|---|
@@ -2160,7 +2160,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's o
 | COIM-C Verdict Entity Promotion | Foundational | **DONE** | — | ARCH-DEBT-043 ✅ |
 | COIM-D Observable Entity | Foundational | **DONE** | — | ARCH-DEBT-041 ✅ |
 | COIM-E Analytic Entity | Foundational | **DONE** | — | ARCH-DEBT-042 ✅ |
-| COIM-F Asset / Identity Augmentation | Foundational | **READY** | — | ARCH-DEBT-045 (Asset/Identity) |
+| COIM-F Asset / Identity Augmentation | Foundational | **DONE** | — | ARCH-DEBT-045 (Asset/Identity) ✅ |
 | COIM-G Case Aggregation | Foundational | **READY** | — | ARCH-DEBT-045 (Case dwell time) |
 | COIM-H Action/Sub-Action + D3FEND | Foundational | **READY** | — | ARCH-DEBT-044, 046 |
 
@@ -2338,9 +2338,11 @@ Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's o
 
 ### Unit COIM-F: Asset / Identity Augmentation
 
-**Status:** READY
+**Status:** DONE
 
-**Blocked by:** — (COIM-A DONE; Unit 5 DONE)
+**Blocked by:** — (complete)
+
+**Verification:** COIM v1.0 §6.1, §6.2; 05_ATTRIBUTE_AND_DATA_EFFICIENCY_MODEL §13. Evidence: Asset contract augmented additively at `packages/contracts/src/entities/asset.ts` (7 optional fields: lifecycleState, platform, networkPosition, assetDataClassification, lastConfirmedAt, firstDiscoveredBy, sourceClassification; 4 new enum types + constants); Identity contract augmented additively at `packages/contracts/src/entities/identity.ts` (6 optional fields: privilegeLevel, authenticationStrength, lastAuthenticatedAt, entitlementSummary, riskFactors[], sourceClassification; 5 new types + constants); DB schemas augmented (assets: 7 nullable columns; identities: 6 nullable columns; migration `0008_asset_identity_coim_f.sql`); vitest 29/29 COIM-F tests pass; existing Asset/Identity fixtures all pass (40 assets, 25 identities, 0 regressions); typecheck clean; DATA_DICTIONARY.md updated; ARCH-DEBT-045 (Asset/Identity portion) RESOLVED.
 
 **Purpose:** Augment Asset and Identity with COIM operational-intelligence fields and timeline semantics, additively.
 
