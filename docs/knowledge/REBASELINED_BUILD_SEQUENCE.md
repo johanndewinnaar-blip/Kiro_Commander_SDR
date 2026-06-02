@@ -69,11 +69,13 @@ A unit is **READY** iff every dependency unit is **DONE** and every mapped chain
 
 Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readiness State Machine above.
 
-**READY (6 numbered + COIM-H):** Unit 16a (Operational Command Centre), Unit 18 (Identity Intelligence Surface), Unit 19 (Asset Intelligence Surface), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors), Unit 40 (Commander AI Core), and COIM unit **COIM-H**. (Unit 15 is DONE — corrected here; it had been erroneously listed as READY in the pre-split snapshot prose while the table and footer correctly showed it DONE.)
+**READY (8 numbered + COIM-H):** Unit 17 (Case Management UI), Unit 18 (Identity Intelligence Surface), Unit 19 (Asset Intelligence Surface), Unit 20 (External Operating Picture), Unit 21 (Internal Operating Picture), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors), Unit 40 (Commander AI Core), and COIM unit **COIM-H**.
 
-**DONE (23):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13, Unit 14, Unit 15, **COIM-A, COIM-B, COIM-C, COIM-D, COIM-E, COIM-F, COIM-G**.
+**DONE (24):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13, Unit 14, Unit 15, **Unit 16a**, **COIM-A, COIM-B, COIM-C, COIM-D, COIM-E, COIM-F, COIM-G**.
 
-**BLOCKED (29):** Unit 16b (Aggregate/Posture Command Centre), Units 17, 20, 21, 23–37, 39, 41–49. All 27 Team 2 numbered units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006. COIM units are Foundational and NOT ARCH-006-gated; none remain BLOCKED.
+**BLOCKED (27):** Unit 16b (Aggregate/Posture Command Centre), Units 23–37, 39, 41–49. All 27 Team 2 numbered units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006. COIM units are Foundational and NOT ARCH-006-gated; none remain BLOCKED.
+
+> **Recompute (2026-06-02, post Unit 16a DONE):** Unit 16a marked DONE. Per the recompute rule, dependents whose chains are now fully DONE flip BLOCKED→READY: **Unit 17** (deps Units 8–13 + 16a all DONE), **Unit 20** (deps Unit 14 + 16a all DONE), **Unit 21** (deps Unit 14 + 16a all DONE). Unit 16b remains BLOCKED (functional pages 17/30–33 not DONE + data-point-to-metric mapping artifact absent).
 
 > **Unit 16 split (`DEC-command-centre-split-16a-16b`, 2026-06-02):** Unit 16 (Command Centre) was split into **16a (Operational Command Centre — READY)** and **16b (Aggregate/Posture Command Centre — BLOCKED)** to resolve ARCH-DEBT-026. The metric-deferral control formerly in `DEC-command-centre-deferred` now applies ONLY to 16b. All units that previously depended on "Unit 16" now depend on **16a**. Full definitions in the Unit 16a / Unit 16b sections below.
 
@@ -97,13 +99,13 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 | 13 Reopening Trigger Engine | Foundational | **DONE** | — |
 | 14 Intelligence Layer — Four Streams | Foundational | **DONE** | — |
 | 15 OODA Layer | Foundational | **DONE** | — |
-| 16a Operational Command Centre | Foundational | **READY** | — |
+| 16a Operational Command Centre | Foundational | **DONE** | — |
 | 16b Aggregate/Posture Command Centre | Foundational | BLOCKED | Units 17, 30–33 (functional pages); data-point-to-metric mapping artifact (absent); Unit 16a |
-| 17 Case Management UI | Foundational | BLOCKED | Units 8–13; Unit 16a |
+| 17 Case Management UI | Foundational | **READY** | — |
 | 18 Identity Intelligence Surface | Foundational | **READY** | — |
 | 19 Asset Intelligence Surface | Foundational | **READY** | — |
-| 20 External Operating Picture | Foundational | BLOCKED | Unit 14; Unit 16a |
-| 21 Internal Operating Picture | Foundational | BLOCKED | Unit 14; Unit 16a |
+| 20 External Operating Picture | Foundational | **READY** | — |
+| 21 Internal Operating Picture | Foundational | **READY** | — |
 | 22 Tenant Admin Surface | Foundational | **READY** | — |
 | 23 Commercial Control Plane | Team 2 | BLOCKED | ARCH-006 (USE_CASE_SCHEDULE.md + PAGE_INVENTORY.md absent) |
 | 24 Drift Detection Engine | Team 2 | BLOCKED | ARCH-006; Unit 4 |
@@ -814,9 +816,11 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ### Unit 16a: Surface Layer — Operational Command Centre (Operational App Entry Point)
 
-**Status:** READY
+**Status:** DONE
 
-**Blocked by:** — (dependencies Units 7–15 all DONE; no mapped build-debt)
+**Blocked by:** — (complete)
+
+**Verification:** Spec #41 Visual Language & Intensity Ceiling, #65/#66 Operating Pictures from `docs/99_source_archive/baseline_v2_6_2/`. Evidence: typecheck/diagnostics clean on `apps/web/src/app/page.tsx`, the two `operating-picture/*` scaffold pages, and `registry/routes.ts`; vitest `tests/05-command-centre/command-centre.test.ts` 16a-scoped suite passing (full run 1473/1493; the 20 residual failures are other units' pre-existing Cluster B/C deferral flags, none from 16a); governance runner `--unit 16a` Green 100% (ARCH-005–009 pass). OODA gauges sourced from Unit 15 `composeCommandTempo`; thresholds strategy-sourced from the `operational-tempo` policy (no hardcoded thresholds); aggregate posture/SLA/coverage rollups deliberately excluded (Unit 16b scope); drill paths resolve to registered SCAFFOLD Operating Picture routes per `DEC-unit16a-gate-clarification`.
 
 **Purpose:** Build the Command Centre operational entry-point surface for the Commander SDR Operational Application — the landing surface and drill hub. This is the surface that other operational surfaces depend on for navigation/drill-in. It presents *overviews* sourced from already-built engines and seed fixtures; it does NOT compute the cross-page aggregate posture rollup (that is Unit 16b).
 
@@ -850,8 +854,10 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 - ✅ Connector health overview displayed
 - ✅ Mission-critical alerts surfaced
 - ✅ Visual intensity Level 3 applied
-- ✅ Drill paths to Operating Pictures working
+- ✅ Drill paths to Operating Pictures working (links resolve to registered SCAFFOLD Operating Picture routes — see gate clarification)
 - ✅ Tests: dashboard rendering, drill paths, data accuracy
+
+**Gate clarification (`DEC-unit16a-gate-clarification`, 2026-06-02):** The "drill paths to Operating Pictures working" gate item is satisfied when the drill links resolve to **registered SCAFFOLD** Operating Picture routes (`/operating-picture/external`, `/operating-picture/internal`) labelled as scaffold/deferred targets. Full Operating Picture implementation remains the responsibility of Units 20 and 21 and is NOT in 16a scope. 16a must NOT add aggregate posture/SLA/coverage KPI rollups from unmapped data points — those belong to Unit 16b.
 
 **Source tag:** Foundational
 
@@ -898,9 +904,9 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ### Unit 17: Surface Layer — Case Management UI
 
-**Status:** BLOCKED
+**Status:** READY
 
-**Blocked by:** Units 7–13 (Case Layer); Unit 16a (Operational Command Centre)
+**Blocked by:** — (dependencies Units 8–13 and Unit 16a all DONE; recomputed 2026-06-02 on Unit 16a completion)
 
 **Purpose:** Build Case Management UI for viewing and progressing cases (system-owned lifecycle only)
 
@@ -1015,9 +1021,9 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ### Unit 20: Surface Layer — External Operating Picture
 
-**Status:** BLOCKED
+**Status:** READY
 
-**Blocked by:** Unit 14 (Intelligence Layer — External Attack stream); Unit 16a (Operational Command Centre)
+**Blocked by:** — (dependencies Unit 14 and Unit 16a all DONE; recomputed 2026-06-02 on Unit 16a completion)
 
 **Purpose:** Build External Operating Picture (external attack surface view)
 
@@ -1054,9 +1060,9 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ### Unit 21: Surface Layer — Internal Operating Picture
 
-**Status:** BLOCKED
+**Status:** READY
 
-**Blocked by:** Unit 14 (Intelligence Layer — Internal Behavioural stream); Unit 16a (Operational Command Centre)
+**Blocked by:** — (dependencies Unit 14 and Unit 16a all DONE; recomputed 2026-06-02 on Unit 16a completion)
 
 **Purpose:** Build Internal Operating Picture (internal attack surface view)
 
@@ -2558,7 +2564,7 @@ A build unit is complete when:
 ---
 
 **Last Updated:** 2026-06-02  
-**Status:** ACTIVE — readiness state machine. Build only from the READY set (currently Units 16a, 18, 19, 22, 38, 40 and COIM-H; Units 0–15 + COIM-A…COIM-G DONE). Status recomputes on debt-resolution / unit-completion.  
+**Status:** ACTIVE — readiness state machine. Build only from the READY set (currently Units 17, 18, 19, 20, 21, 22, 38, 40 and COIM-H; Units 0–15 + 16a + COIM-A…COIM-G DONE). Status recomputes on debt-resolution / unit-completion.  
 **Enforcement:** ARCH-006 (build-stream sequencing) + ARCH-007 (blocking-debt prerequisite) in `.kiro/testing/conformance-registry.md`, auto-run via post-task-review. "What's next" query defined in `.kiro/steering/execution-discipline.md`.  
 **Authority:** Derived from SYSTEM_KNOWLEDGE_GRAPH.md, DATA_DICTIONARY.md, REBASELINED_BUILD_SCHEDULE_NOTES.md, baseline source. Decision: `DEC-build-readiness-state-machine` (DECISIONS.md).  
 **Sourcing rule:** Never cite the translation layer — all citations from `docs/99_source_archive/baseline_v2_6_2/`

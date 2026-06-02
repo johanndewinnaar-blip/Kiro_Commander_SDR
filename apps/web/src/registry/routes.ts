@@ -224,6 +224,31 @@ export const operationalRoutes: RouteEntry[] = [
     icon: 'war-room',
     sortOrder: 23,
   },
+  // === Operating Pictures (Units 20/21 — SCAFFOLD; drill-path targets for Unit 16a Command Centre) ===
+  {
+    path: '/operating-picture/external',
+    label: 'External Operating Picture',
+    boundary: 'operational',
+    status: 'SCAFFOLD',
+    version: 'v1.4',
+    owningSpec: '20-external-operating-picture',
+    workspaces: ['executive-posture', 'drift-operations'],
+    rbac: [],
+    showInNav: false,
+    sortOrder: 24,
+  },
+  {
+    path: '/operating-picture/internal',
+    label: 'Internal Operating Picture',
+    boundary: 'operational',
+    status: 'SCAFFOLD',
+    version: 'v1.4',
+    owningSpec: '21-internal-operating-picture',
+    workspaces: ['executive-posture', 'drift-operations'],
+    rbac: [],
+    showInNav: false,
+    sortOrder: 25,
+  },
   // === v1.5 STUB routes ===
   {
     path: '/transformation',

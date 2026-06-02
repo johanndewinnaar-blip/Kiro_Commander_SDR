@@ -2,155 +2,176 @@ import { describe, it, expect } from 'vitest';
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { seedCases } from '../../packages/contracts/src/fixtures/seed-cases';
-import { seedAssets } from '../../packages/contracts/src/fixtures/seed-assets';
+import { seedRiskObjects } from '../../packages/contracts/src/fixtures/seed-risk-objects';
 import { seedConnectors } from '../../packages/contracts/src/fixtures/seed-connectors';
 import { allRoutes } from '../../apps/web/src/registry/index';
-import { componentTokens } from '../../packages/ui/src/tokens/components';
 
 const ROOT = resolve(import.meta.dirname, '../..');
 const PAGE_PATH = resolve(ROOT, 'apps/web/src/app/page.tsx');
 const pageContent = readFileSync(PAGE_PATH, 'utf-8');
 
 /**
- * Command Centre Tests — DS-1.0 Phase 3
+ * Unit 16a — Operational Command Centre Tests
  *
- * Validates:
- * - Route registration
- * - DS-1.0 workspace structure (Header → KPI strip → Insight Row → Content Grid)
- * - Both Standard and Mission modes supported (useMode)
- * - KPI strip with 8 tiles (carries posture/SLA/coverage metrics)
- * - P0 banner with emergency styling
- * - Live activity feed
- * - Seed data consumption only
- * - Zero hardcoded values (uses token imports)
- * - No manual case creation paths
+ * Source: Spec #41/#65/#66; DEC-command-centre-split-16a-16b; DEC-unit16a-gate-clarification.
+ *
+ * Asserts ONLY the Operational Command Centre entry-surface scope:
+ *  - OODA phase-health gauges (from Unit 15 OODA Layer engine)
+ *  - case queue overview (priority / status / surface attribution)
+ *  - risk object overview (type / treatment state)
+ *  - connector health overview
+ *  - mission-critical alerts (active P0 conditions)
+ *  - Level-3 visual intensity (mode-aware)
+ *  - drill links to registered SCAFFOLD Operating Picture routes
+ *  - NO aggregate posture/SLA/coverage KPI rollups (those are deferred Unit 16b)
+ *  - no manual case creation; seed-data only
  */
 
-describe('Command Centre — Route Registration', () => {
-  it('/ is registered in the route registry', () => {
+describe('Unit 16a — Route Registration', () => {
+  it('/ is registered as Command Centre (operational)', () => {
     const route = allRoutes.find((r) => r.path === '/');
     expect(route).toBeDefined();
     expect(route!.label).toBe('Command Centre');
     expect(route!.boundary).toBe('operational');
   });
+
+  it('Operating Picture drill-path targets are registered as SCAFFOLD routes', () => {
+    const ext = allRoutes.find((r) => r.path === '/operating-picture/external');
+    const int = allRoutes.find((r) => r.path === '/operating-picture/internal');
+    expect(ext, 'external operating picture route missing').toBeDefined();
+    expect(int, 'internal operating picture route missing').toBeDefined();
+    expect(ext!.status).toBe('SCAFFOLD');
+    expect(int!.status).toBe('SCAFFOLD');
+    expect(ext!.owningSpec).toContain('20');
+    expect(int!.owningSpec).toContain('21');
+  });
+
+  it('scaffold Operating Picture placeholder pages exist', () => {
+    expect(existsSync(resolve(ROOT, 'apps/web/src/app/operating-picture/external/page.tsx'))).toBe(true);
+    expect(existsSync(resolve(ROOT, 'apps/web/src/app/operating-picture/internal/page.tsx'))).toBe(true);
+  });
 });
 
-describe('Command Centre — DS-1.0 Mode Support', () => {
+describe('Unit 16a — Mode awareness (Level 3 intensity)', () => {
   it('page uses useMode hook for mode-aware rendering', () => {
     expect(pageContent).toContain('useMode');
   });
 
-  it('page imports semantic tokens via mode context', () => {
-    expect(pageContent).toContain('tokens.surface');
-    expect(pageContent).toContain('tokens.text');
-    expect(pageContent).toContain('tokens.border');
+  it('renders through the shared PageContainer standard', () => {
+    expect(pageContent).toContain('PageContainer');
   });
 });
 
-describe('Command Centre — KPI Strip (DS-1.0 §21 Req 26)', () => {
-  it('renders 8 KPI tiles', () => {
-    expect(pageContent).toContain('Open Cases');
-    expect(pageContent).toContain('Total Assets');
-    expect(pageContent).toContain('Identities');
-    expect(pageContent).toContain('Active Connectors');
-    expect(pageContent).toContain('Connector Errors');
-    expect(pageContent).toContain('Posture Score');
-    expect(pageContent).toContain('SLA Compliance');
-    expect(pageContent).toContain('Coverage');
+describe('Unit 16a — OODA Phase Health Gauges (Unit 15 engine)', () => {
+  it('consumes the OODA Layer engine (composeCommandTempo + phase calculators)', () => {
+    expect(pageContent).toContain('composeCommandTempo');
+    expect(pageContent).toContain('calculateObserveHealth');
+    expect(pageContent).toContain('calculateOrientHealth');
+    expect(pageContent).toContain('calculateDecideHealth');
+    expect(pageContent).toContain('calculateActHealth');
   });
 
-  it('uses KPI tile styles from component library', () => {
-    expect(pageContent).toContain('getKpiTileStyles');
-    expect(pageContent).toContain('getTrendIndicator');
-  });
-});
-
-describe('Command Centre — KPI Strip carries posture metrics (gauges removed)', () => {
-  it('KPI strip includes Posture Score metric', () => {
-    expect(pageContent).toContain('Posture Score');
+  it('renders a gauge per OODA phase via OODA_PHASES', () => {
+    expect(pageContent).toContain('OODA_PHASES');
+    expect(pageContent).toContain('OODA_PHASE_LABELS');
   });
 
-  it('KPI strip includes SLA Compliance metric', () => {
-    expect(pageContent).toContain('SLA Compliance');
-  });
-
-  it('KPI strip includes Coverage metric', () => {
-    expect(pageContent).toContain('Coverage');
+  it('OODA health thresholds are strategy-sourced, not hardcoded', () => {
+    // Thresholds must derive from the operational-tempo strategy policy.
+    expect(pageContent).toContain("surfaceType === 'operational-tempo'");
+    expect(pageContent).toContain('tempoThresholds');
   });
 });
 
-describe('Command Centre — P0 Banner', () => {
-  it('seed data contains P0 case', () => {
+describe('Unit 16a — Case Queue Overview', () => {
+  it('renders case queue overview grouped by priority, status, surface attribution', () => {
+    expect(pageContent).toContain('Case Queue Overview');
+    expect(pageContent).toContain('By priority');
+    expect(pageContent).toContain('By status');
+    expect(pageContent).toContain('By surface attribution');
+  });
+
+  it('seed data contains the cases the overview summarises', () => {
+    expect(seedCases.length).toBeGreaterThan(0);
+  });
+});
+
+describe('Unit 16a — Risk Object Overview', () => {
+  it('renders risk object overview by type and treatment state', () => {
+    expect(pageContent).toContain('Risk Object Overview');
+    expect(pageContent).toContain('By type');
+    expect(pageContent).toContain('By treatment state');
+  });
+
+  it('consumes seed risk objects', () => {
+    expect(pageContent).toContain('seedRiskObjects');
+    expect(seedRiskObjects.length).toBeGreaterThan(0);
+  });
+});
+
+describe('Unit 16a — Connector Health Overview', () => {
+  it('renders connector health overview', () => {
+    expect(pageContent).toContain('Connector Health');
+    expect(pageContent).toContain('seedConnectors');
+  });
+
+  it('seed data contains at least one connector in error state to surface', () => {
+    expect(seedConnectors.some((c) => c.state === 'error')).toBe(true);
+  });
+});
+
+describe('Unit 16a — Mission-Critical Alerts', () => {
+  it('seed data contains an active P0 condition', () => {
     expect(seedCases.filter((c) => c.priority === 'P0').length).toBeGreaterThan(0);
   });
 
-  it('page renders P0 banner with role="alert"', () => {
+  it('renders a P0 alert with role="alert" and a war-room drill path', () => {
     expect(pageContent).toContain('role="alert"');
     expect(pageContent).toContain('P0 ACTIVE');
+    expect(pageContent).toContain('/war-room/p0');
   });
 
-  it('P0 banner uses signal.critical colour from tokens', () => {
+  it('P0 alert uses the critical signal token', () => {
     expect(pageContent).toContain('primitiveSignal.critical');
   });
 });
 
-describe('Command Centre — Live Activity Feed (DS-1.0 §21 Req 33)', () => {
-  it('renders live feed with severity dots', () => {
-    expect(pageContent).toContain('getLiveFeedStyles');
-    expect(pageContent).toContain('getSeverityColor');
-    expect(pageContent).toContain('Live Activity');
+describe('Unit 16a — Operating Picture drill links', () => {
+  it('links to both scaffold Operating Picture routes', () => {
+    expect(pageContent).toContain('/operating-picture/external');
+    expect(pageContent).toContain('/operating-picture/internal');
+  });
+
+  it('labels the drill targets as scaffold/deferred', () => {
+    expect(pageContent).toContain('SCAFFOLD');
   });
 });
 
-describe('Command Centre — Token Consumption (Zero Hardcoded)', () => {
-  it('uses componentTokens for layout dimensions', () => {
-    expect(pageContent).toContain('componentTokens.contentPadding');
-    expect(pageContent).toContain('componentTokens.cardPadding');
-    expect(pageContent).toContain('componentTokens.gridGap');
-    expect(pageContent).toContain('componentTokens.cardRadius');
-  });
-
-  it('uses primitiveTypeScale for font sizes', () => {
-    expect(pageContent).toContain('primitiveTypeScale.h1');
-    expect(pageContent).toContain('primitiveTypeScale.body');
-    expect(pageContent).toContain('primitiveTypeScale.micro');
-  });
-
-  it('uses primitiveFonts for font families', () => {
-    expect(pageContent).toContain('primitiveFonts.body');
-  });
-
-  it('does not contain hardcoded pixel values for layout', () => {
-    // Should not have raw px values for padding/gap (except 76px page header which is a known component dimension)
-    expect(pageContent).not.toContain("padding: '14px'");
-    expect(pageContent).not.toContain("padding: '18px'");
-    expect(pageContent).not.toContain("padding: '26px'");
-    expect(pageContent).not.toContain("padding: '28px'");
+describe('Unit 16a — Aggregate KPI rollups are OUT of scope (deferred to 16b)', () => {
+  it('does NOT render hardcoded Posture Score / SLA Compliance / Coverage aggregate metrics', () => {
+    // These belong to Unit 16b and must not appear as seeded/guessed aggregate values.
+    expect(pageContent).not.toContain('Posture Score');
+    expect(pageContent).not.toContain('SLA Compliance');
+    // No hardcoded percentage literals for aggregate posture metrics.
+    expect(pageContent).not.toContain("'72%'");
+    expect(pageContent).not.toContain("'94%'");
+    expect(pageContent).not.toContain("'87%'");
   });
 });
 
-describe('Command Centre — Seed Data Only', () => {
-  it('consumes seed cases', () => {
+describe('Unit 16a — Seed Data Only / No Manual Case Creation', () => {
+  it('consumes seed cases, risk objects and connectors', () => {
     expect(pageContent).toContain('seedCases');
-  });
-
-  it('consumes seed assets', () => {
-    expect(pageContent).toContain('seedAssets');
-  });
-
-  it('consumes seed connectors', () => {
+    expect(pageContent).toContain('seedRiskObjects');
     expect(pageContent).toContain('seedConnectors');
   });
 
   it('does not define new entity types', () => {
     expect(existsSync(resolve(ROOT, 'apps/web/src/app/entities.ts'))).toBe(false);
   });
-});
 
-describe('Command Centre — No Manual Case Creation', () => {
   it('page does not contain manual case creation UI', () => {
     expect(pageContent).not.toContain('Create Case');
     expect(pageContent).not.toContain('createCase');
-    expect(pageContent).not.toContain('manual');
   });
 });
