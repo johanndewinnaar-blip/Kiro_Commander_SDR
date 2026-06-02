@@ -69,13 +69,13 @@ A unit is **READY** iff every dependency unit is **DONE** and every mapped chain
 
 Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readiness State Machine above.
 
-**READY (3 numbered + COIM-H):** Unit 17 (Case Management UI — HELD pending Unit-44 descope + token doctrine), Unit 21 (Internal Operating Picture), Unit 22 (Tenant Admin Surface — HELD for scoped pass), and COIM unit **COIM-H** (separately authorised only). **Unit 21 is buildable** (Internal-Risk RBAC resolved). Unit 18 is now DONE.
+**READY (2 numbered + COIM-H — all HELD or separately-gated):** Unit 17 (Case Management UI — HELD pending Unit-44 descope + token doctrine), Unit 22 (Tenant Admin Surface — HELD for scoped pass), and COIM unit **COIM-H** (separately authorised only). **No cleanly-buildable un-held READY unit remains in the conveyor chain.**
 
-**DONE (29):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13, Unit 14, Unit 15, **Unit 16a**, **Unit 18**, **Unit 19**, **Unit 20**, **Unit 38**, **Unit 40**, **COIM-A, COIM-B, COIM-C, COIM-D, COIM-E, COIM-F, COIM-G**.
+**DONE (30):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13, Unit 14, Unit 15, **Unit 16a**, **Unit 18**, **Unit 19**, **Unit 20**, **Unit 21**, **Unit 38**, **Unit 40**, **COIM-A, COIM-B, COIM-C, COIM-D, COIM-E, COIM-F, COIM-G**.
 
-**BLOCKED (22):** Unit 16b (Aggregate/Posture Command Centre), Units 23–37, 39, 41–49. All 27 Team 2 numbered units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006. COIM units are Foundational and NOT ARCH-006-gated; none remain BLOCKED.
+**BLOCKED (21):** Unit 16b (Aggregate/Posture Command Centre), Units 23–37, 39, 41–49. All 27 Team 2 numbered units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006. COIM units are Foundational and NOT ARCH-006-gated; none remain BLOCKED.
 
-> **Recompute (2026-06-02, post Unit 18 DONE):** Unit 18 (Identity Intelligence Surface) marked DONE. No unit depends on Unit 18, so no new units flip to READY. **Unit 21 (Internal Operating Picture)** remains the next buildable unit in the priority chain (Internal-Risk RBAC resolved). Units 17 and 22 remain HELD on their own decisions.
+> **Recompute (2026-06-02, post Unit 21 DONE):** Unit 21 (Internal Operating Picture) marked DONE. No unit depends on Unit 21, so no new units flip to READY. **Conveyor chain exhausted again** — the entire Operational App Surface Layer foundational set (16a, 18, 19, 20, 21) is now DONE; every remaining Foundational READY unit is HELD pending an owner decision (17: Unit-44 comms-thread descope + token doctrine; 22: scoped pass for auth/entitlement runtime). Unit 16b stays BLOCKED (functional pages + data-point-to-metric artifact). Team-2 units stay BLOCKED on ARCH-006.
 
 > **Conveyor holds (2026-06-02):** **Unit 18 (Identity Intelligence Surface)** and **Unit 21 (Internal Operating Picture)** are dependency-READY but HELD pending owner resolution of `DEC-sec-c2-internal-cop-rbac-tbd` (Internal-Risk authority/RBAC role model). Their gates require "RBAC gating enforced (Internal Risk authority)" which is owner-gated and must not be invented or deferred with placeholders. **Unit 17 (Case Management UI)** is HELD pending two decisions: deliverable 5 (communication thread) belongs to Team-2 Unit 44, and a token-doctrine conflict in the case tests. **Unit 19 marked DONE** (no unit depends on it; no new units unblocked).
 
@@ -107,7 +107,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 | 18 Identity Intelligence Surface | Foundational | **DONE** | — |
 | 19 Asset Intelligence Surface | Foundational | **DONE** | — |
 | 20 External Operating Picture | Foundational | **DONE** | — |
-| 21 Internal Operating Picture | Foundational | **READY** | — (Internal-Risk RBAC hold resolved by `DEC-sec-c2-internal-cop-rbac`) |
+| 21 Internal Operating Picture | Foundational | **DONE** | — |
 | 22 Tenant Admin Surface | Foundational | READY — HELD | Owner-directed scoped pass (auth/entitlement runtime; RBAC/user-mgmt; connector mutation gating; shell-reference decision) |
 | 23 Commercial Control Plane | Team 2 | BLOCKED | ARCH-006 (USE_CASE_SCHEDULE.md + PAGE_INVENTORY.md absent) |
 | 24 Drift Detection Engine | Team 2 | BLOCKED | ARCH-006; Unit 4 |
@@ -1070,9 +1070,11 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ### Unit 21: Surface Layer — Internal Operating Picture
 
-**Status:** READY
+**Status:** DONE
 
-**Blocked by:** — (dependencies Unit 14 and Unit 16a DONE; the Internal-Risk RBAC hold is RESOLVED by `DEC-sec-c2-internal-cop-rbac`, Option C, 2026-06-02)
+**Blocked by:** — (complete)
+
+**Verification:** Spec #66 Internal Operating Picture, #60 Internal/External Attack Surface Framework from `docs/99_source_archive/baseline_v2_6_2/`; RBAC per `DEC-sec-c2-internal-cop-rbac` (Option C). Evidence: diagnostics clean on `apps/web/src/app/operating-picture/internal/page.tsx`; vitest `tests/21-internal-operating-picture/internal-operating-picture.test.ts` (13 tests) passing; full run 1563/1583 (the 20 residual failures are pre-existing Unit 17 / Cluster B deferral flags, none from Unit 21); governance runner `--unit 21` Green 100% (ARCH-005–009). Internal-only view (`internal_attack_surface` filter, Assertion 10): internal attack surface inventory, aggregate Internal Behavioural Intelligence stream (Class B via Unit 14 `CLASS_TO_STREAM`), internal case queue, internal risk objects, drill paths to cases/assets/identities/External Operating Picture. **RBAC enforced per DEC-sec-c2-internal-cop-rbac:** aggregate-tier route RBAC set on `/operating-picture/internal` (replacing the `RBAC:[]` placeholder); Verdict Density Overlay / Identity Risk Pattern / Geographic Anomaly / per-identity verdict detail rendered as **Internal-Risk-overlay-gated, aggregate-only-by-default** placeholder (no fabricated behavioural/verdict data; per-identity tier has no live data until Class B ingestion — not built here); audit-of-access / tenant isolation / jurisdiction-aware enforcement documented as backend-authoritative. Replaces the SCAFFOLD placeholder created during Unit 16a.
 
 **RBAC model (DEC-sec-c2-internal-cop-rbac):** The `aggregate_only` Internal COP view (Verdict Density Overlay aggregate, Policy Effectiveness Direction Board, internal Command Tempo) renders to base personas: CISO, SOM, Security Analyst, Identity/Access Specialist, Security Architect, Risk Analyst, Risk/Compliance/Audit (read-only). The **per-identity tier** (Identity Risk Pattern Visualisation, Geographic Anomaly Markers, per-identity verdict detail) is gated by the **Internal Risk authority overlay** (per-investigation / persistent / scoped). Audit-of-access mandatory; hard tenant isolation (cross-tenant separately licensed + overlay-gated); jurisdiction-aware enforcement at three granularities (per-tenant / per-entity-type / per-section, Spec #55 v2.6); **aggregate-only default** (per-identity tier OFF until a jurisdiction-aware grant issues); backend-authoritative enforcement (frontend visibility is presentation only). Per-identity tier has no live data until Class B (Internal Behavioural) ingestion exists.
 
@@ -2580,7 +2582,7 @@ A build unit is complete when:
 ---
 
 **Last Updated:** 2026-06-02  
-**Status:** ACTIVE — readiness state machine. Build only from the READY set. **As of 2026-06-02:** Units 0–15 + 16a + 18 + 19 + 20 + 38 + 40 + COIM-A…COIM-G DONE; **Unit 21 is READY and buildable** (Internal-Risk RBAC resolved); Units 17 and 22 remain READY-but-HELD pending their own owner decisions; COIM-H READY but separately authorised. Status recomputes on debt-resolution / unit-completion.  
+**Status:** ACTIVE — readiness state machine. Build only from the READY set. **As of 2026-06-02:** Units 0–15 + 16a + 18 + 19 + 20 + 21 + 38 + 40 + COIM-A…COIM-G DONE (the Operational App Surface Layer foundational set is complete); Units 17 and 22 remain READY-but-HELD pending their own owner decisions; COIM-H READY but separately authorised. Status recomputes on debt-resolution / unit-completion.  
 **Enforcement:** ARCH-006 (build-stream sequencing) + ARCH-007 (blocking-debt prerequisite) in `.kiro/testing/conformance-registry.md`, auto-run via post-task-review. "What's next" query defined in `.kiro/steering/execution-discipline.md`.  
 **Authority:** Derived from SYSTEM_KNOWLEDGE_GRAPH.md, DATA_DICTIONARY.md, REBASELINED_BUILD_SCHEDULE_NOTES.md, baseline source. Decision: `DEC-build-readiness-state-machine` (DECISIONS.md).  
 **Sourcing rule:** Never cite the translation layer — all citations from `docs/99_source_archive/baseline_v2_6_2/`

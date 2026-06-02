@@ -35,18 +35,20 @@ describe('Unit 16a — Route Registration', () => {
     expect(route!.boundary).toBe('operational');
   });
 
-  it('Operating Picture drill-path targets are registered as SCAFFOLD routes', () => {
+  it('Operating Picture drill-path targets are registered routes (now BUILT by Units 20/21)', () => {
     const ext = allRoutes.find((r) => r.path === '/operating-picture/external');
     const int = allRoutes.find((r) => r.path === '/operating-picture/internal');
     expect(ext, 'external operating picture route missing').toBeDefined();
     expect(int, 'internal operating picture route missing').toBeDefined();
-    expect(ext!.status).toBe('SCAFFOLD');
-    expect(int!.status).toBe('SCAFFOLD');
+    // Originally registered SCAFFOLD for the 16a drill paths; Units 20/21 have since
+    // built them, so they are now BUILD. The drill-path targets remain registered and resolve.
+    expect(['SCAFFOLD', 'BUILD']).toContain(ext!.status);
+    expect(['SCAFFOLD', 'BUILD']).toContain(int!.status);
     expect(ext!.owningSpec).toContain('20');
     expect(int!.owningSpec).toContain('21');
   });
 
-  it('scaffold Operating Picture placeholder pages exist', () => {
+  it('Operating Picture pages exist (drill-path targets resolve)', () => {
     expect(existsSync(resolve(ROOT, 'apps/web/src/app/operating-picture/external/page.tsx'))).toBe(true);
     expect(existsSync(resolve(ROOT, 'apps/web/src/app/operating-picture/internal/page.tsx'))).toBe(true);
   });
