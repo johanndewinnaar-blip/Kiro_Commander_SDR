@@ -171,3 +171,103 @@ export {
   validateControlEvaluation,
   validateControlMapping,
 } from './control-framework';
+
+// ─── Intelligence Common (Platform Intelligence & IOC Distribution) ──────────
+export type {
+  PlatformIntelligenceSourceType,
+  PlatformRecordType,
+  IocCategory,
+  IocRelationshipState,
+  TlpMarking,
+  CveState,
+  SourceFreshnessState,
+  TenantSubscriptionState,
+  EvaluationType,
+  TenantExposureState,
+  IocMatchType,
+  IocCaseLinkType,
+  ThreatHuntStatus,
+  PushActionType,
+  PushIntentStatus,
+  AllowBlockListType,
+  SourceAttributionEntry,
+  RelationshipStateTransition,
+} from './intelligence-common';
+export {
+  PLATFORM_INTELLIGENCE_SOURCE_TYPES,
+  PLATFORM_RECORD_TYPES,
+  IOC_CATEGORIES,
+  IOC_RELATIONSHIP_STATES,
+  TLP_MARKINGS,
+  CVE_STATES,
+  SOURCE_FRESHNESS_STATES,
+  TENANT_SUBSCRIPTION_STATES,
+  EVALUATION_TYPES,
+  TENANT_EXPOSURE_STATES,
+  IOC_MATCH_TYPES,
+  IOC_CASE_LINK_TYPES,
+  THREAT_HUNT_STATUSES,
+  PUSH_ACTION_TYPES,
+  PUSH_INTENT_STATUSES,
+  ALLOW_BLOCK_LIST_TYPES,
+} from './intelligence-common';
+
+// ─── Platform Intelligence Source ────────────────────────────────────────────
+export type { PlatformIntelligenceSource, FeedFailureState, PlatformIntelligenceSourceValidation } from './platform-intelligence-source';
+export { validatePlatformIntelligenceSource } from './platform-intelligence-source';
+
+// ─── Platform Intelligence Record ────────────────────────────────────────────
+export type { PlatformIntelligenceRecord, PlatformIntelligenceRecordValidation } from './platform-intelligence-record';
+export { validatePlatformIntelligenceRecord } from './platform-intelligence-record';
+
+// ─── Vulnerability Intelligence Record ───────────────────────────────────────
+export type { VulnerabilityIntelligenceRecord, VulnerabilityIntelligenceRecordValidation } from './vulnerability-intelligence-record';
+export { validateVulnerabilityIntelligenceRecord } from './vulnerability-intelligence-record';
+
+// ─── Vendor Advisory ─────────────────────────────────────────────────────────
+export type { VendorAdvisory, VendorAdvisoryValidation } from './vendor-advisory';
+export { validateVendorAdvisory } from './vendor-advisory';
+
+// ─── Indicator of Compromise ─────────────────────────────────────────────────
+export type { IndicatorOfCompromise, IndicatorOfCompromiseValidation } from './indicator-of-compromise';
+export { validateIndicatorOfCompromise } from './indicator-of-compromise';
+
+// ─── IOC Relationship ────────────────────────────────────────────────────────
+export type { IocRelationship, IocRelationshipValidation } from './ioc-relationship';
+export { validateIocRelationship } from './ioc-relationship';
+
+// ─── Tenant Intelligence Subscription ────────────────────────────────────────
+export type { TenantIntelligenceSubscription, TenantIntelligenceSubscriptionValidation } from './tenant-intelligence-subscription';
+export { validateTenantIntelligenceSubscription } from './tenant-intelligence-subscription';
+
+// ─── Tenant IOC Allow/Block Entry ────────────────────────────────────────────
+export type { TenantIocAllowBlockEntry, TenantIocAllowBlockEntryValidation } from './tenant-ioc-allowblock-entry';
+export { validateTenantIocAllowBlockEntry } from './tenant-ioc-allowblock-entry';
+
+// ─── Tenant Intelligence Evaluation ──────────────────────────────────────────
+export type { TenantIntelligenceEvaluation, TenantIntelligenceEvaluationValidation } from './tenant-intelligence-evaluation';
+export { validateTenantIntelligenceEvaluation } from './tenant-intelligence-evaluation';
+
+// ─── Tenant IOC Match ────────────────────────────────────────────────────────
+export type { TenantIocMatch, TenantIocMatchValidation } from './tenant-ioc-match';
+export { validateTenantIocMatch } from './tenant-ioc-match';
+
+// ─── IOC Case Link ───────────────────────────────────────────────────────────
+export type { IocCaseLink, IocCaseLinkValidation } from './ioc-case-link';
+export { validateIocCaseLink } from './ioc-case-link';
+
+// ─── Vulnerability Case Link ─────────────────────────────────────────────────
+export type { VulnerabilityCaseLink, VulnerabilityCaseLinkValidation } from './vulnerability-case-link';
+export { validateVulnerabilityCaseLink } from './vulnerability-case-link';
+
+// ─── Threat Hunt Record ──────────────────────────────────────────────────────
+export type { ThreatHuntRecord, ThreatHuntRecordValidation } from './threat-hunt-record';
+export { validateThreatHuntRecord } from './threat-hunt-record';
+
+// ─── Push Action Intent ──────────────────────────────────────────────────────
+export type { PushActionIntent, PushActionIntentValidation } from './push-action-intent';
+export { validatePushActionIntent } from './push-action-intent';
+
+// ─── Inbound Email Submission ────────────────────────────────────────────────
+export type { InboundEmailSubmission, ParsedEmailIoc, InboundEmailSubmissionValidation } from './inbound-email-submission';
+export { validateInboundEmailSubmission } from './inbound-email-submission';

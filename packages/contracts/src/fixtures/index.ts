@@ -20,3 +20,7 @@ export { seedActions, seedSubActions } from './seed-actions';
 export { seedControlFrameworks, seedFrameworkControls, seedControlRequirements, seedControlEvaluations, seedControlMappings } from './seed-control-frameworks';
 export { seedEvents } from './seed-events';
 export type { SeedEvent } from './seed-events';
+
+// ─── Platform Intelligence & IOC Distribution Fixtures ───────────────────────
+export { seedPlatformIntelligenceSources } from './seed-platform-intelligence-sources';
+export { seedIocs } from './seed-iocs';

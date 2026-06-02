@@ -35,3 +35,39 @@ export { observables, observableRiskObjectBindings, observableTypeEnum } from '.
 export { analytics, analyticTypeEnum, analyticStateEnum } from './analytics';
 export { actions, subActions, actionStatusEnum, outcomeClassificationEnum, d3fendTacticTypeEnum } from './actions';
 export { controlFrameworks, frameworkControls, controlRequirements, controlEvaluations, controlMappings, frameworkCategoryEnum, licenceStatusEnum, controlTierEnum, evaluationOperatorEnum, complianceVerdictEnum, exceptionStateEnum, mappingSourceEnum, coverageContributionEnum } from './control-frameworks';
+
+// ─── Platform Intelligence & IOC Distribution ────────────────────────────────
+export {
+  platformIntelligenceSources,
+  platformIntelligenceRecords,
+  vulnerabilityIntelligenceRecords,
+  vendorAdvisories,
+  indicatorsOfCompromise,
+  iocRelationships,
+  platformSourceTypeEnum,
+  platformRecordTypeEnum,
+  iocCategoryEnum,
+  iocRelationshipStateEnum,
+  tlpMarkingEnum,
+  cveStateEnum,
+  sourceFreshnessEnum,
+} from './platform-intelligence';
+export {
+  tenantIntelligenceSubscriptions,
+  tenantIntelligenceEvaluations,
+  tenantIocMatches,
+  tenantIocAllowBlockEntries,
+  iocCaseLinks,
+  vulnerabilityCaseLinks,
+  threatHuntRecords,
+  pushActionIntents,
+  tenantSubscriptionStateEnum,
+  evaluationTypeEnum,
+  tenantExposureStateEnum,
+  iocMatchTypeEnum,
+  allowBlockListTypeEnum,
+  iocCaseLinkTypeEnum,
+  threatHuntStatusEnum,
+  pushActionTypeEnum,
+  pushIntentStatusEnum,
+} from './tenant-intelligence';
