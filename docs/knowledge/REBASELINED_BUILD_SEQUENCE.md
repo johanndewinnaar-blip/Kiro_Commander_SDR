@@ -69,13 +69,13 @@ A unit is **READY** iff every dependency unit is **DONE** and every mapped chain
 
 Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readiness State Machine above.
 
-**READY (4 numbered + COIM-H):** Unit 17 (Case Management UI — held), Unit 22 (Tenant Admin Surface — held), Unit 40 (Commander AI Core), and COIM unit **COIM-H**. (Units 18 and 21 dependency-READY but HELD pending the owner-gated Internal-Risk RBAC decision; Unit 22 HELD for a scoped pass; Unit 17 HELD pending Unit-44 descope + token doctrine.)
+**READY (3 numbered + COIM-H — all HELD or separately-gated):** Unit 17 (Case Management UI — HELD), Unit 22 (Tenant Admin Surface — HELD), and COIM unit **COIM-H** (separately authorised only). Units 18 & 21 are dependency-READY but HELD pending the owner-gated Internal-Risk RBAC decision. **No cleanly-buildable un-held READY unit remains in the conveyor chain.**
 
-**DONE (27):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13, Unit 14, Unit 15, **Unit 16a**, **Unit 19**, **Unit 20**, **Unit 38**, **COIM-A, COIM-B, COIM-C, COIM-D, COIM-E, COIM-F, COIM-G**.
+**DONE (28):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13, Unit 14, Unit 15, **Unit 16a**, **Unit 19**, **Unit 20**, **Unit 38**, **Unit 40**, **COIM-A, COIM-B, COIM-C, COIM-D, COIM-E, COIM-F, COIM-G**.
 
-**BLOCKED (24):** Unit 16b (Aggregate/Posture Command Centre), Units 23–37, 39, 41–49. All 27 Team 2 numbered units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006. COIM units are Foundational and NOT ARCH-006-gated; none remain BLOCKED.
+**BLOCKED (23):** Unit 16b (Aggregate/Posture Command Centre), Units 23–37, 39, 41–49. All 27 Team 2 numbered units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006. COIM units are Foundational and NOT ARCH-006-gated; none remain BLOCKED.
 
-> **Recompute (2026-06-02, post Unit 38 DONE):** Unit 38 (Mock Connectors) marked DONE. Unit 39 (Real Connector Readiness) depends on Unit 38 but remains BLOCKED on ARCH-006 (Team 2 gate). No new units flip to READY. The only remaining cleanly-buildable READY unit is **Unit 40 (Commander AI Core)**.
+> **Recompute (2026-06-02, post Unit 40 DONE):** Unit 40 (Commander AI Core) marked DONE. Unit 41 (AWS Alignment — Evaluation Lane) depends on Unit 40 but remains BLOCKED (ARCH-006 Team 2 gate + ARCH-DEBT-034). No new units flip to READY. **Conveyor chain exhausted** — every remaining Foundational READY unit is HELD pending an owner decision (17: Unit-44 descope + token doctrine; 18 & 21: Internal-Risk RBAC `DEC-sec-c2-internal-cop-rbac-tbd`; 22: scoped pass for auth/entitlement runtime). Further progress requires either those owner decisions or Team-2 unblocking (`USE_CASE_SCHEDULE.md` + `PAGE_INVENTORY.md` for ARCH-006).
 
 > **Conveyor holds (2026-06-02):** **Unit 18 (Identity Intelligence Surface)** and **Unit 21 (Internal Operating Picture)** are dependency-READY but HELD pending owner resolution of `DEC-sec-c2-internal-cop-rbac-tbd` (Internal-Risk authority/RBAC role model). Their gates require "RBAC gating enforced (Internal Risk authority)" which is owner-gated and must not be invented or deferred with placeholders. **Unit 17 (Case Management UI)** is HELD pending two decisions: deliverable 5 (communication thread) belongs to Team-2 Unit 44, and a token-doctrine conflict in the case tests. **Unit 19 marked DONE** (no unit depends on it; no new units unblocked).
 
@@ -126,7 +126,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 | 37 Security C2 / War Room | Team 2 | BLOCKED | ARCH-006; Unit 15; Unit 14; Units 7–13 |
 | 38 Mock Connectors | Foundational | **DONE** | — |
 | 39 Real Connector Readiness | Team 2 | BLOCKED | ARCH-006; Unit 4; Unit 38 |
-| 40 Commander AI Core | Foundational | **READY** | — |
+| 40 Commander AI Core | Foundational | **DONE** | — |
 | 41 AWS Alignment — Evaluation Lane | Team 2 | BLOCKED | ARCH-006; Unit 40; ARCH-DEBT-034 (needs re-sourcing) |
 | 42 Push Governance — Dry-Run | Team 2 | BLOCKED | ARCH-006; Units 7–13; Unit 6 |
 | 43 Audit Trail | Foundational | BLOCKED | Units 7–13; Unit 6; ARCH-DEBT-035 (needs re-sourcing) |
@@ -1800,9 +1800,11 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ### Unit 40: Commander AI Core — Grounding & Refusal (Foundational)
 
-**Status:** BLOCKED
+**Status:** DONE
 
-**Blocked by:** Units 7–13 (Case Layer); Unit 14 (Intelligence Layer); Unit 5 (Normalisation Layer)
+**Blocked by:** — (complete; dependencies Unit 5, Units 7–13 and Unit 14 all DONE — the prior "BLOCKED" header was stale drift, corrected on completion 2026-06-02)
+
+**Verification:** Spec #13 Commander AI Architecture and Grounding Rules from `docs/99_source_archive/baseline_v2_6_2/`; ai-grounding steering; Feature Registry `feat.commander.grounding_pipeline`. Evidence: diagnostics clean on `packages/contracts/src/engines/commander-ai-core.ts` + engines barrel; vitest `tests/40-commander-ai-core/commander-ai-core.test.ts` (16 tests) passing; full run 1534/1554 (the 20 residual failures are pre-existing Unit 17 / Cluster B deferral flags, none from Unit 40); governance runner `--unit 40` Green 100% (ARCH-005–009) after status correction. Deterministic grounding pipeline (no live model, no AWS/Bedrock — that is Unit 41, Phase-2 gated): grounding framework (refuses ungrounded references), four-category refusal framework (ungrounded-estate-fact / external-write / approval-bypass / authority-override), drafting/explanation/summarization/navigation grounded strictly in supplied Commander records, and `commander-ai` immutable audit execution logging (including refusals). Honours ai-grounding doctrine — no estate-fact invention, no silent external writes, no approval bypass, no authority override.
 
 **Purpose:** Build Commander AI core with grounding in Commander data and refusal framework
 
@@ -2572,7 +2574,7 @@ A build unit is complete when:
 ---
 
 **Last Updated:** 2026-06-02  
-**Status:** ACTIVE — readiness state machine. Build only from the READY set (currently Unit 40 and COIM-H; Units 17 & 22 READY-but-HELD; Units 18 & 21 dependency-READY but HELD pending owner Internal-Risk RBAC decision; Units 0–15 + 16a + 19 + 20 + 38 + COIM-A…COIM-G DONE). Status recomputes on debt-resolution / unit-completion.  
+**Status:** ACTIVE — readiness state machine. Build only from the READY set. **Conveyor chain exhausted as of 2026-06-02:** Units 0–15 + 16a + 19 + 20 + 38 + 40 + COIM-A…COIM-G DONE; every remaining Foundational READY unit (17, 18, 21, 22) is HELD pending an owner decision; COIM-H is READY but separately authorised only. Status recomputes on debt-resolution / unit-completion.  
 **Enforcement:** ARCH-006 (build-stream sequencing) + ARCH-007 (blocking-debt prerequisite) in `.kiro/testing/conformance-registry.md`, auto-run via post-task-review. "What's next" query defined in `.kiro/steering/execution-discipline.md`.  
 **Authority:** Derived from SYSTEM_KNOWLEDGE_GRAPH.md, DATA_DICTIONARY.md, REBASELINED_BUILD_SCHEDULE_NOTES.md, baseline source. Decision: `DEC-build-readiness-state-machine` (DECISIONS.md).  
 **Sourcing rule:** Never cite the translation layer — all citations from `docs/99_source_archive/baseline_v2_6_2/`

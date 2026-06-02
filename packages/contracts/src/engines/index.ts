@@ -197,3 +197,25 @@ export {
   createDegradationRiskObject,
   composeCommandTempo,
 } from './ooda-layer';
+
+// Unit 40: Commander AI Core (Grounding & Refusal)
+export type {
+  GroundingCorpus,
+  GroundingRef,
+  GroundingResult,
+  RefusalReason,
+  AiActionRequest,
+  RefusalCheck,
+  AiOutput,
+} from './commander-ai-core';
+export {
+  groundReferences,
+  REFUSAL_REASONS,
+  REFUSAL_LABELS,
+  checkRefusal,
+  draftCaseSummary,
+  explainCaseRouting,
+  summarizeRiskTreatment,
+  navigateToEntity,
+  logAiExecution,
+} from './commander-ai-core';
