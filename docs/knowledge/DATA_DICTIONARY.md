@@ -576,6 +576,76 @@
 
 These are code-conformance debt items (contract field removed, test fixtures not updated). Route to `docs/00_authority/debt-register.md` per core-testing-commands.md pipeline.
 
+### 15. Action / Sub-Action
+
+**Source:** COIM v1.0 §4.3, §6 (Action/Sub-Action impact); 03_REUSABLE_OBJECT_CATALOGUE §2.3; Spec #08 Case Management (sub-actions)  
+**Coverage:** Partial (Spec #08 §§1–15 read; COIM v1.0 §4.3 partially read — entry provisional per COVERAGE.md)  
+**Contract:** `packages/contracts/src/entities/action.ts`  
+**DB Schema:** `packages/db/src/schema/actions.ts` ✅  
+**Fixture:** `packages/contracts/src/fixtures/seed-actions.ts` ✅ (3 actions, 5 sub-actions covering all 5 D3FEND tactics)  
+**Status:** AVAILABLE (fixture exists)  
+**Build unit:** COIM-H (Action/Sub-Action + D3FEND). Resolves ARCH-DEBT-044, ARCH-DEBT-046.  
+**Doctrine:** Actions are system-created when a case transitions to `action_decomposed`. No manual Action/Sub-Action creation or lifecycle edit — doctrinal assertion 1 (closed-loop case model). This entity records what was decomposed, not how the lifecycle transitions. Case lifecycle engine logic unchanged.
+
+#### Action Fields
+
+| Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
+|-------|------|----------------------|--------------|---------------------|-------|
+| `id` | string | system-calculated | AVAILABLE | — | Deterministic ID (from CommonFields) |
+| `entityType` | `'action'` | system-calculated | AVAILABLE | — | Discriminator |
+| `tenant` | TenantContext | seeded | AVAILABLE | — | Tenant scope (tenantId, tenantName) |
+| `caseId` | string | system-calculated | AVAILABLE | — | Reference to owning case (application-layer enforced, no FK — cross-workload boundary per performance doctrine §5) |
+| `title` | string | system-calculated | AVAILABLE | — | Human-readable action title |
+| `description` | string | system-calculated | AVAILABLE | — | Action description / remediation objective |
+| `estimatedEffortHours` | number (real) | system-calculated | AVAILABLE | — | Total estimated effort for all sub-actions (hours) |
+| `actualEffortHours` | number (real) | system-calculated | AVAILABLE | — | Total actual effort recorded across sub-actions (hours) |
+| `status` | ActionStatus (enum) | system-calculated | AVAILABLE | — | planned, in_progress, completed, cancelled — derived from sub-action outcomes |
+| `approvalRef` | string | system-calculated | AVAILABLE | — | Approval reference (system-generated or routing-engine ref) |
+| `owner` | string | system-calculated | AVAILABLE | — | Owner assigned via routing engine |
+| `source` | SourceMetadata | seeded | AVAILABLE | — | Provenance (connectorId, importRunId, sourceSystem, sourceTimestamp). Contract↔schema aligned. |
+| `createdAt` | string (ISO 8601) / timestamptz | system-calculated | AVAILABLE | — | Record creation timestamp |
+| `updatedAt` | string (ISO 8601) / timestamptz | system-calculated | AVAILABLE | — | Record update timestamp |
+
+#### Sub-Action Fields
+
+| Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
+|-------|------|----------------------|--------------|---------------------|-------|
+| `id` | string | system-calculated | AVAILABLE | — | Deterministic ID (from CommonFields) |
+| `entityType` | `'sub_action'` | system-calculated | AVAILABLE | — | Discriminator |
+| `tenant` | TenantContext | seeded | AVAILABLE | — | Tenant scope (tenantId, tenantName) |
+| `actionId` | string | system-calculated | AVAILABLE | — | Reference to parent Action (FK → actions.id) |
+| `caseId` | string | system-calculated | AVAILABLE | — | Denormalised case reference (application-layer enforced, no FK — cross-workload boundary) |
+| `targetEntity` | string | system-calculated | AVAILABLE | — | Entity targeted by this sub-action (asset ID, identity ID, analytic ref, etc.) |
+| `targetEntityType` | string | system-calculated | AVAILABLE | — | Type of the target entity (asset, identity, analytic, etc.) |
+| `executionMethod` | string | system-calculated | AVAILABLE | — | How the remediation is executed (patch, isolate, revoke, detection-rule-creation, etc.) |
+| `outcomeClassification` | OutcomeClassification (enum) | system-calculated | AVAILABLE | — | successful, partial, failed, cancelled, pending |
+| `estimatedEffortHours` | number (real) | system-calculated | AVAILABLE | — | Estimated effort for this sub-action (hours) |
+| `actualEffortHours` | number (real) | system-calculated | AVAILABLE | — | Actual effort recorded (hours) |
+| `approvalRef` | string | system-calculated | AVAILABLE | — | Approval reference for this specific sub-action |
+| `owner` | string | system-calculated | AVAILABLE | — | Assigned owner |
+| `sequenceOrder` | integer | system-calculated | AVAILABLE | — | Ordering within the parent Action |
+| `tacticType` | D3FENDTacticType (enum) | integration-derived | AVAILABLE | — | D3FEND tactic classification: isolate, evict, restore, harden, detect (ARCH-DEBT-046) |
+| `countermeasures` | D3FENDCountermeasure[] (JSONB, bounded ≤10) | integration-derived | AVAILABLE | — | D3FEND countermeasures. Each: {techniqueId, techniqueName, artifactRef?}. Max MAX_COUNTERMEASURES=10 (ARCH-DEBT-046) |
+| `source` | SourceMetadata | seeded | AVAILABLE | — | Provenance (connectorId, importRunId, sourceSystem, sourceTimestamp). Contract↔schema aligned. |
+| `createdAt` | string (ISO 8601) / timestamptz | system-calculated | AVAILABLE | — | Record creation timestamp |
+| `updatedAt` | string (ISO 8601) / timestamptz | system-calculated | AVAILABLE | — | Record update timestamp |
+
+**Validation:**
+- `validateAction()` in `action.ts` — structural correctness: required fields (caseId, title), effort ≥ 0, valid status enum.
+- `validateSubAction()` in `action.ts` — structural correctness: required fields (actionId, caseId, targetEntity, executionMethod), effort ≥ 0, valid outcomeClassification, valid D3FEND tacticType, countermeasures[] ≤ MAX_COUNTERMEASURES, each countermeasure has techniqueId + techniqueName.
+
+**Exported constants:**
+- `OUTCOME_CLASSIFICATIONS` — array of 5 outcome values
+- `D3FEND_TACTIC_TYPES` — array of 5 tactic types
+- `ACTION_STATUSES` — array of 4 action statuses
+- `MAX_COUNTERMEASURES` — 10 (bounded array limit)
+
+**DB Schema Reconciliation:** ✅ Contract and schema aligned. DB schema flattens `tenant` to `tenantId` reference (FK → tenants.id) and `source` to individual columns (`source_connector_id`, `source_import_run_id`, `source_system`, `source_timestamp`) — standard pattern. Enum columns: `action_status` (4 values), `outcome_classification` (5 values), `d3fend_tactic_type` (5 values). `countermeasures` stored as JSONB (bounded array). Additional DB-only column: `data_classification` (default 'case'). `caseId` — application-layer enforced, no FK (cross-workload boundary per performance doctrine §5). `actionId` on sub_actions — FK → actions.id (same workload, within-table FK permitted). Effort columns use `real` type. No divergences.
+
+**Resolvers:** None. No action-specific resolver in `packages/contracts/src/resolvers/`. Action/Sub-Action creation is lifecycle-engine driven (triggered by `action_decomposed` transition). `validateAction()` and `validateSubAction()` are structural validators, not resolvers.
+
+---
+
 **Enums Defined:**
 
 | Enum | Values | Source |
@@ -597,6 +667,9 @@ These are code-conformance debt items (contract field removed, test fixtures not
 | `ObservableType` | ip, domain, hash, url, email, certificate, process, file | COIM v1.0 §4.5; OCSF observable.json type_id taxonomy |
 | `AnalyticType` | detection_rule, analytic_rule, sigma_rule, yara_rule, ml_model, ueba_model, vendor_model, security_control_analytic | COIM v1.0 §4.8; OCSF analytic.json type_id (Rule/Behavioral/Statistical/ML) + Commander extensions (sigma_rule, yara_rule, ueba_model, security_control_analytic) |
 | `AnalyticState` | active, deprecated, testing | COIM v1.0 §4.8; Commander-owned lifecycle tracking |
+| `ActionStatus` | planned, in_progress, completed, cancelled | COIM v1.0 §4.3; Spec #08 Case Management |
+| `OutcomeClassification` | successful, partial, failed, cancelled, pending | COIM v1.0 §4.3; 03_REUSABLE_OBJECT_CATALOGUE §2.3 |
+| `D3FENDTacticType` | isolate, evict, restore, harden, detect | COIM v1.0 §4.3; MITRE D3FEND framework — five canonical defensive tactics |
 
 ---
 
@@ -604,7 +677,7 @@ These are code-conformance debt items (contract field removed, test fixtures not
 
 **Purpose:** Complete surfacing of the data layer built to date. Existing work is explicitly accounted for, not silently assumed complete.
 
-### Entities Catalogued: 14
+### Entities Catalogued: 15
 
 1. Asset ✅
 2. Case ✅
@@ -620,11 +693,12 @@ These are code-conformance debt items (contract field removed, test fixtures not
 12. Verdict ✅ (COIM-C — verdict entity promotion)
 13. Observable ✅ (COIM-D — observable entity)
 14. Analytic ✅ (COIM-E — analytic entity)
+15. Action / Sub-Action ✅ (COIM-H — action + D3FEND)
 
 **Composed-object modules (catalogued under their consuming entity, no own table):**
 - `coim.ts` — COIM-A source-classification composed objects (FindingClass, SourceSeverity, SourceConfidence, SourceProduct, AttackMapping, ObservableRef, SourceClassification + `validateSourceClassification`). Catalogued under Risk Object (§4). Also consumed by Verdict entity (§12) for `SourceProduct` type. Satisfies the completeness gate for `packages/contracts/src/entities/coim.ts`.
 
-### Fixtures Found: 13
+### Fixtures Found: 14
 
 1. `seed-assets.ts` ✅
 2. `seed-cases.ts` ✅
@@ -639,6 +713,7 @@ These are code-conformance debt items (contract field removed, test fixtures not
 11. `seed-verdicts.ts` ✅
 12. `seed-observables.ts` ✅
 13. `seed-analytics.ts` ✅
+14. `seed-actions.ts` ✅
 
 ### Resolvers Found: 13
 
@@ -658,7 +733,7 @@ These are code-conformance debt items (contract field removed, test fixtures not
 
 ### Contract vs DB Schema Reconciliation
 
-**Aligned (14):**
+**Aligned (15):**
 - Asset ✅
 - Case ✅
 - Identity ✅
@@ -673,6 +748,7 @@ These are code-conformance debt items (contract field removed, test fixtures not
 - Verdict ✅
 - Observable ✅
 - Analytic ✅
+- Action / Sub-Action ✅
 
 **Divergences (0):**
 None.
@@ -837,55 +913,96 @@ None.
 | `confidenceAggregate` | int (0-100) | system-calculated | AVAILABLE | — | Rounded average of source confidence across bound Risk Objects; undefined when none carry a score |
 | `findingClassBreakdown` | JSONB (Record<string,number>) | system-calculated | AVAILABLE | — | Count of bound Risk Objects per FindingClass |
 
-### Action / Sub-Action (COIM-H — AVAILABLE)
+### Action / Sub-Action (COIM-H — AVAILABLE — promoted to §15)
 
-**Entity file:** `packages/contracts/src/entities/action.ts`  
-**Schema file:** `packages/db/src/schema/actions.ts`  
-**Migration:** `packages/db/drizzle/0010_action_sub_action_coim_h.sql`  
-**Fixture file:** `packages/contracts/src/fixtures/seed-actions.ts`  
-**Build unit:** COIM-H (Action/Sub-Action + D3FEND)  
-**Resolves:** ARCH-DEBT-044 (entity absence), ARCH-DEBT-046 (D3FEND gap)
+> **Delivered 2026-06-02 by build unit COIM-H.** Placeholder retired per maintenance rule (a COIM unit's planning placeholder is replaced by its mechanically-derived entry once the unit lands). Action/Sub-Action with D3FEND classification is now catalogued in the mechanically-derived **Action / Sub-Action** entry (§15 above). Contract: `action.ts` (Action + SubAction interfaces, D3FENDTacticType, D3FENDCountermeasure, validation). Schema: `actions.ts` (actions + sub_actions tables, D3FEND enums, countermeasures JSONB). Migration: `0010_action_sub_action_coim_h.sql`. Fixture: `seed-actions.ts` (3 actions, 5 sub-actions, all 5 D3FEND tactics). Resolves ARCH-DEBT-044 (entity absence), ARCH-DEBT-046 (D3FEND gap).
 
-#### Action Fields
+---
 
-| Field | Type | Source Classification | Availability | Notes |
-|-------|------|----------------------|--------------|-------|
-| `id` | string | system-generated | AVAILABLE | deterministic |
-| `entityType` | literal 'action' | system-generated | AVAILABLE | — |
-| `tenant` | TenantContext | system-generated | AVAILABLE | — |
-| `createdAt` / `updatedAt` | string (ISO) | system-generated | AVAILABLE | — |
-| `source` | SourceMetadata | system-generated | AVAILABLE | — |
-| `caseId` | string | system-calculated | AVAILABLE | owning case reference |
-| `title` | string | system-calculated | AVAILABLE | human-readable |
-| `description` | string | system-calculated | AVAILABLE | remediation objective |
-| `estimatedEffortHours` | number | system-calculated | AVAILABLE | total planned effort |
-| `actualEffortHours` | number | system-calculated | AVAILABLE | total recorded effort |
-| `status` | enum | system-calculated | AVAILABLE | planned/in_progress/completed/cancelled |
-| `approvalRef` | string | system-calculated | AVAILABLE | system-generated approval reference |
-| `owner` | string | system-calculated | AVAILABLE | assigned via routing engine |
+### Control Framework Mapping (CFM — 5 entities — AVAILABLE)
 
-#### Sub-Action Fields
+**Source:** Spec #55 Baseline Configuration Framework; Spec #10 §8; Feature Registry FR-FRAME-001; Kiro Spec 11  
+**Contract:** `packages/contracts/src/entities/control-framework.ts`  
+**Schema:** `packages/db/src/schema/control-frameworks.ts`  
+**Migration:** `packages/db/drizzle/0011_control_framework_mapping_cfm.sql`  
+**Fixture:** `packages/contracts/src/fixtures/seed-control-frameworks.ts`  
+**Build unit:** CFM (Control Framework Mapping — Foundational)  
+**Resolves:** ARCH-DEBT-051 (Control Framework Mapping entity absent)
 
-| Field | Type | Source Classification | Availability | Notes |
-|-------|------|----------------------|--------------|-------|
-| `id` | string | system-generated | AVAILABLE | deterministic |
-| `entityType` | literal 'sub_action' | system-generated | AVAILABLE | — |
-| `tenant` | TenantContext | system-generated | AVAILABLE | — |
-| `createdAt` / `updatedAt` | string (ISO) | system-generated | AVAILABLE | — |
-| `source` | SourceMetadata | system-generated | AVAILABLE | — |
-| `actionId` | string | system-calculated | AVAILABLE | parent action reference |
-| `caseId` | string | system-calculated | AVAILABLE | denormalised case reference |
-| `targetEntity` | string | system-calculated | AVAILABLE | target entity ID |
-| `targetEntityType` | string | system-calculated | AVAILABLE | asset/identity/analytic/etc. |
-| `executionMethod` | string | system-calculated | AVAILABLE | how remediation is executed |
-| `outcomeClassification` | enum | system-calculated | AVAILABLE | successful/partial/failed/cancelled/pending |
-| `estimatedEffortHours` | number | system-calculated | AVAILABLE | effort tracking |
-| `actualEffortHours` | number | system-calculated | AVAILABLE | effort tracking |
-| `approvalRef` | string | system-calculated | AVAILABLE | approval reference |
-| `owner` | string | system-calculated | AVAILABLE | assigned via routing engine |
-| `sequenceOrder` | number | system-calculated | AVAILABLE | ordering within parent |
-| `tacticType` (D3FEND) | enum | integration-derived | AVAILABLE | isolate/evict/restore/harden/detect (ARCH-DEBT-046) |
-| `countermeasures[]` (D3FEND) | D3FENDCountermeasure[] | integration-derived | AVAILABLE | bounded ≤10, techniqueId+techniqueName+artifactRef (ARCH-DEBT-046) |
+Five entities forming the compliance/control-framework mapping layer:
+
+**1. ControlFramework** — the compliance standard itself (ISO 27001, NIST CSF, CIS, etc.)
+
+| Field | Type | Availability | Notes |
+|-------|------|--------------|-------|
+| `frameworkId` | string | AVAILABLE | Short code (iso-27001, nist-csf-2.0, cis-v8, etc.) |
+| `frameworkName` | string | AVAILABLE | Display name |
+| `version` | string | AVAILABLE | Framework version |
+| `category` | FrameworkCategory | AVAILABLE | regulatory/industry/vendor/maturity_model/internal |
+| `publisher` | string | AVAILABLE | Framework owner |
+| `totalControls` | number | AVAILABLE | Total controls in framework |
+| `origin` | 'prebuilt'\|'custom' | AVAILABLE | Commander-shipped or tenant-provided |
+| `active` | boolean | AVAILABLE | Enabled for tenant |
+| `licenceStatus` | LicenceStatus | AVAILABLE | open/restricted/licensed/internal_only |
+| `sourceRef` | string | AVAILABLE | Source URL or document ref |
+| `mappingCompleteness` | number (0-100) | AVAILABLE | % of controls with mappings |
+| `lastReviewedAt` | string | AVAILABLE | Last review date |
+| `licenceNotes` | string? | AVAILABLE | Licence constraint description |
+
+**2. FrameworkControl** — individual control within a framework
+
+| Field | Type | Availability | Notes |
+|-------|------|--------------|-------|
+| `frameworkId` | string | AVAILABLE | Parent framework |
+| `controlId` | string | AVAILABLE | Control ID (A.8.1, PR.AC-1, 1.1, etc.) |
+| `controlName` | string | AVAILABLE | Display name |
+| `domain` | string | AVAILABLE | Domain/category |
+| `subDomain` | string? | AVAILABLE | Sub-domain if applicable |
+| `objective` | string | AVAILABLE | Objective / internal summary |
+| `tier` | ControlTier | AVAILABLE | mandatory/recommended/optional |
+| `parentControlId` | string? | AVAILABLE | Hierarchical parent |
+
+**3. ControlRequirement** — testable requirement bound to a control
+
+| Field | Type | Availability | Notes |
+|-------|------|--------------|-------|
+| `frameworkId` | string | AVAILABLE | Parent framework |
+| `controlId` | string | AVAILABLE | Parent control |
+| `requirementId` | string | AVAILABLE | Requirement identifier |
+| `description` | string | AVAILABLE | What is being tested |
+| `targetType` | RequirementTargetType | AVAILABLE | asset/identity/case/risk_object/etc. |
+| `evaluationRule` | EvaluationRule (JSONB) | AVAILABLE | Structured rule definition |
+| `active` | boolean | AVAILABLE | Whether active for evaluation |
+
+**4. ControlEvaluation** — result of evaluating entity state against a requirement
+
+| Field | Type | Availability | Notes |
+|-------|------|--------------|-------|
+| `frameworkId` | string | AVAILABLE | Framework evaluated |
+| `controlId` | string | AVAILABLE | Control evaluated |
+| `requirementId` | string | AVAILABLE | Requirement evaluated |
+| `evaluatedEntityType` | RequirementTargetType | AVAILABLE | Entity type evaluated |
+| `evaluatedEntityId` | string | AVAILABLE | Entity ID evaluated |
+| `verdict` | ComplianceVerdict | AVAILABLE | compliant/non_compliant/partial/unknown/not_applicable |
+| `evidenceRef` | string? | AVAILABLE | Evidence entity reference |
+| `riskObjectRef` | string? | AVAILABLE | Linked Risk Object if non-compliant |
+| `exceptionState` | ExceptionState | AVAILABLE | none/accepted_risk/compensating_control/waiver/deferred |
+| `evaluatedAt` | string | AVAILABLE | Evaluation timestamp |
+| `nextEvaluationDue` | string? | AVAILABLE | Next scheduled evaluation |
+| `confidence` | number (0-100) | AVAILABLE | Evaluation confidence |
+
+**5. ControlMapping** — relationship binding Commander entities to framework controls
+
+| Field | Type | Availability | Notes |
+|-------|------|--------------|-------|
+| `frameworkId` | string | AVAILABLE | Target framework |
+| `controlId` | string | AVAILABLE | Target control |
+| `mappedEntityType` | MappedEntityType | AVAILABLE | 10 types: risk_object/case/action/sub_action/analytic/evidence/strategy_policy/asset/identity/connector |
+| `mappedEntityId` | string | AVAILABLE | Mapped entity ID |
+| `confidence` | number (0-100) | AVAILABLE | Mapping confidence |
+| `mappingSource` | MappingSource | AVAILABLE | system/manual/ai_suggested |
+| `rationale` | string | AVAILABLE | Why this mapping exists |
+| `coverageContribution` | CoverageContribution | AVAILABLE | full/partial/evidence_only |
 
 ---
 
@@ -899,5 +1016,5 @@ None.
 
 ---
 
-**Last Updated:** 2026-06-02 (COIM-H executed: Action/Sub-Action + D3FEND — new entity `action.ts` (Action + SubAction interfaces, D3FENDTacticType enum, D3FENDCountermeasure, validation functions) + schema `actions.ts` (actions + sub_actions tables with D3FEND tactic_type enum + countermeasures JSONB) + migration `0010_action_sub_action_coim_h.sql` + seed fixture `seed-actions.ts` (3 actions, 5 sub-actions covering all 5 D3FEND tactics) + 38 tests. ARCH-DEBT-044 RESOLVED (entity created). ARCH-DEBT-046 RESOLVED (D3FEND fields on Sub-Action). Case lifecycle engine logic unchanged — Doctrinal Assertion 1 preserved. All COIM entities now AVAILABLE.)  
+**Last Updated:** 2026-06-02 (CFM executed: Control Framework Mapping — 5 new entities (ControlFramework, FrameworkControl, ControlRequirement, ControlEvaluation, ControlMapping) on contract `control-framework.ts` + schema `control-frameworks.ts` (migration `0011_control_framework_mapping_cfm.sql`, 5 tables, 8 enums) + seed `seed-control-frameworks.ts` (5 frameworks: NIST CSF, ISO 27001, CIS v8, Cyber Essentials, internal; 15 controls; 5 requirements; 5 evaluations; 5 mappings) + 60 tests. ARCH-DEBT-051 RESOLVED. Case lifecycle unchanged. Entity count 15→20. Governance Green 100%.)  
 **Snapshot Commit:** (to be recorded after commit)

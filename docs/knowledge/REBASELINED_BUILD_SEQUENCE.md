@@ -2517,6 +2517,48 @@ Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's o
 
 ---
 
+### Unit CFM: Control Framework Mapping
+
+**Status:** DONE
+
+**Blocked by:** — (COIM-H DONE; Unit 7 DONE; COIM-E DONE; all dependencies satisfied)
+
+**Purpose:** Create the Control Framework Mapping canonical entities enabling compliance/control-framework measurement, posture analytics, and control coverage. Five entities: ControlFramework, FrameworkControl, ControlRequirement, ControlEvaluation, ControlMapping. Supports NIST CSF, ISO 27001, CIS Controls, Cyber Essentials, and internal/custom frameworks.
+
+**Baseline spec:** Spec #55 Baseline Configuration Framework Model and Defaults; Spec #10 Platform Security §8; Feature Registry FR-FRAME-001; Kiro Spec 11 (Control Coverage & Editable Baselines)
+
+**Architectural layer:** Data Layer (entity + classification + evaluation)
+
+**Dependencies:** Unit 7 (Case Lifecycle — DONE); COIM-H (Action/Sub-Action — DONE); COIM-E (Analytic — DONE)
+
+**Required entities:**
+- ControlFramework ✅ (created here)
+- FrameworkControl ✅ (created here)
+- ControlRequirement ✅ (created here)
+- ControlEvaluation ✅ (created here)
+- ControlMapping ✅ (created here)
+
+**Deliverables:**
+1. Five entity contracts in `control-framework.ts` (ControlFramework, FrameworkControl, ControlRequirement, ControlEvaluation, ControlMapping) ✅
+2. DB schema with 5 tables and 8 enums ✅
+3. Migration `0011_control_framework_mapping_cfm.sql` ✅
+4. Seed fixtures: 5 frameworks, 15 controls, 5 requirements, 5 evaluations, 5 mappings ✅
+5. Validation functions for all 5 entities ✅
+6. DATA_DICTIONARY.md entry ✅
+7. ARCH-DEBT-051 RESOLVED ✅
+
+**Completion gate:**
+- ✅ Five entity contracts + schemas + fixtures exist
+- ✅ NIST CSF, ISO 27001, CIS Controls, Cyber Essentials, internal/custom covered
+- ✅ Licence/sourcing constraints modelled (ISO restricted — no full text)
+- ✅ DATA_DICTIONARY.md entry created; ARCH-DEBT-051 RESOLVED
+- ✅ Case lifecycle engine logic unchanged
+- ✅ Ingestion → Mapping → Requirement → Evaluation → Output flow represented
+
+**Verification:** vitest 60/60 CFM pass; full suite 1690/1690 pass; typecheck clean (pre-existing baseUrl deprecation only); governance Green 100%; ARCH-DEBT-051 RESOLVED; additive-only (no existing entities modified).
+
+**Source tag:** Foundational
+
 ---
 
 ## Summary
@@ -2594,7 +2636,7 @@ A build unit is complete when:
 ---
 
 **Last Updated:** 2026-06-02  
-**Status:** ACTIVE — readiness state machine. Build only from the READY set. **As of 2026-06-02 (COIM-H delivered):** ALL FOUNDATIONAL NUMBERED UNITS (0–22, 38, 40) ARE DONE. COIM-A…COIM-H ALL DONE. Unit 16b BLOCKED (data-point-to-metric artifact absent). All Team-2 units BLOCKED on ARCH-006. READY set is EMPTY. Status recomputes on debt-resolution / unit-completion.  
+**Status:** ACTIVE — readiness state machine. Build only from the READY set. **As of 2026-06-02 (CFM delivered):** ALL FOUNDATIONAL NUMBERED UNITS (0–22, 38, 40) ARE DONE. COIM-A…COIM-H ALL DONE. CFM DONE. Unit 16b BLOCKED (data-point-to-metric artifact absent). All Team-2 units BLOCKED on ARCH-006. READY set is EMPTY. Status recomputes on debt-resolution / unit-completion.  
 **Enforcement:** ARCH-006 (build-stream sequencing) + ARCH-007 (blocking-debt prerequisite) in `.kiro/testing/conformance-registry.md`, auto-run via post-task-review. "What's next" query defined in `.kiro/steering/execution-discipline.md`.  
 **Authority:** Derived from SYSTEM_KNOWLEDGE_GRAPH.md, DATA_DICTIONARY.md, REBASELINED_BUILD_SCHEDULE_NOTES.md, baseline source. Decision: `DEC-build-readiness-state-machine` (DECISIONS.md).  
 **Sourcing rule:** Never cite the translation layer — all citations from `docs/99_source_archive/baseline_v2_6_2/`

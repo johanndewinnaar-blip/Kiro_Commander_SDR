@@ -17,5 +17,6 @@ export { seedVerdicts } from './seed-verdicts';
 export { seedObservables, seedObservableBindings } from './seed-observables';
 export { seedAnalytics } from './seed-analytics';
 export { seedActions, seedSubActions } from './seed-actions';
+export { seedControlFrameworks, seedFrameworkControls, seedControlRequirements, seedControlEvaluations, seedControlMappings } from './seed-control-frameworks';
 export { seedEvents } from './seed-events';
 export type { SeedEvent } from './seed-events';

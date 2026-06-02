@@ -1034,3 +1034,22 @@ Authority: `.kiro/steering/feature-function-backlog.md` (extended in this update
 
 **History**
 - 2026-06-02: OPEN — registered with Unit 22 v1. Owns Connector Settings enforcement on the Tenant Admin Capability Status ledger.
+
+---
+
+### ARCH-DEBT-051 — Control Framework Mapping entity absent
+
+- **Source:** Control Framework Mapping Delta Review (2026-06-02); Spec #55 Baseline Configuration Framework; Spec #10 §8; Feature Registry FR-FRAME-001; Kiro Spec 11 (Control Coverage & Editable Baselines)
+- **Description:** No Control Framework, Framework Control, Control Requirement, Control Evaluation, or Control Mapping canonical entity existed in the contract model or schema. All compliance/control/governance routes (`/controls`, `/governance`, `/ciso`) were SCAFFOLD with no backing data model. Remediation posture analytics, compliance scoring, and control coverage measurement were unsupported. Tenant Admin framework management (enable/disable, version tracking, licence constraints, custom frameworks) had no entity to govern.
+- **Debt type:** Missing-ownership (entity absent)
+- **Debt class:** build-debt
+- **Scope of fix:** Create five entities under build unit **CFM** (ControlFramework, FrameworkControl, ControlRequirement, ControlEvaluation, ControlMapping) + schema + migration + fixtures + tests. Additive — does not modify case lifecycle or existing entity logic. Update DATA_DICTIONARY.md.
+- **Affected specs / artifacts:** `packages/contracts/src/entities/control-framework.ts` (new); `packages/db/src/schema/control-frameworks.ts` (new); `docs/knowledge/DATA_DICTIONARY.md` (new entity section); CFM unit in `REBASELINED_BUILD_SEQUENCE.md`
+- **Scheduled resolution:** CFM (Foundational)
+- **Status:** RESOLVED
+- **Date logged:** 2026-06-02
+- **Last reviewed:** 2026-06-02
+
+**History**
+- 2026-06-02: OPEN — registered during Control Framework Mapping Delta Review. Resolution unit: CFM.
+- 2026-06-02: RESOLVED — CFM delivered five entities. Contract `control-framework.ts` (ControlFramework, FrameworkControl, ControlRequirement, ControlEvaluation, ControlMapping + validation functions + enums). Schema `control-frameworks.ts` (5 tables, 8 enums). Migration `0011_control_framework_mapping_cfm.sql`. Seed `seed-control-frameworks.ts` (5 frameworks, 15 controls, 5 requirements, 5 evaluations, 5 mappings — covering NIST CSF, ISO 27001, CIS v8, Cyber Essentials, internal). 60 tests pass. DATA_DICTIONARY.md updated. Case lifecycle engine logic unchanged. Verification: vitest 60/60 CFM pass; typecheck clean (pre-existing baseUrl deprecation only); full suite 1690/1690 pass; governance Green 100%.
