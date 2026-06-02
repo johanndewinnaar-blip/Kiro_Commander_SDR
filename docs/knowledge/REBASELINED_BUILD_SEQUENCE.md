@@ -69,13 +69,13 @@ A unit is **READY** iff every dependency unit is **DONE** and every mapped chain
 
 Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readiness State Machine above.
 
-**READY (7 numbered + COIM-H):** Unit 17 (Case Management UI), Unit 18 (Identity Intelligence Surface), Unit 19 (Asset Intelligence Surface), Unit 21 (Internal Operating Picture), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors), Unit 40 (Commander AI Core), and COIM unit **COIM-H**.
+**READY (5 numbered + COIM-H):** Unit 17 (Case Management UI — held: deliverable-5/token-doctrine), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors), Unit 40 (Commander AI Core), and COIM unit **COIM-H**. (Units 18 and 21 are READY by dependency but HELD pending the owner-gated Internal-Risk RBAC decision — see note.)
 
-**DONE (25):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13, Unit 14, Unit 15, **Unit 16a**, **Unit 20**, **COIM-A, COIM-B, COIM-C, COIM-D, COIM-E, COIM-F, COIM-G**.
+**DONE (26):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13, Unit 14, Unit 15, **Unit 16a**, **Unit 19**, **Unit 20**, **COIM-A, COIM-B, COIM-C, COIM-D, COIM-E, COIM-F, COIM-G**.
 
-**BLOCKED (26):** Unit 16b (Aggregate/Posture Command Centre), Units 23–37, 39, 41–49. All 27 Team 2 numbered units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006. COIM units are Foundational and NOT ARCH-006-gated; none remain BLOCKED.
+**BLOCKED (25):** Unit 16b (Aggregate/Posture Command Centre), Units 23–37, 39, 41–49. All 27 Team 2 numbered units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006. COIM units are Foundational and NOT ARCH-006-gated; none remain BLOCKED.
 
-> **Recompute (2026-06-02, post Unit 20 DONE):** Unit 20 (External Operating Picture) marked DONE. No unit depends on Unit 20, so no new units flip to READY. Unit 17 remains READY but is held pending owner decisions (deliverable 5 = Team-2 Unit 44 scope; token-doctrine conflict) and was skipped by owner instruction. Unit 21 (Internal Operating Picture) is the next buildable surface in the priority chain.
+> **Conveyor holds (2026-06-02):** **Unit 18 (Identity Intelligence Surface)** and **Unit 21 (Internal Operating Picture)** are dependency-READY but HELD pending owner resolution of `DEC-sec-c2-internal-cop-rbac-tbd` (Internal-Risk authority/RBAC role model). Their gates require "RBAC gating enforced (Internal Risk authority)" which is owner-gated and must not be invented or deferred with placeholders. **Unit 17 (Case Management UI)** is HELD pending two decisions: deliverable 5 (communication thread) belongs to Team-2 Unit 44, and a token-doctrine conflict in the case tests. **Unit 19 marked DONE** (no unit depends on it; no new units unblocked).
 
 > **Unit 16 split (`DEC-command-centre-split-16a-16b`, 2026-06-02):** Unit 16 (Command Centre) was split into **16a (Operational Command Centre — READY)** and **16b (Aggregate/Posture Command Centre — BLOCKED)** to resolve ARCH-DEBT-026. The metric-deferral control formerly in `DEC-command-centre-deferred` now applies ONLY to 16b. All units that previously depended on "Unit 16" now depend on **16a**. Full definitions in the Unit 16a / Unit 16b sections below.
 
@@ -103,7 +103,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 | 16b Aggregate/Posture Command Centre | Foundational | BLOCKED | Units 17, 30–33 (functional pages); data-point-to-metric mapping artifact (absent); Unit 16a |
 | 17 Case Management UI | Foundational | **READY** | — |
 | 18 Identity Intelligence Surface | Foundational | **READY** | — |
-| 19 Asset Intelligence Surface | Foundational | **READY** | — |
+| 19 Asset Intelligence Surface | Foundational | **DONE** | — |
 | 20 External Operating Picture | Foundational | **DONE** | — |
 | 21 Internal Operating Picture | Foundational | **READY** | — |
 | 22 Tenant Admin Surface | Foundational | **READY** | — |
@@ -983,9 +983,11 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ### Unit 19: Surface Layer — Asset Intelligence Surface
 
-**Status:** BLOCKED
+**Status:** DONE
 
-**Blocked by:** Unit 14 (Intelligence Layer — Posture stream); Unit 5 (Normalisation Layer — Asset)
+**Blocked by:** — (complete; dependencies Unit 5 and Unit 14 both DONE — the prior "BLOCKED" header was stale drift, corrected on completion 2026-06-02)
+
+**Verification:** Spec #69 Asset Intelligence Surface from `docs/99_source_archive/baseline_v2_6_2/`. Evidence: diagnostics clean on `apps/web/src/app/assets/page.tsx`; vitest `tests/19-asset-intelligence-surface/asset-intelligence-surface.test.ts` (16 tests) passing; full run 1501/1521 (the 20 residual failures are pre-existing Unit 17 / Cluster B deferral flags, none from Unit 19); governance runner `--unit 19` Green 100% (ARCH-005–009) after status correction. Seven-section composition (Asset Overview, Configuration State, Verdict History, Behavioural Pattern, Case History, Vulnerability State, Identity Exposure) with `data-section` anchors; data sourced from canonical seed fixtures (Case History via `relatedEntities`, Identity Exposure via `associatedAssets`); Posture/Internal-Behavioural stream context via Unit 14 `STREAM_LABELS`; Verdict/Behavioural sections render source-fed binding state without inventing estate facts (AI-grounding doctrine). Drill paths to cases/identities/vulnerabilities/configuration-drift. `/assets` promoted SCAFFOLD→BUILD, owningSpec re-pointed to 19-asset-intelligence-surface; route-registry test updated. No RBAC authority gating (Asset Intelligence is not Internal-Risk gated).
 
 **Purpose:** Build Asset Intelligence Surface (seven-section composition)
 
@@ -2566,7 +2568,7 @@ A build unit is complete when:
 ---
 
 **Last Updated:** 2026-06-02  
-**Status:** ACTIVE — readiness state machine. Build only from the READY set (currently Units 17, 18, 19, 21, 22, 38, 40 and COIM-H; Units 0–15 + 16a + 20 + COIM-A…COIM-G DONE). Status recomputes on debt-resolution / unit-completion.  
+**Status:** ACTIVE — readiness state machine. Build only from the READY set (currently Units 17, 22, 38, 40 and COIM-H; Units 18 and 21 dependency-READY but HELD pending owner Internal-Risk RBAC decision; Units 0–15 + 16a + 19 + 20 + COIM-A…COIM-G DONE). Status recomputes on debt-resolution / unit-completion.  
 **Enforcement:** ARCH-006 (build-stream sequencing) + ARCH-007 (blocking-debt prerequisite) in `.kiro/testing/conformance-registry.md`, auto-run via post-task-review. "What's next" query defined in `.kiro/steering/execution-discipline.md`.  
 **Authority:** Derived from SYSTEM_KNOWLEDGE_GRAPH.md, DATA_DICTIONARY.md, REBASELINED_BUILD_SCHEDULE_NOTES.md, baseline source. Decision: `DEC-build-readiness-state-machine` (DECISIONS.md).  
 **Sourcing rule:** Never cite the translation layer — all citations from `docs/99_source_archive/baseline_v2_6_2/`

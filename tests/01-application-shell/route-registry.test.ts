@@ -63,12 +63,19 @@ describe('Route Registry', () => {
     });
 
     it('contains v1.2 SCAFFOLD routes for all core domains', () => {
-      const expected = ['/vulnerabilities', '/exposure', '/assets', '/identity', '/controls', '/architecture', '/governance', '/ciso'];
+      const expected = ['/vulnerabilities', '/exposure', '/identity', '/controls', '/architecture', '/governance', '/ciso'];
       for (const path of expected) {
         const route = allRoutes.find((r) => r.path === path);
         expect(route, `Missing route: ${path}`).toBeDefined();
         expect(route!.status).toBe('SCAFFOLD');
       }
+    });
+
+    it('contains /assets as a BUILD route (Asset Intelligence Surface — Unit 19)', () => {
+      const route = allRoutes.find((r) => r.path === '/assets');
+      expect(route, 'Missing route: /assets').toBeDefined();
+      expect(route!.status).toBe('BUILD');
+      expect(route!.owningSpec).toContain('19');
     });
 
     it('contains tenant admin routes per Spec #47', () => {
