@@ -670,6 +670,14 @@ These are code-conformance debt items (contract field removed, test fixtures not
 | `ActionStatus` | planned, in_progress, completed, cancelled | COIM v1.0 §4.3; Spec #08 Case Management |
 | `OutcomeClassification` | successful, partial, failed, cancelled, pending | COIM v1.0 §4.3; 03_REUSABLE_OBJECT_CATALOGUE §2.3 |
 | `D3FENDTacticType` | isolate, evict, restore, harden, detect | COIM v1.0 §4.3; MITRE D3FEND framework — five canonical defensive tactics |
+| `FrameworkCategory` | regulatory, industry, vendor, maturity_model, internal | Spec #55; CFM |
+| `LicenceStatus` | open, restricted, licensed, internal_only | Spec #55; CFM |
+| `ControlTier` | mandatory, recommended, optional | Spec #55; CFM |
+| `EvaluationOperator` | equals, not_equals, less_than, less_than_or_equal, greater_than, greater_than_or_equal, contains, not_contains, exists, not_exists, within_days | Spec #55; CFM |
+| `ComplianceVerdict` | compliant, non_compliant, partial, unknown, not_applicable | Spec #55; CFM |
+| `ExceptionState` | none, accepted_risk, compensating_control, waiver, deferred | Spec #55; CFM |
+| `MappingSource` | system, manual, ai_suggested | Spec #55; CFM |
+| `CoverageContribution` | full, partial, evidence_only | Spec #55; CFM |
 
 ---
 
@@ -677,7 +685,7 @@ These are code-conformance debt items (contract field removed, test fixtures not
 
 **Purpose:** Complete surfacing of the data layer built to date. Existing work is explicitly accounted for, not silently assumed complete.
 
-### Entities Catalogued: 15
+### Entities Catalogued: 35 (+15 intelligence entities, +2 value objects)
 
 1. Asset ✅
 2. Case ✅
@@ -694,11 +702,32 @@ These are code-conformance debt items (contract field removed, test fixtures not
 13. Observable ✅ (COIM-D — observable entity)
 14. Analytic ✅ (COIM-E — analytic entity)
 15. Action / Sub-Action ✅ (COIM-H — action + D3FEND)
+16. ControlFramework ✅ (CFM — control framework mapping)
+17. FrameworkControl ✅ (CFM — individual controls)
+18. ControlRequirement ✅ (CFM — testable requirements)
+19. ControlEvaluation ✅ (CFM — evaluation results)
+20. ControlMapping ✅ (CFM — entity-to-control bindings)
+21. Platform_Intelligence_Source ✅ (Intelligence)
+22. Platform_Intelligence_Record ✅ (Intelligence)
+23. Vulnerability_Intelligence_Record ✅ (Intelligence)
+24. Vendor_Advisory ✅ (Intelligence)
+25. Indicator_Of_Compromise ✅ (Intelligence — first-class)
+26. IOC_Relationship ✅ (Intelligence — stateful)
+27. Tenant_Intelligence_Subscription ✅ (Intelligence — evaluation plane)
+28. Tenant_Intelligence_Evaluation ✅ (Intelligence — evaluation plane)
+29. Tenant_IOC_Match ✅ (Intelligence — evaluation plane)
+30. Tenant_IOC_AllowBlock_Entry ✅ (Intelligence — evaluation plane)
+31. IOC_Case_Link ✅ (Intelligence — evaluation plane)
+32. Vulnerability_Case_Link ✅ (Intelligence — evaluation plane)
+33. Threat_Hunt_Record ✅ (Intelligence — evaluation plane)
+34. Push_Action_Intent ✅ (Intelligence — evaluation plane)
+35. Inbound_Email_Submission ✅ (Intelligence — value object)
 
 **Composed-object modules (catalogued under their consuming entity, no own table):**
 - `coim.ts` — COIM-A source-classification composed objects (FindingClass, SourceSeverity, SourceConfidence, SourceProduct, AttackMapping, ObservableRef, SourceClassification + `validateSourceClassification`). Catalogued under Risk Object (§4). Also consumed by Verdict entity (§12) for `SourceProduct` type. Satisfies the completeness gate for `packages/contracts/src/entities/coim.ts`.
+- `intelligence-common.ts` — Platform Intelligence shared type constants and value objects. Defines 16 array-form type constants (PlatformIntelligenceSourceType, PlatformRecordType, IocCategory [26 values], IocRelationshipState, TlpMarking, CveState, SourceFreshnessState, TenantSubscriptionState, EvaluationType, TenantExposureState, IocMatchType, IocCaseLinkType, ThreatHuntStatus, PushActionType, PushIntentStatus, AllowBlockListType) and 2 shared value objects (SourceAttributionEntry, RelationshipStateTransition). Consumed by: indicator-of-compromise.ts, ioc-case-link.ts, ioc-relationship.ts, platform-intelligence-record.ts, platform-intelligence-source.ts, push-action-intent.ts, tenant-intelligence-evaluation.ts, tenant-intelligence-subscription.ts, tenant-ioc-allowblock-entry.ts, tenant-ioc-match.ts, threat-hunt-record.ts, vulnerability-intelligence-record.ts. Referenced by fixtures: seed-iocs.ts, seed-platform-intelligence-sources.ts. Reuses existing COIM SourceSeverity (1–5) and SourceConfidence from coim.ts. Source: Spec #59 Intelligence Layer Architecture; Spec #61 Universal Security Signal Connector Contract (baseline v2.6.2). Coverage: provisional (source specs partially read per COVERAGE.md). No DB schema counterpart (type constants only — no own table). No fixture of its own (consumed by entity-level fixtures). No resolver. Satisfies the completeness gate for `packages/contracts/src/entities/intelligence-common.ts`.
 
-### Fixtures Found: 14
+### Fixtures Found: 26
 
 1. `seed-assets.ts` ✅
 2. `seed-cases.ts` ✅
@@ -714,6 +743,18 @@ These are code-conformance debt items (contract field removed, test fixtures not
 12. `seed-observables.ts` ✅
 13. `seed-analytics.ts` ✅
 14. `seed-actions.ts` ✅
+15. `seed-control-frameworks.ts` ✅ (5 frameworks, 15 controls, 5 requirements, 5 evaluations, 5 mappings)
+16. `seed-platform-intelligence-sources.ts` ✅ (8 sources, all source types)
+17. `seed-iocs.ts` ✅ (26 IOCs, all categories)
+18. `seed-vulnerability-intelligence.ts` ✅ (5 records, KEV/EPSS variants)
+19. `seed-vendor-advisories.ts` ✅ (3 advisories, multi-CVE, containing IOCs)
+20. `seed-ioc-relationships.ts` ✅ (8 relationships, all states)
+21. `seed-tenant-intelligence-subscriptions.ts` ✅ (3 subscriptions, all states)
+22. `seed-tenant-intelligence-evaluations.ts` ✅ (5 evaluations, exposure states)
+23. `seed-tenant-ioc-matches.ts` ✅ (5 matches, all match types)
+24. `seed-tenant-allowblock-entries.ts` ✅ (4 entries, allow + block, with/without expiry)
+25. `seed-ioc-case-links.ts` ✅ (3 links, all link types)
+26. `seed-vulnerability-case-links.ts` ✅ (2 vulnerability case links)
 
 ### Resolvers Found: 13
 
@@ -733,7 +774,7 @@ These are code-conformance debt items (contract field removed, test fixtures not
 
 ### Contract vs DB Schema Reconciliation
 
-**Aligned (15):**
+**Aligned (20):**
 - Asset ✅
 - Case ✅
 - Identity ✅
@@ -749,6 +790,11 @@ These are code-conformance debt items (contract field removed, test fixtures not
 - Observable ✅
 - Analytic ✅
 - Action / Sub-Action ✅
+- ControlFramework ✅ (CFM)
+- FrameworkControl ✅ (CFM)
+- ControlRequirement ✅ (CFM)
+- ControlEvaluation ✅ (CFM)
+- ControlMapping ✅ (CFM)
 
 **Divergences (0):**
 None.
@@ -761,6 +807,7 @@ None.
 - ARCH-DEBT-031: Strategy Policy DB schema missing (contract + fixture exist) — ✅ RESOLVED (Unit 2)
 - ARCH-DEBT-032: Case Strategy Binding incomplete (contract exists, db schema + fixture missing) — ✅ RESOLVED (Unit 3)
 - ARCH-DEBT-042: Analytic entity absence — ✅ RESOLVED (COIM-E)
+- ARCH-DEBT-051: Control Framework Mapping entity absent — ✅ RESOLVED (CFM)
 
 ---
 
@@ -922,12 +969,15 @@ None.
 ### Control Framework Mapping (CFM — 5 entities — AVAILABLE)
 
 **Source:** Spec #55 Baseline Configuration Framework; Spec #10 §8; Feature Registry FR-FRAME-001; Kiro Spec 11  
+**Coverage:** provisional (Spec #55 partially read — base binding doctrine, baseline layers, baseline templates, risk + control framework baselines)  
 **Contract:** `packages/contracts/src/entities/control-framework.ts`  
 **Schema:** `packages/db/src/schema/control-frameworks.ts`  
 **Migration:** `packages/db/drizzle/0011_control_framework_mapping_cfm.sql`  
-**Fixture:** `packages/contracts/src/fixtures/seed-control-frameworks.ts`  
+**Fixture:** `packages/contracts/src/fixtures/seed-control-frameworks.ts` ✅ (5 frameworks, 15 controls, 5 requirements, 5 evaluations, 5 mappings)  
 **Build unit:** CFM (Control Framework Mapping — Foundational)  
-**Resolves:** ARCH-DEBT-051 (Control Framework Mapping entity absent)
+**Resolves:** ARCH-DEBT-051 (Control Framework Mapping entity absent)  
+**Status:** AVAILABLE (fixture exists)  
+**Doctrine:** Commander identity is primary — controls are mapped TO framework controls, not derived FROM them. Ingestion is the first classification layer, NOT the compliance decision layer. Evaluation compares entity state against defined requirements to produce a verdict. Restricted frameworks store control IDs and short internal summaries only — no reproduced standard text.
 
 Five entities forming the compliance/control-framework mapping layer:
 
@@ -1006,6 +1056,379 @@ Five entities forming the compliance/control-framework mapping layer:
 
 ---
 
+## Platform Intelligence and IOC Distribution Entities (Spec: platform-intelligence-ioc-distribution)
+
+> **Registered 2026-06-03 by Platform Intelligence Closure Conveyor.** 16 entities from the platform-intelligence-ioc-distribution spec. Phase 1 data-layer only — no UI, no live API, seed/mock data only.
+
+### 21. Platform_Intelligence_Source
+
+**Source:** Platform Intelligence and IOC Distribution spec; Requirements 1.1, 1.3, 1.4, 2.1  
+**Contract:** `packages/contracts/src/entities/platform-intelligence-source.ts`  
+**Fixture:** `packages/contracts/src/fixtures/seed-platform-intelligence-sources.ts` ✅  
+**Ownership:** Admin_Tenant (platform catalogue plane)  
+**Workload class:** ingestion-write (sync), operational-read (resolution)  
+**Status:** AVAILABLE  
+**Relationships:** Parent of Platform_Intelligence_Record; referenced by Tenant_Intelligence_Subscription (cross-plane, no FK)
+
+| Field | Type | Availability | Notes |
+|-------|------|--------------|-------|
+| `name` | string | AVAILABLE | Source name (required) |
+| `vendor` | string | AVAILABLE | Feed vendor/origin |
+| `sourceType` | PlatformIntelligenceSourceType | AVAILABLE | 8 types (cisa_kev, nvd_cve, etc.) |
+| `connectorClass` | `'D'` | AVAILABLE | Fixed to class D — Threat Intelligence |
+| `feedReference` | string | AVAILABLE | Feed URL/reference (no live fetch) |
+| `refreshCadenceMinutes` | number | AVAILABLE | Schedule cadence |
+| `lastSuccessfulSync` | string \| null | AVAILABLE | Updated by applySyncResult |
+| `nextScheduledSync` | string \| null | AVAILABLE | Computed from cadence |
+| `failureState` | object \| null | AVAILABLE | Failure tracking |
+| `sourceFreshness` | SourceFreshnessState | AVAILABLE | fresh/aging/stale/expired |
+| `catalogueVersionHash` | string | AVAILABLE | Catalogue version marker |
+| `licenceStatus` | string | AVAILABLE | Licence/use status |
+| `healthState` | string | AVAILABLE | Derived health |
+| `sourceMetadataExtra` | record | AVAILABLE | Additional metadata |
+
+---
+
+### 22. Platform_Intelligence_Record
+
+**Source:** Platform Intelligence and IOC Distribution spec; Requirements 3.1, 3.3, 3.4  
+**Contract:** `packages/contracts/src/entities/platform-intelligence-record.ts`  
+**Fixture:** (Specialised into Vulnerability_Intelligence_Record and IOC fixtures)  
+**Ownership:** Admin_Tenant (platform catalogue plane)  
+**Workload class:** ingestion-write, operational-read  
+**Status:** AVAILABLE  
+**Relationships:** Child of Platform_Intelligence_Source; parent of Vulnerability_Intelligence_Record; referenced by Tenant_Intelligence_Evaluation (cross-plane, no FK)
+
+| Field | Type | Availability | Notes |
+|-------|------|--------------|-------|
+| `sourceId` | string | AVAILABLE | Ref → Platform_Intelligence_Source |
+| `recordType` | PlatformRecordType | AVAILABLE | 5 types (cve, kev_entry, etc.) |
+| `severity` | number (1–5) | AVAILABLE | SourceSeverity model |
+| `confidence` | number (0–100) | AVAILABLE | Source-reported confidence |
+| `publishedAt` | string | AVAILABLE | Publication timestamp |
+| `lastModifiedAt` | string | AVAILABLE | Last modification |
+| `catalogueVersion` | string | AVAILABLE | Catalogue version |
+| `rawReference` | string | AVAILABLE | Raw store pointer |
+
+---
+
+### 23. Vulnerability_Intelligence_Record
+
+**Source:** Platform Intelligence and IOC Distribution spec; Requirements 4.1, 4.2, 4.3  
+**Contract:** `packages/contracts/src/entities/vulnerability-intelligence-record.ts`  
+**Fixture:** `packages/contracts/src/fixtures/seed-vulnerability-intelligence.ts` ✅  
+**Ownership:** Admin_Tenant (platform catalogue plane)  
+**Workload class:** ingestion-write, operational-read  
+**Status:** AVAILABLE  
+**Relationships:** Extends Platform_Intelligence_Record; one-to-many from Vendor_Advisory; zero-to-many to IOC via IOC_Relationship
+
+| Field | Type | Availability | Notes |
+|-------|------|--------------|-------|
+| `cveId` | string | AVAILABLE | CVE identifier |
+| `cvssVector` | string | AVAILABLE | CVSS vector string |
+| `cvssScore` | number | AVAILABLE | CVSS numeric score |
+| `cveState` | CveState | AVAILABLE | published/rejected/reserved/disputed |
+| `cisaKevStatus` | boolean | AVAILABLE | KEV enrichment — never creates risk alone |
+| `kevDateAdded` | string \| null | AVAILABLE | KEV addition date |
+| `kevDueDate` | string \| null | AVAILABLE | KEV due date |
+| `epssScore` | number \| null | AVAILABLE | EPSS probability |
+| `epssPercentile` | number \| null | AVAILABLE | EPSS percentile |
+| `affectedProducts` | string[] | AVAILABLE | Affected product IDs |
+| `references` | string[] | AVAILABLE | External references |
+
+---
+
+### 24. Vendor_Advisory
+
+**Source:** Platform Intelligence and IOC Distribution spec; Requirements 5.1, 5.2, 5.3, 5.4  
+**Contract:** `packages/contracts/src/entities/vendor-advisory.ts`  
+**Fixture:** `packages/contracts/src/fixtures/seed-vendor-advisories.ts` ✅  
+**Ownership:** Admin_Tenant (platform catalogue plane)  
+**Workload class:** ingestion-write, operational-read  
+**Status:** AVAILABLE  
+**Relationships:** One-to-many to CVEs; contains IOCs (extracted as first-class)
+
+| Field | Type | Availability | Notes |
+|-------|------|--------------|-------|
+| `advisoryId` | string | AVAILABLE | Vendor-assigned ID (required) |
+| `vendor` | string | AVAILABLE | Vendor name (required) |
+| `title` | string | AVAILABLE | Advisory title |
+| `publishedAt` | string | AVAILABLE | Publication timestamp |
+| `lastModifiedAt` | string | AVAILABLE | Last modification |
+| `severity` | number (1–5) | AVAILABLE | SourceSeverity model |
+| `affectedProducts` | string[] | AVAILABLE | Affected products |
+| `remediationGuidance` | string | AVAILABLE | Remediation text |
+| `relatedCveIds` | string[] | AVAILABLE | Related CVE IDs (array) |
+| `containedIocIds` | string[] | AVAILABLE | Extracted IOC IDs |
+
+---
+
+### 25. Indicator_Of_Compromise
+
+**Source:** Platform Intelligence and IOC Distribution spec; Requirements 6.1–6.5, 22.1–22.5  
+**Contract:** `packages/contracts/src/entities/indicator-of-compromise.ts`  
+**Fixture:** `packages/contracts/src/fixtures/seed-iocs.ts` ✅  
+**Ownership:** Admin_Tenant (platform catalogue plane)  
+**Workload class:** ingestion-write, operational-read  
+**Status:** AVAILABLE  
+**Relationships:** First-class; IOC_Relationship links to CVE/advisory/campaign/etc.; referenced by Tenant_IOC_Match (cross-plane, no FK)
+
+| Field | Type | Availability | Notes |
+|-------|------|--------------|-------|
+| `iocCategory` | IocCategory (26 values) | AVAILABLE | Exhaustive taxonomy |
+| `value` | string | AVAILABLE | Raw indicator |
+| `normalisedValue` | string | AVAILABLE | Normalised form |
+| `originalRawValue` | string | AVAILABLE | Preserved original (immutable) |
+| `confidence` | number (0–100) | AVAILABLE | Aggregate confidence |
+| `severity` | number (1–5) | AVAILABLE | SourceSeverity model |
+| `tlpMarking` | TlpMarking | AVAILABLE | white/green/amber/amber_strict/red |
+| `expiresAt` | string \| null | AVAILABLE | Optional time-bound expiry |
+| `sourceAttribution` | SourceAttributionEntry[] | AVAILABLE | Per-source attributions |
+| `firstSeenAt` | string | AVAILABLE | Min across attributions |
+| `lastSeenAt` | string | AVAILABLE | Max across attributions |
+| `active` | boolean | AVAILABLE | Active status |
+
+---
+
+### 26. IOC_Relationship
+
+**Source:** Platform Intelligence and IOC Distribution spec; Requirements 7.1–7.5  
+**Contract:** `packages/contracts/src/entities/ioc-relationship.ts`  
+**Fixture:** `packages/contracts/src/fixtures/seed-ioc-relationships.ts` ✅  
+**Ownership:** Admin_Tenant (platform catalogue plane)  
+**Workload class:** ingestion-write, operational-read  
+**Status:** AVAILABLE  
+**Relationships:** Links IOC to any entity (CVE, advisory, campaign, malware, actor, case, risk object, action); CVE binding optional
+
+| Field | Type | Availability | Notes |
+|-------|------|--------------|-------|
+| `iocId` | string | AVAILABLE | Ref → IOC |
+| `relatedEntityId` | string | AVAILABLE | Related entity |
+| `relatedEntityType` | string | AVAILABLE | Entity type classifier |
+| `relationshipState` | IocRelationshipState (11 values) | AVAILABLE | Stateful classification |
+| `confidence` | number (0–100) | AVAILABLE | Confidence in relationship |
+| `establishedAt` | string | AVAILABLE | When established |
+| `lastUpdatedAt` | string | AVAILABLE | Last update |
+| `evidenceRef` | string | AVAILABLE | Evidence reference |
+| `stateHistory` | RelationshipStateTransition[] | AVAILABLE | Audit trail of state changes |
+
+---
+
+### 27. Tenant_Intelligence_Subscription
+
+**Source:** Platform Intelligence and IOC Distribution spec; Requirements 10.1, 10.3, 10.4  
+**Contract:** `packages/contracts/src/entities/tenant-intelligence-subscription.ts`  
+**Fixture:** `packages/contracts/src/fixtures/seed-tenant-intelligence-subscriptions.ts` ✅  
+**Ownership:** Customer_Tenant (evaluation plane)  
+**Workload class:** operational-write, operational-read  
+**Status:** AVAILABLE  
+**Relationships:** References Platform_Intelligence_Source (cross-plane, no FK)
+
+| Field | Type | Availability | Notes |
+|-------|------|--------------|-------|
+| `tenantId` | string | AVAILABLE | Customer tenant |
+| `sourceId` | string | AVAILABLE | Ref → Platform_Intelligence_Source |
+| `subscriptionState` | TenantSubscriptionState | AVAILABLE | active/paused/cancelled |
+| `applicabilityFilters` | Record[] | AVAILABLE | Filter criteria array |
+| `evaluationPreferences` | Record | AVAILABLE | Evaluation preferences |
+| `subscribedAt` | string | AVAILABLE | Subscription timestamp |
+
+---
+
+### 28. Tenant_Intelligence_Evaluation
+
+**Source:** Platform Intelligence and IOC Distribution spec; Requirements 11.1–11.5  
+**Contract:** `packages/contracts/src/entities/tenant-intelligence-evaluation.ts`  
+**Fixture:** `packages/contracts/src/fixtures/seed-tenant-intelligence-evaluations.ts` ✅  
+**Ownership:** Customer_Tenant (evaluation plane)  
+**Workload class:** operational-write, operational-read  
+**Status:** AVAILABLE  
+**Relationships:** References Platform_Intelligence_Record or IOC (cross-plane, no FK); links to Vulnerability_Case_Link
+
+| Field | Type | Availability | Notes |
+|-------|------|--------------|-------|
+| `tenantId` | string | AVAILABLE | Customer tenant |
+| `platformRecordId` | string | AVAILABLE | Ref → platform record or IOC |
+| `evaluationType` | EvaluationType | AVAILABLE | 3 types |
+| `evaluationState` | TenantExposureState (8 values) | AVAILABLE | Evaluation outcome |
+| `matchedAssets` | string[] | AVAILABLE | Matched asset refs |
+| `matchedIdentities` | string[] | AVAILABLE | Matched identity refs |
+| `matchedObservables` | string[] | AVAILABLE | Matched COIM-D observable refs |
+| `evidenceReferences` | string[] | AVAILABLE | Evidence/provenance |
+| `evaluatedAt` | string | AVAILABLE | Evaluation timestamp |
+
+---
+
+### 29. Tenant_IOC_Match
+
+**Source:** Platform Intelligence and IOC Distribution spec; Requirements 12.1–12.3  
+**Contract:** `packages/contracts/src/entities/tenant-ioc-match.ts`  
+**Fixture:** `packages/contracts/src/fixtures/seed-tenant-ioc-matches.ts` ✅  
+**Ownership:** Customer_Tenant (evaluation plane)  
+**Workload class:** operational-write, operational-read  
+**Status:** AVAILABLE  
+**Relationships:** References IOC (cross-plane, no FK); references Observable (COIM-D); links to IOC_Case_Link
+
+| Field | Type | Availability | Notes |
+|-------|------|--------------|-------|
+| `tenantId` | string | AVAILABLE | Customer tenant |
+| `iocId` | string | AVAILABLE | Ref → IOC |
+| `matchedObservableId` | string | AVAILABLE | Ref → Observable COIM-D |
+| `matchType` | IocMatchType | AVAILABLE | exact/partial/heuristic |
+| `matchConfidence` | number (0–100) | AVAILABLE | Match confidence |
+| `matchedAt` | string | AVAILABLE | Match timestamp |
+| `matchSource` | string | AVAILABLE | Match source identifier |
+| `evidenceReferences` | string[] | AVAILABLE | Evidence refs |
+
+---
+
+### 30. Tenant_IOC_AllowBlock_Entry
+
+**Source:** Platform Intelligence and IOC Distribution spec; Requirements 23.1–23.5  
+**Contract:** `packages/contracts/src/entities/tenant-ioc-allowblock-entry.ts`  
+**Fixture:** `packages/contracts/src/fixtures/seed-tenant-allowblock-entries.ts` ✅  
+**Ownership:** Customer_Tenant (evaluation plane)  
+**Workload class:** operational-write, operational-read  
+**Status:** AVAILABLE  
+**Relationships:** Consumed by evaluateAllowBlock engine
+
+| Field | Type | Availability | Notes |
+|-------|------|--------------|-------|
+| `tenantId` | string | AVAILABLE | Customer tenant |
+| `iocCategory` | IocCategory | AVAILABLE | IOC category taxonomy |
+| `value` | string | AVAILABLE | Indicator value |
+| `listType` | AllowBlockListType | AVAILABLE | allow/block |
+| `addedBy` | string | AVAILABLE | Who added |
+| `addedAt` | string | AVAILABLE | When added |
+| `reason` | string | AVAILABLE | Reason |
+| `expiresAt` | string \| null | AVAILABLE | Optional expiry |
+
+---
+
+### 31. IOC_Case_Link
+
+**Source:** Platform Intelligence and IOC Distribution spec; Requirements 13.5  
+**Contract:** `packages/contracts/src/entities/ioc-case-link.ts`  
+**Fixture:** `packages/contracts/src/fixtures/seed-ioc-case-links.ts` ✅  
+**Ownership:** Customer_Tenant (evaluation plane)  
+**Workload class:** operational-write, operational-read  
+**Status:** AVAILABLE  
+**Relationships:** Links Tenant_IOC_Match to Case (application-layer, no FK)
+
+| Field | Type | Availability | Notes |
+|-------|------|--------------|-------|
+| `tenantId` | string | AVAILABLE | Customer tenant |
+| `iocMatchId` | string | AVAILABLE | Ref → Tenant_IOC_Match |
+| `caseId` | string | AVAILABLE | Ref → Case (no cross-workload FK) |
+| `linkType` | IocCaseLinkType | AVAILABLE | created_by/enriched_by/triggered_by |
+| `linkedAt` | string | AVAILABLE | Link timestamp |
+| `status` | string | AVAILABLE | Link status |
+
+---
+
+### 32. Vulnerability_Case_Link
+
+**Source:** Platform Intelligence and IOC Distribution spec; Requirements 13.4  
+**Contract:** `packages/contracts/src/entities/vulnerability-case-link.ts`  
+**Fixture:** `packages/contracts/src/fixtures/seed-vulnerability-case-links.ts` ✅  
+**Ownership:** Customer_Tenant (evaluation plane)  
+**Workload class:** operational-write, operational-read  
+**Status:** AVAILABLE  
+**Relationships:** Links Tenant_Intelligence_Evaluation to Case (application-layer, no FK)
+
+| Field | Type | Availability | Notes |
+|-------|------|--------------|-------|
+| `tenantId` | string | AVAILABLE | Customer tenant |
+| `evaluationId` | string | AVAILABLE | Ref → Tenant_Intelligence_Evaluation |
+| `caseId` | string | AVAILABLE | Ref → Case (no cross-workload FK) |
+| `linkType` | string | AVAILABLE | Link type (vulnerability) |
+| `linkedAt` | string | AVAILABLE | Link timestamp |
+| `status` | string | AVAILABLE | Link status |
+
+---
+
+### 33. Threat_Hunt_Record
+
+**Source:** Platform Intelligence and IOC Distribution spec; Requirements 14.1, 14.2  
+**Contract:** `packages/contracts/src/entities/threat-hunt-record.ts`  
+**Fixture:** `packages/contracts/src/fixtures/seed-threat-hunts.ts` ✅  
+**Ownership:** Customer_Tenant (evaluation plane)  
+**Workload class:** operational-write, operational-read  
+**Status:** AVAILABLE  
+**Relationships:** Triggered by IOC match; links to Case via case-outcome-mappers
+
+| Field | Type | Availability | Notes |
+|-------|------|--------------|-------|
+| `tenantId` | string | AVAILABLE | Customer tenant |
+| `triggeringIocId` | string | AVAILABLE | Triggering IOC |
+| `triggeringMatchId` | string | AVAILABLE | Triggering match |
+| `huntType` | string | AVAILABLE | Hunt classification |
+| `huntScope` | string | AVAILABLE | Hunt scope |
+| `status` | ThreatHuntStatus (7 values) | AVAILABLE | Lifecycle status |
+| `assignedTo` | string | AVAILABLE | Assigned analyst |
+| `proposedAt` | string | AVAILABLE | Proposal timestamp |
+| `startedAt` | string \| null | AVAILABLE | Start timestamp |
+| `completedAt` | string \| null | AVAILABLE | Completion timestamp |
+| `findingsRef` | string | AVAILABLE | Findings reference |
+
+---
+
+### 34. Push_Action_Intent
+
+**Source:** Platform Intelligence and IOC Distribution spec; Requirements 15.1, 15.2, 15.4  
+**Contract:** `packages/contracts/src/entities/push-action-intent.ts`  
+**Fixture:** `packages/contracts/src/fixtures/seed-push-action-intents.ts` ✅  
+**Ownership:** Customer_Tenant (evaluation plane)  
+**Workload class:** operational-write, operational-read  
+**Status:** AVAILABLE  
+**Relationships:** References IOC; intent/status only in Phase 1 (no live push)
+
+| Field | Type | Availability | Notes |
+|-------|------|--------------|-------|
+| `tenantId` | string | AVAILABLE | Customer tenant |
+| `iocId` | string | AVAILABLE | Ref → IOC |
+| `iocCategory` | IocCategory | AVAILABLE | For push mapping |
+| `targetSystemType` | string | AVAILABLE | Target system |
+| `actionType` | PushActionType | AVAILABLE | block/allow/alert/quarantine |
+| `intentStatus` | PushIntentStatus (7 values) | AVAILABLE | Mock statuses only |
+| `requestedBy` | string | AVAILABLE | Requester |
+| `requestedAt` | string | AVAILABLE | Request timestamp |
+| `approvedBy` | string \| null | AVAILABLE | Approver |
+| `approvedAt` | string \| null | AVAILABLE | Approval timestamp |
+| `executionReference` | string | AVAILABLE | Mock execution ref |
+
+---
+
+### 35. Inbound_Email_Submission (Value Object)
+
+**Source:** Platform Intelligence and IOC Distribution spec; Requirements 9.3, 24.1, 24.3  
+**Contract:** `packages/contracts/src/entities/inbound-email-submission.ts`  
+**Fixture:** `packages/contracts/src/fixtures/seed-inbound-email-submissions.ts` ✅  
+**Ownership:** Admin_Tenant (ingestion path — modelled only, no mailbox client)  
+**Workload class:** ingestion-write  
+**Status:** AVAILABLE  
+**Relationships:** Feeds into normalisation/dedup pipeline
+
+| Field | Type | Availability | Notes |
+|-------|------|--------------|-------|
+| `senderAddress` | string | AVAILABLE | Sender email |
+| `sourceOrganisation` | string | AVAILABLE | Source org |
+| `receivedTimestamp` | string | AVAILABLE | Received time |
+| `attachmentReferences` | string[] | AVAILABLE | Attachment refs |
+| `parsedIocValues` | ParsedEmailIoc[] | AVAILABLE | Parsed IOCs with parser confidence |
+| `rawBodyReference` | string | AVAILABLE | Raw body pointer |
+| `submissionMetadata` | Record | AVAILABLE | Additional metadata |
+
+---
+
+### Shared Value Objects (intelligence-common.ts)
+
+**36. SourceAttributionEntry** — Per-source attribution entry preserving what each reporting source claimed (Req 6.5, 8.4, 22.5). Fields: sourceId, reportedConfidence, reportedSeverity, originalRawValue, firstSeenAt, lastSeenAt.
+
+**37. RelationshipStateTransition** — State change audit record appended to IOC_Relationship stateHistory (Req 7.3). Fields: previousState, newState, changedAt, reason.
+
+---
+
 ## Maintenance Rules
 
 1. **This artifact is mechanically derived.** Do NOT manually edit entity entries. Use the data-dictionary-generation.kiro.hook to update.
@@ -1016,5 +1439,5 @@ Five entities forming the compliance/control-framework mapping layer:
 
 ---
 
-**Last Updated:** 2026-06-02 (CFM executed: Control Framework Mapping — 5 new entities (ControlFramework, FrameworkControl, ControlRequirement, ControlEvaluation, ControlMapping) on contract `control-framework.ts` + schema `control-frameworks.ts` (migration `0011_control_framework_mapping_cfm.sql`, 5 tables, 8 enums) + seed `seed-control-frameworks.ts` (5 frameworks: NIST CSF, ISO 27001, CIS v8, Cyber Essentials, internal; 15 controls; 5 requirements; 5 evaluations; 5 mappings) + 60 tests. ARCH-DEBT-051 RESOLVED. Case lifecycle unchanged. Entity count 15→20. Governance Green 100%.)  
+**Last Updated:** 2026-06-03 (Platform Intelligence Closure Conveyor: 16 intelligence entities + 2 shared value objects registered. Entity count 20→35. Fixture count 15→26. Composed-object module count unchanged at 2. Intelligence domain fully catalogued — evaluation engine + priority signal engine added to packages/rules/.)  
 **Snapshot Commit:** (to be recorded after commit)

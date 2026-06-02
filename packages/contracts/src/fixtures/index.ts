@@ -24,3 +24,15 @@ export type { SeedEvent } from './seed-events';
 // ─── Platform Intelligence & IOC Distribution Fixtures ───────────────────────
 export { seedPlatformIntelligenceSources } from './seed-platform-intelligence-sources';
 export { seedIocs } from './seed-iocs';
+export { seedVulnerabilityIntelligence } from './seed-vulnerability-intelligence';
+export { seedVendorAdvisories } from './seed-vendor-advisories';
+export { seedIocRelationships } from './seed-ioc-relationships';
+export { seedTenantIntelligenceSubscriptions } from './seed-tenant-intelligence-subscriptions';
+export { seedTenantIntelligenceEvaluations } from './seed-tenant-intelligence-evaluations';
+export { seedTenantIocMatches } from './seed-tenant-ioc-matches';
+export { seedTenantAllowBlockEntries } from './seed-tenant-allowblock-entries';
+export { seedIocCaseLinks } from './seed-ioc-case-links';
+export { seedVulnerabilityCaseLinks } from './seed-vulnerability-case-links';
+export { seedThreatHunts } from './seed-threat-hunts';
+export { seedPushActionIntents } from './seed-push-action-intents';
+export { seedInboundEmailSubmissions } from './seed-inbound-email-submissions';

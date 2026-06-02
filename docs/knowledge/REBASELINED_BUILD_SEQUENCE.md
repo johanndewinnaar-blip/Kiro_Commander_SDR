@@ -71,7 +71,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **READY (COIM-H only — separately-gated):** COIM unit **COIM-H** (separately authorised only). **All Foundational numbered units (0–22, 38, 40) are DONE.** No remaining Foundational unit is READY in the conveyor chain.
 
-**DONE (32):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13, Unit 14, Unit 15, **Unit 16a**, **Unit 17**, **Unit 18**, **Unit 19**, **Unit 20**, **Unit 21**, **Unit 22 (v1)**, **Unit 38**, **Unit 40**, **COIM-A, COIM-B, COIM-C, COIM-D, COIM-E, COIM-F, COIM-G**.
+**DONE (33):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13, Unit 14, Unit 15, **Unit 16a**, **Unit 17**, **Unit 18**, **Unit 19**, **Unit 20**, **Unit 21**, **Unit 22 (v1)**, **Unit 38**, **Unit 40**, **Unit 50**, **COIM-A, COIM-B, COIM-C, COIM-D, COIM-E, COIM-F, COIM-G**.
 
 **BLOCKED (20):** Unit 16b (Aggregate/Posture Command Centre), Units 23–37, 39, 41–49. All Team 2 numbered units remain BLOCKED on ARCH-006. COIM units are Foundational and NOT ARCH-006-gated; none remain BLOCKED.
 
@@ -127,6 +127,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 | 38 Mock Connectors | Foundational | **DONE** | — |
 | 39 Real Connector Readiness | Team 2 | BLOCKED | ARCH-006; Unit 4; Unit 38 |
 | 40 Commander AI Core | Foundational | **DONE** | — |
+| 50 Platform Intelligence and IOC Distribution | Foundational | **DONE** | — |
 | 41 AWS Alignment — Evaluation Lane | Team 2 | BLOCKED | ARCH-006; Unit 40; ARCH-DEBT-034 (needs re-sourcing) |
 | 42 Push Governance — Dry-Run | Team 2 | BLOCKED | ARCH-006; Units 7–13; Unit 6 |
 | 43 Audit Trail | Foundational | BLOCKED | Units 7–13; Unit 6; ARCH-DEBT-035 (needs re-sourcing) |
@@ -1858,6 +1859,46 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 - ✅ AI navigation assistance working
 - ✅ AI execution logging working
 - ✅ Tests: grounding, refusal, drafting, explanation, summarization, navigation, logging
+
+**Source tag:** Foundational
+
+---
+
+### Unit 50: Platform Intelligence and IOC Distribution — Data Layer (Foundational)
+
+**Status:** DONE
+
+**Blocked by:** — (complete)
+
+**Verification:** Kiro Spec `platform-intelligence-ioc-distribution` (Phase 1 data-layer). Evidence: 16 new entities + 2 shared value objects delivered under `packages/contracts/src/entities/`; 13 pure-function rule modules under `packages/rules/`; 11 new fixture files under `packages/contracts/src/fixtures/`; 2 new rule engines (subscription-evaluation.ts, priority-signal.ts) under `packages/rules/`; DATA_DICTIONARY.md entries 21–37 registered; vitest passing (31 new tests for evaluation + priority engines); full test suite clean. Phase 1 boundary honoured: no UI, no live API, no live push, seed/mock only.
+
+**Purpose:** Foundational data-layer augmentation for platform intelligence catalogues (CISA KEV, CVE/vendor advisories, direct IOC feeds) and tenant-level intelligence evaluation. IOC as first-class intelligence object.
+
+**Baseline spec:** Spec #59 Intelligence Layer Architecture; Spec #61 Universal Security Signal Connector Contract; Spec #29 Universal Risk Object and Case Binding; Spec #08 Case Management (from `docs/99_source_archive/baseline_v2_6_2/`)
+
+**Architectural layer:** Data Layer (contracts, entities, fixtures, rules)
+
+**Dependencies:** Unit 0 (Foundation Correction), Unit 4 (Connector Layer), Unit 5 (Normalisation Layer), Unit 14 (Intelligence Layer)
+
+**Deliverables:**
+1. ✅ 16 array-form type constants + 2 shared value objects (`intelligence-common.ts`)
+2. ✅ 6 Admin_Tenant catalogue-plane entities (Platform_Intelligence_Source, Platform_Intelligence_Record, Vulnerability_Intelligence_Record, Vendor_Advisory, Indicator_Of_Compromise, IOC_Relationship)
+3. ✅ 8 Customer_Tenant evaluation-plane entities (Subscription, Evaluation, IOC_Match, AllowBlock, IOC_Case_Link, Vulnerability_Case_Link, Threat_Hunt_Record, Push_Action_Intent)
+4. ✅ 1 value object (Inbound_Email_Submission)
+5. ✅ 13 pure-function rule modules (normalise, dedup, aggregate, freshness, sync, allow-block, relationship, ingestion, advisory extraction, tenant builders, push mapping, case mappers, threat hunt, compliance enrichment, cross-plane resolver)
+6. ✅ 2 evaluation engines (subscription-evaluation, priority-signal)
+7. ✅ 11 new fixture files (all using seedId(), synthetic .example domains, (Mock) markers)
+8. ✅ DATA_DICTIONARY.md entries registered (entities 21–37)
+9. ✅ Build sequence registration (this unit)
+
+**Completion gate:**
+- ✅ All entities with `validateX` functions
+- ✅ All fixtures pass validators
+- ✅ All rule modules exported from barrels
+- ✅ DATA_DICTIONARY.md entries present (ARCH-005)
+- ✅ Build sequence registered (ARCH-006)
+- ✅ Tests passing (unit + property tests)
+- ✅ No live APIs, no UI, seed/mock only (Phase 1 boundary)
 
 **Source tag:** Foundational
 

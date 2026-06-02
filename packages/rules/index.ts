@@ -49,3 +49,9 @@ export type { IntelligenceEnrichmentEvidence } from './compliance-enrichment';
 
 export { resolveReference, batchResolveReferences } from './cross-plane-resolver';
 export type { ResolutionResult } from './cross-plane-resolver';
+
+export { evaluateSubscription, distributeToTenants } from './subscription-evaluation';
+export type { SubscriptionEvaluationResult, TenantEvaluationInput } from './subscription-evaluation';
+
+export { computeIntelligencePrioritySignal } from './priority-signal';
+export type { PrioritySignal, VulnerabilitySignalInput, TenantEvaluationContext, UrgencyLevel } from './priority-signal';
