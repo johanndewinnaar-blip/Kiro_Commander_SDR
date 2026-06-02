@@ -932,7 +932,7 @@ Authority: `.kiro/steering/feature-function-backlog.md` (extended in this update
 - **Scope of fix:** Add timeline fields under build unit **COIM-A** for Risk Object (`firstDetectedAt`, `normalisedAt` required; `lastConfirmedAt` recommended) and under **COIM-F** for Asset/Identity (`lastConfirmedAt`/`lastAuthenticatedAt` recommended). Indexed timestamp columns; additive. `dwellTimeHours` computed on Case (COIM-G). Update DATA_DICTIONARY.md.
 - **Affected specs / artifacts:** `packages/contracts/src/entities/risk-object.ts`, `asset.ts`, `identity.ts`; corresponding schemas; `docs/knowledge/DATA_DICTIONARY.md`; COIM-A / COIM-F / COIM-G units in `REBASELINED_BUILD_SEQUENCE.md`
 - **Scheduled resolution:** COIM-A (NOW, Risk Object timeline) + COIM-F/COIM-G (NEXT, Asset/Identity/Case)
-- **Status:** OPEN (partially resolved — Risk Object timeline (COIM-A) + Asset/Identity COIM-F augmentation delivered; Case `dwellTimeHours` pending COIM-G)
+- **Status:** RESOLVED (Risk Object timeline (COIM-A) + Asset/Identity (COIM-F) + Case `dwellTimeHours` (COIM-G) all delivered)
 - **Date logged:** 2026-06-01
 - **Last reviewed:** 2026-06-02
 
@@ -940,6 +940,7 @@ Authority: `.kiro/steering/feature-function-backlog.md` (extended in this update
 - 2026-06-01: OPEN — registered under COIM/OCSF NOW-tier governance registration (owner-authorised). Resolution units: COIM-A (Risk Object), COIM-F/COIM-G (Asset/Identity/Case).
 - 2026-06-01: PARTIAL — COIM-A delivered the Risk Object timeline model (`firstDetectedAt`, `lastConfirmedAt`, `normalisedAt`) on contract + schema (migration `0005`) + seed fixtures + tests. Remains OPEN for the Asset/Identity portion (COIM-F) and Case `dwellTimeHours` (COIM-G).
 - 2026-06-02: PARTIAL — COIM-F delivered Asset (`lastConfirmedAt`, `firstDiscoveredBy` + full COIM operational-intelligence augmentation) and Identity (`lastAuthenticatedAt`, `privilegeLevel`, `authenticationStrength`, `entitlementSummary`, `riskFactors[]`, `sourceClassification`) on contract + schema (migration `0008`, additive nullable columns). Asset/Identity portion RESOLVED. Remains open only for Case `dwellTimeHours` (COIM-G).
+- 2026-06-02: RESOLVED — COIM-G delivered the Case aggregation model. `dwellTimeHours` (earliest bound Risk Object `firstDetectedAt` → case `createdAt`) plus `attacks[]`, `affectedEntityCount`, `blastRadiusScore`, `confidenceAggregate`, `findingClassBreakdown` on contract + schema (migration `0009`, additive nullable columns) + pure resolver `case-aggregation-resolver.ts` (`computeCaseAggregation`) + self-consistent seed case-0001 + 29 tests. Governance logic unchanged. All three portions (Risk Object / Asset-Identity / Case) now closed. Verification: vitest 29/29 COIM-G pass; typecheck clean (pre-existing tsconfig `baseUrl` deprecation only); 18 pre-existing UI/DS-1.0 failures confirmed present on clean baseline via stash (0 attributable to COIM-G).
 
 ---
 

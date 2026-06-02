@@ -69,13 +69,13 @@ A unit is **READY** iff every dependency unit is **DONE** and every mapped chain
 
 Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readiness State Machine above.
 
-**READY (5):** Unit 14 (Intelligence Layer — Four Streams), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors), and COIM units **COIM-G, COIM-H**.
+**READY (4):** Unit 14 (Intelligence Layer — Four Streams), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors), and COIM unit **COIM-H**.
 
-**DONE (20):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13, **COIM-A, COIM-B, COIM-C, COIM-D, COIM-E, COIM-F**.
+**DONE (21):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13, **COIM-A, COIM-B, COIM-C, COIM-D, COIM-E, COIM-F, COIM-G**.
 
 **BLOCKED (42):** Units 15–21, 23–37, 39–49 (numbered units, except 14, 22, 38). All 27 Team 2 numbered units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006. COIM units are Foundational and NOT ARCH-006-gated; none remain BLOCKED.
 
-> **COIM / OCSF remediation units (COIM-A … COIM-H):** added 2026-06-01 under owner-authorised governance registration for `DEC-coim-ocsf-source-classification-architecture`. **COIM-A/B/C/D/E/F are DONE**; COIM-G/H remain READY. Full definitions and the COIM Live Status Snapshot are in the **"COIM / OCSF Remediation Units"** section below (after Unit 49). Tier mapping: COIM-A = NOW (DONE), COIM-B/C/D/E/F/G = NEXT, COIM-H = LATER.
+> **COIM / OCSF remediation units (COIM-A … COIM-H):** added 2026-06-01 under owner-authorised governance registration for `DEC-coim-ocsf-source-classification-architecture`. **COIM-A/B/C/D/E/F/G are DONE**; COIM-H remains READY. Full definitions and the COIM Live Status Snapshot are in the **"COIM / OCSF Remediation Units"** section below (after Unit 49). Tier mapping: COIM-A = NOW (DONE), COIM-B/C/D/E/F/G = NEXT (DONE), COIM-H = LATER (READY).
 
 | Unit | Tag | Status | Blocked by |
 |---|---|---|---|
@@ -2145,13 +2145,13 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Resolving debt:** COIM-A → ARCH-DEBT-039 (+ ARCH-DEBT-045 Risk Object timeline); COIM-B → ARCH-DEBT-040; COIM-C → ARCH-DEBT-043; COIM-D → ARCH-DEBT-041; COIM-E → ARCH-DEBT-042; COIM-F → ARCH-DEBT-045 (Asset/Identity timeline); COIM-G → ARCH-DEBT-045 (Case dwell time); COIM-H → ARCH-DEBT-044 + ARCH-DEBT-046.
 
-### COIM Live Status Snapshot (recomputed 2026-06-01 — post COIM-A)
+### COIM Live Status Snapshot (recomputed 2026-06-02 — post COIM-G)
 
 Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's own resolving debt does not self-block it.
 
-**DONE (6):** COIM-A, COIM-B, COIM-C, COIM-D, COIM-E, COIM-F.
+**DONE (7):** COIM-A, COIM-B, COIM-C, COIM-D, COIM-E, COIM-F, COIM-G.
 
-**READY (2):** COIM-G, COIM-H.
+**READY (1):** COIM-H.
 
 | Unit | Tag | Status | Blocked by | Resolves |
 |---|---|---|---|---|
@@ -2161,10 +2161,10 @@ Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's o
 | COIM-D Observable Entity | Foundational | **DONE** | — | ARCH-DEBT-041 ✅ |
 | COIM-E Analytic Entity | Foundational | **DONE** | — | ARCH-DEBT-042 ✅ |
 | COIM-F Asset / Identity Augmentation | Foundational | **DONE** | — | ARCH-DEBT-045 (Asset/Identity) ✅ |
-| COIM-G Case Aggregation | Foundational | **READY** | — | ARCH-DEBT-045 (Case dwell time) |
+| COIM-G Case Aggregation | Foundational | **DONE** | — | ARCH-DEBT-045 (Case dwell time) ✅ |
 | COIM-H Action/Sub-Action + D3FEND | Foundational | **READY** | — | ARCH-DEBT-044, 046 |
 
-> **Tier mapping (owner-authorised plan, 2026-06-01):** COIM-A = **NOW** (DONE); COIM-B/C/D/E/F/G = **NEXT** (now READY); COIM-H = **LATER** (now READY — owner may still elect to defer per tier plan). The NOW tier is complete. NEXT/LATER units await separate owner build authorisation.
+> **Tier mapping (owner-authorised plan, 2026-06-01):** COIM-A = **NOW** (DONE); COIM-B/C/D/E/F/G = **NEXT** (DONE); COIM-H = **LATER** (READY — owner may still elect to defer per tier plan). The NOW and NEXT tiers are complete. The LATER unit awaits separate owner build authorisation.
 
 ---
 
@@ -2372,9 +2372,11 @@ Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's o
 
 ### Unit COIM-G: Case Aggregation
 
-**Status:** READY
+**Status:** DONE
 
-**Blocked by:** — (COIM-A DONE; Unit 7 DONE)
+**Blocked by:** — (complete)
+
+**Verification:** COIM v1.0 §6 (Case impact); 02_SOURCE_CLASSIFICATION_MODEL §10.4; Spec #08 Case Management. Evidence: Case contract augmented additively at `packages/contracts/src/entities/case.ts` (6 optional fields: attacks[], affectedEntityCount, blastRadiusScore, dwellTimeHours, confidenceAggregate, findingClassBreakdown); DB schema augmented additively at `packages/db/src/schema/cases.ts` (6 nullable columns; migration `0009_case_coim_g.sql` — no drops, no changes to existing columns); pure aggregation resolver `packages/contracts/src/resolvers/case-aggregation-resolver.ts` (`computeCaseAggregation` — deduplicated ATT&CK union ≤50, distinct affected-entity count, saturating blast radius, earliest-`firstDetectedAt`→`createdAt` dwell time, averaged source confidence, finding-class breakdown; non-governing — no SLA/routing/priority/lifecycle change); seed case-0001 carries cached aggregates self-consistent with the resolver (dwell 79h from bound risk-object-0003); vitest 29/29 COIM-G tests pass; typecheck clean for COIM-G files (pre-existing tsconfig `baseUrl` deprecation only); 18 pre-existing UI/DS-1.0 failures confirmed present on clean baseline via stash (0 new regressions attributable to COIM-G); DATA_DICTIONARY.md Case COIM-aggregation section updated FUTURE→AVAILABLE; ARCH-DEBT-045 (Case dwell time portion) RESOLVED — debt now fully closed. Doctrinal Assertion 1 preserved (governance logic unchanged).
 
 **Purpose:** Add computed/cached COIM aggregates to Case from bound Risk Objects, additively. Includes dwell time, blast radius, finding-class breakdown, confidence aggregate, ATT&CK aggregation.
 
@@ -2510,7 +2512,7 @@ A build unit is complete when:
 ---
 
 **Last Updated:** 2026-06-01  
-**Status:** ACTIVE — readiness state machine. Build only from the READY set (currently Units 14, 22, 38 and COIM-B…COIM-H; COIM-A DONE). Status recomputes on debt-resolution / unit-completion.  
+**Status:** ACTIVE — readiness state machine. Build only from the READY set (currently Units 14, 22, 38 and COIM-H; COIM-A…COIM-G DONE). Status recomputes on debt-resolution / unit-completion.  
 **Enforcement:** ARCH-006 (build-stream sequencing) + ARCH-007 (blocking-debt prerequisite) in `.kiro/testing/conformance-registry.md`, auto-run via post-task-review. "What's next" query defined in `.kiro/steering/execution-discipline.md`.  
 **Authority:** Derived from SYSTEM_KNOWLEDGE_GRAPH.md, DATA_DICTIONARY.md, REBASELINED_BUILD_SCHEDULE_NOTES.md, baseline source. Decision: `DEC-build-readiness-state-machine` (DECISIONS.md).  
 **Sourcing rule:** Never cite the translation layer — all citations from `docs/99_source_archive/baseline_v2_6_2/`

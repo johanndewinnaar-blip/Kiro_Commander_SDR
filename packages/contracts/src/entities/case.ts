@@ -3,12 +3,15 @@
  *
  * Source: Spec #08 Case Management, Spec #17 Closed-Loop Control Architecture
  * Domain Requirement 3: Cases include lifecycle, owner, SLA, surface attribution, audit
+ * COIM-G: COIM aggregate fields (additive optional) — computed from bound Risk Objects
+ * Source: COIM v1.0 §6 (Case impact); 02_SOURCE_CLASSIFICATION_MODEL §10.4; Spec #08
  *
  * CRITICAL: Cases are system-owned. No manual creation, manual closure,
  * manual reopening or manual lifecycle progression (Doctrinal Assertion 1).
  */
 
 import type { CommonFields, SurfaceAttribution } from './common';
+import type { AttackMapping } from './coim';
 
 export interface Case extends CommonFields {
   entityType: 'case';
@@ -39,6 +42,51 @@ export interface Case extends CommonFields {
   auditTrailRef: string;
   /** Routing rationale (from routing engine) */
   routingRationale: string;
+
+  // ─── COIM-G: Computed Aggregate Fields (additive optional) ───────────────
+  // Source: COIM v1.0 §6 (Case impact); 02_SOURCE_CLASSIFICATION_MODEL §10.4.
+  // Computed at case creation/update from bound Risk Objects.
+  // Cached on Case for query performance; no governance-logic change.
+  // Optional at type level for full backward-compatibility with existing fixtures.
+
+  /**
+   * ATT&CK bindings aggregated from bound Risk Objects (COIM-G).
+   * Union of all ATT&CK bindings across risk objects bound to this case.
+   * Deduplicated by technique ID. Max 50 entries.
+   */
+  attacks?: AttackMapping[];
+
+  /**
+   * Count of distinct affected entities across bound Risk Objects (COIM-G).
+   * Enables blast-radius quantification.
+   */
+  affectedEntityCount?: number;
+
+  /**
+   * Blast radius score (0-100) — computed from affectedEntityCount,
+   * criticality of affected entities, and surface attribution (COIM-G).
+   * Commander-computed; informs but does not govern priority.
+   */
+  blastRadiusScore?: number;
+
+  /**
+   * Dwell time in hours from firstDetectedAt of earliest bound Risk Object
+   * to case creation timestamp (COIM-G).
+   * Resolves ARCH-DEBT-045 (Case dwell time).
+   */
+  dwellTimeHours?: number;
+
+  /**
+   * Confidence aggregate (0-100) — weighted average of sourceConfidence
+   * across bound Risk Objects (COIM-G).
+   */
+  confidenceAggregate?: number;
+
+  /**
+   * Finding-class breakdown — count per FindingClass across bound Risk Objects (COIM-G).
+   * Example: { vulnerability: 3, detection: 1 }
+   */
+  findingClassBreakdown?: Record<string, number>;
 }
 
 /**

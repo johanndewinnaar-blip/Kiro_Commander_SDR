@@ -37,6 +37,22 @@ export const seedCases: Case[] = [
     relatedEntities: [seedId('asset', 1), seedId('asset', 4)],
     auditTrailRef: 'audit/case/CASE-2026-0001',
     routingRationale: 'P0 zero-day condition. Escalated to CISO per P0 priority overlay. War-room activation required.',
+    // COIM-G computed aggregates (cached) — derived from bound risk-object-0003
+    // (vulnerability_drift, firstDetectedAt 2026-01-14T22:30Z, confidence 95, T1190).
+    // dwell = 2026-01-14T22:30Z → case createdAt 2026-01-18T06:00Z = 79h.
+    attacks: [
+      {
+        tactic: 'Initial Access',
+        technique: 'T1190',
+        techniqueName: 'Exploit Public-Facing Application',
+        version: 'v14.1',
+      },
+    ],
+    affectedEntityCount: 1,
+    blastRadiusScore: 10,
+    dwellTimeHours: 79,
+    confidenceAggregate: 95,
+    findingClassBreakdown: { vulnerability: 1 },
   },
   {
     id: seedId('case', 2),

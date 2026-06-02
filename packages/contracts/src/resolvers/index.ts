@@ -14,6 +14,12 @@ export { resolveValidationWindow, type ValidationResolution } from './case-valid
 export { resolveClosureGates, type ClosureGateResolution } from './case-closure-evaluator';
 export { resolveReopeningTriggers, type ReopeningResolution } from './case-reopening-evaluator';
 export { resolveAllStrategies, type FullStrategyResolution } from './case-strategy-resolver';
+export {
+  computeCaseAggregation,
+  type CaseAggregation,
+  MAX_CASE_ATTACK_BINDINGS,
+  MAX_BLAST_RADIUS_SCORE,
+} from './case-aggregation-resolver';
 export { evaluateValidationWindow, type ValidationWindowState } from './validation-window-enforcer';
 export { evaluateClosureGates, type GateEvaluationInput, type ClosureGateResult } from './closure-gate-enforcer';
 export { evaluateReopeningTriggers, type ReopeningConditions, type ReopeningTriggerResult } from './reopening-trigger-enforcer';

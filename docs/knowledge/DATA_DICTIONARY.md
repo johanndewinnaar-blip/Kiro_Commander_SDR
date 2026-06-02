@@ -640,7 +640,7 @@ These are code-conformance debt items (contract field removed, test fixtures not
 12. `seed-observables.ts` ✅
 13. `seed-analytics.ts` ✅
 
-### Resolvers Found: 12
+### Resolvers Found: 13
 
 1. `assignment-engine.ts` — case assignment logic
 2. `case-closure-evaluator.ts` — closure gate evaluation
@@ -654,6 +654,7 @@ These are code-conformance debt items (contract field removed, test fixtures not
 10. `reopening-trigger-enforcer.ts` — reopening trigger enforcement
 11. `validation-window-enforcer.ts` — validation window enforcement
 12. `executeTransition()` — lifecycle state machine (in case-lifecycle.ts)
+13. `case-aggregation-resolver.ts` — COIM-G case aggregate computation (`computeCaseAggregation`); computed/cached, non-governing
 
 ### Contract vs DB Schema Reconciliation
 
@@ -815,16 +816,26 @@ None.
 
 **DB Schema Reconciliation:** ✅ Additive augmentation. All new columns nullable. Existing tests intact. ARCH-DEBT-045 (Asset/Identity portion) RESOLVED.
 
-### Case — COIM aggregation (FUTURE — blocker: COIM-G)
+### Case — COIM aggregation (COIM-G — AVAILABLE)
 
-| Planned Field | Type | Source Classification | Availability | Blocker | Notes |
+**Source:** COIM v1.0 §6 (Case impact); 02_SOURCE_CLASSIFICATION_MODEL §10.4; Spec #08 Case Management
+**Contract:** `packages/contracts/src/entities/case.ts` (additive optional fields)
+**DB Schema:** `packages/db/src/schema/cases.ts` ✅
+**Migration:** `packages/db/drizzle/0009_case_coim_g.sql` ✅ (additive — nullable columns only)
+**Resolver:** `packages/contracts/src/resolvers/case-aggregation-resolver.ts` (`computeCaseAggregation`) ✅
+**Fixture:** `seed-cases.ts` — case-0001 carries cached aggregates self-consistent with the resolver ✅
+**Test:** `tests/coim-g-case-aggregation/coim-g-case-aggregation.test.ts` ✅ (29 assertions)
+**Build unit:** COIM-G (Case Aggregation). Resolves ARCH-DEBT-045 (Case dwell time portion).
+**Doctrine:** These are Commander-computed, cached aggregate values derived from bound Risk Objects. They INFORM reporting, search and AI grounding but never GOVERN case lifecycle, priority, routing, validation or closure (Doctrinal Assertion 1 preserved — governance logic untouched). All fields additive and optional for back-compatibility.
+
+| Field | Type | Source Classification | Availability | Blocker | Notes |
 |-------|------|----------------------|--------------|---------|-------|
-| `attacks[]` (aggregated) | JSONB | system-calculated | FUTURE | COIM-G | aggregated from bound Risk Objects |
-| `affectedEntityCount` | int | system-calculated | FUTURE | COIM-G | computed |
-| `blastRadiusScore` | int | system-calculated | FUTURE | COIM-G | computed |
-| `dwellTimeHours` | number | system-calculated | FUTURE | COIM-G | firstDetectedAt → case creation (ARCH-DEBT-045) |
-| `confidenceAggregate` | int | system-calculated | FUTURE | COIM-G | computed |
-| `findingClassBreakdown` | JSONB | system-calculated | FUTURE | COIM-G | computed |
+| `attacks[]` (aggregated) | JSONB (AttackMapping[], ≤50) | system-calculated | AVAILABLE | — | Deduplicated union of ATT&CK bindings across bound Risk Objects |
+| `affectedEntityCount` | int | system-calculated | AVAILABLE | — | Distinct affected entities across bound Risk Objects (plural `affectedEntities[]` with singular fallback) |
+| `blastRadiusScore` | int (0-100) | system-calculated | AVAILABLE | — | 10 points per affected entity, saturating at 100 |
+| `dwellTimeHours` | number | system-calculated | AVAILABLE | — | Earliest `firstDetectedAt` → case `createdAt`; clamps negatives to 0; undefined when no source detection time (ARCH-DEBT-045) |
+| `confidenceAggregate` | int (0-100) | system-calculated | AVAILABLE | — | Rounded average of source confidence across bound Risk Objects; undefined when none carry a score |
+| `findingClassBreakdown` | JSONB (Record<string,number>) | system-calculated | AVAILABLE | — | Count of bound Risk Objects per FindingClass |
 
 ### Action / Sub-Action (NEW ENTITY + D3FEND — FUTURE — blocker: COIM-H)
 
@@ -850,5 +861,5 @@ None.
 
 ---
 
-**Last Updated:** 2026-06-02 (COIM-E executed: Analytic Entity — contract `analytic.ts` + schema `analytics.ts` (migration `0007_analytic_entity_coim_e.sql`) + fixture `seed-analytics.ts` (8 seed analytics, all 8 types) + `validateAnalytic()` structural validator + `AnalyticRef` reference shape. Analytic entity now AVAILABLE as entry #14. ARCH-DEBT-042 RESOLVED. Remaining COIM planned entities/fields stay FUTURE pending COIM-F…H.)  
+**Last Updated:** 2026-06-02 (COIM-G executed: Case Aggregation — additive COIM aggregate fields on Case (`attacks[]`, `affectedEntityCount`, `blastRadiusScore`, `dwellTimeHours`, `confidenceAggregate`, `findingClassBreakdown`) on contract `case.ts` + schema `cases.ts` (migration `0009_case_coim_g.sql`, additive nullable columns) + resolver `case-aggregation-resolver.ts` (`computeCaseAggregation`, pure/non-governing) + seed case-0001 carries self-consistent cached aggregates + 29 tests. Case COIM aggregation now AVAILABLE. ARCH-DEBT-045 fully RESOLVED (Case dwell-time portion closed; Risk Object + Asset/Identity portions previously closed by COIM-A/COIM-F). Governance logic unchanged — Doctrinal Assertion 1 preserved. Remaining COIM planned entity stays FUTURE pending COIM-H (Action/Sub-Action + D3FEND, LATER tier).)  
 **Snapshot Commit:** (to be recorded after commit)

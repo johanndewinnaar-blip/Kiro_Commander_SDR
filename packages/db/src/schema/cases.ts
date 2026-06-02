@@ -35,6 +35,22 @@ export const cases = pgTable('cases', {
   auditTrailRef: text('audit_trail_ref').notNull(),
   /** Routing rationale from routing engine */
   routingRationale: text('routing_rationale').notNull(),
+  // ─── COIM-G augmentation (additive, nullable) ────────────────────────────
+  // Source: COIM v1.0 §6; 02_SOURCE_CLASSIFICATION_MODEL §10.4; Spec #08.
+  // Computed at case creation/update from bound Risk Objects. Cached for query perf.
+  // No changes to existing columns or governance logic.
+  /** ATT&CK bindings aggregated from bound Risk Objects (JSONB, max 50, deduplicated). */
+  attacks: jsonb('attacks').default('[]'),
+  /** Count of distinct affected entities across bound Risk Objects. */
+  affectedEntityCount: integer('affected_entity_count'),
+  /** Blast radius score (0-100). Commander-computed. */
+  blastRadiusScore: integer('blast_radius_score'),
+  /** Dwell time in hours from firstDetectedAt to case creation. */
+  dwellTimeHours: integer('dwell_time_hours'),
+  /** Confidence aggregate (0-100) — weighted average from bound Risk Objects. */
+  confidenceAggregate: integer('confidence_aggregate'),
+  /** Finding-class breakdown (JSONB: { vulnerability: N, detection: N, ... }). */
+  findingClassBreakdown: jsonb('finding_class_breakdown'),
   /** Source provenance */
   sourceConnectorId: text('source_connector_id').notNull(),
   sourceImportRunId: text('source_import_run_id').notNull(),
