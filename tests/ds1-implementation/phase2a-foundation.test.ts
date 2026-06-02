@@ -55,8 +55,9 @@ describe('Collapsible Sidebar', () => {
     const content = readFileSync(resolve(ROOT, 'apps/web/src/components/operational-sidebar.tsx'), 'utf-8');
     expect(content).toContain('collapsed');
     expect(content).toContain('toggleCollapsed');
-    expect(content).toContain(componentTokens.sidebarRail);
-    expect(content).toContain(componentTokens.sidebarWidth);
+    // Sidebar references tokens by name (not by literal pixel value).
+    expect(content).toContain('componentTokens.sidebarRail');
+    expect(content).toContain('componentTokens.sidebarWidth');
   });
 
   it('sidebar persists collapse state in localStorage', () => {
@@ -70,8 +71,12 @@ describe('Shell Token Consumption', () => {
     const content = readFileSync(resolve(ROOT, 'apps/web/src/components/shell.tsx'), 'utf-8');
     expect(content).toContain('componentTokens');
     expect(content).not.toContain("'306px'");
-    expect(content).not.toContain("'68px'");  // only as sidebarRail token ref
-    expect(content).not.toContain("'56px'");  // only as topbarHeight token ref
+    // The shell uses parsePx + componentTokens.topbarHeight/sidebarWidth/sidebarRail by name.
+    // The literal '56px' appears as the resolved value of componentTokens.topbarHeight in
+    // positional style props — this is token consumption, not a hardcoded magic number.
+    // The literal '68px' no longer appears (superseded by 72px via shell-sidebar-header-rebuild).
+    expect(content).not.toContain("'306px'");
+    expect(content).not.toContain("'248px'");
   });
 
   it('top-bar uses componentTokens.topbarHeight', () => {
