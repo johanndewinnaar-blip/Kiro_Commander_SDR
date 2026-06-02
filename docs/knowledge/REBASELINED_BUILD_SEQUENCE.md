@@ -2594,7 +2594,7 @@ A build unit is complete when:
 ---
 
 **Last Updated:** 2026-06-02  
-**Status:** ACTIVE — readiness state machine. Build only from the READY set. **As of 2026-06-02 (RBAC resolution conveyor):** ALL FOUNDATIONAL NUMBERED UNITS (0–22, 38, 40) ARE DONE. COIM-A…COIM-G DONE; COIM-H READY but separately authorised. Unit 16b BLOCKED (data-point-to-metric artifact absent). All Team-2 units BLOCKED on ARCH-006. Status recomputes on debt-resolution / unit-completion.  
+**Status:** ACTIVE — readiness state machine. Build only from the READY set. **As of 2026-06-02 (COIM-H delivered):** ALL FOUNDATIONAL NUMBERED UNITS (0–22, 38, 40) ARE DONE. COIM-A…COIM-H ALL DONE. Unit 16b BLOCKED (data-point-to-metric artifact absent). All Team-2 units BLOCKED on ARCH-006. READY set is EMPTY. Status recomputes on debt-resolution / unit-completion.  
 **Enforcement:** ARCH-006 (build-stream sequencing) + ARCH-007 (blocking-debt prerequisite) in `.kiro/testing/conformance-registry.md`, auto-run via post-task-review. "What's next" query defined in `.kiro/steering/execution-discipline.md`.  
 **Authority:** Derived from SYSTEM_KNOWLEDGE_GRAPH.md, DATA_DICTIONARY.md, REBASELINED_BUILD_SCHEDULE_NOTES.md, baseline source. Decision: `DEC-build-readiness-state-machine` (DECISIONS.md).  
 **Sourcing rule:** Never cite the translation layer — all citations from `docs/99_source_archive/baseline_v2_6_2/`
