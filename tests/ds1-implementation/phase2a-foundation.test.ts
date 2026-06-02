@@ -46,9 +46,9 @@ describe('Mode System', () => {
 });
 
 describe('Collapsible Sidebar', () => {
-  it('componentTokens defines sidebarWidth=248px and sidebarRail=68px', () => {
-    expect(componentTokens.sidebarWidth).toBe('248px');
-    expect(componentTokens.sidebarRail).toBe('68px');
+  it('componentTokens defines sidebarWidth=264px and sidebarRail=72px', () => {
+    expect(componentTokens.sidebarWidth).toBe('264px');
+    expect(componentTokens.sidebarRail).toBe('72px');
   });
 
   it('operational-sidebar.tsx exists and contains collapse logic', () => {

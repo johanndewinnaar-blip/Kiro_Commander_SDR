@@ -160,8 +160,8 @@ describe('Semantic Tokens — §3 Mode overrides', () => {
 
 describe('Component Tokens — §4 Pinned dimensions', () => {
   it('topbar=56px', () => expect(componentTokens.topbarHeight).toBe('56px'));
-  it('sidebar=248px', () => expect(componentTokens.sidebarWidth).toBe('248px'));
-  it('sidebar-rail=68px', () => expect(componentTokens.sidebarRail).toBe('68px'));
+  it('sidebar=264px', () => expect(componentTokens.sidebarWidth).toBe('264px'));
+  it('sidebar-rail=72px', () => expect(componentTokens.sidebarRail).toBe('72px'));
   it('card-padding=16px', () => expect(componentTokens.cardPadding).toBe('16px'));
   it('card-radius=2px', () => expect(componentTokens.cardRadius).toBe('2px'));
   it('grid-gap=16px', () => expect(componentTokens.gridGap).toBe('16px'));

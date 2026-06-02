@@ -60,19 +60,18 @@ describe('Operational App Shell', () => {
     expect(styles.pipe.background).toBe('#ffd21f');
   });
 
-  it('has exactly 7 top nav workspaces', () => {
-    expect(TOP_NAV_WORKSPACES.length).toBe(7);
+  it('has exactly 6 top nav workspaces', () => {
+    expect(TOP_NAV_WORKSPACES.length).toBe(6);
   });
 
-  it('top nav includes Command Centre, Cases, Fusion Map, Vulnerabilities, Identity, Architecture, CISO Dashboard', () => {
+  it('top nav includes Command Centre, Fusion Map, Vulnerabilities, Identity, Architecture, CISO', () => {
     const labels = TOP_NAV_WORKSPACES.map((w) => w.label);
     expect(labels).toContain('Command Centre');
-    expect(labels).toContain('Cases');
     expect(labels).toContain('Fusion Map');
     expect(labels).toContain('Vulnerabilities');
     expect(labels).toContain('Identity');
     expect(labels).toContain('Architecture');
-    expect(labels).toContain('CISO Dashboard');
+    expect(labels).toContain('CISO');
   });
 
   it('has 18 sidebar navigation groups', () => {
