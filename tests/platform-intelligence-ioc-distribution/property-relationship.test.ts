@@ -84,7 +84,7 @@ describe('Property 9: Relationship state-history completeness and ordering', () 
         fc.array(
           fc.record({
             state: fc.constantFrom(...IOC_RELATIONSHIP_STATES),
-            timestamp: fc.date({ min: new Date('2024-01-01'), max: new Date('2026-12-31') }).map(d => d.toISOString()),
+            timestamp: fc.integer({ min: 1704067200000, max: 1798761600000 }).map(ms => new Date(ms).toISOString()),
             reason: fc.string({ minLength: 1, maxLength: 50 }),
           }),
           { minLength: 1, maxLength: 5 },
