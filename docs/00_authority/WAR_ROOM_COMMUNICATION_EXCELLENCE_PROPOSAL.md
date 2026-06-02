@@ -1,7 +1,7 @@
 # Commander SDR — War Room, Communication & AI Excellence Proposal
 
 **Version:** WRCEP-1.0  
-**Status:** REVIEW — Pending owner decision.  
+**Status:** FINAL — Ready for owner decision.  
 **Date:** 2026-06-02  
 **Scope:** Architectural improvement of P0 War Room (Spec #44), Email/Teams Communication (Spec #26, #26a), and Commander AI integration across emergency operations.  
 **Authority:** This document proposes extensions to Commander War Room and Communication architecture. It does not override existing authority until approved and recorded in DECISIONS.md.  
@@ -134,7 +134,68 @@ A case type represents a discrete risk condition requiring treatment. The War Ro
 - Make it subject to routing/prioritisation/SLA engines (War Rooms aren't assigned to analysts)
 - Violate the principle that cases are system-born from risk objects (War Rooms are activated by condition/rule)
 
-### 2.6 War Room Lifecycle (4-State)
+### 2.6 Activation Authority (Who Can Create or Escalate to a War Room)
+
+War Room creation is a high-authority action. It is NOT available to all users.
+
+#### 2.6.1 Authority Matrix
+
+| Role | Can Activate War Room? | Scope | Mechanism |
+|---|---|---|---|
+| **System (rule-based)** | ✅ Yes — automatic | P0 condition detected by deterministic rule (e.g., KEV listed + CVSS ≥ 9.5 + external-facing) | `war-room-activation-engine` actor creates War Room entity automatically |
+| **CISO / Deputy CISO** | ✅ Yes — manual | Any case, any domain, unrestricted | Applies P0 overlay with documented reason → War Room activates |
+| **SOC Manager** | ✅ Yes — manual | Any case within their operational scope | Applies P0 overlay with documented reason → War Room activates |
+| **Team Lead** | ⚠️ Limited | Within their domain only, IF permitted by tenant P0 policy | Applies P0 within domain → War Room activates (tenant-configurable) |
+| **Senior Analyst** | ❌ Cannot activate | — | Can **recommend** P0 escalation (recommendation goes to SOC Manager or CISO for approval) |
+| **Analyst** | ❌ Cannot activate | — | Can **recommend** P0 escalation (same as Senior Analyst) |
+| **Tenant Admin** | ❌ Cannot activate | — | Configures activation rules and P0 policy but does not operate War Rooms |
+
+#### 2.6.2 Two Activation Paths
+
+**Path 1 — System-initiated (no human decision required):**
+
+```
+Deterministic P0 rule fires (risk condition meets threshold)
+  → prioritisation-engine assigns P0 to case
+  → war-room-activation-engine auto-creates War Room
+  → Senior owner (CISO or SOC Manager per routing) notified to acknowledge
+  → War Room active immediately (no approval gate — speed is doctrine)
+```
+
+**Path 2 — Senior-initiated (human decision with mandatory reason):**
+
+```
+SOC Manager or CISO assesses situation warrants emergency coordination
+  → Applies P0 priority overlay (reason mandatory, audit-recorded)
+  → War Room activates
+  → Audit records: who activated, when, why, affected scope
+```
+
+#### 2.6.3 Recommendation Path (Analysts)
+
+Analysts cannot create War Rooms but can escalate:
+
+```
+Analyst encounters situation they believe warrants P0
+  → Clicks "Recommend P0 / War Room" on the case
+  → Provides justification (mandatory free text)
+  → Recommendation routed to SOC Manager (or CISO if SOC Manager unavailable)
+  → Approver sees recommendation + case evidence + AI assessment
+  → Approver decides: Approve (War Room activates) or Decline (with reason, audit-recorded)
+```
+
+#### 2.6.4 War Room Lead (Post-Activation Authority)
+
+Once a War Room is active, the **senior owner** (typically CISO or SOC Manager — whoever approved/acknowledged the activation) becomes the War Room lead. The lead has exclusive authority to:
+
+- Invite/remove participants (Commander users and external via Teams)
+- Create the Teams War Room Channel
+- Transition War Room state (monitoring → winding_down → closed)
+- Override communication cadence
+- Approve close-out report
+- Delegate lead role to another senior (with audit)
+
+### 2.7 War Room Lifecycle (4-State)
 
 ```
 activated → monitoring → winding_down → closed
@@ -142,17 +203,18 @@ activated → monitoring → winding_down → closed
 
 | State | Meaning | Entry Condition | Exit Condition |
 |---|---|---|---|
-| `activated` | Full emergency coordination. All panels live. AI briefing continuous. Maximum communication cadence. | P0 case exists OR P0 recommended + senior approval OR cluster rule triggers | Senior owner transitions to monitoring |
-| `monitoring` | Active exploitation contained but not validated. Reduced cadence. Watchful posture. | Senior decision: immediate threat contained | All bound cases pass validation OR senior transitions to winding_down |
-| `winding_down` | Post-incident stabilisation. Preparing close-out. Collecting evidence. | All bound cases in `validated_pass` or `pending_closure_gates` | Close-out report generated + senior approval |
-| `closed` | War Room archived. Audit report published. Subscriptions terminated. | Close-out report approved | Terminal state |
+| `activated` | Full emergency coordination. All panels live. AI briefing continuous. Maximum communication cadence. | System rule fires OR senior owner manually activates | Senior owner transitions to monitoring |
+| `monitoring` | Active exploitation contained but not validated. Reduced cadence. Watchful posture. | Senior owner decision: immediate threat contained | All bound cases pass validation OR senior owner transitions to winding_down |
+| `winding_down` | Post-incident stabilisation. Preparing close-out. Collecting evidence. | All bound cases in `validated_pass` or `pending_closure_gates` | Close-out report generated + senior owner approval |
+| `closed` | War Room archived. Audit report published. Subscriptions terminated. | Close-out report approved by senior owner | Terminal state |
 
-**Transition actors:**
-- `activated` can be triggered by: system rule (P0 detected) OR senior owner (manual activation with reason)
-- All other transitions: senior owner only (SOC Manager, CISO, Deputy CISO)
-- `closed`: requires close-out report generation + senior approval
+**Transition actors (explicit):**
+- `→ activated`: `war-room-activation-engine` (system rule) OR SOC Manager / CISO (manual)
+- `→ monitoring`: Senior owner only
+- `→ winding_down`: Senior owner only
+- `→ closed`: Senior owner only (requires close-out report approval)
 
-### 2.7 War Room Entity Contract
+### 2.8 War Room Entity Contract
 
 ```typescript
 export interface WarRoom extends CommonFields {
