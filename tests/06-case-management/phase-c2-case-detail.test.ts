@@ -125,7 +125,7 @@ describe('Case Detail — Token Consumption', () => {
   it('uses componentTokens', () => {
     expect(pageContent).toContain('componentTokens.contentPadding');
     expect(pageContent).toContain('componentTokens.cardPadding');
-    expect(pageContent).toContain('componentTokens.cardRadius');
+    expect(pageContent).toContain('componentTokens.gridGap');
   });
 
   it('uses primitiveTypeScale', () => {
