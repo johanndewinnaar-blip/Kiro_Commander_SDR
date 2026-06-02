@@ -69,11 +69,13 @@ A unit is **READY** iff every dependency unit is **DONE** and every mapped chain
 
 Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readiness State Machine above.
 
-**READY (5 numbered + COIM-H):** Unit 17 (Case Management UI — held: deliverable-5/token-doctrine), Unit 22 (Tenant Admin Surface), Unit 38 (Mock Connectors), Unit 40 (Commander AI Core), and COIM unit **COIM-H**. (Units 18 and 21 are READY by dependency but HELD pending the owner-gated Internal-Risk RBAC decision — see note.)
+**READY (4 numbered + COIM-H):** Unit 17 (Case Management UI — held), Unit 22 (Tenant Admin Surface — held), Unit 40 (Commander AI Core), and COIM unit **COIM-H**. (Units 18 and 21 dependency-READY but HELD pending the owner-gated Internal-Risk RBAC decision; Unit 22 HELD for a scoped pass; Unit 17 HELD pending Unit-44 descope + token doctrine.)
 
-**DONE (26):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13, Unit 14, Unit 15, **Unit 16a**, **Unit 19**, **Unit 20**, **COIM-A, COIM-B, COIM-C, COIM-D, COIM-E, COIM-F, COIM-G**.
+**DONE (27):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13, Unit 14, Unit 15, **Unit 16a**, **Unit 19**, **Unit 20**, **Unit 38**, **COIM-A, COIM-B, COIM-C, COIM-D, COIM-E, COIM-F, COIM-G**.
 
-**BLOCKED (25):** Unit 16b (Aggregate/Posture Command Centre), Units 23–37, 39, 41–49. All 27 Team 2 numbered units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006. COIM units are Foundational and NOT ARCH-006-gated; none remain BLOCKED.
+**BLOCKED (24):** Unit 16b (Aggregate/Posture Command Centre), Units 23–37, 39, 41–49. All 27 Team 2 numbered units (23–37, 39, 41–42, 44–49) additionally blocked by ARCH-006. COIM units are Foundational and NOT ARCH-006-gated; none remain BLOCKED.
+
+> **Recompute (2026-06-02, post Unit 38 DONE):** Unit 38 (Mock Connectors) marked DONE. Unit 39 (Real Connector Readiness) depends on Unit 38 but remains BLOCKED on ARCH-006 (Team 2 gate). No new units flip to READY. The only remaining cleanly-buildable READY unit is **Unit 40 (Commander AI Core)**.
 
 > **Conveyor holds (2026-06-02):** **Unit 18 (Identity Intelligence Surface)** and **Unit 21 (Internal Operating Picture)** are dependency-READY but HELD pending owner resolution of `DEC-sec-c2-internal-cop-rbac-tbd` (Internal-Risk authority/RBAC role model). Their gates require "RBAC gating enforced (Internal Risk authority)" which is owner-gated and must not be invented or deferred with placeholders. **Unit 17 (Case Management UI)** is HELD pending two decisions: deliverable 5 (communication thread) belongs to Team-2 Unit 44, and a token-doctrine conflict in the case tests. **Unit 19 marked DONE** (no unit depends on it; no new units unblocked).
 
@@ -106,7 +108,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 | 19 Asset Intelligence Surface | Foundational | **DONE** | — |
 | 20 External Operating Picture | Foundational | **DONE** | — |
 | 21 Internal Operating Picture | Foundational | **READY** | — |
-| 22 Tenant Admin Surface | Foundational | **READY** | — |
+| 22 Tenant Admin Surface | Foundational | READY — HELD | Owner-directed scoped pass (auth/entitlement runtime; RBAC/user-mgmt; connector mutation gating; shell-reference decision) |
 | 23 Commercial Control Plane | Team 2 | BLOCKED | ARCH-006 (USE_CASE_SCHEDULE.md + PAGE_INVENTORY.md absent) |
 | 24 Drift Detection Engine | Team 2 | BLOCKED | ARCH-006; Unit 4 |
 | 25 Identity Intelligence Engine | Team 2 | BLOCKED | ARCH-006; Unit 14 |
@@ -122,7 +124,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 | 35 Governance & Reporting UI | Team 2 | BLOCKED | ARCH-006; Units 7–13; Unit 14; Unit 15 |
 | 36 CISO Dashboard | Team 2 | BLOCKED | ARCH-006; Unit 15; Unit 14; Units 7–13 |
 | 37 Security C2 / War Room | Team 2 | BLOCKED | ARCH-006; Unit 15; Unit 14; Units 7–13 |
-| 38 Mock Connectors | Foundational | **READY** | — |
+| 38 Mock Connectors | Foundational | **DONE** | — |
 | 39 Real Connector Readiness | Team 2 | BLOCKED | ARCH-006; Unit 4; Unit 38 |
 | 40 Commander AI Core | Foundational | **READY** | — |
 | 41 AWS Alignment — Evaluation Lane | Team 2 | BLOCKED | ARCH-006; Unit 40; ARCH-DEBT-034 (needs re-sourcing) |
@@ -1105,9 +1107,9 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ### Unit 22: Tenant Admin Surface — Foundation
 
-**Status:** READY
+**Status:** READY — HELD (owner-directed scoped pass required, 2026-06-02)
 
-**Blocked by:** — (Unit 4 DONE, Unit 6 DONE; all dependencies satisfied)
+**Blocked by:** — (dependency-READY: Unit 4 DONE, Unit 6 DONE). **HELD pending a scoped pre-build pass** (owner direction, conveyor run 2026-06-02): the unit's gate includes operational/enforcement deliverables that are not truthfully buildable on the current platform. Required before build: (1) **auth/entitlement runtime** (no user-context/provider exists — only the pure `isRouteVisible` helper); (2) **RBAC / user-management boundary** (owned by spec `19-rbac-entitlement-feature-flags`, SCAFFOLD; no platform-user/entitlement fixture); (3) **connector mutation gating** (add/configure/pause/decommission are mutation verbs vs the Phase-2 real-connector gate and the display-only mock-data pattern); (4) **shell-reference decision** (`DEC-v1.3.2-tenant-admin-shell-pending-reference` — Tenant Admin visual language is provisional). Building a display-only shell was explicitly declined by the owner. This is the second application boundary (Assertion 3) and must not be descoped unilaterally.
 
 **Purpose:** Build Tenant Admin Surface foundation (second application boundary)
 
@@ -1719,9 +1721,11 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ### Unit 38: Connector Layer — Mock Connectors (Foundational)
 
-**Status:** READY
+**Status:** DONE
 
-**Blocked by:** — (Unit 4 DONE; no other dependencies)
+**Blocked by:** — (complete)
+
+**Verification:** Spec #61 Universal Security Signal Connector Contract from `docs/99_source_archive/baseline_v2_6_2/`. Evidence: diagnostics clean on `packages/connectors/src/{mock-connectors,mock-signal-generator,mock-connector-state,index}.ts`; vitest `tests/38-mock-connectors/mock-connectors.test.ts` (17 tests) passing; full run 1518/1538 (the 20 residual failures are pre-existing Unit 17 / Cluster B deferral flags, none from Unit 38); governance runner `--unit 38` Green 100% (ARCH-005–009). Mock connectors for all four classes A/B/C/D (only A/B/C/D — Assertion 11); deterministic, repeatable signal generation (output a function of connectorId+runId+index, no wall-clock); all eight signal purposes covered by the full mock set (verified via `coveredPurposes`); mock state machine (active⇄paused, active→error, error→active) built on the Unit 4 `transitionState` foundation with invalid transitions rejected. No live vendor APIs or credentials (Phase-2 gated).
 
 **Purpose:** Build mock connectors for all four classes (A/B/C/D) to support local-first development
 
@@ -2568,7 +2572,7 @@ A build unit is complete when:
 ---
 
 **Last Updated:** 2026-06-02  
-**Status:** ACTIVE — readiness state machine. Build only from the READY set (currently Units 17, 22, 38, 40 and COIM-H; Units 18 and 21 dependency-READY but HELD pending owner Internal-Risk RBAC decision; Units 0–15 + 16a + 19 + 20 + COIM-A…COIM-G DONE). Status recomputes on debt-resolution / unit-completion.  
+**Status:** ACTIVE — readiness state machine. Build only from the READY set (currently Unit 40 and COIM-H; Units 17 & 22 READY-but-HELD; Units 18 & 21 dependency-READY but HELD pending owner Internal-Risk RBAC decision; Units 0–15 + 16a + 19 + 20 + 38 + COIM-A…COIM-G DONE). Status recomputes on debt-resolution / unit-completion.  
 **Enforcement:** ARCH-006 (build-stream sequencing) + ARCH-007 (blocking-debt prerequisite) in `.kiro/testing/conformance-registry.md`, auto-run via post-task-review. "What's next" query defined in `.kiro/steering/execution-discipline.md`.  
 **Authority:** Derived from SYSTEM_KNOWLEDGE_GRAPH.md, DATA_DICTIONARY.md, REBASELINED_BUILD_SCHEDULE_NOTES.md, baseline source. Decision: `DEC-build-readiness-state-machine` (DECISIONS.md).  
 **Sourcing rule:** Never cite the translation layer — all citations from `docs/99_source_archive/baseline_v2_6_2/`

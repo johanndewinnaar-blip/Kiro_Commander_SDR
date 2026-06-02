@@ -499,6 +499,30 @@
 
 ---
 
+### Run: 2026-06-02 (d8a0e33) — Governance Runner
+**Scope:** Unit 38
+**Method:** Automated (scripts/governance-check.cjs)
+
+**Scores:**
+- Architecture (ARCH-005–009): Green (100%)
+
+**Band:** Green
+**Pass Rate:** 100% (5/5)
+
+---
+
+### Run: 2026-06-02 (d8a0e33) — Governance Runner
+**Scope:** Unit 38
+**Method:** Automated (scripts/governance-check.cjs)
+
+**Scores:**
+- Architecture (ARCH-005–009): Green (100%)
+
+**Band:** Green
+**Pass Rate:** 100% (5/5)
+
+---
+
 ## Band Definitions
 
 | Band | Pass Rate | Description |
@@ -534,6 +558,8 @@
 
 **Last Updated:** 2026-05-30  
 **Next Pipeline Run:** TBD
+**Last Governance Runner:** 2026-06-02 (d8a0e33) — Green (100%)
+**Last Governance Runner:** 2026-06-02 (d8a0e33) — Green (100%)
 **Last Governance Runner:** 2026-06-02 (2b5208a) — Green (100%)
 **Last Governance Runner:** 2026-06-02 (2b5208a) — Amber (80%)
 **Last Governance Runner:** 2026-06-02 (da31a0c) — Green (100%)
