@@ -69,19 +69,21 @@ A unit is **READY** iff every dependency unit is **DONE** and every mapped chain
 
 Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readiness State Machine above.
 
-**READY (COIM-H only — separately-gated):** COIM unit **COIM-H** (separately authorised only). **All Foundational numbered units (0–22, 38, 40) are DONE.** No remaining Foundational unit is READY in the conveyor chain.
+**READY (0):** No units are currently READY. The READY set is EMPTY.
 
-**DONE (33):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13, Unit 14, Unit 15, **Unit 16a**, **Unit 17**, **Unit 18**, **Unit 19**, **Unit 20**, **Unit 21**, **Unit 22 (v1)**, **Unit 38**, **Unit 40**, **Unit 50**, **COIM-A, COIM-B, COIM-C, COIM-D, COIM-E, COIM-F, COIM-G**.
+**DONE (36):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13, Unit 14, Unit 15, **Unit 16a**, **Unit 17**, **Unit 18**, **Unit 19**, **Unit 20**, **Unit 21**, **Unit 22 (v1)**, **Unit 38**, **Unit 40**, **Unit 50**, **COIM-A, COIM-B, COIM-C, COIM-D, COIM-E, COIM-F, COIM-G, COIM-H, CFM**.
 
 **BLOCKED (20):** Unit 16b (Aggregate/Posture Command Centre), Units 23–37, 39, 41–49. All Team 2 numbered units remain BLOCKED on ARCH-006. COIM units are Foundational and NOT ARCH-006-gated; none remain BLOCKED.
 
 > **Recompute (2026-06-02, post Unit 17 DONE):** Unit 17 (Case Management UI) marked DONE after descoping deliverable 5 to Unit 44 and resolving the Cluster C stale-test-against-Tabler-reskin conflict. **All Foundational numbered build units are now DONE.** Unit 16b remains BLOCKED (functional pages exist now but the data-point-to-metric mapping artifact is still absent). Team-2 units stay BLOCKED on ARCH-006. The only remaining READY item is COIM-H (separately authorised).
 
-> **Conveyor holds (2026-06-02):** **Unit 18 (Identity Intelligence Surface)** and **Unit 21 (Internal Operating Picture)** are dependency-READY but HELD pending owner resolution of `DEC-sec-c2-internal-cop-rbac-tbd` (Internal-Risk authority/RBAC role model). Their gates require "RBAC gating enforced (Internal Risk authority)" which is owner-gated and must not be invented or deferred with placeholders. **Unit 17 (Case Management UI)** is HELD pending two decisions: deliverable 5 (communication thread) belongs to Team-2 Unit 44, and a token-doctrine conflict in the case tests. **Unit 19 marked DONE** (no unit depends on it; no new units unblocked).
+> **Recompute (2026-06-02, post COIM-H + CFM DONE — phase-hanger exception closure):** COIM-H and CFM both marked DONE. **READY set is now EMPTY.** Unit 16b remains BLOCKED: the Foundational functional pages (Units 17–22) are DONE, but Units 30–33 (Team 2 functional pages) are still BLOCKED on ARCH-006, and the data-point-to-metric mapping artifact remains absent. All Team-2 units stay BLOCKED on ARCH-006. Next unblock path: resolve ARCH-006 (create USE_CASE_SCHEDULE.md + PAGE_INVENTORY.md) OR author the data-point-to-metric mapping artifact for Unit 16b.
+
+> **Conveyor holds (2026-06-02) — RESOLVED:** Units 18, 21, 17, and 19 were previously HELD pending owner decisions. All four are now **DONE** (DEC-sec-c2-internal-cop-rbac resolved, DEC-unit17-gate-clarification resolved, Unit 19 built). No conveyor holds remain among Foundational units.
 
 > **Unit 16 split (`DEC-command-centre-split-16a-16b`, 2026-06-02):** Unit 16 (Command Centre) was split into **16a (Operational Command Centre — READY)** and **16b (Aggregate/Posture Command Centre — BLOCKED)** to resolve ARCH-DEBT-026. The metric-deferral control formerly in `DEC-command-centre-deferred` now applies ONLY to 16b. All units that previously depended on "Unit 16" now depend on **16a**. Full definitions in the Unit 16a / Unit 16b sections below.
 
-> **COIM / OCSF remediation units (COIM-A … COIM-H):** added 2026-06-01 under owner-authorised governance registration for `DEC-coim-ocsf-source-classification-architecture`. **COIM-A/B/C/D/E/F/G are DONE**; COIM-H remains READY. Full definitions and the COIM Live Status Snapshot are in the **"COIM / OCSF Remediation Units"** section below (after Unit 49). Tier mapping: COIM-A = NOW (DONE), COIM-B/C/D/E/F/G = NEXT (DONE), COIM-H = LATER (READY).
+> **COIM / OCSF remediation units (COIM-A … COIM-H):** added 2026-06-01 under owner-authorised governance registration for `DEC-coim-ocsf-source-classification-architecture`. **COIM-A/B/C/D/E/F/G/H are ALL DONE**; CFM also DONE. Full definitions and the COIM Live Status Snapshot are in the **"COIM / OCSF Remediation Units"** section below (after Unit 49). Tier mapping: COIM-A = NOW (DONE), COIM-B/C/D/E/F/G = NEXT (DONE), COIM-H = LATER (DONE).
 
 | Unit | Tag | Status | Blocked by |
 |---|---|---|---|
@@ -102,7 +104,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 | 14 Intelligence Layer — Four Streams | Foundational | **DONE** | — |
 | 15 OODA Layer | Foundational | **DONE** | — |
 | 16a Operational Command Centre | Foundational | **DONE** | — |
-| 16b Aggregate/Posture Command Centre | Foundational | BLOCKED | Units 17, 30–33 (functional pages); data-point-to-metric mapping artifact (absent); Unit 16a |
+| 16b Aggregate/Posture Command Centre | Foundational | BLOCKED | Units 30–33 (Team 2, BLOCKED on ARCH-006); data-point-to-metric mapping artifact (absent — BL-001); Unit 16a |
 | 17 Case Management UI | Foundational | **DONE** | — |
 | 18 Identity Intelligence Surface | Foundational | **DONE** | — |
 | 19 Asset Intelligence Surface | Foundational | **DONE** | — |
@@ -872,7 +874,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Status:** BLOCKED
 
-**Blocked by:** Functional pages that define confirmed data points (Units 17, 30, 31, 32, 33 — not yet DONE); AND the data-point-to-metric mapping artifact (does not yet exist — must be authored or the resume trigger redefined). Carries the metric-deferral control formerly held by `DEC-command-centre-deferred`.
+**Blocked by:** Functional pages that define confirmed data points (Units 30, 31, 32, 33 — Team 2, BLOCKED on ARCH-006); AND the data-point-to-metric mapping artifact (does not yet exist — captured as BL-001 in FEATURE_FUNCTION_BACKLOG.md). Unit 17 (Foundational functional page) is DONE. Carries the metric-deferral control formerly held by `DEC-command-centre-deferred`.
 
 **Purpose:** Build the Command Centre aggregate/posture rollup — the summary KPI layer (Posture Score, SLA Compliance, Coverage and other cross-page aggregates) that must map to *confirmed* data points produced by the functional pages, not seeded guesses.
 
@@ -880,7 +882,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Architectural layer:** Surface Layer (Layer 7)
 
-**Dependencies:** Unit 16a (Operational Command Centre — entry-point surface to host the rollup); the functional pages that define real data points (Units 17, 30, 31, 32, 33); the data-point-to-metric mapping artifact.
+**Dependencies:** Unit 16a (Operational Command Centre — entry-point surface to host the rollup); the functional pages that define real data points (Units 30, 31, 32, 33 — Team 2); the data-point-to-metric mapping artifact (BL-001).
 
 **Required entities:**
 - Confirmed per-page data points (produced by the functional pages — pending)
@@ -2270,9 +2272,9 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's own resolving debt does not self-block it.
 
-**DONE (7):** COIM-A, COIM-B, COIM-C, COIM-D, COIM-E, COIM-F, COIM-G.
+**DONE (8):** COIM-A, COIM-B, COIM-C, COIM-D, COIM-E, COIM-F, COIM-G, COIM-H.
 
-**READY (1):** COIM-H.
+**READY (0):** — (all COIM units complete).
 
 | Unit | Tag | Status | Blocked by | Resolves |
 |---|---|---|---|---|
@@ -2283,9 +2285,9 @@ Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's o
 | COIM-E Analytic Entity | Foundational | **DONE** | — | ARCH-DEBT-042 ✅ |
 | COIM-F Asset / Identity Augmentation | Foundational | **DONE** | — | ARCH-DEBT-045 (Asset/Identity) ✅ |
 | COIM-G Case Aggregation | Foundational | **DONE** | — | ARCH-DEBT-045 (Case dwell time) ✅ |
-| COIM-H Action/Sub-Action + D3FEND | Foundational | **READY** | — | ARCH-DEBT-044, 046 |
+| COIM-H Action/Sub-Action + D3FEND | Foundational | **DONE** | — | ARCH-DEBT-044, 046 ✅ |
 
-> **Tier mapping (owner-authorised plan, 2026-06-01):** COIM-A = **NOW** (DONE); COIM-B/C/D/E/F/G = **NEXT** (DONE); COIM-H = **LATER** (READY — owner may still elect to defer per tier plan). The NOW and NEXT tiers are complete. The LATER unit awaits separate owner build authorisation.
+> **Tier mapping (owner-authorised plan, 2026-06-01):** COIM-A = **NOW** (DONE); COIM-B/C/D/E/F/G = **NEXT** (DONE); COIM-H = **LATER** (DONE). All three tiers are complete.
 
 ---
 

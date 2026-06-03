@@ -297,3 +297,57 @@ TEST MODE is distinct from:
 
 **Status:** Approved. Effective immediately.
 **Date:** 2026-06-03
+
+## Phase Hanger Exception Closure
+
+### DEC-phase-hanger-exception-closure
+
+**Decision:** Audit all governance documents for orphaned or ambiguous phase references and classify each into the appropriate register. Findings below.
+
+**Date:** 2026-06-03
+
+**Orphaned items found and classified:**
+
+| # | Item | Source | Classification | Disposition |
+|---|---|---|---|---|
+| 1 | Data-point-to-metric mapping artifact (absent) | REBASELINED_BUILD_SEQUENCE.md Unit 16b blocked-by | Backlog item (BL-001) | Feature work — the artifact must be authored before 16b can resume. Phase 2. |
+| 2 | PHASE_E_PROPOSAL.md unincorporated | ARCH-DEBT-007; docs/00_authority/PHASE_E_PROPOSAL.md | Backlog item (BL-002) | Owner decision required on incorporate/retire/rework. Partially overlaps Unit 44 (E3) and Unit 43 (audit-adjacent E1/E2). |
+| 3 | USE_CASE_SCHEDULE.md + PAGE_INVENTORY.md absent | ARCH-006 gate; all 20 Team 2 units | Backlog item (BL-003) | Gate artifacts required before any Team 2 unit can proceed. Phase 2. |
+| 4 | ARCH-DEBT-034 "needs re-sourcing" (Unit 41) | ARCHITECTURAL_DEBT_REGISTER.md | Already covered (ARCH-DEBT) | Properly classified as OPEN debt with clear scope-of-fix. No action needed. Phase: Phase 2. |
+| 5 | ARCH-DEBT-035 "needs re-sourcing" (Unit 43) | ARCHITECTURAL_DEBT_REGISTER.md | Already covered (ARCH-DEBT) | Properly classified as OPEN debt with clear scope-of-fix. No action needed. Phase: Phase 1 (Foundational). |
+| 6 | ARCH-DEBT-036 "needs re-sourcing" (Unit 46) | ARCHITECTURAL_DEBT_REGISTER.md | Already covered (ARCH-DEBT) | Properly classified. Phase: Phase 2. |
+| 7 | ARCH-DEBT-037 "needs re-sourcing" (Unit 47) | ARCHITECTURAL_DEBT_REGISTER.md | Already covered (ARCH-DEBT) | Properly classified. Phase: Phase 3. |
+| 8 | ARCH-DEBT-038 "needs re-sourcing" (Unit 49) | ARCHITECTURAL_DEBT_REGISTER.md | Already covered (ARCH-DEBT) | Properly classified. Phase: Phase 3. |
+| 9 | Live Status Snapshot stale (COIM-H shown READY, actually DONE) | REBASELINED_BUILD_SEQUENCE.md line 72 | Stale/close | Corrected — snapshot updated to reflect COIM-H + CFM DONE, READY set EMPTY. |
+| 10 | Conveyor holds paragraph stale (Units 17/18/19/21 shown as HELD, all DONE) | REBASELINED_BUILD_SEQUENCE.md | Stale/close | Corrected — paragraph updated to record resolution. |
+| 11 | Unit 16b blocked-by includes "Unit 17" (DONE) — stale blocker | REBASELINED_BUILD_SEQUENCE.md snapshot table | Stale/close | Removed Unit 17 from 16b blocked-by (Unit 17 is DONE). Remaining blockers: Units 30–33 (Team 2), data-point-to-metric artifact. |
+| 12 | `DEC-command-centre-deferred` resume trigger references "data point to metric schedule" (nonexistent artifact) | DECISIONS.md | Backlog item | Now captured as BL-001. The resume trigger is valid but its object (the artifact) was never placed in a register. |
+| 13 | BUILD_SEQUENCE.md "Gate 6" uses term "TEST MODE" | BUILD_SEQUENCE.md | Already covered (DEC-test-mode-definition) | Properly classified — TEST MODE is the approved term per DEC-test-mode-definition. |
+| 14 | Unit 22 "live enforcement deferred" | REBASELINED_BUILD_SEQUENCE.md | Already covered (ARCH-DEBT-047..050) | Properly classified with four explicit ARCH-DEBT items and clear phase gates. |
+
+**Items closed as stale/duplicate:** 3 (items 9, 10, 11 — Live Status Snapshot drift corrected in place)
+
+**New backlog items created:** 3 (BL-001, BL-002, BL-003)
+
+**New debt created:** 0 (no new ARCH-DEBT entries required — all existing entries are properly classified)
+
+**New decisions created:** 1 (this decision — DEC-phase-hanger-exception-closure)
+
+**Build units modified:** 1 (Unit 16b blocked-by field corrected)
+
+**Remaining ambiguous items requiring owner input:** 1 — BL-002 (PHASE_E_PROPOSAL disposition: incorporate E1/E2 into Unit 43 scope, incorporate E3 into Unit 44 scope, or retire the proposal entirely?)
+
+**ARCH-DEBT-034 through 038 "needs re-sourcing" clarification:** These five items are translation-layer contamination entries. Each unit carried a placeholder citation from the Kiro translation layer rather than a baseline spec. Each debt entry correctly describes:
+- What the unit's actual baseline authority is (or that none exists)
+- What the scope of fix is (re-source to true authority)
+- That the unit stays BLOCKED on this debt until resolved
+They are correctly classified as ARCH-DEBT (structural gaps — mis-sourced citations that compromise the build chain authority). No reclassification needed.
+
+**ARCH-DEBT-035 blocking Unit 43 (Audit Trail) — specific blocker:** Unit 43 cannot proceed because its "Baseline spec" line cites the wrong baseline child spec (#28 = Strategic and Tactical Priority Framework, not Audit Trail). The fix is to re-source Unit 43 to its distributed baseline authority: Spec #05 §6.4.5 (AuditEntry), Spec #29 v2.0 patch §2 No.10 (audit-first operation), Specs #19/#50 (RBAC/audit). Once the Baseline spec line is corrected and the debt is marked RESOLVED, Unit 43's only remaining blockers are its dependency chain (Units 7–13 + Unit 6, all DONE) — making it potentially READY (subject to Team-2/ARCH-006 check: Unit 43 is tagged Foundational, so ARCH-006 does not apply). **Net: resolving ARCH-DEBT-035 would make Unit 43 READY.**
+
+**Unit 16b blocker analysis:** Unit 16b's "data-point-to-metric mapping artifact (absent)" is the single non-Team-2 blocker preventing a Foundational unit from proceeding. However, the artifact depends on Team 2 functional pages (Units 30–33) being built to provide the data points to map. Therefore Unit 16b is effectively Phase 2-gated via this transitive dependency. This is now explicitly captured in BL-001.
+
+**Phase terminology compliance:** No instances of "sandbox", "Phase 1.5", "Phase 2+", or vague "future" found in any governance document. All phase references use approved terminology: Phase 1, TEST MODE, Phase 2, Phase 3.
+
+**Status:** Complete. All registers updated.
+
