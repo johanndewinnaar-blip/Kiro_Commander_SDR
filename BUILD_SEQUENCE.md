@@ -85,7 +85,7 @@ No MVP. The whole Commander SDR product journey is committed from day one. Imple
 2. Test tenant planning.
 3. Credential and secret-handling design.
 4. Vendor API scope validation.
-5. AWS sandbox architecture review.
+5. TEST MODE (AWS test account) architecture review.
 6. Security and privacy review.
 
 ## Gate 7 — Phase 3 Pilot and Production Hardening

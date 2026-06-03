@@ -1798,18 +1798,18 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Deliverables:**
 1. Connector conformance test suite (Certified/Full/Baseline/Planned tier validation)
-2. Connector sandbox test framework (test against vendor sandbox before production)
+2. Connector TEST MODE test framework (test against vendor test environment before production)
 3. Connector deployment validation framework
 4. Connector mapping pack versioning
 5. Phase 2 readiness checklist
 
 **Completion gate:**
 - ✅ Conformance test suite operational
-- ✅ Sandbox test framework operational
+- ✅ TEST MODE test framework operational
 - ✅ Deployment validation framework operational
 - ✅ Mapping pack versioning working
 - ✅ Phase 2 readiness checklist complete
-- ✅ Tests: conformance test suite, sandbox testing, deployment validation
+- ✅ Tests: conformance test suite, TEST MODE testing, deployment validation
 
 **Source tag:** Team 2
 

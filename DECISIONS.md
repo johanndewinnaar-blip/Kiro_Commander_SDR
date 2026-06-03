@@ -271,3 +271,29 @@
 | Decision ID | Date | Decision | Rationale | Impact |
 |---|---|---|---|---|
 | DEC-scoped-read-preflight | 2026-06-02 | Adopt scoped-read pre-flight discipline for READY unit execution: read only the target unit section of `REBASELINED_BUILD_SEQUENCE.md`, only mapped ARCH-DEBT IDs (not the full register), only relevant `DATA_DICTIONARY.md` entity sections, only relevant design/UI files; full-file reads only when the file is being modified or scoped reading is insufficient. | The three governance state docs total ~280 KB (~70k tokens); full-file reads on every unit caused pre-flight context-loading pressure (Unit 16 diagnostic). Scoping cuts pre-flight load ~84% without changing enforcement. | Governance unchanged: the runner (`governance-check.cjs`) still reads in full; ARCH-005–009, scorecard, run logs, pre-commit gate, closure review, and authority preflight are not weakened. Closure report must now disclose scoped-reads-used (yes/no) and any full-file reads with justification. Recorded in `.kiro/steering/execution-discipline.md`. |
+
+
+## Phase terminology standardisation
+
+### DEC-test-mode-definition
+
+**Decision:** TEST MODE is the only approved term for controlled external test integrations in Commander SDR.
+
+**Definition:** TEST MODE means controlled external test integrations using:
+- Test tenants (non-customer)
+- Test mailboxes (non-production)
+- Test credentials (non-production secrets)
+- Test data (synthetic or anonymised)
+- Non-customer-impacting flows
+
+TEST MODE is distinct from:
+- Phase 1 (mock/seed/local only — no external calls)
+- Phase 2 (customer-live with production tenants, credentials, data)
+- Phase 3 (production hardening, resilience, scale, DR, monitoring, commercial)
+
+**Trigger to enter TEST MODE:** Phase 1 data layer complete for the target capability AND owner approval for controlled test scope.
+
+**Forbidden in TEST MODE:** Real customer data, production credentials, customer-impacting flows, billing, uncontrolled external calls.
+
+**Status:** Approved. Effective immediately.
+**Date:** 2026-06-03

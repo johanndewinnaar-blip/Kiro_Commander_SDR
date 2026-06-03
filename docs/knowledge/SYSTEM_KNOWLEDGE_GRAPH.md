@@ -81,12 +81,12 @@ Per Spec #61 §4.1, every connector has a per-class conformance tier. Conformanc
 
 | Tier | Definition |
 |---|---|
-| **Certified** | Built, tested against vendor sandbox, conformance test suite running continuously, deployment validated in pilot. |
+| **Certified** | Built, tested against vendor test environment (TEST MODE), conformance test suite running continuously, deployment validated in pilot. |
 | **Full** | Built, tested against customer data in pilot, vendor-specific tuning completed. |
 | **Baseline** | Built against vendor documentation, customer-specific tuning expected on deployment. |
 | **Planned** | Named in `docs/03_api_specs/INDEX.md`, not yet built. |
 
-The same four tiers govern test cadence (Spec #61 §7): Certified runs continuously against sandbox + production, Full runs in pilot environments, Baseline runs at deployment, Planned has the test suite specified but not yet executed. Spec #55 v2.6 §V2.6-10 exposes these tier states through `connector.conformance.*` configuration parameters.
+The same four tiers govern test cadence (Spec #61 §7): Certified runs continuously against vendor test environment (TEST MODE) + production, Full runs in pilot environments, Baseline runs at deployment, Planned has the test suite specified but not yet executed. Spec #55 v2.6 §V2.6-10 exposes these tier states through `connector.conformance.*` configuration parameters.
 
 ---
 

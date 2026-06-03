@@ -21,7 +21,7 @@
 |---|---|
 | Test ID | Unique test identifier. |
 | Domain | Kiro spec/build pack. |
-| Fixture | Synthetic or approved sandbox source. |
+| Fixture | Synthetic or approved TEST MODE source. |
 | Preconditions | Required setup. |
 | Steps | Repeatable actions. |
 | Expected result | Pass condition. |

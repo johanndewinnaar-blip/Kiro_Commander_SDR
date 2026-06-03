@@ -8,7 +8,7 @@
 
 ## Purpose
 
-Readiness gates, real API sandbox planning, connector contract tests and security review.
+Readiness gates, real API TEST MODE planning, connector contract tests and security review.
 
 ## Scope in
 
