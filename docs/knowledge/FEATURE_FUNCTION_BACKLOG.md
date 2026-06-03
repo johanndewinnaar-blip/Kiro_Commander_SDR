@@ -117,10 +117,11 @@ If any required field is left blank, Kiro will register the item as captured wit
 - **Capability statement:** Decide the disposition of `docs/00_authority/PHASE_E_PROPOSAL.md` (Evidence Pack Model, Auto-Healing Condition Evaluator, Communication Thread Model). Incorporate into the rebaselined build sequence as sub-deliverables of existing units (E1/E2 under Unit 43 or standalone, E3 under Unit 44), retire to `_superseded/`, or rework.
 - **Why / outcome:** Closes ARCH-DEBT-007. The proposal is an unincorporated orphan that references work partially covered by Unit 44 (Email Case Communication) and Unit 43 (Audit Trail). Without a disposition decision, it remains governance noise.
 - **Raw priority:** MEDIUM
-- **Status:** CAPTURED
+- **Status:** CLOSED
 
 **History**
 - 2026-06-02: CAPTURED — surfaced during Phase Hanger Exception Closure. Cross-ref: ARCH-DEBT-007. Phase: Phase 1 (decision only, no code). Owner area: data lake/dormant telemetry. Trigger: owner decision on E1/E2/E3 disposition. Boundary: no code until decision recorded. Does NOT block current UI work.
+- 2026-06-03: CLOSED — proposal retired per DEC-phase-e-retirement. Option A selected (full retirement, zero extraction needed).
 
 ---
 

@@ -158,7 +158,7 @@
 | Build Pack Discipline Steering | `.kiro/steering/build-pack-discipline.md` | BUILD — no-MVP doctrine; prerequisite-chain rule; version-staged commitment (v1.1 → v1.4+) | active |
 | AI Grounding Steering | `.kiro/steering/ai-grounding.md` | BUILD/STANDARDS — Commander AI core from v1.1 | active |
 | Phase 2 Testing & Review Schedule (root) | `PHASE_2_TESTING_AND_REVIEW_SCHEDULE.md` | BUILD — Phase 2 weekly schedule and review gates (also listed as TESTING) | active |
-| PHASE_E_PROPOSAL.md | `docs/00_authority/PHASE_E_PROPOSAL.md` | BUILD — proposed Phase E (E1 Evidence Pack, E2 Auto-Healing, E3 Communication Thread) for spec 06 | draft (self-marked "Planning pass") |
+| PHASE_E_PROPOSAL.md | `docs/00_authority/_superseded/PHASE_E_PROPOSAL_RETIRED.md` | BUILD — proposed Phase E (E1 Evidence Pack, E2 Auto-Healing, E3 Communication Thread) for spec 06 | **RETIRED** (2026-06-03, DEC-phase-e-retirement — fully superseded by CMEP-1.0, Communications Excellence, WRCEP-1.0) |
 | NEXT_TESTING_SCHEDULE.md | `docs/00_authority/NEXT_TESTING_SCHEDULE.md` | BUILD — schedule for testing remaining code (also listed as TESTING) | active |
 | DAILY_OPERATING_LOOP.md | `docs/00_authority/DAILY_OPERATING_LOOP.md` | BUILD — standard session workflow: Start → Scope → Execute → End | active |
 | Conversion Plan | `docs/00_authority/CONVERSION_PLAN.md` | BUILD — 10-step pack-conversion plan and validation gate | active |
@@ -193,7 +193,7 @@
 | `03-seed-data-and-test-fixtures/{…}` | `.kiro/specs/03-…/` | BUILD (implied) — Seed data v1.1 | translation layer (NOT authority) |
 | `04-data-model-canonical-entities/{…}` | `.kiro/specs/04-…/` | BUILD (implied) — Canonical data model v1.1 | translation layer (NOT authority) |
 | `05-command-centre/{…}` | `.kiro/specs/05-…/` | BUILD (implied) — Command Centre v1.1 | translation layer (NOT authority) |
-| `06-case-management/{requirements,design,tasks,planning}.md` | `.kiro/specs/06-…/` | BUILD (implied) — Case Management v1.1; planning.md splits into Phases A/B/C/D/E with explicit Phase E in `PHASE_E_PROPOSAL.md` | translation layer (NOT authority) |
+| `06-case-management/{requirements,design,tasks,planning}.md` | `.kiro/specs/06-…/` | BUILD (implied) — Case Management v1.1; planning.md splits into Phases A/B/C/D/E (Phase E proposal RETIRED per DEC-phase-e-retirement) | translation layer (NOT authority) |
 | `07-vulnerability-management/` | `.kiro/specs/07-…/` | BUILD (implied) — Vuln Mgmt v1.2 | translation layer (NOT authority) |
 | `08-exposure-management/` | `.kiro/specs/08-…/` | BUILD (implied) — Exposure Mgmt v1.2 | translation layer (NOT authority) |
 | `09-asset-intelligence/` | `.kiro/specs/09-…/` | BUILD (implied) — Asset Intelligence v1.2 | translation layer (NOT authority) |

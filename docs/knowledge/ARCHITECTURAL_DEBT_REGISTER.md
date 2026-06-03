@@ -213,12 +213,13 @@ Authority: `.kiro/steering/feature-function-backlog.md` (extended in this update
 - **Scope of fix:** Owner decision on PHASE_E disposition: incorporate into the rebuilt build sequence, retire to `_superseded/`, or rework. The decision must be recorded in `DECISIONS.md`. Cross-ref: `BL-002` in FEATURE_FUNCTION_BACKLOG.md.
 - **Affected specs / artifacts:** `docs/00_authority/PHASE_E_PROPOSAL.md`; `BUILD_SEQUENCE.md`; BP-05; Spec 06 chain; Unit 43 (E1 overlap); Unit 44 (E3 overlap)
 - **Scheduled resolution:** Tied to build-plan replacement (`DEC-build-plan-replacement`); backlog item BL-002 captures disposition decision
-- **Status:** OPEN
+- **Status:** RESOLVED
 - **Date logged:** 2026-05-30
 - **Last reviewed:** 2026-06-03
 
 **History**
 - 2026-05-30: OPEN — seeded from GOVERNANCE_MAP.md Orphan-E
+- 2026-06-03: RESOLVED — proposal retired per DEC-phase-e-retirement. All three sub-phases superseded by CMEP-1.0, Communications Excellence, and WRCEP-1.0.
 
 ---
 

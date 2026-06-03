@@ -1,3 +1,8 @@
+> **RETIRED — 2026-06-03**
+> This proposal has been fully superseded. See DEC-phase-e-retirement below.
+> Replacement capabilities: Evidence entity + COIM-B, CMEP-1.0 DomainProfile (validation/closure/reopening), Communications Excellence (threads/playbooks/effectiveness), WRCEP-1.0 (War Room subscription/cadence/close-out).
+> Retained for lineage only. Do not use as active authority.
+
 # Spec 06 Phase E — Proposed Implementation Plan
 
 **Status:** Planning pass (Phase E not fully specified in repository)  
@@ -6,7 +11,7 @@
 
 ## Phase E Objective
 
-Implement the three Phase E capabilities defined in `.kiro/specs/06-case-management/planning.md`:
+Implement the three Phase E capabilities defined in the Spec 06 case-management planning document (baseline Spec #08):
 
 1. **Evidence Pack Model & Evaluator** (E1) — Formalize the evidence pack data structure, binding evidence to cases with source signal, affected entity, and timestamp. Implement an evidence sufficiency evaluator that determines whether a case has adequate evidence for progression.
 

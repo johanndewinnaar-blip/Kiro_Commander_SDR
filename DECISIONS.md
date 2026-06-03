@@ -351,3 +351,23 @@ They are correctly classified as ARCH-DEBT (structural gaps — mis-sourced cita
 
 **Status:** Complete. All registers updated.
 
+
+
+## PHASE_E_PROPOSAL retirement
+
+### DEC-phase-e-retirement
+
+**Decision:** Retire PHASE_E_PROPOSAL.md (Spec 06 Phase E — Evidence Pack, Auto-Healing, Communication Thread) from active authority. All three sub-phases are fully superseded.
+
+**Rationale:**
+- E1 (Evidence Pack Model): Superseded by Evidence entity (packages/contracts/src/entities/evidence.ts), COIM-B, evidence-sufficiency strategy surface (#13), and intelligence enrichment evidence (compliance-enrichment.ts).
+- E2 (Auto-Healing Condition Evaluator): Superseded by CMEP-1.0 DomainProfile interface — specifically vuln-validation-profile.ts, vuln-closure-gates.ts, vuln-reopening-triggers.ts, and the priority-reassessment loop.
+- E3 (Communication Thread Model): Superseded by Communications Excellence (case-communication-thread.ts, communication-playbook.ts, playbook-execution.ts, playbook-engine.ts, communication-effectiveness.ts) and WRCEP-1.0 (War Room subscription, cadence, close-out).
+
+**Disposition:** Moved to docs/00_authority/_superseded/PHASE_E_PROPOSAL_RETIRED.md. Retained for lineage only.
+
+**Closes:** ARCH-DEBT-007 (PHASE_E orphan)
+**Closes:** BL-002 (PHASE_E_PROPOSAL Incorporation or Retirement)
+
+**Status:** Approved. Effective immediately.
+**Date:** 2026-06-03
