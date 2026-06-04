@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useState } from 'react';
+import { use } from 'react';
 import { useRouter } from 'next/navigation';
 import { useMode } from '@/context/mode-context';
 import { seedCases } from '../../../../../../packages/contracts/src/fixtures/seed-cases';
@@ -25,14 +25,16 @@ import { NotImplemented } from '@/components/not-implemented';
 /**
  * Case Detail — Commander SDR (DS-1.0, Spec 06)
  *
- * Full-depth single-case surface. Inline Case Pattern (Pattern A): a persistent
- * context bar plus a tabbed body — NO split screen, NO pop-out. Everything for a
- * case lives on one scrollable surface and expands inline.
+ * Case-record master-detail layout (ServiceNow/Jira-style): a strong case
+ * header, a main work column (lifecycle → actions/sub-actions → evidence & risk
+ * → activity → communication), and a sticky right rail of case fields (details,
+ * impact, people/escalation, strategy, related entities).
  *
- * All data is real seed data joined by case id (actions, sub-actions, risk
- * objects, evidence) plus resolver output (SLA/routing/validation/closure/
- * reopening). Communication + audit are explicitly-mocked structures that show
- * the full integration shape (email + Teams) for review.
+ * All work-column and rail data is REAL seed data joined by case id (actions,
+ * sub-actions, risk objects, evidence, activity events) plus resolver output
+ * (SLA/routing/validation/closure/reopening). Sections with no data show a
+ * compact inline empty-state. Communication has no entity yet — honest
+ * placeholder. Derived helpers are labelled. No fabrication.
  *
  * Doctrine: no manual lifecycle/closure controls (Assertion 1); surface
  * attribution always shown (Assertion 10); System-First Tier 1 — fully usable
@@ -83,16 +85,6 @@ const ACTION_TONE: Record<string, 'success' | 'warning' | 'muted'> = {
 
 const MS_PER_HOUR = 3_600_000;
 
-type TabId = 'lifecycle' | 'actions' | 'evidence' | 'comms' | 'strategy' | 'audit';
-const TABS: { id: TabId; label: string }[] = [
-  { id: 'lifecycle', label: 'Lifecycle' },
-  { id: 'actions', label: 'Actions & Sub-Actions' },
-  { id: 'evidence', label: 'Evidence & Risk' },
-  { id: 'comms', label: 'Communication' },
-  { id: 'strategy', label: 'Strategy Bindings' },
-  { id: 'audit', label: 'Activity' },
-];
-
 type Tokens = ReturnType<typeof useMode>['tokens'];
 
 // ─── Page ───────────────────────────────────────────────────────────────────
@@ -101,7 +93,6 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
   const { id } = use(params);
   const { mode, tokens } = useMode();
   const router = useRouter();
-  const [tab, setTab] = useState<TabId>('lifecycle');
 
   const caseRecord = seedCases.find((c) => c.id === id) ?? seedCases[0];
   const strategy = resolveAllStrategies(caseRecord, seedStrategies);
@@ -124,95 +115,126 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
   const slaHoursTarget = strategy.sla.status === 'resolved' ? strategy.sla.responseHours : caseRecord.sla.targetResolutionHours;
   const slaRemaining = (slaHoursTarget ?? 0) - ageHours;
   const slaBreached = caseRecord.sla.breached || slaRemaining <= 0;
+  const slaPct = Math.max(0, Math.min(100, Math.round((ageHours / (slaHoursTarget || 1)) * 100)));
+  const slaColor = slaBreached ? primitiveSignal.critical : slaRemaining <= (slaHoursTarget ?? 0) * 0.25 ? primitiveSignal.warning : primitiveSignal.success;
 
   const cur = canonicalStatus(caseRecord.status);
   const blast = caseRecord.blastRadiusScore ?? caseRecord.relatedEntities.length;
   const affected = caseRecord.affectedEntityCount ?? caseRecord.relatedEntities.length;
   const crownJewel = relatedAssets.some((a) => (a as { criticality?: number }).criticality !== undefined && (a as { criticality?: number }).criticality! >= 5);
+  const escalationPath = strategy.routing.status === 'resolved' && strategy.routing.escalationPath ? strategy.routing.escalationPath : ['SOM', 'CISO'];
 
   return (
     <div style={{ padding: componentTokens.contentPadding, display: 'flex', flexDirection: 'column', gap: componentTokens.gridGap }}>
-      {/* Back link */}
+      {/* Breadcrumb / back */}
       <button onClick={() => router.push('/cases')}
         style={{ alignSelf: 'flex-start', background: 'none', border: 'none', cursor: 'pointer', color: tokens.text.muted, fontSize: primitiveTypeScale.caption, padding: 0 }}>
         ← Case Queue
       </button>
 
-      {/* ── CONTEXT BAR (always visible) ───────────────────────────────── */}
-      <section style={{ ...card(tokens), padding: componentTokens.cardPadding }}>
+      {/* ── CASE HEADER ─────────────────────────────────────────────────── */}
+      <header style={{ ...card(tokens), padding: componentTokens.cardPadding, borderLeft: `4px solid ${p.color}` }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: primitiveSpacing[3] }}>
           <div style={{ minWidth: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[2], flexWrap: 'wrap' }}>
               <span style={{ color: p.color, fontWeight: primitiveFontWeight.bold, fontSize: primitiveTypeScale.body }}>{p.shape} {p.label}</span>
               <span style={{ fontFamily: primitiveFonts.mono, fontSize: primitiveTypeScale.caption, color: tokens.text.muted }}>{caseRecord.caseRef}</span>
+              <StatusBadge status={caseRecord.status} tokens={tokens} />
               <SurfacePill surface={caseRecord.surfaceAttribution} tokens={tokens} />
               <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted }}>{titleCase(caseRecord.caseType)}</span>
             </div>
-            <h1 style={{ margin: `${primitiveSpacing[1]} 0 0`, fontSize: primitiveTypeScale.h2, fontWeight: primitiveFontWeight.bold, color: tokens.text.primary }}>{caseRecord.title}</h1>
+            <h1 style={{ margin: `${primitiveSpacing[2]} 0 0`, fontSize: primitiveTypeScale.h2, fontWeight: primitiveFontWeight.bold, color: tokens.text.primary, lineHeight: 1.2 }}>{caseRecord.title}</h1>
           </div>
-          {/* SLA countdown */}
-          <div style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
+          {/* SLA countdown block */}
+          <div style={{ textAlign: 'right', whiteSpace: 'nowrap', minWidth: 150 }}>
             <span style={{ display: 'block', fontSize: primitiveTypeScale.micro, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>SLA</span>
-            <span style={{ fontFamily: primitiveFonts.mono, fontSize: primitiveTypeScale.h3, fontWeight: primitiveFontWeight.bold, color: slaBreached ? primitiveSignal.critical : slaRemaining <= (slaHoursTarget ?? 0) * 0.25 ? primitiveSignal.warning : primitiveSignal.success }}>
-              {slaBreached ? 'BREACHED' : `${Math.max(0, Math.round(slaRemaining))}h left`}
+            <span style={{ fontFamily: primitiveFonts.mono, fontSize: primitiveTypeScale.h2, fontWeight: primitiveFontWeight.bold, color: slaColor }}>
+              {slaBreached ? 'BREACHED' : `${Math.max(0, Math.round(slaRemaining))}h`}
             </span>
-            <span style={{ display: 'block', fontSize: primitiveTypeScale.micro, color: tokens.text.muted }}>target {slaHoursTarget}h</span>
+            <span style={{ display: 'block', fontSize: primitiveTypeScale.micro, color: tokens.text.muted }}>of {slaHoursTarget}h target</span>
+            <div style={{ height: 4, background: tokens.border.subtle, width: '100%', marginTop: 4 }}>
+              <div style={{ height: '100%', width: `${slaPct}%`, background: slaColor }} />
+            </div>
           </div>
         </div>
-
         {/* AI-PLACEMENT: AI-CASE-DETAIL-001 — Next best action recommendation */}
+      </header>
 
-        {/* Context metrics strip */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: primitiveSpacing[3], marginTop: primitiveSpacing[3] }}>
-          <Ctx tokens={tokens} label="Blast Radius" value={String(blast)} accent={blast >= 50 ? primitiveSignal.critical : undefined} />
-          <Ctx tokens={tokens} label="Affected Entities" value={String(affected)} />
-          <Ctx tokens={tokens} label="Crown Jewel" value={crownJewel ? 'YES' : 'No'} accent={crownJewel ? primitiveSignal.critical : undefined} />
-          <Ctx tokens={tokens} label="Surface" value={caseRecord.surfaceAttribution === 'external_attack_surface' ? 'External' : 'Internal'} />
-          <Ctx tokens={tokens} label="Owner / Team" value={caseRecord.owner} sub={caseRecord.team} />
-          <Ctx tokens={tokens} label="Related Cases" value={String(relatedCases.length)}
-            onClick={relatedCases.length ? () => router.push('/cases') : undefined} />
-        </div>
+      {/* ── MASTER-DETAIL: main work column + right rail ────────────────── */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 320px', gap: componentTokens.gridGap, alignItems: 'start' }}>
 
-        {/* Escalation path */}
-        <div style={{ marginTop: primitiveSpacing[3], display: 'flex', alignItems: 'center', gap: primitiveSpacing[2], flexWrap: 'wrap' }}>
-          <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Escalation</span>
-          <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.secondary }}>
-            {caseRecord.owner} → {caseRecord.team} → {strategy.routing.status === 'resolved' && strategy.routing.escalationPath ? strategy.routing.escalationPath.join(' → ') : 'SOM → CISO'}
-          </span>
-        </div>
-      </section>
+        {/* MAIN WORK COLUMN */}
+        <main style={{ minWidth: 0, display: 'flex', flexDirection: 'column', gap: componentTokens.gridGap }}>
+          <LifecycleTab caseRecord={caseRecord} cur={cur} tokens={tokens} mode={mode} />
+          <ActionsTab actions={actions} subActionsByAction={subActionsByAction} tokens={tokens} />
+          <EvidenceTab caseRecord={caseRecord} riskObjects={riskObjects} evidence={evidence} tokens={tokens} />
+          <AuditTab caseRecord={caseRecord} tokens={tokens} />
+          <CommsTab caseRecord={caseRecord} tokens={tokens} />
+        </main>
 
-      {/* ── TAB NAV ─────────────────────────────────────────────────────── */}
-      <div style={{ display: 'flex', gap: primitiveSpacing[1], borderBottom: `1px solid ${tokens.border.default}`, flexWrap: 'wrap' }}>
-        {TABS.map((t) => {
-          const active = t.id === tab;
-          const badge = t.id === 'actions' ? actions.length : t.id === 'evidence' ? riskObjects.length + evidence.length : null;
-          return (
-            <button key={t.id} onClick={() => setTab(t.id)}
-              style={{
-                background: 'none', border: 'none', cursor: 'pointer',
-                padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`,
-                fontSize: primitiveTypeScale.caption, fontWeight: active ? primitiveFontWeight.semibold : primitiveFontWeight.normal,
-                color: active ? tokens.text.primary : tokens.text.muted,
-                borderBottom: active ? `2px solid ${primitiveBrand.gold}` : '2px solid transparent',
-                marginBottom: -1, display: 'flex', alignItems: 'center', gap: primitiveSpacing[1],
-              }}>
-              {t.label}
-              {badge !== null && badge > 0 && (
-                <span style={{ fontSize: primitiveTypeScale.micro, fontFamily: primitiveFonts.mono, color: tokens.text.muted, border: `1px solid ${tokens.border.subtle}`, padding: '0 5px' }}>{badge}</span>
-              )}
-            </button>
-          );
-        })}
+        {/* RIGHT RAIL — case metadata / fields */}
+        <aside style={{ display: 'flex', flexDirection: 'column', gap: componentTokens.gridGap, position: 'sticky', top: primitiveSpacing[3] }}>
+          {/* Details */}
+          <RailPanel tokens={tokens} title="Details">
+            <Field tokens={tokens} label="Owner" value={caseRecord.owner} />
+            <Field tokens={tokens} label="Team" value={caseRecord.team} />
+            <Field tokens={tokens} label="Case Type" value={titleCase(caseRecord.caseType)} />
+            <Field tokens={tokens} label="Surface" value={caseRecord.surfaceAttribution === 'external_attack_surface' ? 'External Attack Surface' : 'Internal Attack Surface'} />
+            <Field tokens={tokens} label="Created" value={new Date(caseRecord.createdAt).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' })} />
+            <Field tokens={tokens} label="Updated" value={new Date(caseRecord.updatedAt).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' })} />
+            <Field tokens={tokens} label="Source" value={caseRecord.source.sourceSystem} mono />
+            <Field tokens={tokens} label="Audit Ref" value={caseRecord.auditTrailRef} mono />
+          </RailPanel>
+
+          {/* Impact (COIM-G where present) */}
+          <RailPanel tokens={tokens} title="Impact">
+            <Field tokens={tokens} label="Blast Radius" value={String(blast)} accent={blast >= 50 ? primitiveSignal.critical : undefined} />
+            <Field tokens={tokens} label="Affected Entities" value={String(affected)} />
+            <Field tokens={tokens} label="Crown Jewel" value={crownJewel ? 'Yes' : 'No'} accent={crownJewel ? primitiveSignal.critical : undefined} />
+            {caseRecord.confidenceAggregate !== undefined && <Field tokens={tokens} label="Confidence" value={`${caseRecord.confidenceAggregate}%`} />}
+            {caseRecord.dwellTimeHours !== undefined && <Field tokens={tokens} label="Dwell" value={`${caseRecord.dwellTimeHours}h`} />}
+          </RailPanel>
+
+          {/* People / escalation */}
+          <RailPanel tokens={tokens} title="People & Escalation">
+            <Field tokens={tokens} label="Assigned" value={caseRecord.owner} />
+            <div style={{ marginTop: primitiveSpacing[1] }}>
+              <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow, display: 'block' }}>Escalation Path</span>
+              <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.secondary }}>{caseRecord.owner} → {caseRecord.team} → {escalationPath.join(' → ')}</span>
+            </div>
+          </RailPanel>
+
+          {/* Strategy summary (real resolver output) */}
+          <RailPanel tokens={tokens} title="Strategy">
+            <Field tokens={tokens} label="SLA" value={strategy.sla.status === 'resolved' ? `${strategy.sla.responseHours}h` : 'Unresolved'} />
+            <Field tokens={tokens} label="Routing" value={strategy.routing.status === 'resolved' ? strategy.routing.team ?? '—' : 'Unresolved'} />
+            <Field tokens={tokens} label="Validation" value={strategy.validation.status === 'resolved' ? `${strategy.validation.windowHours}h window` : 'Unresolved'} />
+            <Field tokens={tokens} label="Closure Gates" value={strategy.closureGates.status === 'resolved' ? `${strategy.closureGates.gates?.length ?? 0} gates` : 'Unresolved'} />
+            <Field tokens={tokens} label="Reopening" value={strategy.reopening.status === 'resolved' ? `${strategy.reopening.triggers?.length ?? 0} triggers` : 'Unresolved'} />
+            <StrategyTab strategy={strategy} tokens={tokens} compact />
+          </RailPanel>
+
+          {/* Related entities */}
+          <RailPanel tokens={tokens} title={`Related (${relatedAssets.length + relatedCases.length})`}>
+            {relatedAssets.length === 0 && relatedCases.length === 0 ? (
+              <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted }}>No related entities.</span>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: primitiveSpacing[1] }}>
+                {relatedAssets.map((a) => (
+                  <span key={a.id} style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.secondary }}>
+                    <span style={{ fontFamily: primitiveFonts.mono, color: tokens.text.muted, fontSize: primitiveTypeScale.micro }}>asset</span> {(a as { name?: string }).name ?? a.id}
+                  </span>
+                ))}
+                {relatedCases.map((rc) => (
+                  <span key={rc.id} onClick={() => router.push(`/cases/${rc.id}`)} style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.secondary, cursor: 'pointer', textDecoration: 'underline' }}>
+                    <span style={{ fontFamily: primitiveFonts.mono, color: tokens.text.muted, fontSize: primitiveTypeScale.micro }}>case</span> {rc.caseRef}
+                  </span>
+                ))}
+              </div>
+            )}
+          </RailPanel>
+        </aside>
       </div>
-
-      {/* ── TAB BODY ────────────────────────────────────────────────────── */}
-      {tab === 'lifecycle' && <LifecycleTab caseRecord={caseRecord} cur={cur} tokens={tokens} mode={mode} />}
-      {tab === 'actions' && <ActionsTab actions={actions} subActionsByAction={subActionsByAction} tokens={tokens} />}
-      {tab === 'evidence' && <EvidenceTab caseRecord={caseRecord} riskObjects={riskObjects} evidence={evidence} tokens={tokens} />}
-      {tab === 'comms' && <CommsTab caseRecord={caseRecord} tokens={tokens} />}
-      {tab === 'strategy' && <StrategyTab strategy={strategy} tokens={tokens} />}
-      {tab === 'audit' && <AuditTab caseRecord={caseRecord} tokens={tokens} />}
     </div>
   );
 }
@@ -452,7 +474,27 @@ function CommsTab({ caseRecord, tokens }: { caseRecord: Case; tokens: Tokens }) 
 
 // ─── TAB 5: Strategy bindings ───────────────────────────────────────────────
 
-function StrategyTab({ strategy, tokens }: { strategy: ReturnType<typeof resolveAllStrategies>; tokens: Tokens }) {
+function StrategyTab({ strategy, tokens, compact }: { strategy: ReturnType<typeof resolveAllStrategies>; tokens: Tokens; compact?: boolean }) {
+  // In the right rail we already show a summary; compact mode renders only the
+  // gate/trigger detail lists that the summary fields don't capture.
+  if (compact) {
+    return (
+      <div style={{ marginTop: primitiveSpacing[2], display: 'flex', flexDirection: 'column', gap: primitiveSpacing[1] }}>
+        {strategy.closureGates.status === 'resolved' && strategy.closureGates.gates && strategy.closureGates.gates.length > 0 && (
+          <div>
+            <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow, display: 'block' }}>Closure Gates</span>
+            <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.secondary }}>{strategy.closureGates.gates.map(titleCase).join(', ')}</span>
+          </div>
+        )}
+        {strategy.reopening.status === 'resolved' && strategy.reopening.triggers && strategy.reopening.triggers.length > 0 && (
+          <div>
+            <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow, display: 'block' }}>Reopening Triggers</span>
+            <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.secondary }}>{strategy.reopening.triggers.map(titleCase).join(', ')}</span>
+          </div>
+        )}
+      </div>
+    );
+  }
   return (
     <section style={{ display: 'flex', flexDirection: 'column', gap: componentTokens.gridGap }}>
       <Panel tokens={tokens} title="SLA Strategy" subtitle="Resolved from SLA surface">
@@ -584,16 +626,6 @@ function Panel({ tokens, title, subtitle, headerRight, children }: { tokens: Tok
   );
 }
 
-function Ctx({ tokens, label, value, sub, accent, onClick }: { tokens: Tokens; label: string; value: string; sub?: string; accent?: string; onClick?: () => void }) {
-  return (
-    <div onClick={onClick} style={{ cursor: onClick ? 'pointer' : 'default' }}>
-      <span style={{ display: 'block', fontSize: primitiveTypeScale.micro, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>{label}</span>
-      <span style={{ fontSize: primitiveTypeScale.body, fontWeight: primitiveFontWeight.semibold, color: accent ?? tokens.text.primary, textDecoration: onClick ? 'underline' : 'none' }}>{value}</span>
-      {sub && <span style={{ display: 'block', fontSize: primitiveTypeScale.micro, color: tokens.text.muted }}>{sub}</span>}
-    </div>
-  );
-}
-
 function Mini({ tokens, label, value, mono }: { tokens: Tokens; label: string; value: string; mono?: boolean }) {
   return (
     <div>
@@ -627,4 +659,40 @@ function Empty({ tokens, text }: { tokens: Tokens; text: string }) {
 
 function Unresolved({ tokens }: { tokens: Tokens }) {
   return <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.muted }}>Unresolved — no matching strategy policy.</span>;
+}
+
+// ─── Right-rail helpers ─────────────────────────────────────────────────────
+
+function RailPanel({ tokens, title, children }: { tokens: Tokens; title: string; children: React.ReactNode }) {
+  return (
+    <div style={{ ...card(tokens), padding: componentTokens.cardPadding }}>
+      <h4 style={{ margin: `0 0 ${primitiveSpacing[2]}`, fontSize: primitiveTypeScale.micro, fontWeight: primitiveFontWeight.semibold, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>{title}</h4>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: primitiveSpacing[2] }}>{children}</div>
+    </div>
+  );
+}
+
+function Field({ tokens, label, value, accent, mono }: { tokens: Tokens; label: string; value: string; accent?: string; mono?: boolean }) {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: primitiveSpacing[2] }}>
+      <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, whiteSpace: 'nowrap' }}>{label}</span>
+      <span style={{ fontSize: primitiveTypeScale.caption, color: accent ?? tokens.text.primary, fontWeight: primitiveFontWeight.medium, fontFamily: mono ? primitiveFonts.mono : primitiveFonts.body, textAlign: 'right', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={value}>{value}</span>
+    </div>
+  );
+}
+
+function StatusBadge({ status, tokens }: { status: string; tokens: Tokens }) {
+  const label =
+    status === 'closed' || status === 'closed_by_system' ? 'Closed'
+    : status === 'awaiting-validation' || status === 'pending_validation' || status === 'validation_running' ? 'Awaiting Validation'
+    : status === 'awaiting-closure' || status === 'pending_closure_gates' ? 'Awaiting Closure'
+    : status === 'in-progress' || status === 'in_progress' ? 'In Progress'
+    : status === 'open' || status === 'detected' ? 'Open'
+    : titleCase(status);
+  const tone: string =
+    label === 'Closed' ? tokens.text.muted
+    : label === 'Awaiting Validation' || label === 'Awaiting Closure' ? tokens.status.warning
+    : label === 'In Progress' ? tokens.status.info
+    : tokens.status.neutral;
+  return <span style={{ fontSize: primitiveTypeScale.micro, fontWeight: primitiveFontWeight.medium, padding: `2px ${primitiveSpacing[2]}`, border: `1px solid ${tone}`, color: tone, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow, whiteSpace: 'nowrap' }}>{label}</span>;
 }
