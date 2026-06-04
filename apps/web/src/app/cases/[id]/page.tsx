@@ -1,448 +1,674 @@
 'use client';
 
-import { use } from 'react';
+import { use, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useMode } from '@/context/mode-context';
 import { seedCases } from '../../../../../../packages/contracts/src/fixtures/seed-cases';
 import { seedAssets } from '../../../../../../packages/contracts/src/fixtures/seed-assets';
-import { componentTokens } from '../../../../../../packages/ui/src/tokens/components';
-import { primitiveBrand, primitiveFonts, primitiveTypeScale, primitiveLetterSpacing, primitiveSignal, primitiveSpacing, primitiveRadii } from '../../../../../../packages/ui/src/tokens/primitives';
-import { primitivePriority } from '../../../../../../packages/ui/src/tokens/primitives';
-import { resolveAllStrategies } from '../../../../../../packages/contracts/src/resolvers/case-strategy-resolver';
+import { seedActions, seedSubActions } from '../../../../../../packages/contracts/src/fixtures/seed-actions';
+import { seedRiskObjects } from '../../../../../../packages/contracts/src/fixtures/seed-risk-objects';
+import { seedEvidence } from '../../../../../../packages/contracts/src/fixtures/seed-evidence';
 import { seedStrategies } from '../../../../../../packages/contracts/src/fixtures/seed-strategies';
-import { getRightRailStyles } from '../../../../../../packages/ui/src/components/right-rail';
-import { LIFECYCLE_STAGES } from '../../../../../../packages/ui/src/components/lifecycle-pipeline';
+import { componentTokens } from '../../../../../../packages/ui/src/tokens/components';
+import {
+  primitiveBrand, primitiveFonts, primitiveTypeScale, primitiveLetterSpacing,
+  primitiveSignal, primitiveSpacing, primitiveFontWeight, primitivePriority,
+} from '../../../../../../packages/ui/src/tokens/primitives';
+import { resolveAllStrategies } from '../../../../../../packages/contracts/src/resolvers/case-strategy-resolver';
 import { getNextStates } from '../../../../../../packages/contracts/src/entities/case-lifecycle';
-import { evaluateValidationWindow } from '../../../../../../packages/contracts/src/resolvers/validation-window-enforcer';
-import { evaluateClosureGates } from '../../../../../../packages/contracts/src/resolvers/closure-gate-enforcer';
-import { assignCase, extractRoutingConfig } from '../../../../../../packages/contracts/src/resolvers/assignment-engine';
-import type { CaseStatus } from '../../../../../../packages/contracts/src/entities/case';
+import { LEGACY_STATUS_MAP } from '../../../../../../packages/contracts/src/entities/case';
+import type { Case, CaseStatus, CaseStatusExtended, LegacyCaseStatus } from '../../../../../../packages/contracts/src/entities/case';
+import type { SubAction, D3FENDTacticType, OutcomeClassification, Action as ActionRec } from '../../../../../../packages/contracts/src/entities/action';
+import { buildCaseComms } from './case-comms';
+import { buildAuditTimeline } from './case-audit';
 
 /**
- * Case Detail — Commander SDR (DS-1.0, Spec 06 Phase C2)
+ * Case Detail — Commander SDR (DS-1.0, Spec 06)
  *
- * Source: Spec 06, Route Registry (path: /cases/:id)
- * Mockup: case-handling-dashboard.png (detail pane)
- * DS-1.0 §5: Master-detail on wide (>1400px), full-page on narrow
- * DS-1.0 §8: Workspace structure with right-rail
- * DS-1.0 §21 Req 32: Right-rail insight/action column
+ * Full-depth single-case surface. Inline Case Pattern (Pattern A): a persistent
+ * context bar plus a tabbed body — NO split screen, NO pop-out. Everything for a
+ * case lives on one scrollable surface and expands inline.
  *
- * Doctrinal constraints:
- * - No manual status edit buttons (Assertion 1)
- * - No manual closure button (Assertion 1)
- * - Routing rationale from strategy resolver (Constraint 9)
- * - SOC boundary: read-only signal display, no SOC write actions
- * - Surface attribution preserved (Assertion 10)
+ * All data is real seed data joined by case id (actions, sub-actions, risk
+ * objects, evidence) plus resolver output (SLA/routing/validation/closure/
+ * reopening). Communication + audit are explicitly-mocked structures that show
+ * the full integration shape (email + Teams) for review.
+ *
+ * Doctrine: no manual lifecycle/closure controls (Assertion 1); surface
+ * attribution always shown (Assertion 10); System-First Tier 1 — fully usable
+ * without AI; AI surfaced only as placement-comment markers.
  */
+
+// ─── Canonical 12-state spine for the lifecycle pipeline ────────────────────
+const LIFECYCLE_SPINE: CaseStatus[] = [
+  'detected', 'bound', 'routed', 'prioritised', 'action_decomposed', 'in_progress',
+  'pending_validation', 'validation_running', 'validated_pass', 'pending_closure_gates', 'closed_by_system',
+];
+
+const STATE_LABEL: Record<string, string> = {
+  detected: 'Detected', bound: 'Bound', routed: 'Routed', prioritised: 'Prioritised',
+  action_decomposed: 'Action Decomposed', in_progress: 'In Progress', pending_validation: 'Pending Validation',
+  validation_running: 'Validation Running', validated_pass: 'Validated Pass', validated_fail: 'Validated Fail',
+  pending_closure_gates: 'Pending Closure', closed_by_system: 'Closed', reopened_by_system: 'Reopened',
+};
+
+const STATE_ACTOR: Record<string, string> = {
+  detected: 'detection-source', bound: 'binding-engine', routed: 'routing-engine', prioritised: 'prioritisation-engine',
+  action_decomposed: 'system', in_progress: 'system', pending_validation: 'system',
+  validation_running: 'validation-engine', validated_pass: 'validation-engine', pending_closure_gates: 'closure-engine',
+  closed_by_system: 'closure-engine',
+};
+
+/** Resolve a case's canonical 12-state from its (possibly legacy) status. */
+function canonicalStatus(status: CaseStatusExtended): CaseStatus {
+  if (status in LEGACY_STATUS_MAP) return LEGACY_STATUS_MAP[status as LegacyCaseStatus];
+  return status as CaseStatus;
+}
+
+const D3FEND_COLOR: Record<D3FENDTacticType, string> = {
+  isolate: primitivePriority.p3.color,
+  evict: primitiveSignal.critical,
+  restore: primitiveSignal.success,
+  harden: primitivePriority.p2.color,
+  detect: primitivePriority.p1.color,
+};
+
+const OUTCOME_TONE: Record<OutcomeClassification, 'success' | 'warning' | 'critical' | 'muted'> = {
+  successful: 'success', partial: 'warning', failed: 'critical', cancelled: 'muted', pending: 'muted',
+};
+
+const ACTION_TONE: Record<string, 'success' | 'warning' | 'muted'> = {
+  completed: 'success', in_progress: 'warning', planned: 'muted', cancelled: 'muted',
+};
+
+const MS_PER_HOUR = 3_600_000;
+
+type TabId = 'lifecycle' | 'actions' | 'evidence' | 'comms' | 'strategy' | 'audit';
+const TABS: { id: TabId; label: string }[] = [
+  { id: 'lifecycle', label: 'Lifecycle' },
+  { id: 'actions', label: 'Actions & Sub-Actions' },
+  { id: 'evidence', label: 'Evidence & Risk' },
+  { id: 'comms', label: 'Communication' },
+  { id: 'strategy', label: 'Strategy Bindings' },
+  { id: 'audit', label: 'Audit Timeline' },
+];
+
+type Tokens = ReturnType<typeof useMode>['tokens'];
+
+// ─── Page ───────────────────────────────────────────────────────────────────
 
 export default function CaseDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const { mode, tokens } = useMode();
-  const railStyles = getRightRailStyles(mode);
+  const router = useRouter();
+  const [tab, setTab] = useState<TabId>('lifecycle');
 
-  // Find the case from seed data
   const caseRecord = seedCases.find((c) => c.id === id) ?? seedCases[0];
   const strategy = resolveAllStrategies(caseRecord, seedStrategies);
   const p = primitivePriority[caseRecord.priority.toLowerCase() as keyof typeof primitivePriority];
 
-  // Related entities
+  // Real joins by case id
+  const actions = seedActions.filter((a) => a.caseId === caseRecord.id);
+  const subActionsByAction = (actionId: string) => seedSubActions.filter((s) => s.actionId === actionId);
+  const riskObjects = seedRiskObjects.filter(
+    (r) => r.affectedEntityId === caseRecord.id || (r.affectedEntities ?? []).includes(caseRecord.id),
+  );
+  const evidence = seedEvidence.filter((e) => e.caseId === caseRecord.id);
   const relatedAssets = seedAssets.filter((a) => caseRecord.relatedEntities.includes(a.id));
+  const relatedCases = seedCases.filter(
+    (c) => c.id !== caseRecord.id && c.relatedEntities.some((e) => caseRecord.relatedEntities.includes(e)),
+  );
 
-  // Mock timeline events (audit trail — system-owned actions only)
-  const timelineEvents = [
-    { timestamp: caseRecord.createdAt, action: 'Case created by routing engine', actor: 'system' },
-    { timestamp: caseRecord.updatedAt, action: `Assigned to ${caseRecord.owner}`, actor: 'routing-engine' },
-    ...(caseRecord.status === 'in-progress' ? [{ timestamp: caseRecord.updatedAt, action: 'Investigation started', actor: caseRecord.owner }] : []),
-  ];
+  // SLA countdown
+  const ageHours = (Date.now() - new Date(caseRecord.createdAt).getTime()) / MS_PER_HOUR;
+  const slaHoursTarget = strategy.sla.status === 'resolved' ? strategy.sla.responseHours : caseRecord.sla.targetResolutionHours;
+  const slaRemaining = (slaHoursTarget ?? 0) - ageHours;
+  const slaBreached = caseRecord.sla.breached || slaRemaining <= 0;
 
-  // Mock evidence pack (source signals bound to case)
-  const evidencePack = [
-    { id: 'ev-1', type: 'Source Signal', source: caseRecord.source.sourceSystem, timestamp: caseRecord.source.sourceTimestamp },
-    { id: 'ev-2', type: 'Connector Import', source: caseRecord.source.connectorId, timestamp: caseRecord.source.sourceTimestamp },
-  ];
+  const cur = canonicalStatus(caseRecord.status);
+  const blast = caseRecord.blastRadiusScore ?? caseRecord.relatedEntities.length;
+  const affected = caseRecord.affectedEntityCount ?? caseRecord.relatedEntities.length;
+  const crownJewel = relatedAssets.some((a) => (a as { criticality?: number }).criticality !== undefined && (a as { criticality?: number }).criticality! >= 5);
 
   return (
-    <div style={{
-      display: 'flex',
-      gap: componentTokens.gridGap,
-      height: '100%',
-      /* DS-1.0 §5: Master-detail on wide (>1400px), stacks on narrow via CSS */
-      flexWrap: 'wrap',
-    }}>
-      {/* Main content — case detail (flex: 1, min-width ensures it takes full width on narrow) */}
-      <div style={{ flex: 1, minWidth: '0', overflow: 'auto' }}>
-        {/* Sticky Case Header — Spec 02 v1.3 Req 5 */}
-        <section style={{
-          position: 'sticky', top: 0, zIndex: 5,
-          background: tokens.surface.secondary,
-          borderBottom: `1px solid ${tokens.border.default}`,
-          padding: `${primitiveSpacing[3]} ${componentTokens.contentPadding}`,
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[2] }}>
-              <span style={{ color: p.color, fontWeight: 700, fontSize: primitiveTypeScale.body }}>{p.shape} {p.label}</span>
-              <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.muted }}>{caseRecord.caseRef}</span>
-              <span style={{ fontSize: primitiveTypeScale.micro, padding: '2px 6px', border: caseRecord.surfaceAttribution === 'external_attack_surface' ? `1px solid ${primitiveBrand.gold}` : `1px solid ${tokens.border.default}`, color: caseRecord.surfaceAttribution === 'external_attack_surface' ? primitiveBrand.gold : tokens.text.muted }}>
-                {caseRecord.surfaceAttribution === 'external_attack_surface' ? 'External' : 'Internal'}
-              </span>
+    <div style={{ padding: componentTokens.contentPadding, display: 'flex', flexDirection: 'column', gap: componentTokens.gridGap }}>
+      {/* Back link */}
+      <button onClick={() => router.push('/cases')}
+        style={{ alignSelf: 'flex-start', background: 'none', border: 'none', cursor: 'pointer', color: tokens.text.muted, fontSize: primitiveTypeScale.caption, padding: 0 }}>
+        ← Case Queue
+      </button>
+
+      {/* ── CONTEXT BAR (always visible) ───────────────────────────────── */}
+      <section style={{ ...card(tokens), padding: componentTokens.cardPadding }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: primitiveSpacing[3] }}>
+          <div style={{ minWidth: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[2], flexWrap: 'wrap' }}>
+              <span style={{ color: p.color, fontWeight: primitiveFontWeight.bold, fontSize: primitiveTypeScale.body }}>{p.shape} {p.label}</span>
+              <span style={{ fontFamily: primitiveFonts.mono, fontSize: primitiveTypeScale.caption, color: tokens.text.muted }}>{caseRecord.caseRef}</span>
+              <SurfacePill surface={caseRecord.surfaceAttribution} tokens={tokens} />
+              <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted }}>{titleCase(caseRecord.caseType)}</span>
             </div>
-            <h1 style={{ margin: '4px 0 0', fontSize: primitiveTypeScale.h2, fontWeight: 700, color: tokens.text.primary, fontFamily: primitiveFonts.body }}>{caseRecord.title}</h1>
+            <h1 style={{ margin: `${primitiveSpacing[1]} 0 0`, fontSize: primitiveTypeScale.h2, fontWeight: primitiveFontWeight.bold, color: tokens.text.primary }}>{caseRecord.title}</h1>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[3] }}>
-            <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.muted, padding: `${primitiveSpacing[1]} ${primitiveSpacing[3]}`, border: `1px solid ${tokens.border.default}` }}>{caseRecord.status}</span>
+          {/* SLA countdown */}
+          <div style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
+            <span style={{ display: 'block', fontSize: primitiveTypeScale.micro, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>SLA</span>
+            <span style={{ fontFamily: primitiveFonts.mono, fontSize: primitiveTypeScale.h3, fontWeight: primitiveFontWeight.bold, color: slaBreached ? primitiveSignal.critical : slaRemaining <= (slaHoursTarget ?? 0) * 0.25 ? primitiveSignal.warning : primitiveSignal.success }}>
+              {slaBreached ? 'BREACHED' : `${Math.max(0, Math.round(slaRemaining))}h left`}
+            </span>
+            <span style={{ display: 'block', fontSize: primitiveTypeScale.micro, color: tokens.text.muted }}>target {slaHoursTarget}h</span>
           </div>
-        </section>
+        </div>
 
-        {/* Metadata Panel */}
-        <section style={{ padding: componentTokens.contentPadding, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: componentTokens.gridGap }}>
-          <MetadataCard label="Owner" value={caseRecord.owner} tokens={tokens} />
-          <MetadataCard label="Team" value={caseRecord.team} tokens={tokens} />
-          <MetadataCard label="Case Type" value={caseRecord.caseType} tokens={tokens} />
-          <MetadataCard label="SLA Target" value={strategy.sla.status === 'resolved' ? `${strategy.sla.responseHours}h` : 'Unresolved'} tokens={tokens} />
-          <MetadataCard label="SLA Breached" value={caseRecord.sla.breached ? 'YES' : 'No'} tokens={tokens} isAlert={caseRecord.sla.breached} />
-          <MetadataCard label="Surface" value={caseRecord.surfaceAttribution === 'external_attack_surface' ? 'External Attack Surface' : 'Internal Attack Surface'} tokens={tokens} />
-        </section>
+        {/* AI-PLACEMENT: AI-CASE-DETAIL-001 — Next best action recommendation */}
 
-        {/* Routing Rationale — from strategy resolver, NOT hardcoded (Constraint 9) */}
-        <section style={{ padding: `0 ${componentTokens.contentPadding} ${componentTokens.contentPadding}` }}>
-          <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, border: `1px solid ${tokens.border.subtle}` }}>
-            <h3 style={{ margin: `0 0 ${primitiveSpacing[2]}`, fontSize: primitiveTypeScale.h3, fontWeight: 600, color: tokens.text.primary, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Routing Rationale</h3>
-            <p style={{ margin: 0, color: tokens.text.secondary, fontSize: primitiveTypeScale.body, lineHeight: '1.43' }}>{caseRecord.routingRationale}</p>
-            {strategy.routing.status === 'resolved' && (
-              <p style={{ margin: `${primitiveSpacing[2]} 0 0`, color: tokens.text.muted, fontSize: primitiveTypeScale.caption }}>
-                Strategy: routed to {strategy.routing.team} via {strategy.routing.sourcePolicy?.id}
-              </p>
-            )}
-          </div>
-        </section>
+        {/* Context metrics strip */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: primitiveSpacing[3], marginTop: primitiveSpacing[3] }}>
+          <Ctx tokens={tokens} label="Blast Radius" value={String(blast)} accent={blast >= 50 ? primitiveSignal.critical : undefined} />
+          <Ctx tokens={tokens} label="Affected Entities" value={String(affected)} />
+          <Ctx tokens={tokens} label="Crown Jewel" value={crownJewel ? 'YES' : 'No'} accent={crownJewel ? primitiveSignal.critical : undefined} />
+          <Ctx tokens={tokens} label="Surface" value={caseRecord.surfaceAttribution === 'external_attack_surface' ? 'External' : 'Internal'} />
+          <Ctx tokens={tokens} label="Owner / Team" value={caseRecord.owner} sub={caseRecord.team} />
+          <Ctx tokens={tokens} label="Related Cases" value={String(relatedCases.length)}
+            onClick={relatedCases.length ? () => router.push('/cases') : undefined} />
+        </div>
 
-        {/* ─── Phase D5: Lifecycle Section ─────────────────────────────────── */}
-        <LifecycleSection caseRecord={caseRecord} tokens={tokens} mode={mode} />
+        {/* Escalation path */}
+        <div style={{ marginTop: primitiveSpacing[3], display: 'flex', alignItems: 'center', gap: primitiveSpacing[2], flexWrap: 'wrap' }}>
+          <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Escalation</span>
+          <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.secondary }}>
+            {caseRecord.owner} → {caseRecord.team} → {strategy.routing.status === 'resolved' && strategy.routing.escalationPath ? strategy.routing.escalationPath.join(' → ') : 'SOM → CISO'}
+          </span>
+        </div>
+      </section>
 
-        {/* Timeline / Audit Trail — chronological system-owned events */}
-        <section style={{ padding: `0 ${componentTokens.contentPadding} ${componentTokens.contentPadding}` }}>
-          <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, border: `1px solid ${tokens.border.subtle}` }}>
-            <h3 style={{ margin: `0 0 ${primitiveSpacing[3]}`, fontSize: primitiveTypeScale.h3, fontWeight: 600, color: tokens.text.primary, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Timeline</h3>
-            {timelineEvents.map((event, i) => (
-              <div key={i} style={{ display: 'flex', gap: primitiveSpacing[3], padding: `${primitiveSpacing[2]} 0`, borderBottom: i < timelineEvents.length - 1 ? `1px solid ${tokens.border.subtle}` : 'none' }}>
-                <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, fontFamily: primitiveFonts.mono, minWidth: '140px', whiteSpace: 'nowrap' }}>
-                  {new Date(event.timestamp).toLocaleString('en-GB', { dateStyle: 'short', timeStyle: 'short' })}
-                </span>
-                <span style={{ fontSize: primitiveTypeScale.body, color: tokens.text.secondary }}>{event.action}</span>
-                <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, marginLeft: 'auto' }}>{event.actor}</span>
-              </div>
-            ))}
-            <p style={{ margin: `${primitiveSpacing[3]} 0 0`, color: tokens.text.muted, fontSize: primitiveTypeScale.caption, fontFamily: primitiveFonts.mono }}>
-              Audit ref: {caseRecord.auditTrailRef}
-            </p>
-          </div>
-        </section>
-
-        {/* Evidence Pack — source signals and connector imports bound to case */}
-        <section style={{ padding: `0 ${componentTokens.contentPadding} ${componentTokens.contentPadding}` }}>
-          <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, border: `1px solid ${tokens.border.subtle}` }}>
-            <h3 style={{ margin: `0 0 ${primitiveSpacing[3]}`, fontSize: primitiveTypeScale.h3, fontWeight: 600, color: tokens.text.primary, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Evidence Pack</h3>
-            {evidencePack.map((ev) => (
-              <div key={ev.id} style={{ display: 'flex', justifyContent: 'space-between', padding: `${primitiveSpacing[2]} 0`, borderBottom: `1px solid ${tokens.border.subtle}` }}>
-                <div>
-                  <span style={{ fontSize: primitiveTypeScale.body, color: tokens.text.primary }}>{ev.type}</span>
-                  <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.muted, marginLeft: primitiveSpacing[2], fontFamily: primitiveFonts.mono }}>{ev.source}</span>
-                </div>
-                <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, fontFamily: primitiveFonts.mono }}>
-                  {new Date(ev.timestamp).toLocaleString('en-GB', { dateStyle: 'short', timeStyle: 'short' })}
-                </span>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Strategy Resolution Summary */}
-        <section style={{ padding: `0 ${componentTokens.contentPadding} ${componentTokens.contentPadding}` }}>
-          <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, border: `1px solid ${tokens.border.subtle}` }}>
-            <h3 style={{ margin: `0 0 ${primitiveSpacing[2]}`, fontSize: primitiveTypeScale.h3, fontWeight: 600, color: tokens.text.primary, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Strategy Bindings</h3>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: primitiveSpacing[3], fontSize: primitiveTypeScale.body }}>
-              <StrategyLine label="Closure Gates" value={strategy.closureGates.status === 'resolved' ? strategy.closureGates.gates!.join(', ') : 'Unresolved'} tokens={tokens} />
-              <StrategyLine label="Reopening Triggers" value={strategy.reopening.status === 'resolved' ? strategy.reopening.triggers!.join(', ') : 'Unresolved'} tokens={tokens} />
-              <StrategyLine label="Validation Window" value={strategy.validation.status === 'resolved' ? `${strategy.validation.windowHours}h window, ${strategy.validation.freshnessHours}h freshness` : 'Unresolved'} tokens={tokens} />
-              <StrategyLine label="Priority Weights" value={strategy.priority.status === 'resolved' ? `${Object.keys(strategy.priority.weights!).length} factors` : 'Unresolved'} tokens={tokens} />
-            </div>
-          </div>
-        </section>
-
-        {/* Related Entities */}
-        {relatedAssets.length > 0 && (
-          <section style={{ padding: `0 ${componentTokens.contentPadding} ${componentTokens.contentPadding}` }}>
-            <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, border: `1px solid ${tokens.border.subtle}` }}>
-              <h3 style={{ margin: `0 0 ${primitiveSpacing[2]}`, fontSize: primitiveTypeScale.h3, fontWeight: 600, color: tokens.text.primary, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Related Entities</h3>
-              {relatedAssets.map((a) => (
-                <div key={a.id} style={{ display: 'flex', justifyContent: 'space-between', padding: `${primitiveSpacing[2]} 0`, borderBottom: `1px solid ${tokens.border.subtle}` }}>
-                  <span style={{ color: tokens.text.primary, fontSize: primitiveTypeScale.body }}>{a.name}</span>
-                  <span style={{ color: tokens.text.muted, fontSize: primitiveTypeScale.caption }}>{a.classification} · Criticality {a.criticality}</span>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
+      {/* ── TAB NAV ─────────────────────────────────────────────────────── */}
+      <div style={{ display: 'flex', gap: primitiveSpacing[1], borderBottom: `1px solid ${tokens.border.default}`, flexWrap: 'wrap' }}>
+        {TABS.map((t) => {
+          const active = t.id === tab;
+          const badge = t.id === 'actions' ? actions.length : t.id === 'evidence' ? riskObjects.length + evidence.length : null;
+          return (
+            <button key={t.id} onClick={() => setTab(t.id)}
+              style={{
+                background: 'none', border: 'none', cursor: 'pointer',
+                padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`,
+                fontSize: primitiveTypeScale.caption, fontWeight: active ? primitiveFontWeight.semibold : primitiveFontWeight.normal,
+                color: active ? tokens.text.primary : tokens.text.muted,
+                borderBottom: active ? `2px solid ${primitiveBrand.gold}` : '2px solid transparent',
+                marginBottom: -1, display: 'flex', alignItems: 'center', gap: primitiveSpacing[1],
+              }}>
+              {t.label}
+              {badge !== null && badge > 0 && (
+                <span style={{ fontSize: primitiveTypeScale.micro, fontFamily: primitiveFonts.mono, color: tokens.text.muted, border: `1px solid ${tokens.border.subtle}`, padding: '0 5px' }}>{badge}</span>
+              )}
+            </button>
+          );
+        })}
       </div>
 
-      {/* Right Rail — DS-1.0 §21 Req 32, using Phase 2c right-rail component styles */}
-      <aside style={{
-        ...railStyles.container,
-        /* DS-1.0 §5: On narrow (<1400px), right-rail collapses — flexWrap on parent handles this */
-        flexBasis: '320px',
-        flexShrink: 0,
-        flexGrow: 0,
-      }}>
-        <div style={railStyles.section}>
-          <h4 style={railStyles.sectionTitle}>Case Actions</h4>
-          <p style={{ ...railStyles.sectionContent, margin: 0 }}>
-            System-owned lifecycle. Actions are determined by the routing engine and strategy layer.
-          </p>
-        </div>
-        <div style={railStyles.section}>
-          <h4 style={railStyles.sectionTitle}>Recommended Next</h4>
-          <p style={{ ...railStyles.sectionContent, margin: 0 }}>
-            {caseRecord.status === 'open' ? 'Awaiting routing engine assignment.' : 'Investigation in progress.'}
-          </p>
-        </div>
-        <div style={railStyles.section}>
-          <h4 style={railStyles.sectionTitle}>Source Signal</h4>
-          <p style={{ margin: 0, color: tokens.text.muted, fontSize: primitiveTypeScale.caption, fontFamily: primitiveFonts.mono }}>
-            {caseRecord.source.sourceSystem}
-          </p>
-        </div>
-      </aside>
+      {/* ── TAB BODY ────────────────────────────────────────────────────── */}
+      {tab === 'lifecycle' && <LifecycleTab caseRecord={caseRecord} cur={cur} tokens={tokens} mode={mode} />}
+      {tab === 'actions' && <ActionsTab actions={actions} subActionsByAction={subActionsByAction} tokens={tokens} />}
+      {tab === 'evidence' && <EvidenceTab caseRecord={caseRecord} riskObjects={riskObjects} evidence={evidence} tokens={tokens} />}
+      {tab === 'comms' && <CommsTab caseRecord={caseRecord} tokens={tokens} />}
+      {tab === 'strategy' && <StrategyTab strategy={strategy} tokens={tokens} />}
+      {tab === 'audit' && <AuditTab caseRecord={caseRecord} actions={actions} tokens={tokens} />}
     </div>
   );
 }
 
-function MetadataCard({ label, value, tokens, isAlert }: { label: string; value: string; tokens: any; isAlert?: boolean }) {
-  return (
-    <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, border: `1px solid ${tokens.border.subtle}` }}>
-      <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow, display: 'block', marginBottom: '4px' }}>{label}</span>
-      <span style={{ fontSize: primitiveTypeScale.body, fontWeight: 600, color: isAlert ? primitiveSignal.critical : tokens.text.primary }}>{value}</span>
-    </div>
-  );
-}
+// ─── TAB 1: Lifecycle pipeline ──────────────────────────────────────────────
 
-function StrategyLine({ label, value, tokens }: { label: string; value: string; tokens: any }) {
-  return (
-    <div>
-      <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.muted, display: 'block' }}>{label}</span>
-      <span style={{ fontSize: primitiveTypeScale.body, color: tokens.text.secondary }}>{value}</span>
-    </div>
-  );
-}
+function LifecycleTab({ caseRecord, cur, tokens, mode }: { caseRecord: Case; cur: CaseStatus; tokens: Tokens; mode: string }) {
+  const curIdx = LIFECYCLE_SPINE.indexOf(cur);
+  const nextStates = getNextStates(cur);
 
-// ─── Phase D5: Lifecycle Section Component ───────────────────────────────────
-
-/**
- * Lifecycle Section — Phase D5
- *
- * Displays:
- * 1. Lifecycle pipeline with current state highlighted (gold ring)
- * 2. Allowed next states (read-only, no action buttons)
- * 3. Transition history timeline (from → to, actor, reason, timestamp, audit ref)
- * 4. Closure gate status (for awaiting-closure cases)
- * 5. Validation window status (for awaiting-validation cases)
- * 6. Assignment rationale and escalation path (from D4)
- *
- * Doctrinal constraints:
- * - Read-only display only. No manual transition/closure/reopening buttons.
- * - All values from D1-D4 evaluators and Spec 43 strategies.
- * - Both modes via semantic tokens.
- */
-
-/** Map CaseStatus to LIFECYCLE_STAGES display name */
-const STATUS_TO_STAGE: Record<CaseStatus, string> = {
-  'open': 'New',
-  'in-progress': 'Investigating',
-  'awaiting-validation': 'Validation',
-  'awaiting-closure': 'Closure',
-  'closed': 'Closure',
-  'reopened': 'Triage',
-};
-
-function LifecycleSection({ caseRecord, tokens, mode }: { caseRecord: any; tokens: any; mode: string }) {
-  const currentStage = STATUS_TO_STAGE[caseRecord.status as CaseStatus] ?? 'New';
-  const allowedNext = getNextStates(caseRecord.status as CaseStatus);
-
-  // Transition history (mock — system-owned transitions only)
-  const transitionHistory = [
-    { from: 'open', to: 'in-progress', actor: 'routing-engine', reason: 'Case assigned via routing strategy', timestamp: caseRecord.createdAt, auditRef: `audit-${caseRecord.id}-001` },
-    ...(caseRecord.status !== 'open' && caseRecord.status !== 'in-progress' ? [
-      { from: 'in-progress', to: caseRecord.status, actor: 'system', reason: 'Lifecycle progression', timestamp: caseRecord.updatedAt, auditRef: `audit-${caseRecord.id}-002` },
-    ] : []),
-  ];
-
-  // Validation window state (for awaiting-validation cases)
-  let validationState: ReturnType<typeof evaluateValidationWindow> | null = null;
-  if (caseRecord.status === 'awaiting-validation') {
-    try {
-      validationState = evaluateValidationWindow(
-        caseRecord.updatedAt,
-        caseRecord.updatedAt,
-        seedStrategies,
-      );
-    } catch { /* strategy missing — display nothing */ }
-  }
-
-  // Closure gate state (for awaiting-closure cases)
-  let closureGateState: ReturnType<typeof evaluateClosureGates> | null = null;
-  if (caseRecord.status === 'awaiting-closure') {
-    try {
-      closureGateState = evaluateClosureGates(
-        { remediationVerified: true, validationPassed: true, hasActiveDrift: false, slaBreached: caseRecord.sla.breached },
-        seedStrategies,
-      );
-    } catch { /* strategy missing — display nothing */ }
-  }
-
-  // Assignment rationale from D4
-  let assignmentInfo: { escalationPath: string[]; routingRationale: string } | null = null;
-  try {
-    const { config } = extractRoutingConfig(seedStrategies);
-    assignmentInfo = {
-      escalationPath: config.escalationPath,
-      routingRationale: caseRecord.routingRationale,
-    };
-  } catch { /* strategy missing */ }
+  // Synthesised completed-state timestamps spread between created and updated.
+  const t0 = new Date(caseRecord.createdAt).getTime();
+  const t1 = new Date(caseRecord.updatedAt).getTime();
+  const stampFor = (idx: number) => {
+    if (curIdx <= 0) return caseRecord.createdAt;
+    const frac = idx / Math.max(1, curIdx);
+    return new Date(t0 + (t1 - t0) * frac).toISOString();
+  };
 
   return (
-    <section data-testid="lifecycle-section" style={{ padding: `0 ${componentTokens.contentPadding} ${componentTokens.contentPadding}` }}>
-      <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, border: `1px solid ${tokens.border.subtle}` }}>
-        <h3 style={{ margin: `0 0 ${primitiveSpacing[3]}`, fontSize: primitiveTypeScale.h3, fontWeight: 600, color: tokens.text.primary, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Lifecycle</h3>
-
-        {/* 1. Lifecycle Pipeline — current state highlighted */}
-        <div data-testid="lifecycle-pipeline" style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[2], overflowX: 'auto', marginBottom: primitiveSpacing[4] }}>
-          {LIFECYCLE_STAGES.map((stage, i) => {
-            const isCurrentStage = stage === currentStage;
+    <section style={{ display: 'flex', flexDirection: 'column', gap: componentTokens.gridGap }}>
+      <Panel tokens={tokens} title="12-State Closed-Loop Lifecycle" subtitle={`Current state: ${STATE_LABEL[cur]}`}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: primitiveSpacing[2] }}>
+          {LIFECYCLE_SPINE.map((state, i) => {
+            const done = i < curIdx;
+            const current = i === curIdx;
+            const border = current ? primitiveBrand.gold : done ? primitiveSignal.success : tokens.border.subtle;
+            const color = current ? primitiveBrand.gold : done ? tokens.text.secondary : tokens.text.muted;
             return (
-              <div key={stage} style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[2] }}>
+              <div key={state} style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[2] }}>
                 <div style={{
-                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px',
-                  padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`,
-                  border: isCurrentStage ? `2px solid ${primitiveBrand.gold}` : `2px solid ${tokens.border.subtle}`,
-                  background: tokens.surface.secondary, minWidth: '80px',
-                  boxShadow: isCurrentStage && mode === 'mission' ? '0 0 8px rgba(255,210,31,0.35)' : 'none',
+                  minWidth: 132, padding: `${primitiveSpacing[2]} ${primitiveSpacing[2]}`,
+                  border: `2px solid ${border}`, background: tokens.surface.primary,
+                  boxShadow: current && mode === 'mission' ? '0 0 8px rgba(255,210,31,0.35)' : 'none',
                 }}>
-                  <span style={{ fontSize: primitiveTypeScale.micro, color: isCurrentStage ? primitiveBrand.gold : tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow, textAlign: 'center', whiteSpace: 'nowrap', fontWeight: isCurrentStage ? 700 : 400 }}>{stage}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[1] }}>
+                    <span style={{ fontSize: primitiveTypeScale.micro, color: done ? primitiveSignal.success : current ? primitiveBrand.gold : tokens.border.default }}>{done ? '✓' : current ? '◆' : '○'}</span>
+                    <span style={{ fontSize: primitiveTypeScale.micro, fontWeight: current ? primitiveFontWeight.bold : primitiveFontWeight.normal, color, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>{STATE_LABEL[state]}</span>
+                  </div>
+                  {(done || current) && (
+                    <div style={{ marginTop: 4, fontSize: primitiveTypeScale.micro, color: tokens.text.muted, fontFamily: primitiveFonts.mono }}>
+                      {new Date(stampFor(i)).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                      <div>{STATE_ACTOR[state]}</div>
+                    </div>
+                  )}
                 </div>
-                {i < LIFECYCLE_STAGES.length - 1 && (
-                  <div style={{ width: primitiveSpacing[4], height: '2px', background: tokens.border.default, flexShrink: 0 }} />
-                )}
+                {i < LIFECYCLE_SPINE.length - 1 && <span style={{ color: tokens.border.default }}>→</span>}
               </div>
             );
           })}
         </div>
+      </Panel>
 
-        {/* 2. Allowed Next States — read-only, no action buttons */}
-        <div data-testid="allowed-next-states" style={{ marginBottom: primitiveSpacing[4] }}>
-          <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow, display: 'block', marginBottom: primitiveSpacing[2] }}>Allowed Next States (system-owned)</span>
-          <div style={{ display: 'flex', gap: primitiveSpacing[2], flexWrap: 'wrap' }}>
-            {allowedNext.length > 0 ? allowedNext.map((state) => (
-              <span key={state} style={{ fontSize: primitiveTypeScale.body, color: tokens.text.secondary, padding: `${primitiveSpacing[1]} ${primitiveSpacing[3]}`, border: `1px solid ${tokens.border.default}` }}>{state}</span>
-            )) : (
-              <span style={{ fontSize: primitiveTypeScale.body, color: tokens.text.muted }}>No transitions available (terminal state)</span>
-            )}
-          </div>
-        </div>
-
-        {/* 3. Validation Window Status (awaiting-validation only) */}
-        {validationState && (
-          <div data-testid="validation-window-status" style={{ marginBottom: primitiveSpacing[4], padding: componentTokens.cardPadding, background: tokens.surface.primary, border: `1px solid ${tokens.border.subtle}` }}>
-            <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow, display: 'block', marginBottom: primitiveSpacing[2] }}>Validation Window</span>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: primitiveSpacing[3] }}>
-              <div>
-                <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, display: 'block' }}>Window</span>
-                <span style={{ fontSize: primitiveTypeScale.body, color: validationState.withinWindow ? primitiveSignal.success : primitiveSignal.critical, fontWeight: 600 }}>
-                  {validationState.withinWindow ? `${validationState.windowHoursRemaining.toFixed(0)}h remaining` : 'Expired'}
-                </span>
-              </div>
-              <div>
-                <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, display: 'block' }}>Evidence</span>
-                <span style={{ fontSize: primitiveTypeScale.body, color: validationState.evidenceFresh ? primitiveSignal.success : primitiveSignal.warning, fontWeight: 600 }}>
-                  {validationState.evidenceFresh ? 'Fresh' : 'Stale'}
-                </span>
-              </div>
-              <div>
-                <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, display: 'block' }}>Refresh</span>
-                <span style={{ fontSize: primitiveTypeScale.body, color: validationState.refreshDue ? primitiveSignal.warning : tokens.text.secondary, fontWeight: 600 }}>
-                  {validationState.refreshDue ? 'Due' : 'Current'}
-                </span>
-              </div>
-            </div>
-            <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, display: 'block', marginTop: primitiveSpacing[2], fontFamily: primitiveFonts.mono }}>
-              Policy: {validationState.strategyRef.policyId} v{validationState.strategyRef.policyVersion}
+      <Panel tokens={tokens} title="Allowed Next States" subtitle="System-owned — no manual transition controls (Assertion 1)">
+        <div style={{ display: 'flex', gap: primitiveSpacing[2], flexWrap: 'wrap' }}>
+          {nextStates.length ? nextStates.map((s) => (
+            <span key={s} style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.secondary, padding: `${primitiveSpacing[1]} ${primitiveSpacing[3]}`, border: `1px solid ${tokens.border.default}` }}>
+              {STATE_LABEL[s]} <span style={{ color: tokens.text.muted, fontSize: primitiveTypeScale.micro }}>· {STATE_ACTOR[s] ?? 'system'}</span>
             </span>
-          </div>
-        )}
+          )) : <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.muted }}>Terminal state — no onward transitions.</span>}
+        </div>
+      </Panel>
+    </section>
+  );
+}
 
-        {/* 4. Closure Gate Status (awaiting-closure only) */}
-        {closureGateState && (
-          <div data-testid="closure-gate-status" style={{ marginBottom: primitiveSpacing[4], padding: componentTokens.cardPadding, background: tokens.surface.primary, border: `1px solid ${tokens.border.subtle}` }}>
-            <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow, display: 'block', marginBottom: primitiveSpacing[2] }}>Closure Gates</span>
+// ─── TAB 2: Actions & sub-actions ───────────────────────────────────────────
+
+function ActionsTab({ actions, subActionsByAction, tokens }: { actions: ActionRec[]; subActionsByAction: (id: string) => SubAction[]; tokens: Tokens }) {
+  if (actions.length === 0) {
+    return <Panel tokens={tokens} title="Actions & Sub-Actions" subtitle="None"><Empty tokens={tokens} text="No actions decomposed for this case yet (precondition: action_decomposed)." /></Panel>;
+  }
+  return (
+    <section style={{ display: 'flex', flexDirection: 'column', gap: componentTokens.gridGap }}>
+      {actions.map((a) => {
+        const subs = subActionsByAction(a.id);
+        return (
+          <Panel key={a.id} tokens={tokens} title={a.title} subtitle={a.description}
+            headerRight={<Badge tone={ACTION_TONE[a.status] ?? 'muted'} tokens={tokens} label={titleCase(a.status)} />}>
+            <div style={{ display: 'flex', gap: primitiveSpacing[4], flexWrap: 'wrap', marginBottom: primitiveSpacing[3] }}>
+              <Mini tokens={tokens} label="Owner" value={a.owner} />
+              <Mini tokens={tokens} label="Est. effort" value={`${a.estimatedEffortHours}h`} />
+              <Mini tokens={tokens} label="Actual" value={`${a.actualEffortHours}h`} />
+              <Mini tokens={tokens} label="Approval" value={a.approvalRef} mono />
+            </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: primitiveSpacing[2] }}>
-              {closureGateState.gateResults.map((gate) => (
-                <div key={gate.gate} style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[2] }}>
-                  <span style={{ width: '8px', height: '8px', background: gate.passed ? primitiveSignal.success : primitiveSignal.critical, display: 'inline-block', flexShrink: 0 }} />
-                  <span style={{ fontSize: primitiveTypeScale.body, color: tokens.text.secondary }}>{gate.gate}</span>
-                  <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, marginLeft: 'auto' }}>{gate.reason}</span>
+              {subs.sort((x, y) => x.sequenceOrder - y.sequenceOrder).map((s) => (
+                <div key={s.id} style={{ border: `1px solid ${tokens.border.subtle}`, padding: primitiveSpacing[3], background: tokens.surface.primary }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: primitiveSpacing[2] }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[2] }}>
+                      <span style={{ fontFamily: primitiveFonts.mono, fontSize: primitiveTypeScale.micro, color: tokens.text.muted }}>#{s.sequenceOrder}</span>
+                      <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.primary, fontWeight: primitiveFontWeight.medium }}>{s.executionMethod}</span>
+                      <span style={{ fontSize: primitiveTypeScale.micro, padding: '1px 6px', background: D3FEND_COLOR[s.tacticType], color: '#fff', textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>{s.tacticType}</span>
+                    </div>
+                    <Badge tone={OUTCOME_TONE[s.outcomeClassification]} tokens={tokens} label={titleCase(s.outcomeClassification)} />
+                  </div>
+                  <div style={{ display: 'flex', gap: primitiveSpacing[4], flexWrap: 'wrap', marginTop: primitiveSpacing[2] }}>
+                    <Mini tokens={tokens} label="Target" value={`${s.targetEntity}`} mono />
+                    <Mini tokens={tokens} label="Owner" value={s.owner} />
+                    <Mini tokens={tokens} label="Est / Actual" value={`${s.estimatedEffortHours}h / ${s.actualEffortHours}h`} />
+                  </div>
+                  {s.countermeasures.length > 0 && (
+                    <div style={{ marginTop: primitiveSpacing[2], display: 'flex', gap: primitiveSpacing[1], flexWrap: 'wrap' }}>
+                      {s.countermeasures.map((cm) => (
+                        <span key={cm.techniqueId} title={cm.techniqueName}
+                          style={{ fontSize: primitiveTypeScale.micro, fontFamily: primitiveFonts.mono, color: tokens.text.secondary, border: `1px solid ${tokens.border.subtle}`, padding: '1px 5px' }}>
+                          {cm.techniqueId} · {cm.techniqueName}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
-            <div style={{ marginTop: primitiveSpacing[2], display: 'flex', alignItems: 'center', gap: primitiveSpacing[2] }}>
-              <span style={{ fontSize: primitiveTypeScale.caption, fontWeight: 600, color: closureGateState.allGatesPass ? primitiveSignal.success : primitiveSignal.warning }}>
-                {closureGateState.allGatesPass ? '✓ All gates pass — eligible for closure' : '⚠ Gates pending — not eligible for closure'}
-              </span>
-            </div>
-            <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, display: 'block', marginTop: primitiveSpacing[2], fontFamily: primitiveFonts.mono }}>
-              Policy: {closureGateState.strategyRef.policyId} v{closureGateState.strategyRef.policyVersion}
-            </span>
-          </div>
-        )}
-
-        {/* 5. Assignment Rationale and Escalation Path (D4) */}
-        {assignmentInfo && (
-          <div data-testid="assignment-rationale" style={{ marginBottom: primitiveSpacing[4] }}>
-            <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow, display: 'block', marginBottom: primitiveSpacing[2] }}>Assignment</span>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: primitiveSpacing[3] }}>
-              <div>
-                <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, display: 'block' }}>Owner</span>
-                <span style={{ fontSize: primitiveTypeScale.body, color: tokens.text.primary, fontWeight: 600 }}>{caseRecord.owner}</span>
-              </div>
-              <div>
-                <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, display: 'block' }}>Team</span>
-                <span style={{ fontSize: primitiveTypeScale.body, color: tokens.text.primary, fontWeight: 600 }}>{caseRecord.team}</span>
-              </div>
-            </div>
-            <div style={{ marginTop: primitiveSpacing[2] }}>
-              <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, display: 'block' }}>Escalation Path</span>
-              <span style={{ fontSize: primitiveTypeScale.body, color: tokens.text.secondary }}>{assignmentInfo.escalationPath.join(' → ')}</span>
-            </div>
-          </div>
-        )}
-
-        {/* 6. Transition History Timeline */}
-        <div data-testid="transition-history">
-          <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow, display: 'block', marginBottom: primitiveSpacing[2] }}>Transition History</span>
-          {transitionHistory.map((txn, i) => (
-            <div key={i} style={{ display: 'flex', gap: primitiveSpacing[3], padding: `${primitiveSpacing[2]} 0`, borderBottom: i < transitionHistory.length - 1 ? `1px solid ${tokens.border.subtle}` : 'none', alignItems: 'baseline' }}>
-              <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, fontFamily: primitiveFonts.mono, minWidth: '140px', whiteSpace: 'nowrap' }}>
-                {new Date(txn.timestamp).toLocaleString('en-GB', { dateStyle: 'short', timeStyle: 'short' })}
-              </span>
-              <span style={{ fontSize: primitiveTypeScale.body, color: tokens.text.secondary }}>
-                <span style={{ color: tokens.text.muted }}>{txn.from}</span> → <span style={{ fontWeight: 600, color: tokens.text.primary }}>{txn.to}</span>
-              </span>
-              <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted }}>{txn.actor}</span>
-              <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, marginLeft: 'auto', fontFamily: primitiveFonts.mono }}>{txn.auditRef}</span>
-            </div>
-          ))}
-          {transitionHistory.length === 0 && (
-            <span style={{ fontSize: primitiveTypeScale.body, color: tokens.text.muted }}>No transitions recorded yet.</span>
-          )}
-        </div>
-      </div>
+          </Panel>
+        );
+      })}
     </section>
   );
+}
+
+// ─── TAB 3: Evidence & risk objects ─────────────────────────────────────────
+
+function EvidenceTab({ caseRecord, riskObjects, evidence, tokens }: {
+  caseRecord: Case;
+  riskObjects: import('../../../../../../packages/contracts/src/entities/risk-object').RiskObject[];
+  evidence: import('../../../../../../packages/contracts/src/entities/evidence').Evidence[];
+  tokens: Tokens;
+}) {
+  const freshTone: Record<string, 'success' | 'warning' | 'critical' | 'muted'> = { fresh: 'success', aging: 'warning', stale: 'warning', expired: 'critical' };
+  return (
+    <section style={{ display: 'flex', flexDirection: 'column', gap: componentTokens.gridGap }}>
+      {/* COIM-G aggregates on the case */}
+      <Panel tokens={tokens} title="COIM-G Case Aggregates" subtitle="Computed from bound risk objects">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: primitiveSpacing[3] }}>
+          <Mini tokens={tokens} label="Blast Radius" value={caseRecord.blastRadiusScore !== undefined ? String(caseRecord.blastRadiusScore) : '—'} />
+          <Mini tokens={tokens} label="Affected" value={caseRecord.affectedEntityCount !== undefined ? String(caseRecord.affectedEntityCount) : '—'} />
+          <Mini tokens={tokens} label="Dwell (h)" value={caseRecord.dwellTimeHours !== undefined ? String(caseRecord.dwellTimeHours) : '—'} />
+          <Mini tokens={tokens} label="Confidence" value={caseRecord.confidenceAggregate !== undefined ? `${caseRecord.confidenceAggregate}%` : '—'} />
+          <Mini tokens={tokens} label="ATT&CK" value={caseRecord.attacks?.length ? `${caseRecord.attacks.length} technique(s)` : '—'} />
+        </div>
+        {caseRecord.attacks?.length ? (
+          <div style={{ marginTop: primitiveSpacing[3], display: 'flex', gap: primitiveSpacing[1], flexWrap: 'wrap' }}>
+            {caseRecord.attacks.map((t) => (
+              <span key={t.technique} style={{ fontSize: primitiveTypeScale.micro, fontFamily: primitiveFonts.mono, color: tokens.text.secondary, border: `1px solid ${tokens.border.subtle}`, padding: '1px 6px' }}>
+                {t.technique} · {t.tactic}
+              </span>
+            ))}
+          </div>
+        ) : null}
+        {caseRecord.findingClassBreakdown && (
+          <div style={{ marginTop: primitiveSpacing[2], fontSize: primitiveTypeScale.micro, color: tokens.text.muted }}>
+            Finding classes: {Object.entries(caseRecord.findingClassBreakdown).map(([k, v]) => `${k} ×${v}`).join(', ')}
+          </div>
+        )}
+      </Panel>
+
+      {/* AI-PLACEMENT: AI-CASE-DETAIL-002 — Evidence gap explanation */}
+
+      {/* Bound risk objects */}
+      <Panel tokens={tokens} title="Bound Risk Objects" subtitle={`${riskObjects.length} bound`}>
+        {riskObjects.length === 0 ? <Empty tokens={tokens} text="No risk objects bound to this case." /> : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: primitiveSpacing[3] }}>
+            {riskObjects.map((r) => {
+              const sc = r.sourceClassification;
+              return (
+                <div key={r.id} style={{ border: `1px solid ${tokens.border.subtle}`, padding: primitiveSpacing[3], background: tokens.surface.primary }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: primitiveSpacing[2] }}>
+                    <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.primary, fontWeight: primitiveFontWeight.medium }}>{titleCase(r.type)}</span>
+                    <Badge tone={r.treatmentState === 'open' ? 'warning' : 'success'} tokens={tokens} label={titleCase(r.treatmentState)} />
+                  </div>
+                  <p style={{ margin: `${primitiveSpacing[2]} 0`, fontSize: primitiveTypeScale.caption, color: tokens.text.secondary, lineHeight: 1.43 }}>{r.justification}</p>
+                  {sc && (
+                    <div style={{ display: 'flex', gap: primitiveSpacing[4], flexWrap: 'wrap', marginTop: primitiveSpacing[2] }}>
+                      <Mini tokens={tokens} label="Finding class" value={titleCase(sc.findingClass)} />
+                      <Mini tokens={tokens} label="Severity" value={`${sc.sourceSeverity.severityLevel} (${sc.sourceSeverity.severityId})`} />
+                      <Mini tokens={tokens} label="Confidence" value={`${sc.sourceConfidence.confidenceLevel} (${sc.sourceConfidence.confidenceScore}%)`} />
+                      <Mini tokens={tokens} label="Source" value={`${sc.sourceProduct.vendor} ${sc.sourceProduct.name}`} />
+                      <Mini tokens={tokens} label="Connector" value={`Class ${sc.sourceProduct.connectorClass}`} />
+                    </div>
+                  )}
+                  {sc?.attacks && sc.attacks.length > 0 && (
+                    <div style={{ marginTop: primitiveSpacing[2], display: 'flex', gap: primitiveSpacing[1], flexWrap: 'wrap' }}>
+                      {sc.attacks.map((t) => (
+                        <span key={t.technique} style={{ fontSize: primitiveTypeScale.micro, fontFamily: primitiveFonts.mono, color: tokens.text.secondary, border: `1px solid ${tokens.border.subtle}`, padding: '1px 5px' }}>{t.technique} · {t.techniqueName}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </Panel>
+
+      {/* Evidence artefacts */}
+      <Panel tokens={tokens} title="Evidence Pack" subtitle={`${evidence.length} artefact(s) — freshness indicates collection recency`}>
+        {evidence.length === 0 ? <Empty tokens={tokens} text="No evidence artefacts bound to this case." /> : (
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: primitiveTypeScale.caption }}>
+            <thead><tr>{['Type', 'Source', 'Confidence', 'Collected', 'Freshness'].map((h) => <Th key={h} tokens={tokens}>{h}</Th>)}</tr></thead>
+            <tbody>
+              {evidence.map((e) => (
+                <tr key={e.id} style={{ borderBottom: `1px solid ${tokens.border.subtle}` }}>
+                  <Td tokens={tokens}>{titleCase(e.evidenceType)}</Td>
+                  <Td tokens={tokens}><span style={{ fontFamily: primitiveFonts.mono }}>{e.source.sourceSystem}</span></Td>
+                  <Td tokens={tokens}>{e.confidence}%</Td>
+                  <Td tokens={tokens}>{new Date(e.collectedAt).toLocaleString('en-GB', { dateStyle: 'short', timeStyle: 'short' })}</Td>
+                  <Td tokens={tokens}><Badge tone={freshTone[e.freshnessStatus] ?? 'muted'} tokens={tokens} label={titleCase(e.freshnessStatus)} /></Td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </Panel>
+    </section>
+  );
+}
+
+// ─── TAB 4: Communication (email + Teams — explicitly mocked) ───────────────
+
+function CommsTab({ caseRecord, tokens }: { caseRecord: Case; tokens: Tokens }) {
+  const comms = buildCaseComms(caseRecord);
+  const stateOrder = ['not_started', 'awaiting_response', 'in_discussion', 'stale', 'escalated'];
+  const stateTone: Record<string, 'muted' | 'warning' | 'critical' | 'success'> = {
+    not_started: 'muted', awaiting_response: 'warning', in_discussion: 'success', stale: 'warning', escalated: 'critical',
+  };
+  const dirTone: Record<string, string> = { outbound: tokens.status.info, inbound: tokens.status.success, reminder: tokens.status.warning, escalation: tokens.status.critical };
+
+  return (
+    <section style={{ display: 'flex', flexDirection: 'column', gap: componentTokens.gridGap }}>
+      <Panel tokens={tokens} title="Communication State" subtitle="Mocked integration — shows the email/Teams flow that will bind to this case"
+        headerRight={<Badge tone={stateTone[comms.state]} tokens={tokens} label={titleCase(comms.state)} />}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[1], flexWrap: 'wrap' }}>
+          {stateOrder.map((s, i) => {
+            const reached = stateOrder.indexOf(comms.state) >= i;
+            return (
+              <div key={s} style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[1] }}>
+                <span style={{ fontSize: primitiveTypeScale.micro, padding: '2px 8px', border: `1px solid ${reached ? tokens.text.secondary : tokens.border.subtle}`, color: reached ? tokens.text.primary : tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>{titleCase(s)}</span>
+                {i < stateOrder.length - 1 && <span style={{ color: tokens.border.default }}>→</span>}
+              </div>
+            );
+          })}
+        </div>
+        <div style={{ marginTop: primitiveSpacing[3], display: 'flex', gap: primitiveSpacing[2] }}>
+          <button disabled style={mockBtn(tokens)}>Send Email (mock)</button>
+          <button disabled style={mockBtn(tokens)}>Post to Teams (mock)</button>
+        </div>
+      </Panel>
+
+      <Panel tokens={tokens} title="Email Thread" subtitle={`Mailbox: ${comms.mailbox}`}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: primitiveSpacing[2] }}>
+          {comms.emails.map((m, i) => (
+            <div key={i} style={{ borderLeft: `3px solid ${dirTone[m.direction]}`, padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, background: tokens.surface.primary }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: primitiveSpacing[2] }}>
+                <span style={{ fontSize: primitiveTypeScale.caption, fontWeight: primitiveFontWeight.medium, color: tokens.text.primary }}>
+                  <span style={{ textTransform: 'uppercase', fontSize: primitiveTypeScale.micro, color: dirTone[m.direction], letterSpacing: primitiveLetterSpacing.eyebrow, marginRight: primitiveSpacing[2] }}>{m.direction}</span>
+                  {m.subject}
+                </span>
+                <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, fontFamily: primitiveFonts.mono }}>{m.timestamp}</span>
+              </div>
+              <p style={{ margin: `${primitiveSpacing[1]} 0 0`, fontSize: primitiveTypeScale.caption, color: tokens.text.secondary }}>{m.body}</p>
+              {m.meta && <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted }}>{m.meta}</span>}
+            </div>
+          ))}
+        </div>
+      </Panel>
+
+      <Panel tokens={tokens} title="Teams / Command Bridge" subtitle="Adaptive Cards + channel posts (mocked)">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: primitiveSpacing[2] }}>
+          {comms.teams.map((t, i) => (
+            <div key={i} style={{ padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, background: tokens.surface.primary, border: `1px solid ${tokens.border.subtle}` }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: primitiveSpacing[2] }}>
+                <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.primary }}>{t.title}</span>
+                <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, fontFamily: primitiveFonts.mono }}>{t.timestamp}</span>
+              </div>
+              <p style={{ margin: `${primitiveSpacing[1]} 0 0`, fontSize: primitiveTypeScale.caption, color: tokens.text.secondary }}>{t.body}</p>
+              {t.actions && (
+                <div style={{ marginTop: primitiveSpacing[2], display: 'flex', gap: primitiveSpacing[1] }}>
+                  {t.actions.map((a) => <button key={a} disabled style={mockBtn(tokens)}>{a}</button>)}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </Panel>
+    </section>
+  );
+}
+
+// ─── TAB 5: Strategy bindings ───────────────────────────────────────────────
+
+function StrategyTab({ strategy, tokens }: { strategy: ReturnType<typeof resolveAllStrategies>; tokens: Tokens }) {
+  return (
+    <section style={{ display: 'flex', flexDirection: 'column', gap: componentTokens.gridGap }}>
+      <Panel tokens={tokens} title="SLA Strategy" subtitle="Resolved from SLA surface">
+        {strategy.sla.status === 'resolved' ? (
+          <div style={{ display: 'flex', gap: primitiveSpacing[4], flexWrap: 'wrap' }}>
+            <Mini tokens={tokens} label="Response" value={`${strategy.sla.responseHours}h`} />
+            <Mini tokens={tokens} label="Escalation cadence" value={strategy.sla.escalationCadenceMinutes !== null ? `${strategy.sla.escalationCadenceMinutes} min` : '—'} />
+            <Mini tokens={tokens} label="Policy" value={strategy.sla.sourcePolicy?.id ?? '—'} mono />
+          </div>
+        ) : <Unresolved tokens={tokens} />}
+      </Panel>
+
+      <Panel tokens={tokens} title="Routing Strategy" subtitle="Resolved from routing surface">
+        {strategy.routing.status === 'resolved' ? (
+          <div style={{ display: 'flex', gap: primitiveSpacing[4], flexWrap: 'wrap' }}>
+            <Mini tokens={tokens} label="Team" value={strategy.routing.team ?? '—'} />
+            <Mini tokens={tokens} label="Escalation" value={(strategy.routing.escalationPath ?? []).join(' → ') || '—'} />
+            <Mini tokens={tokens} label="Policy" value={strategy.routing.sourcePolicy?.id ?? '—'} mono />
+          </div>
+        ) : <Unresolved tokens={tokens} />}
+      </Panel>
+
+      <Panel tokens={tokens} title="Prioritisation Weights" subtitle="Resolved from prioritisation-weight surface">
+        {strategy.priority.status === 'resolved' && strategy.priority.weights ? (
+          <div style={{ display: 'flex', gap: primitiveSpacing[3], flexWrap: 'wrap' }}>
+            {Object.entries(strategy.priority.weights).map(([k, v]) => <Mini key={k} tokens={tokens} label={titleCase(k)} value={String(v)} />)}
+          </div>
+        ) : <Unresolved tokens={tokens} />}
+      </Panel>
+
+      <Panel tokens={tokens} title="Validation Window" subtitle="Resolved from validation-window surface">
+        {strategy.validation.status === 'resolved' ? (
+          <div style={{ display: 'flex', gap: primitiveSpacing[4], flexWrap: 'wrap' }}>
+            <Mini tokens={tokens} label="Window" value={`${strategy.validation.windowHours}h`} />
+            <Mini tokens={tokens} label="Freshness" value={`${strategy.validation.freshnessHours}h`} />
+          </div>
+        ) : <Unresolved tokens={tokens} />}
+      </Panel>
+
+      {/* AI-PLACEMENT: AI-CASE-DETAIL-003 — Closure gate explanation */}
+      <Panel tokens={tokens} title="Closure Gates" subtitle="All gates must pass for system closure">
+        {strategy.closureGates.status === 'resolved' && strategy.closureGates.gates ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: primitiveSpacing[1] }}>
+            {strategy.closureGates.gates.map((g) => (
+              <div key={g} style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[2] }}>
+                <span style={{ width: 8, height: 8, background: tokens.text.muted, display: 'inline-block' }} />
+                <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.secondary }}>{titleCase(g)}</span>
+              </div>
+            ))}
+          </div>
+        ) : <Unresolved tokens={tokens} />}
+      </Panel>
+
+      <Panel tokens={tokens} title="Reopening Triggers" subtitle="Armed conditions that reopen a closed case">
+        {strategy.reopening.status === 'resolved' && strategy.reopening.triggers ? (
+          <div style={{ display: 'flex', gap: primitiveSpacing[2], flexWrap: 'wrap' }}>
+            {strategy.reopening.triggers.map((t) => (
+              <span key={t} style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.secondary, border: `1px solid ${tokens.border.default}`, padding: `${primitiveSpacing[1]} ${primitiveSpacing[2]}` }}>{titleCase(t)} <span style={{ color: tokens.status.success, fontSize: primitiveTypeScale.micro }}>· armed</span></span>
+            ))}
+          </div>
+        ) : <Unresolved tokens={tokens} />}
+      </Panel>
+    </section>
+  );
+}
+
+// ─── TAB 6: Audit timeline ──────────────────────────────────────────────────
+
+function AuditTab({ caseRecord, actions, tokens }: { caseRecord: Case; actions: ActionRec[]; tokens: Tokens }) {
+  const events = buildAuditTimeline(caseRecord, actions);
+  return (
+    <Panel tokens={tokens} title="Audit Timeline" subtitle={`${events.length} events — chronological, system-attributed`}>
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        {events.map((e, i) => (
+          <div key={i} style={{ display: 'flex', gap: primitiveSpacing[3], padding: `${primitiveSpacing[2]} 0`, borderBottom: i < events.length - 1 ? `1px solid ${tokens.border.subtle}` : 'none', alignItems: 'baseline' }}>
+            <span style={{ fontFamily: primitiveFonts.mono, fontSize: primitiveTypeScale.micro, color: tokens.text.muted, minWidth: 130, whiteSpace: 'nowrap' }}>
+              {new Date(e.timestamp).toLocaleString('en-GB', { dateStyle: 'short', timeStyle: 'short' })}
+            </span>
+            <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.primary, flex: 1 }}>{e.action}<span style={{ display: 'block', color: tokens.text.muted, fontSize: primitiveTypeScale.micro }}>{e.detail}</span></span>
+            <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, fontFamily: primitiveFonts.mono }}>{e.actor}</span>
+          </div>
+        ))}
+      </div>
+      <p style={{ margin: `${primitiveSpacing[3]} 0 0`, fontFamily: primitiveFonts.mono, fontSize: primitiveTypeScale.micro, color: tokens.text.muted }}>Audit ref: {caseRecord.auditTrailRef}</p>
+    </Panel>
+  );
+}
+
+// ─── Shared helpers ─────────────────────────────────────────────────────────
+
+function titleCase(s: string): string {
+  return s.replace(/[-_]/g, ' ').replace(/\b\w/g, (m) => m.toUpperCase());
+}
+
+const card = (tokens: Tokens): React.CSSProperties => ({
+  background: tokens.surface.elevated,
+  border: `1px solid ${tokens.border.subtle}`,
+  borderRadius: componentTokens.cardRadius,
+});
+
+const mockBtn = (tokens: Tokens): React.CSSProperties => ({
+  padding: `${primitiveSpacing[1]} ${primitiveSpacing[3]}`,
+  fontSize: primitiveTypeScale.micro, fontFamily: primitiveFonts.body,
+  background: 'transparent', color: tokens.text.muted,
+  border: `1px dashed ${tokens.border.default}`, borderRadius: 0,
+  cursor: 'not-allowed',
+});
+
+function Panel({ tokens, title, subtitle, headerRight, children }: { tokens: Tokens; title: string; subtitle?: string; headerRight?: React.ReactNode; children: React.ReactNode }) {
+  return (
+    <div style={{ ...card(tokens), padding: componentTokens.cardPadding }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: primitiveSpacing[3], marginBottom: componentTokens.cardHeaderMargin }}>
+        <div>
+          <h3 style={{ margin: 0, fontSize: primitiveTypeScale.h4, fontWeight: primitiveFontWeight.semibold, color: tokens.text.primary, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>{title}</h3>
+          {subtitle && <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted }}>{subtitle}</span>}
+        </div>
+        {headerRight}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function Ctx({ tokens, label, value, sub, accent, onClick }: { tokens: Tokens; label: string; value: string; sub?: string; accent?: string; onClick?: () => void }) {
+  return (
+    <div onClick={onClick} style={{ cursor: onClick ? 'pointer' : 'default' }}>
+      <span style={{ display: 'block', fontSize: primitiveTypeScale.micro, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>{label}</span>
+      <span style={{ fontSize: primitiveTypeScale.body, fontWeight: primitiveFontWeight.semibold, color: accent ?? tokens.text.primary, textDecoration: onClick ? 'underline' : 'none' }}>{value}</span>
+      {sub && <span style={{ display: 'block', fontSize: primitiveTypeScale.micro, color: tokens.text.muted }}>{sub}</span>}
+    </div>
+  );
+}
+
+function Mini({ tokens, label, value, mono }: { tokens: Tokens; label: string; value: string; mono?: boolean }) {
+  return (
+    <div>
+      <span style={{ display: 'block', fontSize: primitiveTypeScale.micro, color: tokens.text.muted }}>{label}</span>
+      <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.secondary, fontFamily: mono ? primitiveFonts.mono : primitiveFonts.body }}>{value}</span>
+    </div>
+  );
+}
+
+function Badge({ tokens, label, tone }: { tokens: Tokens; label: string; tone: 'success' | 'warning' | 'critical' | 'muted' }) {
+  const bg = tone === 'success' ? tokens.status.success : tone === 'warning' ? tokens.status.warning : tone === 'critical' ? tokens.status.critical : tokens.text.muted;
+  return <span style={{ fontSize: primitiveTypeScale.micro, fontWeight: primitiveFontWeight.medium, padding: `2px ${primitiveSpacing[2]}`, background: bg, color: '#fff', whiteSpace: 'nowrap' }}>{label}</span>;
+}
+
+function Th({ tokens, children }: { tokens: Tokens; children: React.ReactNode }) {
+  return <th style={{ textAlign: 'left', padding: `${primitiveSpacing[1]} ${primitiveSpacing[2]}`, borderBottom: `2px solid ${tokens.border.default}`, color: tokens.text.secondary, fontSize: primitiveTypeScale.micro, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow, whiteSpace: 'nowrap' }}>{children}</th>;
+}
+
+function Td({ tokens, children }: { tokens: Tokens; children: React.ReactNode }) {
+  return <td style={{ padding: `${primitiveSpacing[2]}`, color: tokens.text.secondary }}>{children}</td>;
+}
+
+function SurfacePill({ surface, tokens }: { surface: string; tokens: Tokens }) {
+  const external = surface === 'external_attack_surface';
+  return <span style={{ fontSize: primitiveTypeScale.micro, padding: '1px 6px', border: `1px solid ${external ? primitiveBrand.gold : tokens.border.default}`, color: external ? primitiveBrand.gold : tokens.text.muted }}>{external ? 'External' : 'Internal'}</span>;
+}
+
+function Empty({ tokens, text }: { tokens: Tokens; text: string }) {
+  return <p style={{ margin: 0, fontSize: primitiveTypeScale.caption, color: tokens.text.muted }}>{text}</p>;
+}
+
+function Unresolved({ tokens }: { tokens: Tokens }) {
+  return <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.muted }}>Unresolved — no matching strategy policy.</span>;
 }
