@@ -19,8 +19,8 @@ import { getNextStates } from '../../../../../../packages/contracts/src/entities
 import { LEGACY_STATUS_MAP } from '../../../../../../packages/contracts/src/entities/case';
 import type { Case, CaseStatus, CaseStatusExtended, LegacyCaseStatus } from '../../../../../../packages/contracts/src/entities/case';
 import type { SubAction, D3FENDTacticType, OutcomeClassification, Action as ActionRec } from '../../../../../../packages/contracts/src/entities/action';
-import { buildCaseComms } from './case-comms';
-import { buildAuditTimeline } from './case-audit';
+import { seedEvents } from '../../../../../../packages/contracts/src/fixtures/seed-events';
+import { NotImplemented } from '@/components/not-implemented';
 
 /**
  * Case Detail — Commander SDR (DS-1.0, Spec 06)
@@ -90,7 +90,7 @@ const TABS: { id: TabId; label: string }[] = [
   { id: 'evidence', label: 'Evidence & Risk' },
   { id: 'comms', label: 'Communication' },
   { id: 'strategy', label: 'Strategy Bindings' },
-  { id: 'audit', label: 'Audit Timeline' },
+  { id: 'audit', label: 'Activity' },
 ];
 
 type Tokens = ReturnType<typeof useMode>['tokens'];
@@ -212,7 +212,7 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
       {tab === 'evidence' && <EvidenceTab caseRecord={caseRecord} riskObjects={riskObjects} evidence={evidence} tokens={tokens} />}
       {tab === 'comms' && <CommsTab caseRecord={caseRecord} tokens={tokens} />}
       {tab === 'strategy' && <StrategyTab strategy={strategy} tokens={tokens} />}
-      {tab === 'audit' && <AuditTab caseRecord={caseRecord} actions={actions} tokens={tokens} />}
+      {tab === 'audit' && <AuditTab caseRecord={caseRecord} tokens={tokens} />}
     </div>
   );
 }
@@ -433,71 +433,19 @@ function EvidenceTab({ caseRecord, riskObjects, evidence, tokens }: {
 
 // ─── TAB 4: Communication (email + Teams — explicitly mocked) ───────────────
 
-function CommsTab({ caseRecord, tokens }: { caseRecord: Case; tokens: Tokens }) {
-  const comms = buildCaseComms(caseRecord);
-  const stateOrder = ['not_started', 'awaiting_response', 'in_discussion', 'stale', 'escalated'];
-  const stateTone: Record<string, 'muted' | 'warning' | 'critical' | 'success'> = {
-    not_started: 'muted', awaiting_response: 'warning', in_discussion: 'success', stale: 'warning', escalated: 'critical',
-  };
-  const dirTone: Record<string, string> = { outbound: tokens.status.info, inbound: tokens.status.success, reminder: tokens.status.warning, escalation: tokens.status.critical };
+// ─── TAB 4: Communication — placeholder (no email/Teams entity exists yet) ──
 
+function CommsTab({ caseRecord, tokens }: { caseRecord: Case; tokens: Tokens }) {
+  // The case communication lifecycle (Spec 25) has no entity or fixture yet:
+  // no CaseEmailThread, no Teams record, no message store. Rather than fabricate
+  // a thread, show honest placeholders. Real per-case activity lives in the
+  // Audit tab (seed-events). caseRecord referenced to keep signature stable.
+  void caseRecord;
   return (
     <section style={{ display: 'flex', flexDirection: 'column', gap: componentTokens.gridGap }}>
-      <Panel tokens={tokens} title="Communication State" subtitle="Mocked integration — shows the email/Teams flow that will bind to this case"
-        headerRight={<Badge tone={stateTone[comms.state]} tokens={tokens} label={titleCase(comms.state)} />}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[1], flexWrap: 'wrap' }}>
-          {stateOrder.map((s, i) => {
-            const reached = stateOrder.indexOf(comms.state) >= i;
-            return (
-              <div key={s} style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[1] }}>
-                <span style={{ fontSize: primitiveTypeScale.micro, padding: '2px 8px', border: `1px solid ${reached ? tokens.text.secondary : tokens.border.subtle}`, color: reached ? tokens.text.primary : tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>{titleCase(s)}</span>
-                {i < stateOrder.length - 1 && <span style={{ color: tokens.border.default }}>→</span>}
-              </div>
-            );
-          })}
-        </div>
-        <div style={{ marginTop: primitiveSpacing[3], display: 'flex', gap: primitiveSpacing[2] }}>
-          <button disabled style={mockBtn(tokens)}>Send Email (mock)</button>
-          <button disabled style={mockBtn(tokens)}>Post to Teams (mock)</button>
-        </div>
-      </Panel>
-
-      <Panel tokens={tokens} title="Email Thread" subtitle={`Mailbox: ${comms.mailbox}`}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: primitiveSpacing[2] }}>
-          {comms.emails.map((m, i) => (
-            <div key={i} style={{ borderLeft: `3px solid ${dirTone[m.direction]}`, padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, background: tokens.surface.primary }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: primitiveSpacing[2] }}>
-                <span style={{ fontSize: primitiveTypeScale.caption, fontWeight: primitiveFontWeight.medium, color: tokens.text.primary }}>
-                  <span style={{ textTransform: 'uppercase', fontSize: primitiveTypeScale.micro, color: dirTone[m.direction], letterSpacing: primitiveLetterSpacing.eyebrow, marginRight: primitiveSpacing[2] }}>{m.direction}</span>
-                  {m.subject}
-                </span>
-                <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, fontFamily: primitiveFonts.mono }}>{m.timestamp}</span>
-              </div>
-              <p style={{ margin: `${primitiveSpacing[1]} 0 0`, fontSize: primitiveTypeScale.caption, color: tokens.text.secondary }}>{m.body}</p>
-              {m.meta && <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted }}>{m.meta}</span>}
-            </div>
-          ))}
-        </div>
-      </Panel>
-
-      <Panel tokens={tokens} title="Teams / Command Bridge" subtitle="Adaptive Cards + channel posts (mocked)">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: primitiveSpacing[2] }}>
-          {comms.teams.map((t, i) => (
-            <div key={i} style={{ padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, background: tokens.surface.primary, border: `1px solid ${tokens.border.subtle}` }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: primitiveSpacing[2] }}>
-                <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.primary }}>{t.title}</span>
-                <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, fontFamily: primitiveFonts.mono }}>{t.timestamp}</span>
-              </div>
-              <p style={{ margin: `${primitiveSpacing[1]} 0 0`, fontSize: primitiveTypeScale.caption, color: tokens.text.secondary }}>{t.body}</p>
-              {t.actions && (
-                <div style={{ marginTop: primitiveSpacing[2], display: 'flex', gap: primitiveSpacing[1] }}>
-                  {t.actions.map((a) => <button key={a} disabled style={mockBtn(tokens)}>{a}</button>)}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </Panel>
+      <NotImplemented title="Email Communication Thread" requires="CaseEmailThread / case-message entity + seed fixture (Spec 25)" />
+      <NotImplemented title="Teams / Command Bridge Integration" requires="Teams decision-event entity + seed fixture (Spec 25 / 26)" />
+      <NotImplemented title="Outbound Draft & Approval Chain" requires="governed-compose + approval entity (Spec 25 Req 3/5)" />
     </section>
   );
 }
@@ -571,25 +519,41 @@ function StrategyTab({ strategy, tokens }: { strategy: ReturnType<typeof resolve
   );
 }
 
-// ─── TAB 6: Audit timeline ──────────────────────────────────────────────────
+// ─── TAB 6: Activity timeline (REAL seed-events for this case) ──────────────
 
-function AuditTab({ caseRecord, actions, tokens }: { caseRecord: Case; actions: ActionRec[]; tokens: Tokens }) {
-  const events = buildAuditTimeline(caseRecord, actions);
+function AuditTab({ caseRecord, tokens }: { caseRecord: Case; tokens: Tokens }) {
+  // Real activity events from seed-events.ts that reference this case, newest first.
+  const sevColor: Record<string, string> = {
+    critical: tokens.status.critical, warning: tokens.status.warning,
+    info: tokens.status.info, success: tokens.status.success, neutral: tokens.text.muted,
+  };
+  const events = seedEvents
+    .filter((e) => e.entityType === 'case' && e.entityRef === caseRecord.id)
+    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
   return (
-    <Panel tokens={tokens} title="Audit Timeline" subtitle={`${events.length} events — chronological, system-attributed`}>
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
-        {events.map((e, i) => (
-          <div key={i} style={{ display: 'flex', gap: primitiveSpacing[3], padding: `${primitiveSpacing[2]} 0`, borderBottom: i < events.length - 1 ? `1px solid ${tokens.border.subtle}` : 'none', alignItems: 'baseline' }}>
-            <span style={{ fontFamily: primitiveFonts.mono, fontSize: primitiveTypeScale.micro, color: tokens.text.muted, minWidth: 130, whiteSpace: 'nowrap' }}>
-              {new Date(e.timestamp).toLocaleString('en-GB', { dateStyle: 'short', timeStyle: 'short' })}
-            </span>
-            <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.primary, flex: 1 }}>{e.action}<span style={{ display: 'block', color: tokens.text.muted, fontSize: primitiveTypeScale.micro }}>{e.detail}</span></span>
-            <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, fontFamily: primitiveFonts.mono }}>{e.actor}</span>
+    <section style={{ display: 'flex', flexDirection: 'column', gap: componentTokens.gridGap }}>
+      <Panel tokens={tokens} title="Activity Timeline" subtitle={`${events.length} real event(s) from seed-events for this case`}>
+        {events.length === 0 ? (
+          <Empty tokens={tokens} text="No activity events reference this case in seed-events." />
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            {events.map((e, i) => (
+              <div key={e.id} style={{ display: 'flex', gap: primitiveSpacing[3], padding: `${primitiveSpacing[2]} 0`, borderBottom: i < events.length - 1 ? `1px solid ${tokens.border.subtle}` : 'none', alignItems: 'baseline' }}>
+                <span style={{ fontFamily: primitiveFonts.mono, fontSize: primitiveTypeScale.micro, color: tokens.text.muted, minWidth: 130, whiteSpace: 'nowrap' }}>
+                  {new Date(e.timestamp).toLocaleString('en-GB', { dateStyle: 'short', timeStyle: 'short' })}
+                </span>
+                <span style={{ width: 7, height: 7, borderRadius: '50%', background: sevColor[e.severity], display: 'inline-block', flexShrink: 0, alignSelf: 'center' }} />
+                <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.primary, flex: 1 }}>{e.message}</span>
+                <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, fontFamily: primitiveFonts.mono }}>{e.severity}</span>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-      <p style={{ margin: `${primitiveSpacing[3]} 0 0`, fontFamily: primitiveFonts.mono, fontSize: primitiveTypeScale.micro, color: tokens.text.muted }}>Audit ref: {caseRecord.auditTrailRef}</p>
-    </Panel>
+        )}
+        <p style={{ margin: `${primitiveSpacing[3]} 0 0`, fontFamily: primitiveFonts.mono, fontSize: primitiveTypeScale.micro, color: tokens.text.muted }}>Audit ref: {caseRecord.auditTrailRef}</p>
+      </Panel>
+      <NotImplemented title="Structured Lifecycle Audit Trail" requires="case-transition audit event store (Spec 06 Domain Req 6) — only activity events exist today" />
+    </section>
   );
 }
 
@@ -603,14 +567,6 @@ const card = (tokens: Tokens): React.CSSProperties => ({
   background: tokens.surface.elevated,
   border: `1px solid ${tokens.border.subtle}`,
   borderRadius: componentTokens.cardRadius,
-});
-
-const mockBtn = (tokens: Tokens): React.CSSProperties => ({
-  padding: `${primitiveSpacing[1]} ${primitiveSpacing[3]}`,
-  fontSize: primitiveTypeScale.micro, fontFamily: primitiveFonts.body,
-  background: 'transparent', color: tokens.text.muted,
-  border: `1px dashed ${tokens.border.default}`, borderRadius: 0,
-  cursor: 'not-allowed',
 });
 
 function Panel({ tokens, title, subtitle, headerRight, children }: { tokens: Tokens; title: string; subtitle?: string; headerRight?: React.ReactNode; children: React.ReactNode }) {

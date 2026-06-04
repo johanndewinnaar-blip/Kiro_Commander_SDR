@@ -1,13 +1,15 @@
 /**
- * Case Metrics (deterministic, derived) — Commander SDR
+ * Case Metrics (DERIVED — not a Spec 08 contract) — Commander SDR
  *
- * Transparent, deterministic scoring + flow helpers computed from populated
- * case fields. These stand in for the Spec #08 scoring contracts (Case Risk
- * Score, Momentum Score, Workload Capacity, Next Best Action) until those
- * resolvers land — every value here is reproducible and labelled as derived.
+ * Transparent, deterministic helpers computed from populated Case fields.
+ * These are DERIVED heuristics, NOT the Spec #08 scoring contracts (Case Risk
+ * Score, Momentum Score, Workload Capacity, Next Best Action). No resolver or
+ * entity backs them yet (Spec 06 Domain Req 10–13 are future work). Every
+ * consuming surface MUST label these "Derived" so they are never mistaken for
+ * authoritative system scores. No mock randomness — all reproducible.
  *
- * Source intent: Spec 06 Domain Requirements 10–14 + Master Proposition §7
- * (severity → ownership → next best action). No mock randomness.
+ * SLA state IS real (computed from case.sla + createdAt). Comm state is a
+ * lifecycle-derived hint only and must NOT imply a real communication record.
  */
 
 import type { Case } from '../../../../../packages/contracts/src/entities/case';
@@ -117,19 +119,7 @@ export function momentum(c: Case, now: number): Momentum {
   return 'stalling';
 }
 
-// ─── Communication state (mirrors case-comms derivation) ────────────────────
-
-export type CommState = 'not_started' | 'awaiting_response' | 'in_discussion' | 'stale' | 'escalated';
-
-export function commState(c: Case): CommState {
-  if (isClosed(c)) return 'in_discussion';
-  if (c.sla.breached) return 'escalated';
-  if (c.priority === 'P0' || c.priority === 'P1') return 'awaiting_response';
-  if (NEW_STATES.has(c.status)) return 'not_started';
-  return 'in_discussion';
-}
-
-// ─── Next Best Action (Master Proposition §7) ───────────────────────────────
+// ─── Next Best Action (DERIVED — not a Spec 08 contract) ────────────────────
 
 /** Deterministic Next Best Action label from lifecycle + SLA + priority. */
 export function nextBestAction(c: Case, now: number): string {

@@ -2,37 +2,58 @@
 
 import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { useMode } from '@/context/mode-context';
 import { seedCases } from '../../../../../packages/contracts/src/fixtures/seed-cases';
+import { seedEvents } from '../../../../../packages/contracts/src/fixtures/seed-events';
 import { componentTokens } from '../../../../../packages/ui/src/tokens/components';
 import {
   primitiveBrand, primitiveFonts, primitiveTypeScale, primitiveLetterSpacing,
-  primitiveSignal, primitiveSpacing, primitiveFontWeight, primitivePriority,
+  primitiveSignal, primitiveSpacing, primitiveFontWeight, primitivePriority, primitiveHud, primitiveGlow,
 } from '../../../../../packages/ui/src/tokens/primitives';
 import { PageContainer } from '@/components/page-container';
 import { CaseCard } from '@/components/case-card';
 import type { Case } from '../../../../../packages/contracts/src/entities/case';
 import {
   FLOW_LANES, laneOf, isClosed, isNew, slaState, riskScore, ageLabel,
-  PRIORITIES, type FlowLane,
+  momentum, PRIORITIES, type FlowLane,
 } from './case-metrics';
 
+const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
+
 /**
- * Case Queue — Commander SDR (DS-1.0, Spec 06)
+ * Case Handling Dashboard — Commander SDR (DS-1.0, Spec 06 Phase C)
  *
- * Flow-first operational queue, modelled on ServiceNow/Jira but driven by the
- * Commander closed-loop lifecycle. Default view is a lane board (New → Triage →
- * In Progress → Validation → Closure → Closed) of rich case cards; a dense
- * table is available via toggle. The New lane leads so "what's next" is the
- * first thing an operator sees.
+ * Built to the governing mockup `case-handling-dashboard.png` (Mission/HUD dark)
+ * and the MOCKUP_INDEX signature patterns:
+ *   KPI strip → Closed-Loop Lifecycle Pipeline (hero) → instrument gauges →
+ *   flow board of rich cards → live activity feed.
  *
- * All values derive from real seed data + deterministic metrics (case-metrics).
- * Doctrine: no manual creation (Assertion 1); surface attribution always shown
- * (Assertion 10). System-First Tier 1 — fully usable without AI.
+ * This surface forces Mission chrome (the mockup is Mission mode) while the rest
+ * of the app honours the toggle. All values derive from real seed data +
+ * deterministic metrics (case-metrics). No mock randomness. System-First Tier 1
+ * — fully usable without AI; AI as placement markers only.
  */
 
+// ── 7-stage display pipeline (named component, Spec 06 / MOCKUP_INDEX §4) ──
+const PIPELINE: { label: string; lanes: FlowLane[] }[] = [
+  { label: 'New', lanes: ['new'] },
+  { label: 'Triage', lanes: ['triage'] },
+  { label: 'Investigating', lanes: ['in_progress'] },
+  { label: 'Awaiting Feedback', lanes: [] },          // comms-awaiting (derived below)
+  { label: 'Actioning', lanes: [] },                  // active remediation (derived below)
+  { label: 'Validation', lanes: ['validation'] },
+  { label: 'Closure', lanes: ['closure', 'closed'] },
+];
+
+// Mission/HUD surface palette (this dashboard is Mission per the mockup)
+const HUD = {
+  bg: primitiveHud.bg0, panel: primitiveHud.bg2, elevated: primitiveHud.bg3,
+  text: primitiveHud.text0, textSecondary: primitiveHud.text1, textMuted: primitiveHud.text2,
+  line: primitiveHud.line2, lineSubtle: primitiveHud.line,
+};
+
 type View = 'board' | 'table';
-type Tokens = ReturnType<typeof useMode>['tokens'];
 
 const STATUS_LABEL: Record<string, string> = {
   'open': 'Open', 'detected': 'Detected', 'in-progress': 'In Progress', 'in_progress': 'In Progress',
@@ -40,15 +61,19 @@ const STATUS_LABEL: Record<string, string> = {
   'closed': 'Closed', 'reopened': 'Reopened',
 };
 
+const SEV_COLOR: Record<string, string> = {
+  critical: primitiveSignal.critical, warning: primitiveSignal.warning,
+  info: primitiveSignal.info, success: primitiveSignal.success, neutral: primitiveSignal.neutral,
+};
+
 function titleCase(s: string): string {
   return s.replace(/[-_]/g, ' ').replace(/\b\w/g, (m) => m.toUpperCase());
 }
 
-export default function CaseQueuePage() {
-  const { tokens } = useMode();
+export default function CaseHandlingPage() {
+  useMode(); // consumed; this surface forces Mission chrome per the mockup.
   const router = useRouter();
   const [view, setView] = useState<View>('board');
-
   const [fPriority, setFPriority] = useState('all');
   const [fType, setFType] = useState('all');
   const [fTeam, setFTeam] = useState('all');
@@ -72,89 +97,173 @@ export default function CaseQueuePage() {
     return true;
   }), [fPriority, fType, fTeam, fOwner, fSurface, showClosed]);
 
-  // KPI strip
+  // ── Metrics ──
   const openCases = seedCases.filter((c) => !isClosed(c));
+  const closedCases = seedCases.filter(isClosed);
   const newCount = seedCases.filter(isNew).length;
   const slaAtRisk = openCases.filter((c) => slaState(c, now).tone !== 'success').length;
-  const p0p1 = openCases.filter((c) => c.priority === 'P0' || c.priority === 'P1').length;
+  const breached = seedCases.filter((c) => c.sla.breached).length;
+  const p0 = openCases.filter((c) => c.priority === 'P0').length;
+  const p1 = openCases.filter((c) => c.priority === 'P1').length;
+  const stalling = openCases.filter((c) => momentum(c, now) === 'stalling').length;
   const avgRisk = openCases.length ? Math.round(openCases.reduce((a, c) => a + riskScore(c, now), 0) / openCases.length) : 0;
 
-  // Lane grouping (sorted within lane by risk desc)
-  const lanes = useMemo(() => {
-    const grouped: Record<FlowLane, Case[]> = { new: [], triage: [], in_progress: [], validation: [], closure: [], closed: [] };
-    filtered.forEach((c) => grouped[laneOf(c)].push(c));
-    (Object.keys(grouped) as FlowLane[]).forEach((k) => grouped[k].sort((a, b) => riskScore(b, now) - riskScore(a, now)));
-    return grouped;
-  }, [filtered, now]);
+  // Pipeline counts (map 12-state → 7 display stages)
+  const pipelineCounts = PIPELINE.map((stage) => {
+    if (stage.label === 'Awaiting Feedback') {
+      return seedCases.filter((c) => (c.priority === 'P0' || c.priority === 'P1') && (c.status === 'in_progress' || c.status === 'in-progress')).length;
+    }
+    if (stage.label === 'Actioning') {
+      return seedCases.filter((c) => c.status === 'action_decomposed' || c.status === 'prioritised').length;
+    }
+    return seedCases.filter((c) => stage.lanes.includes(laneOf(c))).length;
+  });
+  const activeStageIdx = pipelineCounts.findIndex((n, i) => i > 0 && n > 0); // first non-New populated stage
 
+  // Instrument gauges (signature). value/max with red→amber→green meaning.
+  const triageVelocity = Math.round((closedCases.length / Math.max(1, seedCases.length)) * 100);
+  const slaPressure = Math.round((slaAtRisk / Math.max(1, openCases.length)) * 100);
+  const gauges = [
+    { label: 'SLA Pressure', value: slaPressure, max: 100, invert: true },   // high = bad
+    { label: 'Risk Posture', value: avgRisk, max: 100, invert: true },        // high = bad
+    { label: 'Triage Velocity', value: triageVelocity, max: 100, invert: false }, // high = good
+  ];
+
+  // Lane grouping for board
+  const lanes = useMemo(() => {
+    const g: Record<FlowLane, Case[]> = { new: [], triage: [], in_progress: [], validation: [], closure: [], closed: [] };
+    filtered.forEach((c) => g[laneOf(c)].push(c));
+    (Object.keys(g) as FlowLane[]).forEach((k) => g[k].sort((a, b) => riskScore(b, now) - riskScore(a, now)));
+    return g;
+  }, [filtered, now]);
   const visibleLanes = showClosed ? FLOW_LANES : FLOW_LANES.filter((l) => l.id !== 'closed');
 
+  // Live activity feed — case-related events, newest first
+  const caseEvents = useMemo(() => seedEvents
+    .filter((e) => e.entityType === 'case')
+    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+    .slice(0, 12), []);
+
   return (
-    <PageContainer
-      pretitle="Cases › Queue"
-      title="Case Flow"
-      headerActions={
-        <div style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[2] }}>
-          <Toggle tokens={tokens} value={view} onChange={setView} />
+    <div style={{ background: HUD.bg, minHeight: '100%', color: HUD.text }}>
+      <div className="container-xl" style={{ paddingTop: componentTokens.contentPadding, paddingBottom: componentTokens.contentPadding }}>
+
+        {/* Header */}
+        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: primitiveSpacing[3], marginBottom: componentTokens.gridGap }}>
+          <div>
+            <span style={{ fontSize: primitiveTypeScale.micro, color: HUD.textMuted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.display }}>Cases › Handling</span>
+            <h1 style={{ margin: '4px 0 0', fontSize: primitiveTypeScale.h1, fontWeight: primitiveFontWeight.bold, color: HUD.text, fontFamily: primitiveFonts.body }}>Case Handling</h1>
+          </div>
+          <Toggle value={view} onChange={setView} />
         </div>
-      }
-    >
-      {/* AI-PLACEMENT: AI-CASE-QUEUE-001 — Focus order explanation */}
 
-      {/* KPI strip */}
-      <section style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: componentTokens.gridGap, marginBottom: componentTokens.gridGap }}>
-        <Kpi tokens={tokens} label="New — Act Next" value={String(newCount)} accent={newCount > 0 ? primitiveBrand.gold : undefined} />
-        <Kpi tokens={tokens} label="Open Cases" value={String(openCases.length)} />
-        <Kpi tokens={tokens} label="P0 / P1 Open" value={String(p0p1)} accent={p0p1 > 0 ? primitiveSignal.critical : undefined} />
-        <Kpi tokens={tokens} label="SLA At Risk" value={String(slaAtRisk)} accent={slaAtRisk > 0 ? primitiveSignal.warning : undefined} />
-        <Kpi tokens={tokens} label="Avg Risk Score" value={String(avgRisk)} />
-      </section>
+        {/* AI-PLACEMENT: AI-CASE-QUEUE-001 — Focus order explanation */}
 
-      {/* Filters */}
-      <section style={{ display: 'flex', gap: primitiveSpacing[2], flexWrap: 'wrap', marginBottom: componentTokens.gridGap, alignItems: 'flex-end' }}>
-        <Filter tokens={tokens} label="Priority" value={fPriority} onChange={setFPriority} options={['all', ...PRIORITIES]} />
-        <Filter tokens={tokens} label="Type" value={fType} onChange={setFType} options={['all', ...typeOptions]} render={(o) => o === 'all' ? 'All' : titleCase(o)} />
-        <Filter tokens={tokens} label="Team" value={fTeam} onChange={setFTeam} options={['all', ...teamOptions]} />
-        <Filter tokens={tokens} label="Owner" value={fOwner} onChange={setFOwner} options={['all', ...ownerOptions]} />
-        <Filter tokens={tokens} label="Surface" value={fSurface} onChange={setFSurface} options={['all', 'internal_attack_surface', 'external_attack_surface']} render={(o) => o === 'all' ? 'All' : o === 'external_attack_surface' ? 'External' : 'Internal'} />
-        <label style={{ display: 'inline-flex', alignItems: 'center', gap: primitiveSpacing[1], fontSize: primitiveTypeScale.caption, color: tokens.text.secondary, cursor: 'pointer', height: componentTokens.inputHeight }}>
-          <input type="checkbox" checked={showClosed} onChange={(e) => setShowClosed(e.target.checked)} /> Show closed
-        </label>
-      </section>
+        {/* SECTION 1: KPI strip */}
+        <section style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: primitiveSpacing[2], marginBottom: componentTokens.gridGap }}>
+          <Kpi label="New" value={String(newCount)} accent={newCount ? primitiveBrand.gold : undefined} hint="act next" />
+          <Kpi label="Open" value={String(openCases.length)} />
+          <Kpi label="P0" value={String(p0)} accent={p0 ? primitiveSignal.critical : undefined} />
+          <Kpi label="P1" value={String(p1)} accent={p1 ? primitiveSignal.warning : undefined} />
+          <Kpi label="SLA Breached" value={String(breached)} accent={breached ? primitiveSignal.critical : undefined} />
+          <Kpi label="SLA At Risk" value={String(slaAtRisk)} accent={slaAtRisk ? primitiveSignal.warning : undefined} />
+          <Kpi label="Stalling" value={String(stalling)} accent={stalling ? primitiveSignal.warning : undefined} />
+          <Kpi label="Closed" value={String(closedCases.length)} />
+        </section>
 
-      {view === 'board' ? (
-        <BoardView lanes={lanes} visibleLanes={visibleLanes} tokens={tokens} now={now} />
-      ) : (
-        <TableView cases={filtered} tokens={tokens} now={now} router={router} />
-      )}
-    </PageContainer>
+        {/* SECTION 2: Closed-Loop Lifecycle Pipeline (HERO) */}
+        <section style={{ background: HUD.elevated, border: `1px solid ${HUD.line}`, padding: componentTokens.cardPadding, marginBottom: componentTokens.gridGap }}>
+          <span style={{ fontSize: primitiveTypeScale.micro, color: HUD.textMuted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Closed-Loop Lifecycle</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[1], overflowX: 'auto', marginTop: primitiveSpacing[3] }}>
+            {PIPELINE.map((stage, i) => {
+              const active = i === activeStageIdx;
+              const count = pipelineCounts[i];
+              const isNewStage = i === 0;
+              return (
+                <div key={stage.label} style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[1] }}>
+                  <div style={{
+                    minWidth: 96, padding: `${primitiveSpacing[2]} ${primitiveSpacing[2]}`, textAlign: 'center',
+                    border: `2px solid ${active ? primitiveBrand.gold : isNewStage && count ? primitiveBrand.gold : HUD.lineSubtle}`,
+                    background: HUD.panel,
+                    boxShadow: (active || (isNewStage && count)) ? `0 0 ${primitiveGlow.radius} rgba(255,210,31,${primitiveGlow.intensity})` : 'none',
+                  }}>
+                    <div style={{ fontSize: primitiveTypeScale.h3, fontWeight: primitiveFontWeight.bold, fontFamily: primitiveFonts.mono, color: count ? HUD.text : HUD.textMuted }}>{count}</div>
+                    <div style={{ fontSize: primitiveTypeScale.micro, color: active || (isNewStage && count) ? primitiveBrand.gold : HUD.textMuted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow, whiteSpace: 'nowrap' }}>{stage.label}</div>
+                  </div>
+                  {i < PIPELINE.length - 1 && <span style={{ color: HUD.lineSubtle }}>→</span>}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* SECTION 3: Instrument gauges (signature) — DERIVED metrics */}
+        <section style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: componentTokens.gridGap, marginBottom: primitiveSpacing[1] }}>
+          {gauges.map((g) => <Gauge key={g.label} {...g} />)}
+        </section>
+        <p style={{ margin: `0 0 ${componentTokens.gridGap}`, fontSize: primitiveTypeScale.micro, color: HUD.textMuted }}>
+          ⓓ Derived indicators — computed from case fields, not Spec 08 scoring contracts. Risk Posture & Triage Velocity are heuristics; SLA Pressure is from real SLA state.
+        </p>
+
+        {/* SECTION 4: Filters */}
+        <section style={{ display: 'flex', gap: primitiveSpacing[2], flexWrap: 'wrap', marginBottom: componentTokens.gridGap, alignItems: 'flex-end' }}>
+          <Filter label="Priority" value={fPriority} onChange={setFPriority} options={['all', ...PRIORITIES]} />
+          <Filter label="Type" value={fType} onChange={setFType} options={['all', ...typeOptions]} render={(o) => o === 'all' ? 'All' : titleCase(o)} />
+          <Filter label="Team" value={fTeam} onChange={setFTeam} options={['all', ...teamOptions]} />
+          <Filter label="Owner" value={fOwner} onChange={setFOwner} options={['all', ...ownerOptions]} />
+          <Filter label="Surface" value={fSurface} onChange={setFSurface} options={['all', 'internal_attack_surface', 'external_attack_surface']} render={(o) => o === 'all' ? 'All' : o === 'external_attack_surface' ? 'External' : 'Internal'} />
+          <label style={{ display: 'inline-flex', alignItems: 'center', gap: primitiveSpacing[1], fontSize: primitiveTypeScale.caption, color: HUD.textSecondary, cursor: 'pointer', height: componentTokens.inputHeight }}>
+            <input type="checkbox" checked={showClosed} onChange={(e) => setShowClosed(e.target.checked)} /> Show closed
+          </label>
+        </section>
+
+        {/* SECTION 5: Board / Table + activity feed */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 300px', gap: componentTokens.gridGap, alignItems: 'start' }}>
+          <div style={{ minWidth: 0 }}>
+            {view === 'board'
+              ? <BoardView lanes={lanes} visibleLanes={visibleLanes} now={now} />
+              : <TableView cases={filtered} now={now} router={router} />}
+          </div>
+
+          {/* Live activity feed */}
+          <aside style={{ background: HUD.elevated, border: `1px solid ${HUD.line}`, padding: componentTokens.cardPadding, position: 'sticky', top: primitiveSpacing[3] }}>
+            <span style={{ fontSize: primitiveTypeScale.micro, color: HUD.textMuted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Live Activity</span>
+            <div style={{ marginTop: primitiveSpacing[3], display: 'flex', flexDirection: 'column', gap: primitiveSpacing[2], maxHeight: 520, overflowY: 'auto' }}>
+              {caseEvents.map((e) => (
+                <div key={e.id} onClick={() => router.push(`/cases/${e.entityRef}`)} style={{ display: 'flex', gap: primitiveSpacing[2], cursor: 'pointer', paddingBottom: primitiveSpacing[2], borderBottom: `1px solid ${HUD.lineSubtle}` }}>
+                  <span style={{ width: 7, height: 7, borderRadius: '50%', background: SEV_COLOR[e.severity], display: 'inline-block', marginTop: 5, flexShrink: 0 }} />
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ fontSize: primitiveTypeScale.micro, color: HUD.textSecondary, lineHeight: 1.4 }}>{e.message}</div>
+                    <div style={{ fontSize: primitiveTypeScale.micro, color: HUD.textMuted, fontFamily: primitiveFonts.mono }}>{new Date(e.timestamp).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })} · {e.entityRef}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
   );
 }
 
-// ─── Board view ─────────────────────────────────────────────────────────────
-
-function BoardView({ lanes, visibleLanes, tokens, now }: { lanes: Record<FlowLane, Case[]>; visibleLanes: typeof FLOW_LANES; tokens: Tokens; now: number }) {
+// ── Board ──
+function BoardView({ lanes, visibleLanes, now }: { lanes: Record<FlowLane, Case[]>; visibleLanes: typeof FLOW_LANES; now: number }) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: `repeat(${visibleLanes.length}, minmax(240px, 1fr))`, gap: componentTokens.gridGap, alignItems: 'start', overflowX: 'auto' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: `repeat(${visibleLanes.length}, minmax(210px, 1fr))`, gap: primitiveSpacing[2], alignItems: 'start', overflowX: 'auto' }}>
       {visibleLanes.map((lane) => {
         const cards = lanes[lane.id];
         const leads = lane.id === 'new';
         return (
-          <div key={lane.id} style={{ display: 'flex', flexDirection: 'column', gap: primitiveSpacing[2], minWidth: 240 }}>
-            {/* Lane header */}
-            <div style={{ position: 'sticky', top: 0, background: tokens.surface.secondary, paddingBottom: primitiveSpacing[1], borderBottom: `2px solid ${leads ? primitiveBrand.gold : tokens.border.default}` }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: primitiveTypeScale.caption, fontWeight: primitiveFontWeight.bold, color: leads ? primitiveBrand.gold : tokens.text.primary, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>{lane.label}</span>
-                <span style={{ fontFamily: primitiveFonts.mono, fontSize: primitiveTypeScale.micro, color: tokens.text.muted, background: tokens.surface.primary, padding: '0 6px', border: `1px solid ${tokens.border.subtle}` }}>{cards.length}</span>
+          <div key={lane.id} style={{ display: 'flex', flexDirection: 'column', gap: primitiveSpacing[2], minWidth: 210 }}>
+            <div style={{ background: HUD.panel, padding: `${primitiveSpacing[1]} ${primitiveSpacing[2]}`, borderBottom: `2px solid ${leads ? primitiveBrand.gold : HUD.line}` }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: primitiveTypeScale.micro, fontWeight: primitiveFontWeight.bold, color: leads ? primitiveBrand.gold : HUD.text, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>{lane.label}</span>
+                <span style={{ fontFamily: primitiveFonts.mono, fontSize: primitiveTypeScale.micro, color: HUD.textMuted }}>{cards.length}</span>
               </div>
-              <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted }}>{lane.hint}</span>
             </div>
-            {/* Cards */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: primitiveSpacing[2] }}>
-              {cards.map((c) => <CaseCard key={c.id} caseRecord={c} now={now} />)}
-              {cards.length === 0 && (
-                <div style={{ padding: primitiveSpacing[4], border: `1px dashed ${tokens.border.subtle}`, textAlign: 'center', color: tokens.text.muted, fontSize: primitiveTypeScale.micro }}>Empty</div>
-              )}
+              {cards.map((c) => <CaseCard key={c.id} caseRecord={c} now={now} hud />)}
+              {cards.length === 0 && <div style={{ padding: primitiveSpacing[3], border: `1px dashed ${HUD.lineSubtle}`, textAlign: 'center', color: HUD.textMuted, fontSize: primitiveTypeScale.micro }}>—</div>}
             </div>
           </div>
         );
@@ -163,16 +272,15 @@ function BoardView({ lanes, visibleLanes, tokens, now }: { lanes: Record<FlowLan
   );
 }
 
-// ─── Table view ─────────────────────────────────────────────────────────────
-
-function TableView({ cases, tokens, now, router }: { cases: Case[]; tokens: Tokens; now: number; router: ReturnType<typeof useRouter> }) {
+// ── Table ──
+function TableView({ cases, now, router }: { cases: Case[]; now: number; router: ReturnType<typeof useRouter> }) {
   const sorted = [...cases].sort((a, b) => riskScore(b, now) - riskScore(a, now));
   return (
-    <div style={{ background: tokens.surface.elevated, border: `1px solid ${tokens.border.subtle}`, overflowX: 'auto' }}>
+    <div style={{ background: HUD.elevated, border: `1px solid ${HUD.line}`, overflowX: 'auto' }}>
       <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: primitiveTypeScale.caption }}>
         <thead>
-          <tr>{['Priority', 'Risk', 'Case Ref', 'Title', 'Type', 'Status', 'Owner', 'Team', 'SLA', 'Age', 'Surface'].map((h) => (
-            <th key={h} style={{ textAlign: 'left', padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, borderBottom: `2px solid ${tokens.border.default}`, color: tokens.text.secondary, fontWeight: primitiveFontWeight.semibold, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow, fontSize: primitiveTypeScale.micro, whiteSpace: 'nowrap' }}>{h}</th>
+          <tr>{['Priority', 'Risk', 'Case Ref', 'Title', 'Type', 'Status', 'Owner', 'SLA', 'Age', 'Surface'].map((h) => (
+            <th key={h} style={{ textAlign: 'left', padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, borderBottom: `2px solid ${HUD.line}`, color: HUD.textSecondary, fontWeight: primitiveFontWeight.semibold, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow, fontSize: primitiveTypeScale.micro, whiteSpace: 'nowrap' }}>{h}</th>
           ))}</tr>
         </thead>
         <tbody>
@@ -180,66 +288,97 @@ function TableView({ cases, tokens, now, router }: { cases: Case[]; tokens: Toke
             const pr = primitivePriority[c.priority.toLowerCase() as keyof typeof primitivePriority];
             const sla = slaState(c, now);
             const risk = riskScore(c, now);
-            const toneColor = sla.tone === 'critical' ? tokens.status.critical : sla.tone === 'warning' ? tokens.status.warning : tokens.status.success;
+            const toneColor = sla.tone === 'critical' ? primitiveSignal.critical : sla.tone === 'warning' ? primitiveSignal.warning : primitiveSignal.success;
             return (
-              <tr key={c.id} onClick={() => router.push(`/cases/${c.id}`)} style={{ cursor: 'pointer', borderBottom: `1px solid ${tokens.border.subtle}` }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = tokens.surface.primary)}
-                onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}>
-                <td style={td(tokens)}><span style={{ color: pr.color, fontWeight: primitiveFontWeight.semibold }}>{pr.shape} {pr.label}</span></td>
-                <td style={{ ...td(tokens), fontFamily: primitiveFonts.mono, fontWeight: primitiveFontWeight.bold, color: risk >= 75 ? tokens.status.critical : risk >= 50 ? tokens.status.warning : tokens.text.secondary }}>{risk}</td>
-                <td style={{ ...td(tokens), fontFamily: primitiveFonts.mono }}>{c.caseRef}</td>
-                <td style={{ ...td(tokens), maxWidth: 340, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: tokens.text.primary }} title={c.title}>{c.title}</td>
-                <td style={td(tokens)}>{titleCase(c.caseType)}</td>
-                <td style={{ ...td(tokens), whiteSpace: 'nowrap' }}>{STATUS_LABEL[c.status] ?? c.status}</td>
-                <td style={td(tokens)}>{c.owner}</td>
-                <td style={td(tokens)}>{c.team}</td>
-                <td style={td(tokens)}><span style={{ padding: `2px ${primitiveSpacing[2]}`, background: toneColor, color: '#fff', fontSize: primitiveTypeScale.micro, whiteSpace: 'nowrap' }}>{sla.label}</span></td>
-                <td style={{ ...td(tokens), fontFamily: primitiveFonts.mono, whiteSpace: 'nowrap' }}>{ageLabel(c, now)}</td>
-                <td style={td(tokens)}><span style={{ fontSize: primitiveTypeScale.micro, padding: '1px 6px', border: `1px solid ${c.surfaceAttribution === 'external_attack_surface' ? primitiveBrand.gold : tokens.border.default}`, color: c.surfaceAttribution === 'external_attack_surface' ? primitiveBrand.gold : tokens.text.muted }}>{c.surfaceAttribution === 'external_attack_surface' ? 'External' : 'Internal'}</span></td>
+              <tr key={c.id} onClick={() => router.push(`/cases/${c.id}`)} style={{ cursor: 'pointer', borderBottom: `1px solid ${HUD.lineSubtle}` }}>
+                <td style={tdHud}><span style={{ color: pr.color, fontWeight: primitiveFontWeight.semibold }}>{pr.shape} {pr.label}</span></td>
+                <td style={{ ...tdHud, fontFamily: primitiveFonts.mono, fontWeight: primitiveFontWeight.bold, color: risk >= 75 ? primitiveSignal.critical : risk >= 50 ? primitiveSignal.warning : HUD.textSecondary }}>{risk}</td>
+                <td style={{ ...tdHud, fontFamily: primitiveFonts.mono }}>{c.caseRef}</td>
+                <td style={{ ...tdHud, maxWidth: 320, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: HUD.text }} title={c.title}>{c.title}</td>
+                <td style={tdHud}>{titleCase(c.caseType)}</td>
+                <td style={{ ...tdHud, whiteSpace: 'nowrap' }}>{STATUS_LABEL[c.status] ?? c.status}</td>
+                <td style={tdHud}>{c.owner}</td>
+                <td style={tdHud}><span style={{ padding: `2px ${primitiveSpacing[2]}`, background: toneColor, color: '#fff', fontSize: primitiveTypeScale.micro, whiteSpace: 'nowrap' }}>{sla.label}</span></td>
+                <td style={{ ...tdHud, fontFamily: primitiveFonts.mono, whiteSpace: 'nowrap' }}>{ageLabel(c, now)}</td>
+                <td style={tdHud}><span style={{ fontSize: primitiveTypeScale.micro, padding: '1px 6px', border: `1px solid ${c.surfaceAttribution === 'external_attack_surface' ? primitiveBrand.gold : HUD.lineSubtle}`, color: c.surfaceAttribution === 'external_attack_surface' ? primitiveBrand.gold : HUD.textMuted }}>{c.surfaceAttribution === 'external_attack_surface' ? 'EXT' : 'INT'}</span></td>
               </tr>
             );
           })}
-          {sorted.length === 0 && <tr><td colSpan={11} style={{ ...td(tokens), textAlign: 'center', color: tokens.text.muted, padding: primitiveSpacing[6] }}>No cases match the current filters.</td></tr>}
+          {sorted.length === 0 && <tr><td colSpan={10} style={{ ...tdHud, textAlign: 'center', color: HUD.textMuted, padding: primitiveSpacing[6] }}>No cases match the current filters.</td></tr>}
         </tbody>
       </table>
     </div>
   );
 }
 
-// ─── Shared bits ────────────────────────────────────────────────────────────
+const tdHud: React.CSSProperties = { padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, color: HUD.textSecondary, height: componentTokens.tableRowHeight };
 
-const td = (tokens: Tokens): React.CSSProperties => ({ padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, color: tokens.text.secondary, height: componentTokens.tableRowHeight });
-
-function Kpi({ tokens, label, value, accent }: { tokens: Tokens; label: string; value: string; accent?: string }) {
+// ── Instrument gauge (ApexCharts radialBar, Mission cluster styling) ──
+function Gauge({ label, value, max, invert }: { label: string; value: number; max: number; invert: boolean }) {
+  const pct = Math.round((value / max) * 100);
+  // band: when invert, high pct = bad
+  const score = invert ? 100 - pct : pct;
+  const color = score >= 66 ? primitiveSignal.success : score >= 33 ? primitiveSignal.warning : primitiveSignal.critical;
+  const meaning = score >= 66 ? 'Healthy' : score >= 33 ? 'Elevated' : 'Critical';
+  const opts = {
+    chart: { type: 'radialBar' as const, background: 'transparent', sparkline: { enabled: true } },
+    theme: { mode: 'dark' as const },
+    colors: [color],
+    plotOptions: {
+      radialBar: {
+        startAngle: -135, endAngle: 135,
+        hollow: { size: '58%' },
+        track: { background: HUD.lineSubtle, strokeWidth: '100%' },
+        dataLabels: {
+          name: { show: false },
+          value: { show: true, offsetY: 6, color: HUD.text, fontFamily: primitiveFonts.mono, fontSize: primitiveTypeScale.h1, fontWeight: 700, formatter: () => String(value) },
+        },
+      },
+    },
+    stroke: { lineCap: 'round' as const },
+  };
   return (
-    <div style={{ padding: componentTokens.cardPadding, background: tokens.surface.elevated, border: `1px solid ${tokens.border.subtle}` }}>
-      <span style={{ display: 'block', fontSize: primitiveTypeScale.micro, color: accent ?? tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>{label}</span>
-      <span style={{ fontSize: primitiveTypeScale.kpiValue, fontFamily: primitiveFonts.mono, fontWeight: primitiveFontWeight.bold, color: accent ?? tokens.text.primary }}>{value}</span>
+    <div style={{ background: HUD.elevated, border: `1px solid ${HUD.line}`, padding: componentTokens.cardPadding, display: 'flex', flexDirection: 'column', alignItems: 'center', boxShadow: `0 0 ${primitiveGlow.radius} rgba(255,210,31,0.12)` }}>
+      <span style={{ alignSelf: 'flex-start', fontSize: primitiveTypeScale.micro, color: HUD.textMuted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>{label}</span>
+      <div style={{ width: 150, height: 120 }}>
+        <Chart type="radialBar" height={150} options={opts} series={[pct]} />
+      </div>
+      <span style={{ fontSize: primitiveTypeScale.micro, color, fontWeight: primitiveFontWeight.semibold, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>{meaning}</span>
     </div>
   );
 }
 
-function Toggle({ tokens, value, onChange }: { tokens: Tokens; value: View; onChange: (v: View) => void }) {
+function Kpi({ label, value, accent, hint }: { label: string; value: string; accent?: string; hint?: string }) {
   return (
-    <div style={{ display: 'inline-flex', border: `1px solid ${tokens.border.default}` }}>
+    <div style={{ background: HUD.elevated, border: `1px solid ${HUD.line}`, padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}` }}>
+      <span style={{ display: 'block', fontSize: primitiveTypeScale.micro, color: accent ?? HUD.textMuted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow, whiteSpace: 'nowrap' }}>{label}</span>
+      <span style={{ fontSize: primitiveTypeScale.kpiValue, fontFamily: primitiveFonts.mono, fontWeight: primitiveFontWeight.bold, color: accent ?? HUD.text }}>{value}</span>
+      {hint && <span style={{ display: 'block', fontSize: primitiveTypeScale.micro, color: HUD.textMuted }}>{hint}</span>}
+    </div>
+  );
+}
+
+function Toggle({ value, onChange }: { value: View; onChange: (v: View) => void }) {
+  return (
+    <div style={{ display: 'inline-flex', border: `1px solid ${HUD.line}` }}>
       {(['board', 'table'] as View[]).map((v, i) => {
         const active = v === value;
         return (
           <button key={v} onClick={() => onChange(v)}
-            style={{ padding: `${primitiveSpacing[1]} ${primitiveSpacing[3]}`, fontSize: primitiveTypeScale.micro, fontWeight: primitiveFontWeight.medium, border: 'none', cursor: 'pointer', background: active ? tokens.action.secondary : 'transparent', color: active ? tokens.surface.elevated : tokens.text.secondary, borderLeft: i === 0 ? 'none' : `1px solid ${tokens.border.subtle}`, textTransform: 'capitalize' }}>{v}</button>
+            style={{ padding: `${primitiveSpacing[1]} ${primitiveSpacing[3]}`, fontSize: primitiveTypeScale.micro, fontWeight: primitiveFontWeight.medium, border: 'none', cursor: 'pointer', background: active ? primitiveBrand.gold : 'transparent', color: active ? primitiveHud.bg0 : HUD.textSecondary, borderLeft: i === 0 ? 'none' : `1px solid ${HUD.lineSubtle}`, textTransform: 'capitalize' }}>{v}</button>
         );
       })}
     </div>
   );
 }
 
-function Filter({ tokens, label, value, onChange, options, render }: { tokens: Tokens; label: string; value: string; onChange: (v: string) => void; options: readonly string[]; render?: (o: string) => string }) {
+function Filter({ label, value, onChange, options, render }: { label: string; value: string; onChange: (v: string) => void; options: readonly string[]; render?: (o: string) => string }) {
   return (
     <label style={{ display: 'inline-flex', flexDirection: 'column', gap: 2 }}>
-      <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>{label}</span>
+      <span style={{ fontSize: primitiveTypeScale.micro, color: HUD.textMuted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>{label}</span>
       <select value={value} onChange={(e) => onChange(e.target.value)}
-        style={{ height: componentTokens.inputHeight, padding: `0 ${primitiveSpacing[2]}`, background: tokens.input.background, color: tokens.input.text, border: `1px solid ${tokens.input.border}`, borderRadius: 0, fontSize: primitiveTypeScale.caption, fontFamily: primitiveFonts.body }}>
-        {options.map((o) => <option key={o} value={o}>{o === 'all' ? 'All' : render ? render(o) : o}</option>)}
+        style={{ height: componentTokens.inputHeight, padding: `0 ${primitiveSpacing[2]}`, background: primitiveHud.bg1, color: HUD.text, border: `1px solid ${HUD.line}`, borderRadius: 0, fontSize: primitiveTypeScale.caption, fontFamily: primitiveFonts.body }}>
+        {options.map((o) => <option key={o} value={o} style={{ background: primitiveHud.bg1 }}>{o === 'all' ? 'All' : render ? render(o) : o}</option>)}
       </select>
     </label>
   );
