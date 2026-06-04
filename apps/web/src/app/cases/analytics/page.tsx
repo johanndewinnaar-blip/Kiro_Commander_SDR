@@ -30,17 +30,19 @@ const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
  * 3. Mean Time to Resolution (line) — MTTR trend by priority
  * 4. SLA Compliance (radial gauge) — % cases within SLA target
  * 
- * PEOPLE METRICS (workload & effectiveness):
- * 5. Cases by Owner (bar) — workload distribution by assigned owner
+ * PEOPLE METRICS (analyst workload & effectiveness):
+ * 5. Cases by Owner (bar) — workload distribution by assigned analyst
  * 6. Cases by Team (donut) — team workload distribution
+ * 7. Analyst Performance (scatter) — case velocity vs resolution quality per analyst
+ * 8. Workload Balance Index (radial gauge) — distribution fairness across analysts
  * 
  * SYSTEM METRICS (risk coverage & classification):
- * 7. Case Type Distribution (treemap) — breakdown by case type
- * 8. Priority Distribution (column) — cases by priority level
- * 9. Surface Attribution (donut) — internal vs external attack surface
- * 10. ATT&CK Tactic Coverage (radar) — COIM-G aggregate ATT&CK coverage
- * 11. Confidence Score Distribution (histogram) — case confidence aggregate
- * 12. Blast Radius Analysis (scatter) — blast radius vs affected entities (COIM-G)
+ * 9. Case Type Distribution (treemap) — breakdown by case type
+ * 10. Priority Distribution (column) — cases by priority level
+ * 11. Surface Attribution (donut) — internal vs external attack surface
+ * 12. ATT&CK Tactic Coverage (radar) — COIM-G aggregate ATT&CK coverage
+ * 13. Confidence Score Distribution (histogram) — case confidence aggregate
+ * 14. Blast Radius Analysis (scatter) — blast radius vs affected entities (COIM-G)
  */
 
 export default function CaseAnalyticsPage() {
@@ -77,6 +79,37 @@ export default function CaseAnalyticsPage() {
 
   const teamCounts: Record<string, number> = {};
   seedCases.forEach((c) => { teamCounts[c.team] = (teamCounts[c.team] || 0) + 1; });
+
+  // Analyst performance: velocity (cases closed per week) vs quality (% validated_pass)
+  const analystPerformance: Record<string, { velocity: number; quality: number }> = {};
+  seedCases.forEach((c) => {
+    if (!analystPerformance[c.owner]) {
+      analystPerformance[c.owner] = { velocity: 0, quality: 0 };
+    }
+    // Mock velocity: cases assigned (in real system: closed cases / weeks active)
+    analystPerformance[c.owner].velocity += 1;
+    // Mock quality: validated_pass status increases quality score
+    if (c.status === 'validated_pass' || c.status === 'closed_by_system') {
+      analystPerformance[c.owner].quality += 1;
+    }
+  });
+
+  // Convert to quality percentage
+  Object.keys(analystPerformance).forEach((owner) => {
+    const total = analystPerformance[owner].velocity;
+    analystPerformance[owner].quality = total > 0 
+      ? Math.round((analystPerformance[owner].quality / total) * 100) 
+      : 0;
+  });
+
+  // Workload balance: measure how evenly cases are distributed (Gini coefficient proxy)
+  const workloadValues = Object.values(ownerCounts);
+  const avgWorkload = workloadValues.reduce((a, b) => a + b, 0) / workloadValues.length;
+  const maxDeviation = Math.max(...workloadValues.map(v => Math.abs(v - avgWorkload)));
+  const workloadBalanceScore = avgWorkload > 0 
+    ? Math.round(100 - ((maxDeviation / avgWorkload) * 100)) 
+    : 100;
+  const clampedBalanceScore = Math.max(0, Math.min(100, workloadBalanceScore));
 
   // ─── SYSTEM METRICS: COIM-G aggregates ────────────────────────────────────
   // ATT&CK tactic coverage (from COIM-G attacks[] field)
@@ -229,7 +262,53 @@ export default function CaseAnalyticsPage() {
     dataLabels: { enabled: false },
   };
 
-  // ─── 7. SYSTEM: Case Type Distribution (treemap) ─────────────────────────
+  // ─── 7. PEOPLE: Analyst Performance (scatter) ────────────────────────────
+  const analystScatterData = Object.entries(analystPerformance).map(([owner, perf]) => ({
+    x: perf.velocity,
+    y: perf.quality,
+    z: 1,
+    label: owner,
+  }));
+
+  const analystScatterOpts: ApexOptions = {
+    ...baseChartOpts,
+    chart: { ...baseChartOpts.chart, type: 'scatter' },
+    colors: [primitiveData[5]],
+    xaxis: { ...baseChartOpts.xaxis, title: { text: 'Case Velocity', style: { color: tokens.text.muted, fontSize: primitiveTypeScale.micro } } },
+    yaxis: { ...baseChartOpts.yaxis, title: { text: 'Resolution Quality %', style: { color: tokens.text.muted, fontSize: primitiveTypeScale.micro } } },
+    markers: { size: 6 },
+    tooltip: {
+      ...baseChartOpts.tooltip,
+      custom: ({ seriesIndex, dataPointIndex, w }) => {
+        const data = analystScatterData[dataPointIndex];
+        return `<div style="padding: 8px; background: ${tokens.surface.elevated}; border: 1px solid ${tokens.border.subtle};">
+          <strong style="color: ${tokens.text.primary};">${data.label}</strong><br/>
+          <span style="color: ${tokens.text.secondary};">Velocity: ${data.x} cases</span><br/>
+          <span style="color: ${tokens.text.secondary};">Quality: ${data.y}%</span>
+        </div>`;
+      },
+    },
+  };
+
+  // ─── 8. PEOPLE: Workload Balance Index (radial gauge) ────────────────────
+  const balanceGaugeOpts: ApexOptions = {
+    ...baseChartOpts,
+    chart: { ...baseChartOpts.chart, type: 'radialBar' },
+    colors: [clampedBalanceScore >= 70 ? tokens.status.success : clampedBalanceScore >= 50 ? tokens.status.warning : tokens.status.critical],
+    plotOptions: {
+      radialBar: {
+        hollow: { size: '60%' },
+        dataLabels: {
+          name: { show: true, color: tokens.text.muted, fontSize: primitiveTypeScale.caption },
+          value: { show: true, color: tokens.text.primary, fontSize: '28px', fontFamily: primitiveFonts.mono, fontWeight: 700 },
+        },
+        track: { background: tokens.border.subtle },
+      },
+    },
+    labels: ['Workload Balance'],
+  };
+
+  // ─── 9. SYSTEM: Case Type Distribution (treemap) ─────────────────────────
   const treemapData = Object.entries(typeCounts).map(([type, count]) => ({
     x: type.replace(/-/g, ' '),
     y: count,
@@ -244,7 +323,7 @@ export default function CaseAnalyticsPage() {
     legend: { show: false },
   };
 
-  // ─── 8. SYSTEM: Priority Distribution (column) ───────────────────────────
+  // ─── 10. SYSTEM: Priority Distribution (column) ───────────────────────────
   const priorityLabels = Object.keys(priorityCounts);
   const priorityValues = Object.values(priorityCounts);
   const priorityColors = [tokens.status.critical, tokens.status.warning, primitiveData[4], primitiveData[1], primitiveData[3]];
@@ -259,7 +338,7 @@ export default function CaseAnalyticsPage() {
     legend: { show: false },
   };
 
-  // ─── 9. SYSTEM: Surface Attribution (donut) ──────────────────────────────
+  // ─── 11. SYSTEM: Surface Attribution (donut) ──────────────────────────────
   const surfaceLabels = Object.keys(surfaceCounts);
   const surfaceValues = Object.values(surfaceCounts);
 
@@ -272,7 +351,7 @@ export default function CaseAnalyticsPage() {
     dataLabels: { enabled: false },
   };
 
-  // ─── 10. SYSTEM: ATT&CK Tactic Coverage (radar) ──────────────────────────
+  // ─── 12. SYSTEM: ATT&CK Tactic Coverage (radar) ──────────────────────────
   const tacticLabels = Object.keys(tacticCounts);
   const tacticValues = Object.values(tacticCounts);
 
@@ -286,7 +365,7 @@ export default function CaseAnalyticsPage() {
     fill: { opacity: 0.2 },
   };
 
-  // ─── 11. SYSTEM: Confidence Score Distribution (column histogram) ────────
+  // ─── 13. SYSTEM: Confidence Score Distribution (column histogram) ────────
   const confidenceLabels = Object.keys(confidenceBuckets);
   const confidenceValues = Object.values(confidenceBuckets);
 
@@ -299,7 +378,7 @@ export default function CaseAnalyticsPage() {
     dataLabels: { enabled: false },
   };
 
-  // ─── 12. SYSTEM: Blast Radius Analysis (scatter) ─────────────────────────
+  // ─── 14. SYSTEM: Blast Radius Analysis (scatter) ─────────────────────────
   const scatterOpts: ApexOptions = {
     ...baseChartOpts,
     chart: { ...baseChartOpts.chart, type: 'scatter' },
@@ -340,7 +419,7 @@ export default function CaseAnalyticsPage() {
 
       {/* Row 3: PEOPLE — Cases by Owner + Cases by Team */}
       <section style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: componentTokens.gridGap, marginTop: componentTokens.gridGap }}>
-        <ChartCard title="Cases by Owner" subtitle={`Workload distribution — top ${ownerLabels.length} owners`} tokens={tokens} mode={mode}>
+        <ChartCard title="Cases by Owner" subtitle={`Workload distribution — top ${ownerLabels.length} analysts`} tokens={tokens} mode={mode}>
           <Chart type="bar" height={220} options={ownerBarOpts} series={[{ name: 'Cases', data: ownerValues }]} />
         </ChartCard>
 
@@ -349,7 +428,24 @@ export default function CaseAnalyticsPage() {
         </ChartCard>
       </section>
 
-      {/* Row 4: SYSTEM — Case Type + Priority */}
+      {/* Row 4: PEOPLE — Analyst Performance + Workload Balance */}
+      <section style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: componentTokens.gridGap, marginTop: componentTokens.gridGap }}>
+        <ChartCard title="Analyst Performance" subtitle="Case velocity vs resolution quality per analyst" tokens={tokens} mode={mode}>
+          {analystScatterData.length > 0 ? (
+            <Chart type="scatter" height={220} options={analystScatterOpts} series={[{ name: 'Analysts', data: analystScatterData }]} />
+          ) : (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 220, color: tokens.text.muted, fontSize: primitiveTypeScale.caption }}>
+              No analyst performance data available
+            </div>
+          )}
+        </ChartCard>
+
+        <ChartCard title="Workload Balance Index" subtitle={`Fairness: ${clampedBalanceScore}% — distribution equity across ${Object.keys(ownerCounts).length} analysts`} tokens={tokens} mode={mode}>
+          <Chart type="radialBar" height={220} options={balanceGaugeOpts} series={[clampedBalanceScore]} />
+        </ChartCard>
+      </section>
+
+      {/* Row 5: SYSTEM — Case Type + Priority */}
       <section style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: componentTokens.gridGap, marginTop: componentTokens.gridGap }}>
         <ChartCard title="Case Type Distribution" subtitle="Breakdown by case type" tokens={tokens} mode={mode}>
           <Chart type="treemap" height={220} options={treemapOpts} series={[{ data: treemapData }]} />
@@ -360,7 +456,7 @@ export default function CaseAnalyticsPage() {
         </ChartCard>
       </section>
 
-      {/* Row 5: SYSTEM — Surface Attribution + ATT&CK Coverage */}
+      {/* Row 6: SYSTEM — Surface Attribution + ATT&CK Coverage */}
       <section style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: componentTokens.gridGap, marginTop: componentTokens.gridGap }}>
         <ChartCard title="Surface Attribution" subtitle="Internal vs external attack surface" tokens={tokens} mode={mode}>
           <Chart type="donut" height={220} options={surfaceDonutOpts} series={surfaceValues} />
@@ -377,7 +473,7 @@ export default function CaseAnalyticsPage() {
         </ChartCard>
       </section>
 
-      {/* Row 6: SYSTEM — Confidence Distribution + Blast Radius Analysis */}
+      {/* Row 7: SYSTEM — Confidence Distribution + Blast Radius Analysis */}
       <section style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: componentTokens.gridGap, marginTop: componentTokens.gridGap }}>
         <ChartCard title="Confidence Score Distribution" subtitle="COIM-G confidenceAggregate — weighted average" tokens={tokens} mode={mode}>
           <Chart type="bar" height={220} options={histogramOpts} series={[{ name: 'Cases', data: confidenceValues }]} />
