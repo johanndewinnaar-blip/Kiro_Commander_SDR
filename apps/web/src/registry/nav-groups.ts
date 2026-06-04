@@ -44,7 +44,7 @@ export const OPERATIONAL_NAV_GROUPS: NavGroup[] = [
       { label: 'My Cases', path: '/cases/my', status: 'BUILD' },
       { label: 'All Cases', path: '/cases', status: 'BUILD' },
       { label: 'P0 Zero-Day', path: '/war-room/p0', status: 'SCAFFOLD' },
-      { label: 'Case Analytics', path: '/cases/analytics', status: 'SCAFFOLD' },
+      { label: 'Case Analytics', path: '/cases/analytics', status: 'BUILD' },
     ],
   },
   // Group 2 — Mission Control [Source: v11 shell reference]
