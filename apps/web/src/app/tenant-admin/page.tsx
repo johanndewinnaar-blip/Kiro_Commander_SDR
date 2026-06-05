@@ -62,7 +62,7 @@ function EnforcementBadge({ status }: { status: EnforcementStatus }) {
 function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
   return (
     <section data-section={id} style={{ border: `1px solid ${colors.operational.line ?? '#d7dee8'}`, background: '#fff', padding: '16px', marginBottom: '16px' }}>
-      <h2 style={{ fontSize: typography.fontSize.h3, color: ink, margin: '0 0 12px' }}>{title}</h2>
+      <h2 style={{ fontSize: typography.fontSize.md, color: ink, margin: '0 0 12px' }}>{title}</h2>
       {children}
     </section>
   );

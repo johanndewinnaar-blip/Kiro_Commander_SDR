@@ -230,7 +230,6 @@
 | `OperationalTopBar` | `operational-top-bar.tsx` | Navigation | `Shell` |
 | `CaseList` | `case-list.tsx` | Data display | `/cases`, `/cases/my` |
 | `ExpandableCaseRow` | `expandable-case-row.tsx` | Data display | `CaseList` |
-| `VegaChart` | `vega-chart.tsx` | Charting | `/cases/analytics` |
 
 ### 3.2 Shared UI Style Components (`packages/ui/src/components/`)
 
@@ -266,12 +265,12 @@ These are style-factory functions (not React components) that return inline styl
 | Library | Version | Usage |
 |---------|---------|-------|
 | `lucide-react` | ^1.16.0 | Icon library (declared in package.json, not yet imported in components) |
-| `vega` | 5.30.0 | Chart rendering engine |
-| `vega-lite` | 5.21.0 | Declarative chart specification |
-| `vega-embed` | 6.26.0 | Chart embedding (used in `VegaChart`) |
+| `apexcharts` | ^5.13.0 | Chart rendering library (sole charting library per DEC-ds1-vega-removed) |
+| `react-apexcharts` | ^2.1.0 | React wrapper for ApexCharts |
+| `@xyflow/react` | ^12.11.0 | Node-based graph library (Fusion Map, blast radius, architecture maps) |
 | `class-variance-authority` | ^0.7.1 | Variant management (declared, not yet used in source) |
-| `clsx` | ^2.1.1 | Class merging utility (declared, not yet used in source) |
-| `tailwind-merge` | ^3.6.0 | Tailwind class merging (declared, not yet used in source) |
+| `clsx` | ^2.1.1 | Class merging utility |
+| `tailwind-merge` | ^3.6.0 | Tailwind class merging |
 
 ---
 

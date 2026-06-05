@@ -426,7 +426,7 @@ WHEN case lifecycle is visualised THE SYSTEM SHALL render a horizontal stepper: 
 
 ### DS-1.0 Requirement 30 — Network topology / blast graph
 
-WHEN network topology or blast radius is visualised THE SYSTEM SHALL render origin→spread across zones (Internet→DMZ→Core→Restricted→Crown Jewel), risk-coloured nodes, exposed/contained/blocked edges. Bespoke graph library (not Vega-Lite). [Source: DESIGN_SYSTEM.md §21; mockup: blast-radius-command-mission.png, blast-radius-command-detailed.png]
+WHEN network topology or blast radius is visualised THE SYSTEM SHALL render origin→spread across zones (Internet→DMZ→Core→Restricted→Crown Jewel), risk-coloured nodes, exposed/contained/blocked edges. @xyflow/react (React Flow) graph library. [Source: DESIGN_SYSTEM.md §21; mockup: blast-radius-command-mission.png, blast-radius-command-detailed.png]
 
 ### DS-1.0 Requirement 31 — Ranked table with inline bar+trend
 
@@ -464,9 +464,9 @@ WHEN data freshness is indicated THE SYSTEM SHALL use: Live (green dot + "Live")
 
 ### Data visualisation
 
-### DS-1.0 Requirement 39 — Vega-Lite charts
+### DS-1.0 Requirement 39 — ApexCharts charting
 
-WHEN charts are rendered THE SYSTEM SHALL use Vega-Lite as the primary charting library. Charts reference --data-* semantic tokens only (never literal hex). Every chart includes: title, legend (if discrete colour), tooltip, time context (if time series), empty state. [Source: DESIGN_SYSTEM.md §13]
+WHEN charts are rendered THE SYSTEM SHALL use ApexCharts as the sole charting library. Charts reference --data-* semantic tokens only (never literal hex). Every chart includes: title, legend (if discrete colour), tooltip, time context (if time series), empty state. [Source: DESIGN_SYSTEM.md §13; DEC-ds1-vega-removed]
 
 ### DS-1.0 Requirement 40 — Approved chart types
 

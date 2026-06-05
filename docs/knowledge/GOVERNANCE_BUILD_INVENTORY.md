@@ -83,7 +83,7 @@
 | UI Design System Steering | `.kiro/steering/ui-design-system.md` | UI GOVERNANCE — visual direction, navy/ink/gold palette, Command Centre as landing surface (note: file-match scoped to apps/web, packages/ui, docs/06_ui_build_reference) | active |
 | Design System Contract Steering | `.kiro/steering/design-system-contract.md` | UI GOVERNANCE — exact Tabler-class build rulebook for all pages (also listed in Category 2) | active |
 | Page Layout Standard Steering | `.kiro/steering/page-layout-standard.md` | UI GOVERNANCE — `PageContainer` contract and exceptions (also listed in Category 2) | active |
-| DESIGN_SYSTEM.md (DS-1.0) | `docs/06_ui_build_reference/DESIGN_SYSTEM.md` | UI GOVERNANCE — DS-1.0 reconciled spec; tokens, Vega-Lite/Lucide/Inter/Bebas/JetBrains decisions | active (authoritative; supersedes ad-hoc styling per its own header) |
+| DESIGN_SYSTEM.md (DS-1.0) | `docs/06_ui_build_reference/DESIGN_SYSTEM.md` | UI GOVERNANCE — DS-1.0 reconciled spec; tokens, ApexCharts/Lucide/Inter/Bebas/JetBrains decisions | active (authoritative; supersedes ad-hoc styling per its own header) |
 | ROUTE_REGISTRY_BASELINE.md | `docs/06_ui_build_reference/ROUTE_REGISTRY_BASELINE.md` | UI GOVERNANCE — planning route registry (route, surface, status, version) | draft (self-marked planning only) |
 | UI_PAGE_SCHEDULE.md | `docs/06_ui_build_reference/UI_PAGE_SCHEDULE.md` | UI GOVERNANCE — page-by-page schedule (page, status, version, owning spec) | active |
 | MOCKUP_INDEX.md | `docs/06_ui_build_reference/MOCKUP_INDEX.md` | UI GOVERNANCE — authoritative mockup → surface → mode → spec mapping | active |

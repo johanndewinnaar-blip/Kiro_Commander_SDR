@@ -775,6 +775,18 @@
 
 ---
 
+### Run: 2026-06-04 (37881d3) — Governance Runner
+**Scope:** Full sweep
+**Method:** Automated (scripts/governance-check.cjs)
+
+**Scores:**
+- Architecture (ARCH-005–009): Amber (80%)
+
+**Band:** Amber
+**Pass Rate:** 80% (4/5)
+
+---
+
 ## Band Definitions
 
 | Band | Pass Rate | Description |
@@ -810,6 +822,7 @@
 
 **Last Updated:** 2026-05-30  
 **Next Pipeline Run:** TBD
+**Last Governance Runner:** 2026-06-04 (37881d3) — Amber (80%)
 **Last Governance Runner:** 2026-06-02 (7eda590) — Green (100%)
 **Last Governance Runner:** 2026-06-02 (7eda590) — Green (100%)
 **Last Governance Runner:** 2026-06-02 (7eda590) — Amber (80%)

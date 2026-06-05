@@ -43,7 +43,7 @@ A literal compass rose (N/S/E/W) with a needle pointing to a heading (e.g. "126�
 The Case Handling dashboard renders the case lifecycle as a horizontal stepper: New → Triage → Investigating → Awaiting Feedback → Actioning → Validation → Closure, each with a count and the active stage highlighted (gold ring). This is the visual form of the closed-loop case model. Named component for Spec 06.
 
 ### 5. Network topology / blast graph
-The Blast Radius and Architecture surfaces render network graphs: origin node → spreading paths across zones (Internet → DMZ → Core → Restricted → Crown Jewel), nodes coloured by risk, edges showing exposed/contained/blocked paths, a contamination-spread visual from the origin. This is the Fusion Map visualisation — bespoke graph library (not Vega-Lite).
+The Blast Radius and Architecture surfaces render network graphs: origin node → spreading paths across zones (Internet → DMZ → Core → Restricted → Crown Jewel), nodes coloured by risk, edges showing exposed/contained/blocked paths, a contamination-spread visual from the origin. This is the Fusion Map visualisation — @xyflow/react (React Flow).
 
 ### 6. Multi-column dense card grid
 Below the KPI strip and insight row, dashboards use a dense multi-column grid of cards (donuts, trend lines, ranked tables with inline bar indicators, finding lists). 4–6 columns on wide screens. Each card has an uppercase eyebrow title + info icon + "View all →" link.
@@ -67,7 +67,7 @@ The mockups confirm and slightly enrich the pinned palette:
 - **Severity ramp** in use: critical red, high orange, medium amber, low blue/green — maps to priority P0–P4 and signal tokens.
 - **Gauges** use a red→amber→green arc for threshold scoring.
 - **Charts** use multi-hue series consistent with the 8-colour data palette.
-- **Donut charts** (Risk Distribution, Risk Mix, Environment Distribution) are a recurring composition chart — confirm donut as an approved Vega-Lite type.
+- **Donut charts** (Risk Distribution, Risk Mix, Environment Distribution) are a recurring composition chart — confirm donut as an approved ApexCharts type.
 
 Where the written DESIGN_SYSTEM.md token differs from a mockup pixel, the token is authoritative.
 

@@ -706,7 +706,7 @@ These are code-conformance debt items (contract field removed, test fixtures not
 
 **Purpose:** Complete surfacing of the data layer built to date. Existing work is explicitly accounted for, not silently assumed complete.
 
-### Entities Catalogued: 36 (+15 intelligence entities, +2 value objects, +1 communications entity)
+### Entities Catalogued: 37 (+15 intelligence entities, +2 value objects, +1 communications entity, +1 overlay entity)
 
 1. Asset ✅
 2. Case ✅
@@ -744,12 +744,13 @@ These are code-conformance debt items (contract field removed, test fixtures not
 34. Push_Action_Intent ✅ (Intelligence — evaluation plane)
 35. Inbound_Email_Submission ✅ (Intelligence — value object)
 36. Case Communication Thread ⚠️ (Communications — contract + fixture, DB schema absent)
+37. War Room ⚠️ (Overlay — contract + fixture, DB schema absent)
 
 **Composed-object modules (catalogued under their consuming entity, no own table):**
 - `coim.ts` — COIM-A source-classification composed objects (FindingClass, SourceSeverity, SourceConfidence, SourceProduct, AttackMapping, ObservableRef, SourceClassification + `validateSourceClassification`). Catalogued under Risk Object (§4). Also consumed by Verdict entity (§12) for `SourceProduct` type. Satisfies the completeness gate for `packages/contracts/src/entities/coim.ts`.
 - `intelligence-common.ts` — Platform Intelligence shared type constants and value objects. Defines 16 array-form type constants (PlatformIntelligenceSourceType, PlatformRecordType, IocCategory [26 values], IocRelationshipState, TlpMarking, CveState, SourceFreshnessState, TenantSubscriptionState, EvaluationType, TenantExposureState, IocMatchType, IocCaseLinkType, ThreatHuntStatus, PushActionType, PushIntentStatus, AllowBlockListType) and 2 shared value objects (SourceAttributionEntry, RelationshipStateTransition). Consumed by: indicator-of-compromise.ts, ioc-case-link.ts, ioc-relationship.ts, platform-intelligence-record.ts, platform-intelligence-source.ts, push-action-intent.ts, tenant-intelligence-evaluation.ts, tenant-intelligence-subscription.ts, tenant-ioc-allowblock-entry.ts, tenant-ioc-match.ts, threat-hunt-record.ts, vulnerability-intelligence-record.ts. Referenced by fixtures: seed-iocs.ts, seed-platform-intelligence-sources.ts. Reuses existing COIM SourceSeverity (1–5) and SourceConfidence from coim.ts. Source: Spec #59 Intelligence Layer Architecture; Spec #61 Universal Security Signal Connector Contract (baseline v2.6.2). Coverage: provisional (source specs partially read per COVERAGE.md). No DB schema counterpart (type constants only — no own table). No fixture of its own (consumed by entity-level fixtures). No resolver. Satisfies the completeness gate for `packages/contracts/src/entities/intelligence-common.ts`.
 
-### Fixtures Found: 27
+### Fixtures Found: 28
 
 1. `seed-assets.ts` ✅
 2. `seed-cases.ts` ✅
@@ -778,6 +779,7 @@ These are code-conformance debt items (contract field removed, test fixtures not
 25. `seed-ioc-case-links.ts` ✅ (3 links, all link types)
 26. `seed-vulnerability-case-links.ts` ✅ (2 vulnerability case links)
 27. `seed-communication-threads.ts` ✅ (4 threads: 2 email, 2 teams; statuses: responded, awaiting_response, stale, closed)
+28. `seed-war-rooms.ts` ✅ (3 war rooms: activated, monitoring, closed)
 
 ### Resolvers Found: 13
 
@@ -818,9 +820,10 @@ These are code-conformance debt items (contract field removed, test fixtures not
 - ControlEvaluation ✅ (CFM)
 - ControlMapping ✅ (CFM)
 
-**Divergences (2):**
+**Divergences (3):**
 - Strategy Policy ⚠️ — Contract `StrategySurfaceType` has 17 values (CMEP-1.0 extension); DB `strategySurfaceTypeEnum` has 13. Migration required to add: `sla-modifier`, `correlation-policy`, `effectiveness-targets`, `ssvc-decision-tree`.
 - Case Communication Thread ⚠️ — Contract + fixture exist; DB schema ABSENT. ARCH-DEBT-052 proposed.
+- War Room ⚠️ — Contract + fixture exist; DB schema ABSENT. ARCH-DEBT-053 proposed.
 
 **Proposed Architectural Debt Entries:**
 - ARCH-DEBT-NEW: Strategy Policy DB enum out of sync with contract (17 vs 13 surface types). Blocker: DB migration required before CMEP-1.0 surface policies can be persisted. Additionally, `seed-strategies.ts` lacks fixture entries for the 4 new surface types.
@@ -1488,6 +1491,47 @@ Five entities forming the compliance/control-framework mapping layer:
 
 ---
 
+### 39. War Room
+
+**Source:** Spec #44 P0 Zero-Day War Room UI Spec (baseline v2.6.2)  
+**Coverage:** Partial (Spec #44 initial portion, prior session) — **provisional (source partially read)**  
+**Contract:** `packages/contracts/src/entities/war-room.ts`  
+**DB Schema:** ❌ NOT FOUND  
+**Fixture:** `packages/contracts/src/fixtures/seed-war-rooms.ts` ✅ (3 war rooms: activated, monitoring, closed)  
+**Resolver:** ❌ NOT FOUND  
+**Status:** AVAILABLE (fixture exists)  
+**Doctrine:** War Room is an OVERLAY entity — does NOT modify the 12-state case lifecycle, does NOT add a case type, does NOT alter ALLOWED_TRANSITIONS. Activated on P0 conditions (system rule or senior decision). All delivery actions modelled as intent/status (no live Graph, Teams, email, WebSocket — Phase 1). Reuses TeamsDecisionEvent for approval flows.
+
+| Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
+|-------|------|----------------------|--------------|---------------------|-------|
+| `id` | string (CommonFields) | seeded | AVAILABLE | — | Deterministic ID from fixture |
+| `entityType` | `'war-room'` | seeded | AVAILABLE | — | Discriminator |
+| `tenant` | TenantContext (CommonFields) | seeded | AVAILABLE | — | Tenant scope (tenantId, tenantName) |
+| `createdAt` | string ISO 8601 (CommonFields) | system-calculated | AVAILABLE | — | Record creation timestamp |
+| `updatedAt` | string ISO 8601 (CommonFields) | system-calculated | AVAILABLE | — | Record update timestamp |
+| `source` | SourceMetadata (CommonFields) | seeded | AVAILABLE | — | Provenance (connectorId, importRunId, sourceSystem, sourceTimestamp) |
+| `warRoomRef` | string | seeded | AVAILABLE | — | Unique War Room reference identifier |
+| `status` | WarRoomStatus | seeded | AVAILABLE | — | `activated` \| `monitoring` \| `winding_down` \| `closed` |
+| `activationReason` | string | seeded | AVAILABLE | — | Human-readable activation reason |
+| `activationSource` | WarRoomActivationSource | seeded | AVAILABLE | — | `system_rule` \| `senior_decision` |
+| `boundCaseIds` | string[] | seeded | AVAILABLE | — | Case IDs bound to this War Room (≥1 required) |
+| `membership` | WarRoomMember[] | seeded | AVAILABLE | — | Roster: {userId, role, joinedAt, acknowledgedAt, leftAt} |
+| `membership[].role` | WarRoomMemberRole | seeded | AVAILABLE | — | `senior_owner` \| `coordinator` \| `analyst` \| `observer` |
+| `subscribers` | WarRoomSubscriber[] | seeded | AVAILABLE | — | Update subscribers: {userId, channels[], cadence, subscribedAt, unsubscribedAt} |
+| `subscribers[].channels` | SubscriptionChannel[] | seeded | AVAILABLE | — | `teams_adaptive_card` \| `email_structured` \| `email_summary` \| `in_app` |
+| `subscribers[].cadence` | SubscriptionCadence | seeded | AVAILABLE | — | `live` \| `hourly` \| `four_hourly` \| `end_of_day` \| `on_state_change` |
+| `communicationCadence` | CommunicationCadenceProfile | seeded | AVAILABLE | — | {activatedCadenceMinutes, monitoringCadenceMinutes, windingDownCadenceMinutes, execUpdateCadenceMinutes} |
+| `seniorOwnerId` | string | seeded | AVAILABLE | — | Senior owner responsible (must match a senior_owner in membership) |
+| `aiOrientationState` | WarRoomAiOrientationState | seeded | AVAILABLE | — | `active` \| `paused` \| `complete` |
+| `closeOutReportRef` | string \| null | seeded | AVAILABLE | — | Reference to close-out report (null until closed) |
+| `auditTrailRef` | string | seeded | AVAILABLE | — | Reference to audit trail |
+
+**DB Schema Reconciliation:** ⚠️ **DIVERGENT — Contract + fixture exist, DB schema ABSENT.** No file at `packages/db/src/schema/` for war-room. Proposed ARCH-DEBT entry: ARCH-DEBT-053.
+
+**Validation:** `validateWarRoom()` — structural correctness (id, tenant.tenantId, warRoomRef, status enum, activationReason, activationSource enum, boundCaseIds non-empty, membership non-empty with ≥1 senior_owner, subscribers channel/cadence enums, communicationCadence positive numbers, seniorOwnerId, aiOrientationState enum, auditTrailRef).
+
+---
+
 ## Maintenance Rules
 
 1. **This artifact is mechanically derived.** Do NOT manually edit entity entries. Use the data-dictionary-generation.kiro.hook to update.
@@ -1498,5 +1542,5 @@ Five entities forming the compliance/control-framework mapping layer:
 
 ---
 
-**Last Updated:** 2026-06-02 (CaseCommunicationThread entity added — entity #38 in catalogue. Contract + fixture exist; DB schema absent (ARCH-DEBT-052 proposed). Entity count 35→36. Fixture count 26→27. Resolver count unchanged at 13. Composed-object module count unchanged at 2.)  
+**Last Updated:** 2026-06-03 (WarRoom entity added — entity #39 in catalogue. Contract + fixture exist; DB schema absent (ARCH-DEBT-053 proposed). Entity count 36→37. Fixture count 27→28. Resolver count unchanged at 13. Composed-object module count unchanged at 2.)  
 **Snapshot Commit:** (to be recorded after commit)

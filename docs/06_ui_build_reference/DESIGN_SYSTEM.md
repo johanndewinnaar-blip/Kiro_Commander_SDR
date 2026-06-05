@@ -14,8 +14,8 @@ This document is complete. Every value is pinned. Nothing is left "to be defined
 | Decision | Resolution |
 |---|---|
 | Density | Dense-operational (information-rich, deliberate hierarchy, never cramped) |
-| Charting library | **Vega-Lite** primary (free, BSD licence, grammar-of-graphics for heavy analytical use). ECharts permitted only for a visualisation Vega-Lite genuinely cannot do, token-aligned. |
-| Fusion Map / network graph | Separate decision — not Vega-Lite. Bespoke graph library (e.g. Cytoscape or react-force-graph) to be specified when the Fusion Map spec is reached. |
+| Charting library | **ApexCharts** primary (MIT licence, rich chart types for dashboard/analytical use). Sole charting library — no dual-library maintenance. |
+| Fusion Map / network graph | **@xyflow/react (React Flow)** — sole node-based graph library for blast radius, architecture maps, attack paths, Fusion Maps. |
 | Icon library | **Lucide** (outline, monochrome, token-coloured). Single library, no mixing. |
 | Display/brand font | **Bebas Neue** (retained — established identity, in shell references) |
 | Body font | **Inter** (weights 400/500/600/700/800) |
@@ -351,9 +351,9 @@ The baseline's three levels map onto modes as:
 
 ---
 
-## 13. Data visualisation (Vega-Lite)
+## 13. Data visualisation (ApexCharts)
 
-- **Library:** Vega-Lite primary (declarative, free/BSD). ECharts only where Vega-Lite genuinely cannot, token-aligned. Fusion Map is out of scope here (separate graph library later).
+- **Library:** ApexCharts primary (MIT licence, rich interactive charts). Sole charting library. @xyflow/react for node-based graphs (Fusion Map, blast radius, architecture maps). No other charting libraries permitted.
 - **Colour:** charts reference `--data-*` semantic tokens only. Never literal hex in specs.
 - **Every chart includes:** title (if separate from card), legend (if discrete colour), tooltip, time context (if time series), empty state.
 - **Approved types + purpose:** line (trend), bar (comparison, grouped/stacked), area (cumulative trend), donut (composition — use sparingly), gauge (single metric vs thresholds), sparkline (inline trend on tiles/rows), scatter (correlation), histogram (distribution). Each instance must have an explicit operational purpose.
@@ -447,7 +447,7 @@ No data grey dash   + "No data"
 
 - **Fonts:** Bebas Neue + Inter retained over the generic spec's "Inter or Segoe UI"; JetBrains Mono added for telemetry. *(Owner: old fonts stay.)*
 - **Icons:** Lucide chosen over the generic spec's Fluent. *(Owner: Lucide yes.)*
-- **Charts:** Vega-Lite retained as owner's considered choice for heavy analytical use; confirmed free/BSD, no subscription. *(Owner: Vega.)*
+- **Charts:** ApexCharts adopted as sole charting library; Vega-Lite removed (declared but never implemented). *(Owner: ApexCharts.)*
 - **Max width:** generic spec's hard 1280px cap removed; replaced with per-panel max + multi-panel fill to honour wide/ultrawide requirement. *(Owner: as recommended.)*
 - **Top bar:** new spec (56px) adopted. *(Owner: top bar as new spec.)*
 - **Sidebar:** new spec (248px + 68px rail, collapsible) adopted; supersedes the 306px static sidebar. *(Owner: new sidebar stays.)*
@@ -460,7 +460,7 @@ No data grey dash   + "No data"
 ## 20. Implementation path
 
 1. Place this file at `docs/06_ui_build_reference/DESIGN_SYSTEM.md` — authoritative, equal to the shell reference HTMLs.
-2. Amend Spec 02 with EARS requirements capturing every section here. Record library decisions (Vega-Lite, Lucide, shadcn base, JetBrains Mono) in DECISIONS.md.
+2. Amend Spec 02 with EARS requirements capturing every section here. Record library decisions (ApexCharts, @xyflow/react, Lucide, shadcn base, JetBrains Mono) in DECISIONS.md.
 3. Tokenise: build the three-layer token system with these exact primitive values. Remove all hardcoded values from existing components/pages.
 4. Update the design system + the one existing page (Command Centre) to this standard. Verify against one page.
 5. Build the collapsible sidebar, top-bar mode toggle, and Mission mode.
@@ -479,10 +479,10 @@ Eight high-fidelity mockups in `docs/06_ui_build_reference/mockups/` are authori
 - **Instrument gauge** — circular scored-metric gauge. Standard: clean arc. Mission: dark instrument cluster with ticks, needle, glow. A Commander signature.
 - **Strategic Heading compass** — bespoke compass-rose instrument (heading in degrees + cardinal). Mission mode signature element.
 - **Closed-loop lifecycle pipeline** — horizontal stepper (New→Triage→Investigating→Awaiting Feedback→Actioning→Validation→Closure) with per-stage counts and active-stage gold ring. The visual form of the closed-loop case model (Spec 06).
-- **Network topology / blast graph** — origin→spread visualisation across zones (Internet→DMZ→Core→Restricted→Crown Jewel), risk-coloured nodes, exposed/contained/blocked edges. Fusion Map — bespoke graph library, not Vega-Lite.
+- **Network topology / blast graph** — origin→spread visualisation across zones (Internet→DMZ→Core→Restricted→Crown Jewel), risk-coloured nodes, exposed/contained/blocked edges. Fusion Map — @xyflow/react (React Flow).
 - **Ranked table with inline bar+trend** — value + inline horizontal bar + trend arrow per row.
 - **Right-rail insight/action column** — persistent Path Explorer / Recommended Actions / Case & Action Center beside main visuals on detail surfaces.
 - **Live activity feed** — timestamped events with severity dots, recurring bottom-right card.
 
 ### Gauges elevated
-Gauges are a primary signature, not a minor chart type. Implement a dedicated gauge component (Vega-Lite arc or bespoke) supporting: value, /scale, label, threshold bands (red→amber→green), needle, and Mission-mode instrument styling with controlled glow. Meaning never by colour alone (always value + label + position).
+Gauges are a primary signature, not a minor chart type. Implement a dedicated gauge component (ApexCharts radialBar or bespoke) supporting: value, /scale, label, threshold bands (red→amber→green), needle, and Mission-mode instrument styling with controlled glow. Meaning never by colour alone (always value + label + position).

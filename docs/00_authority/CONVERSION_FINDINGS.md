@@ -231,7 +231,7 @@ Working copy clean. Branch: main. HEAD matches origin/main.
 
 - `DESIGN_SYSTEM.md`, `MOCKUP_INDEX.md`, and 8 high-fidelity PNG mockups committed as authoritative in `docs/06_ui_build_reference/` (commit `48e5377`). Equal in standing to the shell reference HTMLs.
 - Spec 02 amended with 47 DS-1.0 EARS requirements capturing every pinned value, both workspace modes, three-layer token architecture, and all signature components (commit `70fc8e0`).
-- 8 library/design decisions recorded: DEC-design-system-v1, DEC-ds1-vega-lite, DEC-ds1-lucide, DEC-ds1-shadcn-ui, DEC-ds1-jetbrains-mono, DEC-ds1-fusion-map-library-deferred, DEC-ds1-topbar-56px, DEC-ds1-sidebar-248px-collapsible.
+- 8 library/design decisions recorded: DEC-design-system-v1, DEC-ds1-vega-lite (superseded by DEC-ds1-vega-removed), DEC-ds1-lucide, DEC-ds1-shadcn-ui, DEC-ds1-jetbrains-mono, DEC-ds1-fusion-map-library-deferred, DEC-ds1-topbar-56px, DEC-ds1-sidebar-248px-collapsible.
 
 ### DS-1.0 Implementation Phases
 
@@ -290,7 +290,7 @@ Working copy clean. Branch: main. HEAD `a8ed0c1` matches origin/main.
 
 - `DESIGN_SYSTEM.md`, `MOCKUP_INDEX.md`, and 8 high-fidelity PNG mockups committed as authoritative in `docs/06_ui_build_reference/` (commit `48e5377`). Equal in standing to the shell reference HTMLs.
 - Spec 02 amended with 47 DS-1.0 EARS requirements (commit `70fc8e0`).
-- 8 library/design decisions recorded: DEC-design-system-v1, DEC-ds1-vega-lite, DEC-ds1-lucide, DEC-ds1-shadcn-ui, DEC-ds1-jetbrains-mono, DEC-ds1-fusion-map-library-deferred, DEC-ds1-topbar-56px, DEC-ds1-sidebar-248px-collapsible.
+- 8 library/design decisions recorded: DEC-design-system-v1, DEC-ds1-vega-lite (superseded by DEC-ds1-vega-removed), DEC-ds1-lucide, DEC-ds1-shadcn-ui, DEC-ds1-jetbrains-mono, DEC-ds1-fusion-map-library-deferred, DEC-ds1-topbar-56px, DEC-ds1-sidebar-248px-collapsible.
 
 ### DS-1.0 Implementation (all complete)
 

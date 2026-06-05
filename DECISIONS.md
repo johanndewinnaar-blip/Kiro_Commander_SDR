@@ -123,11 +123,11 @@
 | Decision ID | Date | Decision | Rationale | Impact |
 |---|---|---|---|---|
 | DEC-design-system-v1 | 2026-05-28 | DESIGN_SYSTEM.md and the 8 mockups in docs/06_ui_build_reference/ are now authoritative, equal in standing to the shell reference HTMLs. DS-1.0 supersedes the v1.3.2 design remediation values where they conflict. | Owner produced a complete, pinned design system specification with high-fidelity mockups. Every value is resolved — nothing left to improvise. | All implementation must build to DS-1.0 exactly. Prior hardcoded values (14px, 18px, 26px, 28px, 68px top bar, 306px sidebar) are superseded. |
-| DEC-ds1-vega-lite | 2026-05-28 | Vega-Lite is the primary charting library for Commander SDR. | Free/BSD licence, grammar-of-graphics approach suitable for heavy analytical use. Owner's considered choice. | All charts use Vega-Lite. ECharts permitted only where Vega-Lite genuinely cannot. Literal hex never in chart specs — reference --data-* tokens only. |
+| DEC-ds1-vega-lite | 2026-05-28 | ~~SUPERSEDED by DEC-ds1-vega-removed (2026-06-03).~~ Vega-Lite was declared but never implemented. ApexCharts is the sole charting library. | Superseded. | See DEC-ds1-vega-removed. |
 | DEC-ds1-lucide | 2026-05-28 | Lucide is the single icon library for Commander SDR. | Outline, monochrome, token-coloured. Consistent visual language. | No mixing icon libraries. Lucide only. Sizes: 16px inline, 20px nav, 24px feature. |
 | DEC-ds1-shadcn-ui | 2026-05-28 | shadcn/ui primitives are the component base, restyled with Commander tokens. | Accessible, composable, unstyled primitives that can be fully themed. | Bespoke components reserved for signature surfaces only (Command Centre, Fusion Map, P0 War Room). |
 | DEC-ds1-jetbrains-mono | 2026-05-28 | JetBrains Mono is the monospace font for telemetry, IDs, hashes, and all numeric values in Mission mode. | Tabular figures, clear distinction from body text, established developer font. | Mandatory for numeric KPI values in Mission mode. Used for CVE IDs, asset IDs, hashes throughout. |
-| DEC-ds1-fusion-map-library-deferred | 2026-05-28 | Bespoke graph library for Fusion Map (Cytoscape or react-force-graph) is deferred until the Fusion Map spec is reached. | Fusion Map requires network graph capabilities that Vega-Lite cannot provide. Library selection deferred to avoid premature commitment. | Fusion Map spec will make the final library choice. |
+| DEC-ds1-fusion-map-library-deferred | 2026-05-28 | @xyflow/react (React Flow) is the sole node-based graph library for Fusion Map, blast radius, architecture maps, attack paths. | React Flow already in use (@xyflow/react ^12.11.0). Provides network graph capabilities needed for Fusion Map. | Fusion Map and all node-based visualisations use @xyflow/react exclusively. |
 | DEC-ds1-topbar-56px | 2026-05-28 | Top bar height is 56px (supersedes the v1.3.2 remediation's 68px from shell reference v11). | DS-1.0 §0 locked decision. Owner's new spec. | Implementation must update from 68px to 56px. |
 | DEC-ds1-sidebar-248px-collapsible | 2026-05-28 | Sidebar is 248px expanded, collapsible to 68px icon rail (supersedes the v1.3.2 remediation's 306px static). | DS-1.0 §0 locked decision. Owner's new spec. Collapsible sidebar improves workspace real estate. | Implementation must update from 306px static to 248px + 68px rail with hamburger toggle. |
 
@@ -368,6 +368,18 @@ They are correctly classified as ARCH-DEBT (structural gaps — mis-sourced cita
 
 **Closes:** ARCH-DEBT-007 (PHASE_E orphan)
 **Closes:** BL-002 (PHASE_E_PROPOSAL Incorporation or Retirement)
+
+**Status:** Approved. Effective immediately.
+**Date:** 2026-06-03
+
+
+### DEC-ds1-vega-removed
+
+**Decision:** Vega-Lite removed from Commander SDR. ApexCharts is the sole charting library. React Flow (@xyflow/react) is the sole node-based graph library.
+
+**Rationale:** ApexCharts already in use and serves all dashboard charting needs (gauges, time-series, heatmaps, radial charts). Vega-Lite was declared in the design system spec but never implemented. Removing it simplifies the stack and avoids a dual-library maintenance burden. React Flow handles all node-based visualisations (blast radius, architecture maps, attack paths, Fusion Maps).
+
+**Constraint:** All charts use ApexCharts exclusively. No Vega-Lite/Vega references permitted. Node-based graphs use @xyflow/react exclusively.
 
 **Status:** Approved. Effective immediately.
 **Date:** 2026-06-03

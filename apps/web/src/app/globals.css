@@ -1,3 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* === EXISTING CSS BELOW — DO NOT MODIFY === */
+
 /*
  * Commander SDR — Global CSS Overrides
  *

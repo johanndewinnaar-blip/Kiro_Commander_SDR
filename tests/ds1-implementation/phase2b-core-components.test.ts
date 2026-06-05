@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { getKpiStripStyles } from '../../packages/ui/src/components/kpi-strip';
 import { getKpiTileStyles, getTrendIndicator } from '../../packages/ui/src/components/kpi-tile';
-import { getGaugeStyles, getGaugeBand, getGaugeVegaSpec } from '../../packages/ui/src/components/instrument-gauge';
+import { getGaugeStyles, getGaugeBand, getGaugeChartConfig } from '../../packages/ui/src/components/instrument-gauge';
 import { getRankedTableStyles, getTrendArrow, getBarColor } from '../../packages/ui/src/components/ranked-table';
 import { getLiveFeedStyles, getSeverityColor } from '../../packages/ui/src/components/live-feed';
 import { componentTokens } from '../../packages/ui/src/tokens/components';
@@ -99,10 +99,11 @@ describe('Instrument Gauge', () => {
     expect(band.label).toBe('Healthy');
   });
 
-  it('Vega-Lite spec is generated for gauge', () => {
-    const spec = getGaugeVegaSpec({ value: 75, max: 100, label: 'Score' }, 'standard');
-    expect(spec.$schema).toContain('vega-lite');
-    expect(spec.data.values.length).toBe(3);
+  it('ApexCharts config is generated for gauge', () => {
+    const config = getGaugeChartConfig({ value: 75, max: 100, label: 'Score' }, 'standard');
+    expect(config.series[0]).toBe(75);
+    expect(config.options.chart.type).toBe('radialBar');
+    expect(config.options.labels[0]).toBe('Score');
   });
 });
 

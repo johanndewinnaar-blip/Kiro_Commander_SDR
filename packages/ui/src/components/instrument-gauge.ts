@@ -103,38 +103,31 @@ export function getGaugeBand(
 }
 
 /**
- * Generate Vega-Lite spec for a gauge arc.
- * Returns a declarative spec object suitable for rendering with vega-lite.
+ * Generate ApexCharts gauge configuration for a gauge arc.
+ * Returns a configuration object suitable for rendering with ApexCharts radialBar.
  */
-export function getGaugeVegaSpec(data: GaugeData, mode: WorkspaceMode) {
+export function getGaugeChartConfig(data: GaugeData, mode: WorkspaceMode) {
   const tokens = getSemanticTokens(mode);
   const thresholds = data.thresholds ?? { critical: 0.3, warning: 0.6, success: 1.0 };
+  const pct = (data.value / data.max) * 100;
+  const band = getGaugeBand(data.value, data.max, thresholds);
 
   return {
-    $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
-    width: 140,
-    height: 80,
-    data: {
-      values: [
-        { category: 'critical', start: 0, end: thresholds.critical * data.max },
-        { category: 'warning', start: thresholds.critical * data.max, end: thresholds.warning * data.max },
-        { category: 'success', start: thresholds.warning * data.max, end: data.max },
-      ],
-    },
-    layer: [
-      {
-        mark: { type: 'arc', innerRadius: 50, outerRadius: 65, theta: { expr: 'datum.start / ' + data.max + ' * PI' }, theta2: { expr: 'datum.end / ' + data.max + ' * PI' } },
-        encoding: {
-          color: {
-            field: 'category',
-            scale: { domain: ['critical', 'warning', 'success'], range: [primitiveSignal.critical, primitiveSignal.warning, primitiveSignal.success] },
-            legend: null,
+    series: [pct],
+    options: {
+      chart: { type: 'radialBar' as const },
+      plotOptions: {
+        radialBar: {
+          hollow: { size: '60%' },
+          track: { background: tokens.border.subtle },
+          dataLabels: {
+            name: { show: true, fontSize: primitiveTypeScale.micro, color: tokens.text.muted },
+            value: { show: true, fontSize: primitiveTypeScale.h1, fontFamily: primitiveFonts.mono, color: tokens.text.primary },
           },
         },
       },
-    ],
-    config: {
-      background: mode === 'mission' ? tokens.surface.elevated : 'transparent',
+      colors: [band.color],
+      labels: [data.label],
     },
   };
 }
