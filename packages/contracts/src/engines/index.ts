@@ -219,3 +219,20 @@ export {
   navigateToEntity,
   logAiExecution,
 } from './commander-ai-core';
+
+// Spec 39: Posture Accountability Engine (Temporal Posture Classification)
+export type {
+  PostureSignals,
+  EntityReference,
+  PostureClassificationResult,
+  TransitionResult,
+  AccountabilityReportEntry,
+  AccountabilityReport,
+} from './posture-accountability-engine';
+export {
+  classifyPostureState,
+  evaluateTransition,
+  computeTimeInState,
+  checkEscalationThreshold,
+  generateAccountabilityReport,
+} from './posture-accountability-engine';

@@ -517,7 +517,7 @@ Order respects dependency chains, places shared infrastructure early, and sequen
 
 ## 5. Risk Notes
 
-1. **Spec 39 semantic conflict:** The existing `pre-warned-classification.ts` implements a severity escalation model, NOT the temporal posture accountability model required by Spec 39. A design decision is needed: replace, parallel-entity, or restructure.
+1. **Spec 39 semantic conflict:** ~~The existing `pre-warned-classification.ts` implements a severity escalation model, NOT the temporal posture accountability model required by Spec 39. A design decision is needed: replace, parallel-entity, or restructure.~~ **RESOLVED (DEC-spec39-dual-model, 2026-06-06):** Dual-model approach adopted — severity escalation retained (`pre-warned-classification.ts`), temporal posture accountability added alongside (`posture-accountability.ts` + `posture-accountability-engine.ts`). Both models coexist, measuring different things: threat urgency vs accountability for inaction.
 
 2. **Spec 43 is blocking:** The Strategy Layer Runtime Surface is explicitly build-blocking per its own Req 24. Many other specs depend on strategy surfaces. This should be prioritised.
 

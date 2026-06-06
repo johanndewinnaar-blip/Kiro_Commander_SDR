@@ -60,3 +60,6 @@ export { seedRules, seedModels, seedAutomationRules, seedFeatureRegistry } from 
 
 // ─── Posture Metrics Fixtures (Unit 16b — Aggregate Command Centre) ──────────
 export { seedPostureMetrics } from './seed-posture-metrics';
+
+// ─── Posture Accountability Fixtures (Spec 39 — DEC-spec39-dual-model) ───────
+export { seedPostureAccountability } from './seed-posture-accountability';

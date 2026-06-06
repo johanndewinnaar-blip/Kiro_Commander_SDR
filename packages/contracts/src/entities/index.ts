@@ -422,6 +422,23 @@ export {
   POSTURE_METRIC_DOMAINS,
 } from './posture-metrics-config';
 
+// ─── Posture Accountability (Spec 39 — Temporal Posture Model) ───────────────
+export type {
+  PostureAccountabilityClassification,
+  AccountableEntityType,
+  AccountabilityStatus,
+  ClassifierSource,
+  PostureAccountability,
+  PostureAccountabilityValidation,
+} from './posture-accountability';
+export {
+  POSTURE_ACCOUNTABILITY_CLASSIFICATIONS,
+  ACCOUNTABLE_ENTITY_TYPES,
+  ACCOUNTABILITY_STATUSES,
+  CLASSIFIER_SOURCES,
+  validatePostureAccountability,
+} from './posture-accountability';
+
 // ─── Report Entity ───────────────────────────────────────────────────────────
 export type { Report, ReportType, ReportStatus, ReportCadence } from './report';
 export { REPORT_TYPES, REPORT_STATUSES, REPORT_CADENCES } from './report';

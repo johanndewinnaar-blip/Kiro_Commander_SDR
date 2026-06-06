@@ -1416,6 +1416,8 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **Architectural layer:** Engine Layer (Layer 3) + Intelligence Layer (Layer 4) cross-stream correlation
 
+> **Design resolution (2026-06-06, DEC-spec39-dual-model):** Spec 39 semantic conflict RESOLVED. The existing `pre-warned-classification.ts` (severity escalation: pre_warned→elevated→critical→imminent) is RETAINED as-is. A new temporal posture accountability model (`posture-accountability.ts` + `posture-accountability-engine.ts`) has been added alongside it, implementing the PRE_WARNED/PROTECTED/NOVEL classification from Spec #71. Both models coexist — severity escalation measures threat urgency, posture accountability measures time-in-known-unprotected-state. Unit 29 scope updated accordingly: when this unit is built, it must wire the posture-accountability-engine into the live classification pipeline (the entity + engine contracts already exist).
+
 **Dependencies:** Unit 14 (Intelligence Layer — all four streams), Unit 24-28 (Engine Layer — drift, identity, architecture, vulnerability, exposure engines)
 
 **Required entities:**

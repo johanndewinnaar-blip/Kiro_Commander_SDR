@@ -383,3 +383,26 @@ They are correctly classified as ARCH-DEBT (structural gaps — mis-sourced cita
 
 **Status:** Approved. Effective immediately.
 **Date:** 2026-06-03
+
+
+## Spec 39 — Dual-Model Resolution
+
+### DEC-spec39-dual-model
+
+**Decision:** Spec 39 (Pre-Warned/Protected/Novel Classification) resolved as a SEPARATE temporal posture accountability model coexisting with the existing `pre-warned-classification.ts` severity escalation model.
+
+**The two models:**
+- **Severity escalation** (`pre-warned-classification.ts`): Tracks how urgent a known threat is. Classification levels: `pre_warned → elevated → critical → imminent`. Driven by combined engine signals from Units 24–28. Measures threat intensity/urgency.
+- **Posture accountability** (`posture-accountability.ts`): Tracks how long an entity has been in a known-unprotected state. Classification values: `PRE_WARNED / PROTECTED / NOVEL`. Measures accountability for inaction — how long did Commander know about a weakness before an attack landed?
+
+**Coexistence:** Both models can reference the same entity simultaneously. An asset can be `elevated` severity (threat is urgent) AND `PRE_WARNED` accountability (Commander knew about the weakness for 8 days). The models serve different questions: "How bad is this?" vs "Should we have prevented this?"
+
+**Rationale:** The baseline source (Spec #71) describes a temporal posture model ("classify every external attack landing as pre-warned, protected or novel using prior Commander posture knowledge") that is semantically distinct from the existing severity escalation model. Replacing would lose the severity model's value; the correct resolution is additive.
+
+**Artefacts delivered:**
+- Entity: `packages/contracts/src/entities/posture-accountability.ts`
+- Fixture: `packages/contracts/src/fixtures/seed-posture-accountability.ts`
+- Engine: `packages/contracts/src/engines/posture-accountability-engine.ts`
+
+**Status:** Approved. Effective immediately.
+**Date:** 2026-06-06
