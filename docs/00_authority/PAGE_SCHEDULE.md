@@ -270,6 +270,7 @@
 | Tenant Overview | /settings/tenant | SCAFFOLD | Unit 22 | UC-101 |
 | Users & RBAC | /settings/users-rbac | SCAFFOLD | Unit 22 | UC-099 |
 | Connectors & Data Sources | /settings/connectors | BUILT | Unit 22 | — |
+| Missions | /settings/missions | BUILT | Spec 37 | UC-162, UC-163, UC-166 |
 | Feature Availability | /settings/features | SCAFFOLD | Unit 22 | UC-097 |
 | SLA Configuration | /settings/sla | BUILT | Unit 22 | — |
 | Routing Configuration | /settings/routing | BUILT | Unit 22 | — |
@@ -290,7 +291,8 @@
 
 | Nav Item | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
-| Command Overview | /control-plane | BUILT | Unit 23 | UC-019 |
+| Command Overview | /control-plane | BUILT | Unit 23, Spec 38 | UC-019, UC-157, UC-160 |
+| Entitlements | /control-plane/entitlements | BUILT | Spec 38 | UC-158 |
 | Customers | /control-plane/customers | SCAFFOLD | Unit 23 | UC-103 |
 | Tenants | /control-plane/tenants | SCAFFOLD | Unit 23 | UC-104 |
 | Licences & Entitlements | /control-plane/licences | SCAFFOLD | Unit 23 | UC-105 |
@@ -298,7 +300,7 @@
 | AI & Model Control | /control-plane/ai-models | SCAFFOLD | Unit 23 | UC-107 |
 | Rule & Policy Packs | /control-plane/rule-packs | SCAFFOLD | Unit 23 | UC-108 |
 | Baseline Profile Management | /control-plane/baselines | SCAFFOLD | Unit 23 | UC-109 |
-| Deployment & Release | /control-plane/deployment | SCAFFOLD | Unit 23 | UC-110 |
+| Deployment & Release | /control-plane/deployment | SCAFFOLD | Unit 23, Spec 38 | UC-110, UC-159 |
 | Support Operations | /control-plane/support | SCAFFOLD | Unit 23 | UC-111 |
 | Billing / Usage Evidence | /control-plane/billing | SCAFFOLD | Unit 23 | UC-112 |
 | Operator Audit | /control-plane/audit | SCAFFOLD | Unit 23 | UC-113 |

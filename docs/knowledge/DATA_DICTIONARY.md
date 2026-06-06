@@ -2098,6 +2098,63 @@ Five entities forming the compliance/control-framework mapping layer:
 
 ---
 
+### 54. Entitlement Manifest
+
+**Source:** Spec #38 Commercial Control Plane UI  
+**Coverage:** Full (Spec #38 requirements read)  
+**Contract:** `packages/contracts/src/entities/entitlement-manifest.ts`  
+**DB Schema:** ❌ NOT FOUND  
+**Fixture:** `packages/contracts/src/fixtures/seed-entitlements.ts` ✅  
+**Status:** AVAILABLE (fixture exists)  
+**Use Cases:** Spec 38, UC-157, UC-158, UC-160, UC-161
+
+| Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
+|-------|------|----------------------|--------------|---------------------|-------|
+| `id` | string | seeded | AVAILABLE | — | CommonFields |
+| `entityType` | `'entitlement-manifest'` | seeded | AVAILABLE | — | Discriminator |
+
+**DB Schema Reconciliation:** ⚠️ **DIVERGENT — Contract + fixture exist, DB schema ABSENT.**
+
+---
+
+### 55. Mission
+
+**Source:** Spec #37 Mission Impact Model  
+**Coverage:** Full (Spec #37 requirements read)  
+**Contract:** `packages/contracts/src/entities/mission.ts`  
+**DB Schema:** ❌ NOT FOUND  
+**Fixture:** `packages/contracts/src/fixtures/seed-missions.ts` ✅  
+**Status:** AVAILABLE (fixture exists)  
+**Use Cases:** Spec 37, UC-162, UC-164, UC-166
+
+| Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
+|-------|------|----------------------|--------------|---------------------|-------|
+| `id` | string | seeded | AVAILABLE | — | CommonFields |
+| `entityType` | `'mission'` | seeded | AVAILABLE | — | Discriminator |
+
+**DB Schema Reconciliation:** ⚠️ **DIVERGENT — Contract + fixture exist, DB schema ABSENT.**
+
+---
+
+### 56. Mission Binding
+
+**Source:** Spec #37 Mission Impact Model  
+**Coverage:** Full (Spec #37 requirements read)  
+**Contract:** `packages/contracts/src/entities/mission-binding.ts`  
+**DB Schema:** ❌ NOT FOUND  
+**Fixture:** `packages/contracts/src/fixtures/seed-mission-bindings.ts` ✅  
+**Status:** AVAILABLE (fixture exists)  
+**Use Cases:** Spec 37, UC-162, UC-163
+
+| Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
+|-------|------|----------------------|--------------|---------------------|-------|
+| `id` | string | seeded | AVAILABLE | — | CommonFields |
+| `entityType` | `'mission-binding'` | seeded | AVAILABLE | — | Discriminator |
+
+**DB Schema Reconciliation:** ⚠️ **DIVERGENT — Contract + fixture exist, DB schema ABSENT.**
+
+---
+
 ## Maintenance Rules
 
 1. **This artifact is mechanically derived.** Do NOT manually edit entity entries. Use the data-dictionary-generation.kiro.hook to update.
@@ -2108,5 +2165,5 @@ Five entities forming the compliance/control-framework mapping layer:
 
 ---
 
-**Last Updated:** 2026-06-06 (Spec 35 + Spec 42 entities added — entries #50–53 in catalogue. Auth Session + Break-Glass Request + RBAC Policy + Search Index Config. All contract + fixture AVAILABLE. DB schemas ABSENT. Entity count 49→53. Fixture count 37→41.)  
+**Last Updated:** 2026-06-06 (Spec 37 + Spec 38 entities added — entries #54–56 in catalogue. Entitlement Manifest + Mission + Mission Binding. All contract + fixture AVAILABLE. DB schemas ABSENT. Entity count 53→56. Fixture count 41→44.)  
 **Snapshot Commit:** (to be recorded after commit)
