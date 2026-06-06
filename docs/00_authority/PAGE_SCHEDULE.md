@@ -51,7 +51,7 @@
 
 | Nav Item | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
-| Overview | /vulnerabilities | SCAFFOLD | Unit 30 (Team 2) | UC-033 |
+| Overview | /vulnerabilities | BUILT | Unit 30 (Team 2) | UC-033 |
 | KEV & Critical | /vulnerabilities/kev | SCAFFOLD | Unit 30 (Team 2) | — |
 | Patch Intelligence | /vulnerabilities/patches | SCAFFOLD | Unit 30 (Team 2) | — |
 | Code & Supply Chain | /vulnerabilities/supply-chain | SCAFFOLD | Unit 30 (Team 2) | — |
@@ -73,8 +73,8 @@
 | Nav Item | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
 | Identity Overview | /identity | BUILT | Unit 18 | UC-012, UC-013 |
-| Privileged Access | /identity/privileged | SCAFFOLD | Unit 18 | — |
-| Access Drift | /identity/drift | SCAFFOLD | Unit 18 | — |
+| Privileged Access | /identity/privileged | BUILT | Unit 18 | UC-013 |
+| Access Drift | /identity/drift | BUILT | Unit 18 | — |
 
 ---
 
@@ -93,8 +93,8 @@
 | Nav Item | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
 | Inventory | /assets | BUILT | Unit 19 | UC-010, UC-011 |
-| Ownership | /assets/ownership | SCAFFOLD | Unit 19 | — |
-| Classification | /assets/classification | SCAFFOLD | Unit 19 | — |
+| Ownership | /assets/ownership | BUILT | Unit 19 | — |
+| Classification | /assets/classification | BUILT | Unit 19 | — |
 
 ---
 
@@ -102,7 +102,7 @@
 
 | Nav Item | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
-| Control Coverage | /controls | SCAFFOLD | Unit 33 (Team 2) | UC-038 |
+| Control Coverage | /controls | BUILT | Unit 33 (Team 2) | UC-038 |
 | Control Strength | /controls/strength | SCAFFOLD | Unit 33 (Team 2) | — |
 | Framework Mapping | /controls/frameworks | SCAFFOLD | Unit 33 (Team 2) | — |
 
@@ -122,9 +122,9 @@
 
 | Nav Item | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
-| Tool Health | /tool-health | SCAFFOLD | Unit 46 (Team 2) | — |
-| Connectors | /tool-health/connectors | SCAFFOLD | Unit 46 (Team 2) | — |
-| Source Freshness | /tool-health/freshness | SCAFFOLD | Unit 46 (Team 2) | — |
+| Tool Health | /tool-health | BUILT | Unit 46 (Team 2) | — |
+| Connectors | /tool-health/connectors | BUILT | Unit 46 (Team 2) | — |
+| Source Freshness | /tool-health/freshness | BUILT | Unit 46 (Team 2) | — |
 
 ---
 
@@ -163,14 +163,14 @@
 | Nav Item | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
 | Platform Overview | /platform | SCAFFOLD | — | — |
-| Connectors & Data Sources | /platform/connectors | SCAFFOLD | Unit 4, Unit 38 | UC-030 |
+| Connectors & Data Sources | /platform/connectors | BUILT | Unit 4, Unit 38 | UC-030 |
 | Data Quality | /platform/data-quality | SCAFFOLD | — | — |
 | Rule Engine | /platform/rules | SCAFFOLD | — | — |
 | Model Management | /platform/models | SCAFFOLD | — | — |
-| Commander AI | /commander-ai | SCAFFOLD | Unit 40 | UC-046–053 (AICAP) |
+| Commander AI | /commander-ai | BUILT | Unit 40 | UC-046–053 (AICAP) |
 | Automation | /platform/automation | SCAFFOLD | — | — |
 | Feature Availability | /platform/features | SCAFFOLD | — | — |
-| Audit & Logs | /platform/audit | SCAFFOLD | Unit 43 | — |
+| Audit & Logs | /platform/audit | BUILT | Unit 43 | — |
 
 ---
 
@@ -191,7 +191,7 @@
 
 | Nav Item | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
-| Compliance | /governance | SCAFFOLD | Unit 35 (Team 2) | — |
+| Compliance | /governance | BUILT | Unit 35 (Team 2) | — |
 | Policies & Standards | /governance/policies | SCAFFOLD | Unit 35 (Team 2) | — |
 | Exceptions | /governance/exceptions | SCAFFOLD | Unit 35 (Team 2) | — |
 
@@ -238,15 +238,15 @@
 | Tenant Admin Overview | /tenant-admin | SCAFFOLD | Unit 22 | UC-020 |
 | Tenant Overview | /settings/tenant | SCAFFOLD | Unit 22 | — |
 | Users & RBAC | /settings/users-rbac | SCAFFOLD | Unit 22 | — |
-| Connectors & Data Sources | /settings/connectors | SCAFFOLD | Unit 22 | — |
+| Connectors & Data Sources | /settings/connectors | BUILT | Unit 22 | — |
 | Feature Availability | /settings/features | SCAFFOLD | Unit 22 | — |
-| SLA Configuration | /settings/sla | SCAFFOLD | Unit 22 | — |
-| Routing Configuration | /settings/routing | SCAFFOLD | Unit 22 | — |
-| Validation Rules | /settings/validation | SCAFFOLD | Unit 22 | — |
-| Closure & Reopening | /settings/closure-reopening | SCAFFOLD | Unit 22 | — |
+| SLA Configuration | /settings/sla | BUILT | Unit 22 | — |
+| Routing Configuration | /settings/routing | BUILT | Unit 22 | — |
+| Validation Rules | /settings/validation | BUILT | Unit 22 | — |
+| Closure & Reopening | /settings/closure-reopening | BUILT | Unit 22 | — |
 | P0 / Zero-Day Config | /settings/p0-zero-day | SCAFFOLD | Unit 22 | — |
-| Automation Boundaries | /settings/automation-boundaries | SCAFFOLD | Unit 22 | — |
-| Commander AI Config | /settings/commander-ai | SCAFFOLD | Unit 22 | — |
+| Automation Boundaries | /settings/automation-boundaries | BUILT | Unit 22 | — |
+| Commander AI Config | /settings/commander-ai | BUILT | Unit 22 | — |
 | Audit & Export | /settings/audit-export | SCAFFOLD | Unit 22 | — |
 
 **Arch Debt:** ARCH-DEBT-047..050 (live enforcement deferred), ARCH-DEBT-019
@@ -370,9 +370,9 @@ These pages exist on disk (page.tsx) but are NOT in nav-groups.ts sidebar:
 
 | Metric | Count |
 |---|---|
-| Total BUILT pages (page.tsx on disk) | 12 |
-| Total SCAFFOLD nav items (no page.tsx) | 52 |
-| Sidebar nav groups (operational) | 18 |
-| Top nav workspace tabs | 6 |
+| Total BUILT pages (page.tsx on disk) | 34 |
+| Total SCAFFOLD nav items (no page.tsx) | 30 |
+| Sidebar nav groups (operational) | 19 |
+| Top nav workspace tabs | 5 |
 | Detail views (no nav item) | 3 |
 | True orphan pages | 0 |

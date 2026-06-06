@@ -50,13 +50,13 @@
 | UC-029 | Assign/reassign case to analyst | System | — | — | assignment-engine resolver | SYSTEM | — | Unit 8 | NOT BUILT (resolver exists, no direct UI) |
 | UC-030 | Execute connector pull (mock) | System | — | — | connector-pull-orchestrator resolver, connector.ts | SYSTEM | — | Unit 4, Unit 38 | NOT BUILT (resolver exists, no direct UI) |
 | UC-031 | Manage strategy policy lifecycle | SOM, CISO, Tenant Admin | operational | /strategy | strategy-policy-lifecycle resolver, strategy.ts | SYSTEM | — | Unit 6 | NOT BUILT (resolver exists, strategy page is scaffold for lifecycle management) |
-| UC-032 | View IOC intelligence | All authenticated | operational | — | indicator-of-compromise.ts, seed-iocs | SYSTEM | — | Unit 50 | NOT BUILT (entity/fixture exist, no page) |
-| UC-033 | View vulnerability intelligence | All authenticated | operational | — | vulnerability-intelligence-record.ts, seed-vulnerability-intelligence | SYSTEM | — | Unit 50 | NOT BUILT (entity/fixture exist, no page) |
+| UC-032 | View IOC intelligence | All authenticated | operational | /vulnerabilities | indicator-of-compromise.ts, seed-iocs | SYSTEM | — | Unit 50 | BUILT |
+| UC-033 | View vulnerability intelligence | All authenticated | operational | /vulnerabilities | vulnerability-intelligence-record.ts, seed-vulnerability-intelligence | SYSTEM | — | Unit 50 | BUILT |
 | UC-034 | View vendor advisories | All authenticated | operational | — | vendor-advisory.ts, seed-vendor-advisories | SYSTEM | — | Unit 50 | NOT BUILT (entity/fixture exist, no page) |
 | UC-035 | View threat hunt records | All authenticated | operational | — | threat-hunt-record.ts, seed-threat-hunts | SYSTEM | — | Unit 50 | NOT BUILT (entity/fixture exist, no page) |
 | UC-036 | View platform intelligence sources | Seiertech Operator | operational | — | platform-intelligence-source.ts, seed-platform-intelligence-sources | SYSTEM | — | Unit 50 | NOT BUILT (entity/fixture exist, no page) |
 | UC-037 | View push action intents | SOM | operational | — | push-action-intent.ts, seed-push-action-intents | SYSTEM | — | Unit 42 (Team 2, BLOCKED) | NOT BUILT (entity/fixture exist, no page) |
-| UC-038 | View control framework compliance | All authenticated | operational | — | control-framework.ts, seed-control-frameworks | SYSTEM | — | Unit 33 (Team 2, BLOCKED) | NOT BUILT (entity/fixture exist, /controls is SCAFFOLD with no page.tsx) |
+| UC-038 | View control framework compliance | All authenticated | operational | /controls | control-framework.ts, seed-control-frameworks | SYSTEM | — | Unit 33 (Team 2, BLOCKED) | BUILT |
 | UC-039 | View case communication threads | All authenticated | operational | — | case-communication-thread.ts, seed-communication-threads | SYSTEM | — | Unit 44 (Team 2, BLOCKED) | NOT BUILT (entity/fixture exist, no dedicated page) |
 | UC-040 | View communication playbooks | SOM, Tenant Admin | operational | — | communication-playbook.ts, seed-communication-playbooks | SYSTEM | — | Unit 44 (Team 2, BLOCKED) | NOT BUILT (entity/fixture exist, no page) |
 | UC-041 | View detonation verdicts | Security Analyst | operational | — | detonation-verdict.ts, seed-detonation-verdicts | SYSTEM | — | — | NOT BUILT (entity/fixture exist, no page) |
