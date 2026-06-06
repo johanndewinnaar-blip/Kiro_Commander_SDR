@@ -77,6 +77,23 @@
 | UC-056 | Resolve vulnerability closure gates | System | — | — | vuln-closure-gates (profiles/vulnerability/) | SYSTEM | — | Unit 27  | NOT BUILT (profile code exists, no UI) |
 | UC-057 | Resolve vulnerability reopening triggers | System | — | — | vuln-reopening-triggers (profiles/vulnerability/) | SYSTEM | — | Unit 27  | NOT BUILT (profile code exists, no UI) |
 | UC-058 | View Teams decision events | SOM | operational | — | teams-decision-event.ts, seed-teams-decision-events | SYSTEM | — | — | NOT BUILT (entity/fixture exist, no page) |
+| UC-PULSE-001 | View team workload distribution | SOM, Security Analyst | operational | /team-pulse/workload | pulse.ts (TeamPulseEntry), seed-pulse | SYSTEM | AICAP-PULSE-001 | Tier 3 batch | BUILT |
+| UC-PULSE-002 | View SLA pressure by team | SOM, CISO | operational | /team-pulse/sla | pulse.ts (TeamPulseEntry), seed-pulse | SYSTEM | AICAP-PULSE-002 | Tier 3 batch | BUILT |
+| UC-PULSE-003 | View escalation queue depth | SOM, CISO | operational | /team-pulse/escalation | pulse.ts (TeamPulseEntry), seed-pulse | SYSTEM | AICAP-PULSE-003 | Tier 3 batch | BUILT |
+| UC-PULSE-004 | View domain health overview | All authenticated | operational | /domain-pulse | pulse.ts (DomainPulseEntry), seed-pulse | SYSTEM | AICAP-PULSE-004 | Tier 3 batch | BUILT |
+| UC-PULSE-005 | View failed validation by domain | All authenticated | operational | /domain-pulse/failed-validation | pulse.ts (DomainPulseEntry), seed-pulse | SYSTEM | AICAP-PULSE-005 | Tier 3 batch | BUILT |
+| UC-PULSE-006 | View closure blockers by domain | All authenticated | operational | /domain-pulse/closure-blockers | pulse.ts (DomainPulseEntry), seed-pulse | SYSTEM | AICAP-PULSE-006 | Tier 3 batch | BUILT |
+| UC-PULSE-007 | View engine health status | SOM, Security Architect | operational | /system-pulse/engine | pulse.ts (SystemPulseEntry), seed-pulse | SYSTEM | AICAP-PULSE-007 | Tier 3 batch | BUILT |
+| UC-PULSE-008 | View queue backlog depth | SOM, Security Architect | operational | /system-pulse/queues | pulse.ts (SystemPulseEntry), seed-pulse | SYSTEM | AICAP-PULSE-008 | Tier 3 batch | BUILT |
+| UC-PULSE-009 | View data freshness by subsystem | SOM, Security Architect | operational | /system-pulse/freshness | pulse.ts (SystemPulseEntry), seed-pulse | SYSTEM | AICAP-PULSE-009 | Tier 3 batch | BUILT |
+| UC-REPORT-001 | View report schedule | CISO, SOM | operational | /reporting | report.ts, seed-reports | SYSTEM | AICAP-REPORT-001 | Tier 3 batch | BUILT |
+| UC-REPORT-002 | View completed report exports | CISO, SOM | operational | /reporting/exports | report.ts, seed-reports | SYSTEM | AICAP-REPORT-002 | Tier 3 batch | BUILT |
+| UC-REPORT-003 | View CISO briefing pack | CISO | operational | /reporting/ciso-pack | report.ts (ciso-pack type), seed-reports | SYSTEM | AICAP-REPORT-003 | Tier 3 batch | BUILT |
+| UC-PLAT-001 | View rule engine definitions | SOM, Tenant Admin | operational | /platform/rules | platform-management.ts (RuleDefinition), seed-platform | SYSTEM | AICAP-PLATFORM-001 | Tier 3 batch | BUILT |
+| UC-PLAT-002 | View model management status | SOM, Tenant Admin | operational | /platform/models | platform-management.ts (ModelDefinition), seed-platform | SYSTEM | AICAP-PLATFORM-002 | Tier 3 batch | BUILT |
+| UC-PLAT-003 | View automation rules | SOM, Tenant Admin | operational | /platform/automation | platform-management.ts (AutomationRule), seed-platform | SYSTEM | AICAP-PLATFORM-003 | Tier 3 batch | BUILT |
+| UC-PLAT-004 | View feature availability registry | Tenant Admin | operational | /platform/features | platform-management.ts (FeatureRegistryEntry), seed-platform | SYSTEM | AICAP-PLATFORM-004 | Tier 3 batch | BUILT |
+| UC-PLAT-005 | View platform data quality | SOM, Tenant Admin | operational | /platform/data-quality | platform-management.ts, pulse.ts, seed-platform, seed-pulse | SYSTEM | AICAP-PLATFORM-005 | Tier 3 batch | BUILT |
 
 ---
 

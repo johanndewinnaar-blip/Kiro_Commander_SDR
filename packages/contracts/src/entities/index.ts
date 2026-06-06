@@ -392,3 +392,33 @@ export {
   SUBSCRIPTION_CADENCES,
   validateWarRoom,
 } from './war-room';
+
+// ─── Pulse Entities (Team/Domain/System health snapshots) ────────────────────
+export type {
+  PulseDomain,
+  WorkloadBand,
+  TeamPulseEntry,
+  DomainHealth,
+  DomainPulseEntry,
+  EngineHealth,
+  SystemPulseEntry,
+} from './pulse';
+export { PULSE_DOMAINS } from './pulse';
+
+// ─── Report Entity ───────────────────────────────────────────────────────────
+export type { Report, ReportType, ReportStatus, ReportCadence } from './report';
+export { REPORT_TYPES, REPORT_STATUSES, REPORT_CADENCES } from './report';
+
+// ─── Platform Management Entities ────────────────────────────────────────────
+export type {
+  RuleDefinition, RuleStatus, RuleType,
+  ModelDefinition, ModelStatus, ModelType,
+  AutomationRule, AutomationStatus, AutomationTrigger,
+  FeatureRegistryEntry, FeatureState,
+} from './platform-management';
+export {
+  RULE_STATUSES, RULE_TYPES,
+  MODEL_STATUSES, MODEL_TYPES,
+  AUTOMATION_STATUSES, AUTOMATION_TRIGGERS,
+  FEATURE_STATES,
+} from './platform-management';
