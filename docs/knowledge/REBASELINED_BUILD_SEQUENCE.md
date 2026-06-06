@@ -71,15 +71,17 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **READY (0):** No units are currently READY. The READY set is EMPTY.
 
-**DONE (43):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13, Unit 14, Unit 15, **Unit 16a**, **Unit 17**, **Unit 18**, **Unit 19**, **Unit 20**, **Unit 21**, **Unit 22 (v1)**, **Unit 30**, **Unit 31**, **Unit 33**, **Unit 35**, **Unit 36**, **Unit 37**, **Unit 38**, **Unit 40**, **Unit 46**, **Unit 50**, **COIM-A, COIM-B, COIM-C, COIM-D, COIM-E, COIM-F, COIM-G, COIM-H, CFM**.
+**DONE (44):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13, Unit 14, Unit 15, **Unit 16a**, **Unit 16b**, **Unit 17**, **Unit 18**, **Unit 19**, **Unit 20**, **Unit 21**, **Unit 22 (v1)**, **Unit 30**, **Unit 31**, **Unit 33**, **Unit 35**, **Unit 36**, **Unit 37**, **Unit 38**, **Unit 40**, **Unit 46**, **Unit 50**, **COIM-A, COIM-B, COIM-C, COIM-D, COIM-E, COIM-F, COIM-G, COIM-H, CFM**.
 
-**BLOCKED (13):** Unit 16b, Units 23–29, 32, 34, 39, 41–45, 47–49. Blocked on missing entities, ARCH-DEBT re-sourcing, or Phase 2 gating.
+**BLOCKED (12):** Units 23–29, 32, 34, 39, 41–45, 47–49. Blocked on missing entities, ARCH-DEBT re-sourcing, or Phase 2 gating.
 
 > **Recompute (2026-06-02, post Unit 17 DONE):** Unit 17 (Case Management UI) marked DONE after descoping deliverable 5 to Unit 44 and resolving the Cluster C stale-test-against-Tabler-reskin conflict. **All Foundational numbered build units are now DONE.** Unit 16b remains BLOCKED (functional pages exist now but the data-point-to-metric mapping artifact is still absent). Team-2 units stay BLOCKED on ARCH-006. The only remaining READY item is COIM-H (separately authorised).
 
 > **Recompute (2026-06-02, post COIM-H + CFM DONE — phase-hanger exception closure):** COIM-H and CFM both marked DONE. **READY set is now EMPTY.** Unit 16b remains BLOCKED: the Foundational functional pages (Units 17–22) are DONE, but Units 30–33 (Team 2 functional pages) are still BLOCKED on ARCH-006, and the data-point-to-metric mapping artifact remains absent. All Team-2 units stay BLOCKED on ARCH-006. Next unblock path: resolve ARCH-006 (create USE_CASE_SCHEDULE.md + PAGE_INVENTORY.md) OR author the data-point-to-metric mapping artifact for Unit 16b.
 
 > **Conveyor holds (2026-06-02) — RESOLVED:** Units 18, 21, 17, and 19 were previously HELD pending owner decisions. All four are now **DONE** (DEC-sec-c2-internal-cop-rbac resolved, DEC-unit17-gate-clarification resolved, Unit 19 built). No conveyor holds remain among Foundational units.
+
+> **Recompute (2026-06-06, post Unit 16b DONE — owner-authorised build):** Unit 16b marked DONE. BL-001 (data-point-to-metric mapping artifact) RESOLVED — artifact delivered as `posture-metrics-config.ts` entity + seed fixture. DONE count: 44. BLOCKED count: 12. READY set remains EMPTY (all remaining units are Team-2, blocked on ARCH-006). Next unblock: resolve ARCH-006 (USE_CASE_SCHEDULE.md + PAGE_INVENTORY.md).
 
 > **Unit 16 split (`DEC-command-centre-split-16a-16b`, 2026-06-02):** Unit 16 (Command Centre) was split into **16a (Operational Command Centre — READY)** and **16b (Aggregate/Posture Command Centre — BLOCKED)** to resolve ARCH-DEBT-026. The metric-deferral control formerly in `DEC-command-centre-deferred` now applies ONLY to 16b. All units that previously depended on "Unit 16" now depend on **16a**. Full definitions in the Unit 16a / Unit 16b sections below.
 
@@ -872,9 +874,11 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 ### Unit 16b: Surface Layer — Aggregate/Posture Command Centre (Summary Rollup)
 
-**Status:** BLOCKED
+**Status:** DONE
 
-**Blocked by:** Functional pages that define confirmed data points (Units 30, 31, 32, 33 — Team 2, BLOCKED on ARCH-006); AND the data-point-to-metric mapping artifact (does not yet exist — captured as BL-001 in FEATURE_FUNCTION_BACKLOG.md). Unit 17 (Foundational functional page) is DONE. Carries the metric-deferral control formerly held by `DEC-command-centre-deferred`.
+**Blocked by:** — (complete)
+
+**Verification:** Owner-authorised build (2026-06-06). The data-point-to-metric mapping artifact was authored as `posture-metrics-config.ts` entity + `seed-posture-metrics.ts` fixture (12 metrics, 4 periods, 7-point history, strategy-sourced thresholds). BL-001 RESOLVED. Components: sparkline (inline SVG), posture-metric-card (KPI + sparkline + threshold colouring + trend), time-range-toggle (24h/7d/30d/YTD). Page: `/posture` route with 4×3 grid, time-range toggle, inline expansion. Pattern A. All diagnostics clean; pre-commit gate passed.
 
 **Purpose:** Build the Command Centre aggregate/posture rollup — the summary KPI layer (Posture Score, SLA Compliance, Coverage and other cross-page aggregates) that must map to *confirmed* data points produced by the functional pages, not seeded guesses.
 
@@ -2678,8 +2682,8 @@ A build unit is complete when:
 
 ---
 
-**Last Updated:** 2026-06-02  
-**Status:** ACTIVE — readiness state machine. Build only from the READY set. **As of 2026-06-02 (CFM delivered):** ALL FOUNDATIONAL NUMBERED UNITS (0–22, 38, 40) ARE DONE. COIM-A…COIM-H ALL DONE. CFM DONE. Unit 16b BLOCKED (data-point-to-metric artifact absent). All Team-2 units BLOCKED on ARCH-006. READY set is EMPTY. Status recomputes on debt-resolution / unit-completion.  
+**Last Updated:** 2026-06-06  
+**Status:** ACTIVE — readiness state machine. Build only from the READY set. **As of 2026-06-06 (Unit 16b delivered):** ALL FOUNDATIONAL UNITS (0–22, 38, 40, 16b) ARE DONE. COIM-A…COIM-H ALL DONE. CFM DONE. BL-001 RESOLVED. All Team-2 units BLOCKED on ARCH-006. READY set is EMPTY. Status recomputes on debt-resolution / unit-completion.  
 **Enforcement:** ARCH-006 (build-stream sequencing) + ARCH-007 (blocking-debt prerequisite) in `.kiro/testing/conformance-registry.md`, auto-run via post-task-review. "What's next" query defined in `.kiro/steering/execution-discipline.md`.  
 **Authority:** Derived from SYSTEM_KNOWLEDGE_GRAPH.md, DATA_DICTIONARY.md, REBASELINED_BUILD_SCHEDULE_NOTES.md, baseline source. Decision: `DEC-build-readiness-state-machine` (DECISIONS.md).  
 **Sourcing rule:** Never cite the translation layer — all citations from `docs/99_source_archive/baseline_v2_6_2/`
