@@ -157,9 +157,9 @@ export const OPERATIONAL_NAV_GROUPS: NavGroup[] = [
     id: 'team-pulse',
     label: 'Team Pulse',
     subItems: [
-      { label: 'Workload', path: '/team-pulse/workload', status: 'SCAFFOLD' },
-      { label: 'SLA Pressure', path: '/team-pulse/sla', status: 'SCAFFOLD' },
-      { label: 'Escalation Queue', path: '/team-pulse/escalation', status: 'SCAFFOLD' },
+      { label: 'Workload', path: '/team-pulse/workload', status: 'BUILD' },
+      { label: 'SLA Pressure', path: '/team-pulse/sla', status: 'BUILD' },
+      { label: 'Escalation Queue', path: '/team-pulse/escalation', status: 'BUILD' },
     ],
   },
   // Group 13 — Domain Pulse [Source: v11 shell reference]
@@ -167,9 +167,9 @@ export const OPERATIONAL_NAV_GROUPS: NavGroup[] = [
     id: 'domain-pulse',
     label: 'Domain Pulse',
     subItems: [
-      { label: 'Domain Overview', path: '/domain-pulse', status: 'SCAFFOLD' },
-      { label: 'Failed Validation', path: '/domain-pulse/failed-validation', status: 'SCAFFOLD' },
-      { label: 'Closure Blockers', path: '/domain-pulse/closure-blockers', status: 'SCAFFOLD' },
+      { label: 'Domain Overview', path: '/domain-pulse', status: 'BUILD' },
+      { label: 'Failed Validation', path: '/domain-pulse/failed-validation', status: 'BUILD' },
+      { label: 'Closure Blockers', path: '/domain-pulse/closure-blockers', status: 'BUILD' },
     ],
   },
   // Group 14 — System Pulse [Source: v11 shell reference]
@@ -177,9 +177,9 @@ export const OPERATIONAL_NAV_GROUPS: NavGroup[] = [
     id: 'system-pulse',
     label: 'System Pulse',
     subItems: [
-      { label: 'Engine Health', path: '/system-pulse/engine', status: 'SCAFFOLD' },
-      { label: 'Queue Backlog', path: '/system-pulse/queues', status: 'SCAFFOLD' },
-      { label: 'Data Freshness', path: '/system-pulse/freshness', status: 'SCAFFOLD' },
+      { label: 'Engine Health', path: '/system-pulse/engine', status: 'BUILD' },
+      { label: 'Queue Backlog', path: '/system-pulse/queues', status: 'BUILD' },
+      { label: 'Data Freshness', path: '/system-pulse/freshness', status: 'BUILD' },
     ],
   },
   // Group 15 — Platform [Source: v11 shell reference]
@@ -191,12 +191,12 @@ export const OPERATIONAL_NAV_GROUPS: NavGroup[] = [
     subItems: [
       { label: 'Platform Overview', path: '/platform', status: 'SCAFFOLD' },
       { label: 'Connectors & Data Sources', path: '/platform/connectors', status: 'SCAFFOLD' },
-      { label: 'Data Quality', path: '/platform/data-quality', status: 'SCAFFOLD' },
-      { label: 'Rule Engine', path: '/platform/rules', status: 'SCAFFOLD' },
-      { label: 'Model Management', path: '/platform/models', status: 'SCAFFOLD' },
+      { label: 'Data Quality', path: '/platform/data-quality', status: 'BUILD' },
+      { label: 'Rule Engine', path: '/platform/rules', status: 'BUILD' },
+      { label: 'Model Management', path: '/platform/models', status: 'BUILD' },
       { label: 'Commander AI', path: '/commander-ai', status: 'BUILD' },
-      { label: 'Automation', path: '/platform/automation', status: 'SCAFFOLD' },
-      { label: 'Feature Availability', path: '/platform/features', status: 'SCAFFOLD' },
+      { label: 'Automation', path: '/platform/automation', status: 'BUILD' },
+      { label: 'Feature Availability', path: '/platform/features', status: 'BUILD' },
       { label: 'Audit & Logs', path: '/platform/audit', status: 'SCAFFOLD' },
     ],
   },
@@ -229,9 +229,9 @@ export const OPERATIONAL_NAV_GROUPS: NavGroup[] = [
     id: 'reporting',
     label: 'Reporting',
     subItems: [
-      { label: 'Reports', path: '/reporting', status: 'SCAFFOLD' },
-      { label: 'Exports', path: '/reporting/exports', status: 'SCAFFOLD' },
-      { label: 'CISO Pack', path: '/reporting/ciso-pack', status: 'SCAFFOLD' },
+      { label: 'Reports', path: '/reporting', status: 'BUILD' },
+      { label: 'Exports', path: '/reporting/exports', status: 'BUILD' },
+      { label: 'CISO Pack', path: '/reporting/ciso-pack', status: 'BUILD' },
     ],
   },
   // Group 19 — SOM (Security Operations Management)
