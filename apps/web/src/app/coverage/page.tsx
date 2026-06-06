@@ -1,53 +1,60 @@
 'use client';
 
+import { useMode } from '@/context/mode-context';
 import { PageContainer } from '@/components/page-container';
-import { seedConnectors } from '../../../../../packages/contracts/src/fixtures/seed-connectors';
-import { seedAssets } from '../../../../../packages/contracts/src/fixtures/seed-assets';
-import { primitiveTypeScale, primitiveSignal } from '../../../../../packages/ui/src/tokens/primitives';
+import { seedCoverage } from '../../../../../packages/contracts/src/fixtures/seed-coverage';
+import { componentTokens } from '../../../../../packages/ui/src/tokens/components';
+import { primitiveTypeScale, primitiveSpacing, primitiveFontWeight, primitiveFonts, primitiveLetterSpacing, primitiveSignal } from '../../../../../packages/ui/src/tokens/primitives';
 
 /**
  * Coverage — Overview
- * Data: connector.ts + asset.ts (coverage field)
- * Route: /coverage | Nav Group: Coverage
+ * Data: Coverage from seed-coverage
+ * Route: /coverage | Status: BUILD
  */
-export default function CoveragePage() {
-  const assets = seedAssets;
-  const edr = assets.filter((a) => a.coverage.hasEdr).length;
-  const vulnScan = assets.filter((a) => a.coverage.hasVulnScan).length;
-  const patch = assets.filter((a) => a.coverage.hasPatchManagement).length;
-  const backup = assets.filter((a) => a.coverage.hasBackup).length;
-  const total = assets.length;
+{/* AI-PLACEMENT: AICAP-COV-001 — Commander AI coverage improvement recommendation */}
+
+export default function CoverageOverviewPage() {
+  const { tokens } = useMode();
+  const avgCoverage = seedCoverage.length > 0 ? Math.round(seedCoverage.reduce((a, c) => a + c.coveragePercent, 0) / seedCoverage.length) : 0;
+  const improving = seedCoverage.filter((c) => c.trend === 'improving').length;
+  const degrading = seedCoverage.filter((c) => c.trend === 'degrading').length;
+  const totalGaps = seedCoverage.reduce((a, c) => a + c.gaps.length, 0);
 
   return (
-    <PageContainer pretitle="Coverage" title="Coverage Overview" headerActions={<span className="badge bg-blue-lt">{total} assets assessed</span>}>
-      <div className="row row-deck row-cards mb-3">
-        <div className="col-sm-6 col-lg-3"><div className="card"><div className="card-body"><div className="subheader">EDR Coverage</div><div className="h1 mb-0">{edr}/{total}</div></div></div></div>
-        <div className="col-sm-6 col-lg-3"><div className="card"><div className="card-body"><div className="subheader">Vuln Scan</div><div className="h1 mb-0">{vulnScan}/{total}</div></div></div></div>
-        <div className="col-sm-6 col-lg-3"><div className="card"><div className="card-body"><div className="subheader">Patch Mgmt</div><div className="h1 mb-0">{patch}/{total}</div></div></div></div>
-        <div className="col-sm-6 col-lg-3"><div className="card"><div className="card-body"><div className="subheader">Backup</div><div className="h1 mb-0">{backup}/{total}</div></div></div></div>
-      </div>
-      <div className="card mb-3">
-        <div className="card-header"><h3 className="card-title">Asset Coverage Matrix</h3></div>
-        <div className="card-body p-0">
-          <div className="table-responsive">
-            <table className="table table-vcenter card-table">
-              <thead><tr><th>Asset</th><th>EDR</th><th>Vuln Scan</th><th>Patch</th><th>Backup</th></tr></thead>
-              <tbody>
-                {assets.map((a) => (
-                  <tr key={a.id}>
-                    <td style={{ fontWeight: 600, fontSize: primitiveTypeScale.body }}>{a.name}</td>
-                    <td><span className={`badge ${a.coverage.hasEdr ? 'bg-green-lt' : 'bg-red-lt'}`}>{a.coverage.hasEdr ? 'Yes' : 'No'}</span></td>
-                    <td><span className={`badge ${a.coverage.hasVulnScan ? 'bg-green-lt' : 'bg-red-lt'}`}>{a.coverage.hasVulnScan ? 'Yes' : 'No'}</span></td>
-                    <td><span className={`badge ${a.coverage.hasPatchManagement ? 'bg-green-lt' : 'bg-red-lt'}`}>{a.coverage.hasPatchManagement ? 'Yes' : 'No'}</span></td>
-                    <td><span className={`badge ${a.coverage.hasBackup ? 'bg-green-lt' : 'bg-red-lt'}`}>{a.coverage.hasBackup ? 'Yes' : 'No'}</span></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+    <PageContainer pretitle="Coverage" title="Coverage Overview">
+      <section style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: componentTokens.gridGap, marginBottom: componentTokens.gridGap }}>
+        <Kpi tokens={tokens} label="Avg Coverage" value={`${avgCoverage}%`} accent={avgCoverage >= 90 ? primitiveSignal.success : primitiveSignal.warning} />
+        <Kpi tokens={tokens} label="Improving" value={String(improving)} accent={primitiveSignal.success} />
+        <Kpi tokens={tokens} label="Degrading" value={String(degrading)} accent={degrading > 0 ? primitiveSignal.critical : undefined} />
+        <Kpi tokens={tokens} label="Total Gaps" value={String(totalGaps)} accent={totalGaps > 0 ? primitiveSignal.warning : undefined} />
+      </section>
+      <div style={{ background: tokens.surface.elevated, border: `1px solid ${tokens.border.default}`, padding: componentTokens.cardPadding }}>
+        <h3 style={{ fontSize: primitiveTypeScale.h4, fontWeight: primitiveFontWeight.semibold, color: tokens.text.primary, margin: `0 0 ${componentTokens.cardHeaderMargin}` }}>Coverage by Type</h3>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: primitiveTypeScale.caption }}>
+            <thead><tr>{['Type', 'Domain', 'Coverage %', 'Covered/Total', 'Gaps', 'Trend', 'Assessed'].map((h) => <th key={h} style={{ textAlign: 'left', padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, borderBottom: `2px solid ${tokens.border.default}`, color: tokens.text.muted, fontWeight: primitiveFontWeight.semibold, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow, fontSize: primitiveTypeScale.micro }}>{h}</th>)}</tr></thead>
+            <tbody>{seedCoverage.map((c) => {
+              const pctColor = c.coveragePercent >= 95 ? primitiveSignal.success : c.coveragePercent >= 85 ? primitiveSignal.warning : primitiveSignal.critical;
+              const trendIcon = c.trend === 'improving' ? '↑' : c.trend === 'degrading' ? '↓' : '→';
+              return (
+                <tr key={c.id} style={{ borderBottom: `1px solid ${tokens.border.subtle}` }}>
+                  <td style={{ padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, color: tokens.text.primary, fontWeight: primitiveFontWeight.semibold }}>{c.coverageType.replace(/_/g, ' ')}</td>
+                  <td style={{ padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, color: tokens.text.secondary }}>{c.domain}</td>
+                  <td style={{ padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, fontFamily: primitiveFonts.mono, color: pctColor }}>{c.coveragePercent}%</td>
+                  <td style={{ padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, fontFamily: primitiveFonts.mono, color: tokens.text.muted }}>{c.coveredAssets}/{c.totalAssets}</td>
+                  <td style={{ padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, fontFamily: primitiveFonts.mono }}>{c.gaps.length}</td>
+                  <td style={{ padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, color: c.trend === 'improving' ? primitiveSignal.success : c.trend === 'degrading' ? primitiveSignal.critical : tokens.text.muted }}>{trendIcon} {c.trend}</td>
+                  <td style={{ padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, color: tokens.text.muted, fontFamily: primitiveFonts.mono, fontSize: primitiveTypeScale.micro }}>{new Date(c.lastAssessedAt).toLocaleDateString()}</td>
+                </tr>
+              );
+            })}</tbody>
+          </table>
         </div>
       </div>
-      <div className="card"><div className="card-body"><p className="text-muted mb-0">Coverage Gap Analysis — entity not yet built. Requires: dedicated coverage-gap entity with gap scoring model.</p></div></div>
     </PageContainer>
   );
+}
+
+function Kpi({ tokens, label, value, accent }: { tokens: ReturnType<typeof useMode>['tokens']; label: string; value: string; accent?: string }) {
+  return (<div style={{ background: tokens.surface.elevated, border: `1px solid ${tokens.border.default}`, padding: componentTokens.cardPadding }}><span style={{ display: 'block', fontSize: primitiveTypeScale.micro, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>{label}</span><span style={{ fontSize: primitiveTypeScale.kpiValue, fontFamily: primitiveFonts.mono, fontWeight: primitiveFontWeight.bold, color: accent ?? tokens.text.primary }}>{value}</span></div>);
 }
