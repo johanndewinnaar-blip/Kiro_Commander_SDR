@@ -236,3 +236,54 @@ export {
   checkEscalationThreshold,
   generateAccountabilityReport,
 } from './posture-accountability-engine';
+
+// Spec 43: Strategy Runtime Engine (Runtime Binding + Blocking Gate)
+export type {
+  PolicyChangeResult,
+  BlockingGateResult,
+  DependencyEvaluation,
+} from './strategy-runtime-engine';
+export {
+  applyPolicyChange,
+  fireRuntimeBindingTrigger,
+  evaluateStrategyDependency,
+  enforceBlockingGate,
+} from './strategy-runtime-engine';
+
+// Spec 43: Strategy Simulation Engine (Blast Radius + Conflict Detection)
+export type {
+  SimulationResult,
+  BlastRadiusResult,
+  EffectiveStatePreview,
+  PolicyConflict,
+  SimulationRiskAssessment,
+} from './strategy-simulation-engine';
+export {
+  simulatePolicyChange,
+  computeBlastRadius,
+  previewEffectiveState,
+} from './strategy-simulation-engine';
+
+// Spec 38: Entitlement Enforcement Engine (Commercial Control Plane)
+export type { EntitlementResult } from './entitlement-enforcement-engine';
+export {
+  evaluateEntitlement,
+  checkModuleAccess,
+  checkConnectorLimit,
+  isTrialExpired,
+} from './entitlement-enforcement-engine';
+
+// Spec 37: Mission Impact Engine (Mission Objective Binding Model)
+export type {
+  RiskObjectInput,
+  ImpactResult,
+  AffectedMission,
+  SuggestedBinding,
+  EvaluatedBinding,
+} from './mission-impact-engine';
+export {
+  calculateMissionImpact,
+  traverseImpactChain,
+  evaluateBindingRules,
+  suggestBindings,
+} from './mission-impact-engine';

@@ -63,3 +63,9 @@ export { seedPostureMetrics } from './seed-posture-metrics';
 
 // ─── Posture Accountability Fixtures (Spec 39 — DEC-spec39-dual-model) ───────
 export { seedPostureAccountability } from './seed-posture-accountability';
+
+// ─── Entitlement Manifest Fixtures (Spec 38 — Commercial Control Plane) ──────
+export { seedEntitlements } from './seed-entitlements';
+
+// ─── Mission Binding Fixtures (Spec 37 — Mission Objective Binding Model) ────
+export { seedMissionBindings } from './seed-mission-bindings';

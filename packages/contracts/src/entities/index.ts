@@ -456,3 +456,34 @@ export {
   AUTOMATION_STATUSES, AUTOMATION_TRIGGERS,
   FEATURE_STATES,
 } from './platform-management';
+
+// ─── Entitlement Manifest (Spec 38 — Commercial Control Plane) ──────────────
+export type {
+  EntitlementManifest,
+  EntitlementModule,
+  EntitlementStatus,
+  ReportingTier,
+  ModuleCategory,
+  EntitlementManifestValidation,
+} from './entitlement-manifest';
+export {
+  ENTITLEMENT_STATUSES,
+  REPORTING_TIERS,
+  MODULE_CATEGORIES,
+  validateEntitlementManifest,
+} from './entitlement-manifest';
+
+// ─── Mission Binding (Spec 37 — Mission Objective Binding Model) ─────────────
+export type {
+  MissionBinding,
+  BindingEntityType,
+  BindingMethod,
+  BoundBy,
+  MissionBindingValidation,
+} from './mission-binding';
+export {
+  BINDING_ENTITY_TYPES,
+  BINDING_METHODS,
+  BOUND_BY_OPTIONS,
+  validateMissionBinding,
+} from './mission-binding';

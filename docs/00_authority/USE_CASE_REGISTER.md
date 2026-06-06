@@ -208,3 +208,15 @@
 | AICAP-006 | Draft case communication | case + thread history + playbook template | Communication drafting | PROPOSED |
 | AICAP-007 | Explain drift finding context | risk object (drift type) + strategy policy | Engineering support | PROPOSED |
 | AICAP-008 | Correlate IOC to estate exposure | IOC + tenant matches + affected assets | Threat triage | PROPOSED |
+
+| UC-157 | View operator command home (aggregate metrics) | Seiertech Operator | control-plane | /control-plane | entitlement-manifest.ts, customer.ts, connector.ts, deployment.ts | SYSTEM | — | Spec 38 | BUILT |
+| UC-158 | Manage entitlement manifests | Seiertech Operator | control-plane | /control-plane/entitlements | entitlement-manifest.ts, seed-entitlements | SYSTEM | — | Spec 38 | BUILT |
+| UC-159 | Manage deployment rings | Seiertech Operator | control-plane | /control-plane/deployment | deployment.ts, seed-deployments | SYSTEM | — | Spec 38 | SCAFFOLD |
+| UC-160 | View trial conversion metrics | Seiertech Operator | control-plane | /control-plane | entitlement-manifest.ts, customer.ts | SYSTEM | — | Spec 38 | BUILT |
+| UC-161 | Manage emergency controls | Seiertech Operator | control-plane | /control-plane | entitlement-manifest.ts | SYSTEM | — | Spec 38 | SCAFFOLD |
+
+| UC-162 | Create/edit mission with binding rules | CISO, SOM | operational | /settings/missions | mission.ts, mission-binding.ts, seed-mission-bindings | SYSTEM | — | Spec 37 | BUILT |
+| UC-163 | Bind entities to mission (manual, tag-based, dependency-graph) | SOM | operational | /settings/missions | mission-binding.ts, seed-mission-bindings | SYSTEM | — | Spec 37 | BUILT |
+| UC-164 | Calculate mission impact from risk objects | System | — | — | mission-impact-engine.ts, mission-binding.ts, risk-object.ts | SYSTEM | — | Spec 37 | NOT BUILT (engine exists, no direct UI) |
+| UC-165 | View mission impact panel on case detail | All authenticated | operational | /cases/:id | mission-impact-engine.ts, mission-binding.ts | SYSTEM | — | Spec 37 | NOT BUILT (engine exists, case detail deferred) |
+| UC-166 | Approve Tier 0/1 mission changes | CISO | operational | /settings/missions | mission.ts | SYSTEM | — | Spec 37 | SCAFFOLD |

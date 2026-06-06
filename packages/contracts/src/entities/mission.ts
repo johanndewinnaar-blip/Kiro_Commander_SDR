@@ -56,6 +56,20 @@ export interface MissionKpi {
   unit: string;
 }
 
+// ─── Mission Binding Rule ────────────────────────────────────────────────────
+
+export const BINDING_RULE_TYPES = ['tag_match', 'service_group', 'dependency'] as const;
+export type BindingRuleType = typeof BINDING_RULE_TYPES[number];
+
+export interface MissionBindingRule {
+  /** Rule type */
+  ruleType: BindingRuleType;
+  /** Pattern to match (e.g. tag name, service group name, dependency path) */
+  pattern: string;
+  /** Whether matches should be automatically bound */
+  autoApply: boolean;
+}
+
 // ─── Mission Entity ──────────────────────────────────────────────────────────
 
 export interface Mission extends CommonFields {
@@ -84,6 +98,20 @@ export interface Mission extends CommonFields {
   alignedCases: string[];
   /** Key performance indicators */
   kpiMetrics: MissionKpi[];
+  /** Mission criticality tier (1 = highest, 5 = lowest) */
+  criticality: number;
+  /** Scope description for this mission */
+  scope: string;
+  /** Binding rules for automatic entity binding */
+  bindingRules: MissionBindingRule[];
+  /** P0 policy reference (null if no P0 policy applies) */
+  p0Policy: string | null;
+  /** Routing profile for mission-related cases */
+  routingProfile: string | null;
+  /** When the mission was last reviewed */
+  reviewedAt: string | null;
+  /** Who reviewed the mission */
+  reviewedBy: string | null;
 }
 
 // ─── Validation ──────────────────────────────────────────────────────────────
@@ -170,6 +198,39 @@ export function validateMission(mission: Mission): MissionValidation {
         errors.push('kpiMetrics[].unit: required');
       }
     }
+  }
+  if (typeof mission.criticality !== 'number' || mission.criticality < 1 || mission.criticality > 5) {
+    errors.push('criticality: must be 1-5');
+  }
+  if (!mission.scope || mission.scope.trim() === '') {
+    errors.push('scope: required');
+  }
+  if (!Array.isArray(mission.bindingRules)) {
+    errors.push('bindingRules: must be an array');
+  } else {
+    for (const rule of mission.bindingRules) {
+      if (!BINDING_RULE_TYPES.includes(rule.ruleType)) {
+        errors.push(`bindingRules[].ruleType: must be one of: ${BINDING_RULE_TYPES.join(', ')}`);
+      }
+      if (!rule.pattern || rule.pattern.trim() === '') {
+        errors.push('bindingRules[].pattern: required');
+      }
+      if (typeof rule.autoApply !== 'boolean') {
+        errors.push('bindingRules[].autoApply: must be a boolean');
+      }
+    }
+  }
+  if (mission.p0Policy !== null && typeof mission.p0Policy !== 'string') {
+    errors.push('p0Policy: must be a string or null');
+  }
+  if (mission.routingProfile !== null && typeof mission.routingProfile !== 'string') {
+    errors.push('routingProfile: must be a string or null');
+  }
+  if (mission.reviewedAt !== null && typeof mission.reviewedAt !== 'string') {
+    errors.push('reviewedAt: must be a string or null');
+  }
+  if (mission.reviewedBy !== null && typeof mission.reviewedBy !== 'string') {
+    errors.push('reviewedBy: must be a string or null');
   }
 
   return { valid: errors.length === 0, errors };
