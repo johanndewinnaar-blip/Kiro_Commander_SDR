@@ -94,6 +94,87 @@
 | UC-PLAT-003 | View automation rules | SOM, Tenant Admin | operational | /platform/automation | platform-management.ts (AutomationRule), seed-platform | SYSTEM | AICAP-PLATFORM-003 | Tier 3 batch | BUILT |
 | UC-PLAT-004 | View feature availability registry | Tenant Admin | operational | /platform/features | platform-management.ts (FeatureRegistryEntry), seed-platform | SYSTEM | AICAP-PLATFORM-004 | Tier 3 batch | BUILT |
 | UC-PLAT-005 | View platform data quality | SOM, Tenant Admin | operational | /platform/data-quality | platform-management.ts, pulse.ts, seed-platform, seed-pulse | SYSTEM | AICAP-PLATFORM-005 | Tier 3 batch | BUILT |
+| UC-059 | View aggregate posture metrics | All authenticated | operational | /posture | posture-metrics-config.ts, seed-posture-metrics | SYSTEM | — | Unit 16b | BUILT |
+| UC-060 | View CISO executive summary | CISO | operational | /ciso | case.ts, asset.ts, identity.ts, risk-object.ts | SYSTEM | — | Unit 36 | SCAFFOLD |
+| UC-061 | View SOM architecture overview | SOM, CISO | operational | /som/architecture | architecture-component.ts | SYSTEM | — | — | SCAFFOLD |
+| UC-062 | View SOM cloud security posture | SOM, CISO | operational | /som/cloud-security | coverage.ts, asset.ts | SYSTEM | — | — | SCAFFOLD |
+| UC-063 | View SOM risk overview | SOM, CISO | operational | /som/risk | risk-object.ts, case.ts | SYSTEM | — | — | SCAFFOLD |
+| UC-064 | View SOM security operations | SOM | operational | /som/security-operations | case.ts, pulse.ts | SYSTEM | — | — | SCAFFOLD |
+| UC-065 | View identity access drift | All authenticated | operational | /identity/drift | identity.ts (riskFactors), seed-identities | SYSTEM | — | Unit 18 | BUILT |
+| UC-066 | View asset ownership mapping | All authenticated | operational | /assets/ownership | asset.ts, seed-assets | SYSTEM | — | Unit 19 | BUILT |
+| UC-067 | View asset classification | All authenticated | operational | /assets/classification | asset.ts (dataClassification), seed-assets | SYSTEM | — | Unit 19 | BUILT |
+| UC-068 | View architecture overview | All authenticated | operational | /architecture | architecture-component.ts, topology.ts | SYSTEM | — | Unit 32 | SCAFFOLD |
+| UC-069 | View architecture drift | All authenticated | operational | /architecture/drift | architecture-component.ts, drift-detection-engine.ts | SYSTEM | — | Unit 32 | SCAFFOLD |
+| UC-070 | View architecture dependencies | All authenticated | operational | /architecture/dependencies | topology.ts | SYSTEM | — | Unit 32 | SCAFFOLD |
+| UC-071 | View control strength analysis | All authenticated | operational | /controls/strength | control-framework.ts | SYSTEM | — | Unit 33 | SCAFFOLD |
+| UC-072 | View control framework mapping | All authenticated | operational | /controls/frameworks | control-framework.ts | SYSTEM | — | Unit 33 | SCAFFOLD |
+| UC-073 | View coverage overview | All authenticated | operational | /coverage | coverage.ts, control-framework.ts | SYSTEM | — | — | SCAFFOLD |
+| UC-074 | View scanner coverage | All authenticated | operational | /coverage/scanners | coverage.ts, connector.ts | SYSTEM | — | — | SCAFFOLD |
+| UC-075 | View telemetry coverage | All authenticated | operational | /coverage/telemetry | coverage.ts, connector.ts | SYSTEM | — | — | SCAFFOLD |
+| UC-076 | View tool health overview | All authenticated | operational | /tool-health | connector.ts, seed-connectors | SYSTEM | — | Unit 46 | BUILT |
+| UC-077 | View tool connector status | All authenticated | operational | /tool-health/connectors | connector.ts, seed-connectors | SYSTEM | — | Unit 46 | BUILT |
+| UC-078 | View source data freshness | All authenticated | operational | /tool-health/freshness | connector.ts, pulse.ts | SYSTEM | — | Unit 46 | BUILT |
+| UC-079 | View attack surface exposure | All authenticated | operational | /exposure | exposure.ts, risk-object.ts | SYSTEM | — | Unit 31 | SCAFFOLD |
+| UC-080 | View blast zone analysis | All authenticated | operational | /exposure/blast-zones | exposure.ts, risk-object.ts | SYSTEM | — | Unit 31 | SCAFFOLD |
+| UC-081 | View coverage gap analysis | All authenticated | operational | /exposure/coverage-gaps | exposure.ts, coverage.ts | SYSTEM | — | Unit 31 | SCAFFOLD |
+| UC-082 | View relationship graph | All authenticated | operational | /fusion-map | topology.ts, risk-object.ts | SYSTEM | — | — | SCAFFOLD |
+| UC-083 | View blast radius graph | All authenticated | operational | /fusion-map/blast-radius | risk-object.ts, case.ts | SYSTEM | — | — | SCAFFOLD |
+| UC-084 | View mission overlay graph | All authenticated | operational | /fusion-map/mission | mission.ts, risk-object.ts | SYSTEM | — | — | SCAFFOLD |
+| UC-085 | View P0 overlay graph | All authenticated | operational | /fusion-map/p0 | case.ts (P0), risk-object.ts | SYSTEM | — | — | SCAFFOLD |
+| UC-086 | View governance compliance overview | All authenticated | operational | /governance | control-framework.ts, report.ts | SYSTEM | — | Unit 35 | BUILT |
+| UC-087 | View governance policies | All authenticated | operational | /governance/policies | control-framework.ts | SYSTEM | — | Unit 35 | SCAFFOLD |
+| UC-088 | View governance exceptions | All authenticated | operational | /governance/exceptions | control-framework.ts | SYSTEM | — | Unit 35 | SCAFFOLD |
+| UC-089 | View mission overview | All authenticated | operational | /mission/overview | mission.ts | SYSTEM | — | — | SCAFFOLD |
+| UC-090 | View mission objectives | All authenticated | operational | /mission/objectives | mission.ts | SYSTEM | — | — | SCAFFOLD |
+| UC-091 | View mission impact | All authenticated | operational | /mission/impact | mission.ts, risk-object.ts | SYSTEM | — | — | SCAFFOLD |
+| UC-092 | View KEV and critical vulnerabilities | All authenticated | operational | /vulnerabilities/kev | vulnerability-intelligence-record.ts, indicator-of-compromise.ts | SYSTEM | — | Unit 30 | SCAFFOLD |
+| UC-093 | View patch intelligence | All authenticated | operational | /vulnerabilities/patches | vulnerability-intelligence-record.ts | SYSTEM | — | Unit 30 | SCAFFOLD |
+| UC-094 | View code and supply chain vulns | All authenticated | operational | /vulnerabilities/supply-chain | vulnerability-intelligence-record.ts | SYSTEM | — | Unit 30 | SCAFFOLD |
+| UC-095 | Configure P0/zero-day policy | Tenant Admin | tenant-admin | /settings/p0-zero-day | strategy.ts, case.ts | SYSTEM | — | Unit 22 | SCAFFOLD |
+| UC-096 | Configure baseline settings | Tenant Admin | tenant-admin | /settings/baselines | strategy.ts, tenant-config.ts | SYSTEM | — | Unit 22 | SCAFFOLD |
+| UC-097 | Configure feature availability | Tenant Admin | tenant-admin | /settings/features | platform-management.ts (FeatureRegistryEntry) | SYSTEM | — | Unit 22 | SCAFFOLD |
+| UC-098 | Configure audit export | Tenant Admin | tenant-admin | /settings/audit-export | audit-event.ts, report.ts | SYSTEM | — | Unit 22 | SCAFFOLD |
+| UC-099 | Manage users and RBAC | Tenant Admin | tenant-admin | /settings/users-rbac | — (scaffold) | SYSTEM | — | Unit 22 | SCAFFOLD |
+| UC-100 | Configure tenant rules | Tenant Admin | tenant-admin | /settings/rules | platform-management.ts (RuleDefinition) | SYSTEM | — | Unit 22 | SCAFFOLD |
+| UC-101 | View tenant overview | Tenant Admin | tenant-admin | /settings/tenant | tenant-config.ts | SYSTEM | — | Unit 22 | SCAFFOLD |
+| UC-102 | View platform overview | All authenticated | operational | /platform | connector.ts, platform-management.ts | SYSTEM | — | — | SCAFFOLD |
+| UC-103 | Manage customers | Seiertech Operator | control-plane | /control-plane/customers | customer.ts | SYSTEM | — | Unit 23 | SCAFFOLD |
+| UC-104 | Manage tenants | Seiertech Operator | control-plane | /control-plane/tenants | tenant-config.ts | SYSTEM | — | Unit 23 | SCAFFOLD |
+| UC-105 | Manage licences | Seiertech Operator | control-plane | /control-plane/licences | licence.ts | SYSTEM | — | Unit 23 | SCAFFOLD |
+| UC-106 | Manage product features | Seiertech Operator | control-plane | /control-plane/features | platform-management.ts | SYSTEM | — | Unit 23 | SCAFFOLD |
+| UC-107 | Manage AI models | Seiertech Operator | control-plane | /control-plane/ai-models | platform-management.ts (ModelDefinition) | SYSTEM | — | Unit 23 | SCAFFOLD |
+| UC-108 | Manage rule packs | Seiertech Operator | control-plane | /control-plane/rule-packs | platform-management.ts (RuleDefinition) | SYSTEM | — | Unit 23 | SCAFFOLD |
+| UC-109 | Manage baseline profiles | Seiertech Operator | control-plane | /control-plane/baselines | strategy.ts, tenant-config.ts | SYSTEM | — | Unit 23 | SCAFFOLD |
+| UC-110 | Manage deployment and release | Seiertech Operator | control-plane | /control-plane/deployment | deployment.ts | SYSTEM | — | Unit 23 | SCAFFOLD |
+| UC-111 | Manage support operations | Seiertech Operator | control-plane | /control-plane/support | support-operation.ts | SYSTEM | — | Unit 23 | SCAFFOLD |
+| UC-112 | View billing and usage | Seiertech Operator | control-plane | /control-plane/billing | — (scaffold) | SYSTEM | — | Unit 23 | SCAFFOLD |
+| UC-113 | View operator audit | Seiertech Operator | control-plane | /control-plane/audit | audit-event.ts | SYSTEM | — | Unit 23 | SCAFFOLD |
+| UC-114 | Manage architecture components | System | — | — | architecture-component.ts | SYSTEM | — | Unit 32 | NOT BUILT |
+| UC-115 | Compute architecture intelligence | System | — | — | architecture-intelligence-engine.ts | SYSTEM | — | Unit 26 | NOT BUILT |
+| UC-116 | Generate CISO executive summary | CISO | operational | /som/ciso | ciso-summary.ts | SYSTEM | — | Unit 36 | NOT BUILT |
+| UC-117 | Compute coverage metrics | System | — | — | coverage.ts | SYSTEM | — | — | NOT BUILT |
+| UC-118 | Manage customers lifecycle | Seiertech Operator | control-plane | — | customer.ts | SYSTEM | — | Unit 23 | NOT BUILT |
+| UC-119 | Manage deployment lifecycle | Seiertech Operator | control-plane | — | deployment.ts | SYSTEM | — | Unit 23 | NOT BUILT |
+| UC-120 | Manage direction boards | All authenticated | operational | — | direction-board.ts | SYSTEM | — | Unit 34 | NOT BUILT |
+| UC-121 | Compute drift detection | System | — | — | drift-detection-engine.ts | SYSTEM | — | Unit 24 | NOT BUILT |
+| UC-122 | Manage email case communication | System | — | — | email-case-communication.ts | SYSTEM | — | Unit 44 | NOT BUILT |
+| UC-123 | Compute exposure assessment | System | — | — | exposure-engine.ts, exposure.ts | SYSTEM | — | Unit 28 | NOT BUILT |
+| UC-124 | Compute identity intelligence | System | — | — | identity-intelligence-engine.ts | SYSTEM | — | Unit 25 | NOT BUILT |
+| UC-125 | Manage licence entitlements | Seiertech Operator | control-plane | — | licence.ts | SYSTEM | — | Unit 23 | NOT BUILT |
+| UC-126 | Manage mission objectives | SOM, CISO | operational | — | mission.ts | SYSTEM | — | — | NOT BUILT |
+| UC-127 | Compute pre-warned classification | System | — | — | pre-warned-classification.ts | SYSTEM | — | Unit 29 | NOT BUILT |
+| UC-128 | Manage push governance | System | — | — | push-governance.ts | SYSTEM | — | Unit 42 | NOT BUILT |
+| UC-129 | Compute security tool intelligence | System | — | — | security-tool-intelligence.ts | SYSTEM | — | Unit 45 | NOT BUILT |
+| UC-130 | Manage support operations | Seiertech Operator | control-plane | — | support-operation.ts | SYSTEM | — | Unit 23 | NOT BUILT |
+| UC-131 | Manage tenant configuration | Tenant Admin | tenant-admin | — | tenant-config.ts | SYSTEM | — | Unit 22 | NOT BUILT |
+| UC-132 | Manage topology graph | System | — | — | topology.ts | SYSTEM | — | Unit 32 | NOT BUILT |
+| UC-133 | Compute posture accountability | System | — | — | posture-accountability.ts | SYSTEM | — | Unit 29 | NOT BUILT |
+| UC-134 | Compute architecture intelligence patterns | System | — | — | architecture-intelligence-engine.ts (engine) | SYSTEM | — | Unit 26 | NOT BUILT |
+| UC-135 | Manage direction board lifecycle | System | — | — | direction-boards-engine.ts | SYSTEM | — | Unit 34 | NOT BUILT |
+| UC-136 | Process email case communication | System | — | — | email-case-communication-engine.ts | SYSTEM | — | Unit 44 | NOT BUILT |
+| UC-137 | Compute pre-warned classification pipeline | System | — | — | pre-warned-classification-engine.ts | SYSTEM | — | Unit 29 | NOT BUILT |
+| UC-138 | Enforce push governance rules | System | — | — | push-governance-engine.ts | SYSTEM | — | Unit 42 | NOT BUILT |
+| UC-139 | Compute security tool intelligence metrics | System | — | — | security-tool-intelligence-engine.ts | SYSTEM | — | Unit 45 | NOT BUILT |
 
 ---
 

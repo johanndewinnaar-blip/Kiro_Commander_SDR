@@ -30,9 +30,9 @@
 
 | Nav Item | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
-| Mission Overview | /mission/overview | SCAFFOLD | — | — |
-| Mission Objectives | /mission/objectives | SCAFFOLD | — | — |
-| Mission Impact | /mission/impact | SCAFFOLD | — | — |
+| Mission Overview | /mission/overview | SCAFFOLD | — | UC-089 |
+| Mission Objectives | /mission/objectives | SCAFFOLD | — | UC-090 |
+| Mission Impact | /mission/impact | SCAFFOLD | — | UC-091 |
 
 ---
 
@@ -40,10 +40,10 @@
 
 | Nav Item | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
-| Relationship Graph | /fusion-map | SCAFFOLD | — | — |
-| Blast Radius | /fusion-map/blast-radius | SCAFFOLD | — | — |
-| Mission Overlay | /fusion-map/mission | SCAFFOLD | — | — |
-| P0 Overlay | /fusion-map/p0 | SCAFFOLD | — | — |
+| Relationship Graph | /fusion-map | SCAFFOLD | — | UC-082 |
+| Blast Radius | /fusion-map/blast-radius | SCAFFOLD | — | UC-083 |
+| Mission Overlay | /fusion-map/mission | SCAFFOLD | — | UC-084 |
+| P0 Overlay | /fusion-map/p0 | SCAFFOLD | — | UC-085 |
 
 ---
 
@@ -52,9 +52,9 @@
 | Nav Item | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
 | Overview | /vulnerabilities | BUILT | Unit 30 | UC-033 |
-| KEV & Critical | /vulnerabilities/kev | SCAFFOLD | Unit 30 | — |
-| Patch Intelligence | /vulnerabilities/patches | SCAFFOLD | Unit 30 | — |
-| Code & Supply Chain | /vulnerabilities/supply-chain | SCAFFOLD | Unit 30 | — |
+| KEV & Critical | /vulnerabilities/kev | SCAFFOLD | Unit 30 | UC-092 |
+| Patch Intelligence | /vulnerabilities/patches | SCAFFOLD | Unit 30 | UC-093 |
+| Code & Supply Chain | /vulnerabilities/supply-chain | SCAFFOLD | Unit 30 | UC-094 |
 
 ---
 
@@ -62,9 +62,9 @@
 
 | Nav Item | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
-| Attack Surface | /exposure | SCAFFOLD | Unit 31 | — |
-| Blast Zones | /exposure/blast-zones | SCAFFOLD | Unit 31 | — |
-| Coverage Gaps | /exposure/coverage-gaps | SCAFFOLD | Unit 31 | — |
+| Attack Surface | /exposure | SCAFFOLD | Unit 31 | UC-079 |
+| Blast Zones | /exposure/blast-zones | SCAFFOLD | Unit 31 | UC-080 |
+| Coverage Gaps | /exposure/coverage-gaps | SCAFFOLD | Unit 31 | UC-081 |
 
 ---
 
@@ -74,7 +74,7 @@
 |---|---|---|---|---|
 | Identity Overview | /identity | BUILT | Unit 18 | UC-012, UC-013 |
 | Privileged Access | /identity/privileged | BUILT | Unit 18 | UC-013 |
-| Access Drift | /identity/drift | BUILT | Unit 18 | — |
+| Access Drift | /identity/drift | BUILT | Unit 18 | UC-065 |
 
 ---
 
@@ -82,9 +82,9 @@
 
 | Nav Item | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
-| Architecture Overview | /architecture | SCAFFOLD | Unit 32 | — |
-| Architecture Drift | /architecture/drift | SCAFFOLD | Unit 32 | — |
-| Dependency Map | /architecture/dependencies | SCAFFOLD | Unit 32 | — |
+| Architecture Overview | /architecture | SCAFFOLD | Unit 32 | UC-068 |
+| Architecture Drift | /architecture/drift | SCAFFOLD | Unit 32 | UC-069 |
+| Dependency Map | /architecture/dependencies | SCAFFOLD | Unit 32 | UC-070 |
 
 ---
 
@@ -93,8 +93,8 @@
 | Nav Item | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
 | Inventory | /assets | BUILT | Unit 19 | UC-010, UC-011 |
-| Ownership | /assets/ownership | BUILT | Unit 19 | — |
-| Classification | /assets/classification | BUILT | Unit 19 | — |
+| Ownership | /assets/ownership | BUILT | Unit 19 | UC-066 |
+| Classification | /assets/classification | BUILT | Unit 19 | UC-067 |
 
 ---
 
@@ -103,8 +103,8 @@
 | Nav Item | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
 | Control Coverage | /controls | BUILT | Unit 33 | UC-038 |
-| Control Strength | /controls/strength | SCAFFOLD | Unit 33 | — |
-| Framework Mapping | /controls/frameworks | SCAFFOLD | Unit 33 | — |
+| Control Strength | /controls/strength | SCAFFOLD | Unit 33 | UC-071 |
+| Framework Mapping | /controls/frameworks | SCAFFOLD | Unit 33 | UC-072 |
 
 ---
 
@@ -112,9 +112,9 @@
 
 | Nav Item | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
-| Coverage Overview | /coverage | SCAFFOLD | — | — |
-| Scanner Coverage | /coverage/scanners | SCAFFOLD | — | — |
-| Telemetry Coverage | /coverage/telemetry | SCAFFOLD | — | — |
+| Coverage Overview | /coverage | SCAFFOLD | — | UC-073 |
+| Scanner Coverage | /coverage/scanners | SCAFFOLD | — | UC-074 |
+| Telemetry Coverage | /coverage/telemetry | SCAFFOLD | — | UC-075 |
 
 ---
 
@@ -122,9 +122,9 @@
 
 | Nav Item | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
-| Tool Health | /tool-health | BUILT | Unit 46 | — |
-| Connectors | /tool-health/connectors | BUILT | Unit 46 | — |
-| Source Freshness | /tool-health/freshness | BUILT | Unit 46 | — |
+| Tool Health | /tool-health | BUILT | Unit 46 | UC-076 |
+| Connectors | /tool-health/connectors | BUILT | Unit 46 | UC-077 |
+| Source Freshness | /tool-health/freshness | BUILT | Unit 46 | UC-078 |
 
 ---
 
@@ -162,7 +162,7 @@
 
 | Nav Item | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
-| Platform Overview | /platform | SCAFFOLD | — | — |
+| Platform Overview | /platform | SCAFFOLD | — | UC-102 |
 | Connectors & Data Sources | /platform/connectors | BUILT | Unit 4, Unit 38 | UC-030 |
 | Data Quality | /platform/data-quality | BUILT | Tier 3 batch | UC-PLAT-005 |
 | Rule Engine | /platform/rules | BUILT | Tier 3 batch | UC-PLAT-001 |
@@ -178,12 +178,12 @@
 
 | Nav Item | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
-| Overview | /settings/tenant | SCAFFOLD | Unit 22 | — |
-| Baseline Configuration | /settings/baselines | SCAFFOLD | Unit 22 | — |
-| Users & Access | /settings/users-rbac | SCAFFOLD | Unit 22 | — |
-| Rules & Models | /settings/rules | SCAFFOLD | Unit 22 | — |
+| Overview | /settings/tenant | SCAFFOLD | Unit 22 | UC-101 |
+| Baseline Configuration | /settings/baselines | SCAFFOLD | Unit 22 | UC-096 |
+| Users & Access | /settings/users-rbac | SCAFFOLD | Unit 22 | UC-099 |
+| Rules & Models | /settings/rules | SCAFFOLD | Unit 22 | UC-100 |
 | AI Configuration | /settings/commander-ai | SCAFFOLD | Unit 22 | — |
-| Audit | /settings/audit-export | SCAFFOLD | Unit 22 | — |
+| Audit | /settings/audit-export | SCAFFOLD | Unit 22 | UC-098 |
 
 ---
 
@@ -191,9 +191,9 @@
 
 | Nav Item | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
-| Compliance | /governance | BUILT | Unit 35 | — |
-| Policies & Standards | /governance/policies | SCAFFOLD | Unit 35 | — |
-| Exceptions | /governance/exceptions | SCAFFOLD | Unit 35 | — |
+| Compliance | /governance | BUILT | Unit 35 | UC-086 |
+| Policies & Standards | /governance/policies | SCAFFOLD | Unit 35 | UC-087 |
+| Exceptions | /governance/exceptions | SCAFFOLD | Unit 35 | UC-088 |
 
 ---
 
@@ -216,7 +216,26 @@
 | Vulnerabilities | /vulnerabilities | SCAFFOLD | Group 4 entry |
 | Identity | /identity | BUILT | Group 6 entry |
 | Architecture | /architecture | SCAFFOLD | Group 7 entry |
-| CISO | /ciso | SCAFFOLD | Route registered, no nav group match |
+| CISO | /ciso | SCAFFOLD | Route registered, UC-060 |
+
+---
+
+### SOM Workspace (direct access from CISO/SOM navigation)
+
+| Nav Item | Route | Status | Build Unit | Use Cases |
+|---|---|---|---|---|
+| SOM Architecture | /som/architecture | SCAFFOLD | — | UC-061 |
+| SOM Cloud Security | /som/cloud-security | SCAFFOLD | — | UC-062 |
+| SOM Risk | /som/risk | SCAFFOLD | — | UC-063 |
+| SOM Security Operations | /som/security-operations | SCAFFOLD | — | UC-064 |
+
+---
+
+### Posture (drill-path from Command Centre)
+
+| Nav Item | Route | Status | Build Unit | Use Cases |
+|---|---|---|---|---|
+| Posture Overview | /posture | BUILT | Unit 16b | UC-059 |
 
 ---
 
@@ -236,18 +255,18 @@
 | Nav Item | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
 | Tenant Admin Overview | /tenant-admin | SCAFFOLD | Unit 22 | UC-020 |
-| Tenant Overview | /settings/tenant | SCAFFOLD | Unit 22 | — |
-| Users & RBAC | /settings/users-rbac | SCAFFOLD | Unit 22 | — |
+| Tenant Overview | /settings/tenant | SCAFFOLD | Unit 22 | UC-101 |
+| Users & RBAC | /settings/users-rbac | SCAFFOLD | Unit 22 | UC-099 |
 | Connectors & Data Sources | /settings/connectors | BUILT | Unit 22 | — |
-| Feature Availability | /settings/features | SCAFFOLD | Unit 22 | — |
+| Feature Availability | /settings/features | SCAFFOLD | Unit 22 | UC-097 |
 | SLA Configuration | /settings/sla | BUILT | Unit 22 | — |
 | Routing Configuration | /settings/routing | BUILT | Unit 22 | — |
 | Validation Rules | /settings/validation | BUILT | Unit 22 | — |
 | Closure & Reopening | /settings/closure-reopening | BUILT | Unit 22 | — |
-| P0 / Zero-Day Config | /settings/p0-zero-day | SCAFFOLD | Unit 22 | — |
+| P0 / Zero-Day Config | /settings/p0-zero-day | SCAFFOLD | Unit 22 | UC-095 |
 | Automation Boundaries | /settings/automation-boundaries | BUILT | Unit 22 | — |
 | Commander AI Config | /settings/commander-ai | BUILT | Unit 22 | — |
-| Audit & Export | /settings/audit-export | SCAFFOLD | Unit 22 | — |
+| Audit & Export | /settings/audit-export | SCAFFOLD | Unit 22 | UC-098 |
 
 **Arch Debt:** ARCH-DEBT-047..050 (live enforcement deferred), ARCH-DEBT-019
 
@@ -260,17 +279,17 @@
 | Nav Item | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
 | Command Overview | /control-plane | BUILT | Unit 23 | UC-019 |
-| Customers | /control-plane/customers | SCAFFOLD | Unit 23 | — |
-| Tenants | /control-plane/tenants | SCAFFOLD | Unit 23 | — |
-| Licences & Entitlements | /control-plane/licences | SCAFFOLD | Unit 23 | — |
-| Product & Feature Control | /control-plane/features | SCAFFOLD | Unit 23 | — |
-| AI & Model Control | /control-plane/ai-models | SCAFFOLD | Unit 23 | — |
-| Rule & Policy Packs | /control-plane/rule-packs | SCAFFOLD | Unit 23 | — |
-| Baseline Profile Management | /control-plane/baselines | SCAFFOLD | Unit 23 | — |
-| Deployment & Release | /control-plane/deployment | SCAFFOLD | Unit 23 | — |
-| Support Operations | /control-plane/support | SCAFFOLD | Unit 23 | — |
-| Billing / Usage Evidence | /control-plane/billing | SCAFFOLD | Unit 23 | — |
-| Operator Audit | /control-plane/audit | SCAFFOLD | Unit 23 | — |
+| Customers | /control-plane/customers | SCAFFOLD | Unit 23 | UC-103 |
+| Tenants | /control-plane/tenants | SCAFFOLD | Unit 23 | UC-104 |
+| Licences & Entitlements | /control-plane/licences | SCAFFOLD | Unit 23 | UC-105 |
+| Product & Feature Control | /control-plane/features | SCAFFOLD | Unit 23 | UC-106 |
+| AI & Model Control | /control-plane/ai-models | SCAFFOLD | Unit 23 | UC-107 |
+| Rule & Policy Packs | /control-plane/rule-packs | SCAFFOLD | Unit 23 | UC-108 |
+| Baseline Profile Management | /control-plane/baselines | SCAFFOLD | Unit 23 | UC-109 |
+| Deployment & Release | /control-plane/deployment | SCAFFOLD | Unit 23 | UC-110 |
+| Support Operations | /control-plane/support | SCAFFOLD | Unit 23 | UC-111 |
+| Billing / Usage Evidence | /control-plane/billing | SCAFFOLD | Unit 23 | UC-112 |
+| Operator Audit | /control-plane/audit | SCAFFOLD | Unit 23 | UC-113 |
 
 **Feature Backlog Ref:** BL-003 (USE_CASE_SCHEDULE.md + PAGE_INVENTORY.md gate artifacts unblock Unit 23)
 
