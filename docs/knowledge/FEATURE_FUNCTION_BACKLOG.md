@@ -102,10 +102,11 @@ If any required field is left blank, Kiro will register the item as captured wit
 - **Capability statement:** A mapping document/schedule that maps confirmed data points from all functional pages (cases, assets, vulnerabilities, identity, control coverage, architecture/topology, governance) to the aggregate Command Centre KPI metrics (Posture Score, SLA Compliance, Coverage, etc.).
 - **Why / outcome:** Unblocks Unit 16b (Aggregate/Posture Command Centre). Without this artifact, KPI rollups would be built against seeded guesses rather than confirmed data points — the exact waste `DEC-command-centre-deferred` was designed to prevent.
 - **Raw priority:** HIGH
-- **Status:** CAPTURED
+- **Status:** RESOLVED
 
 **History**
 - 2026-06-02: CAPTURED — surfaced during Phase Hanger Exception Closure. The artifact was referenced as a resume trigger for Unit 16b (`DEC-command-centre-deferred`, `DEC-command-centre-split-16a-16b`) but never created or placed in a register. Now explicitly captured. Phase: Phase 2 (requires Team 2 functional pages Units 30–33 to be complete first). Owner area: deployment. Trigger: Team 2 functional pages (Units 30–33) DONE. Boundary: must not invent metric values — summary only of confirmed data points. Does NOT block current UI work (all Foundational surface units are DONE).
+- 2026-06-06: RESOLVED — Owner-authorised build. Artifact delivered as `packages/contracts/src/entities/posture-metrics-config.ts` (PostureMetricConfig entity with strategy-sourced thresholds, domain mapping, time-series) + `packages/contracts/src/fixtures/seed-posture-metrics.ts` (12 confirmed metrics × 4 periods × 7-point history). Unit 16b built and marked DONE.
 
 ---
 
