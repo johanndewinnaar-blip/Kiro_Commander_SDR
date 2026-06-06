@@ -1,19 +1,27 @@
 'use client';
 
 import { PageContainer } from '@/components/page-container';
-import { COMMANDER_MODES, REFUSAL_TRIGGERS } from '../../../../../packages/contracts/src/engines/commander-ai-core';
+import { REFUSAL_REASONS, REFUSAL_LABELS } from '../../../../../packages/contracts/src/engines/commander-ai-core';
 import { primitiveTypeScale, primitiveSignal } from '../../../../../packages/ui/src/tokens/primitives';
 
 /**
  * Commander AI — Status Overview
  *
  * Source: Unit 40 (Commander AI Core)
- * Data: commander-ai-core engine (modes, grounding rules, refusal triggers)
+ * Data: commander-ai-core engine (grounding, refusal framework)
  * Route: /commander-ai | Nav Group: Platform
  *
  * Displays: Commander AI modes, grounding status, refusal triggers, phase status.
  * Phase 1: Deterministic grounding pipeline. No live model inference.
  */
+
+const MODES = [
+  { id: 'estate', label: 'Estate Awareness', description: 'Explain asset, coverage, case and posture context' },
+  { id: 'engineering', label: 'Engineering Support', description: 'Interpret rules, connectors, mappings and remediation' },
+  { id: 'architectural', label: 'Architectural Advisory', description: 'Explain drift, trust boundaries and design weakness' },
+  { id: 'threat', label: 'Threat Triage', description: 'Summarise CVEs, advisories, IOCs and estate relevance' },
+  { id: 'communication', label: 'Communication Drafting', description: 'Draft governed emails and SIR summaries from case context' },
+];
 
 export default function CommanderAiPage() {
   return (
@@ -46,7 +54,7 @@ export default function CommanderAiPage() {
                 <table className="table table-vcenter card-table">
                   <thead><tr><th>Mode</th><th>Purpose</th><th>Status</th></tr></thead>
                   <tbody>
-                    {COMMANDER_MODES.map((mode) => (
+                    {MODES.map((mode) => (
                       <tr key={mode.id}>
                         <td style={{ fontWeight: 600, fontSize: primitiveTypeScale.body }}>{mode.label}</td>
                         <td className="text-muted" style={{ fontSize: primitiveTypeScale.caption }}>{mode.description}</td>
@@ -69,9 +77,9 @@ export default function CommanderAiPage() {
                 <table className="table table-vcenter card-table">
                   <thead><tr><th>Trigger</th><th>Action</th></tr></thead>
                   <tbody>
-                    {REFUSAL_TRIGGERS.map((trigger) => (
-                      <tr key={trigger.id}>
-                        <td style={{ fontSize: primitiveTypeScale.body }}>{trigger.label}</td>
+                    {REFUSAL_REASONS.map((reason) => (
+                      <tr key={reason}>
+                        <td style={{ fontSize: primitiveTypeScale.body }}>{REFUSAL_LABELS[reason]}</td>
                         <td><span className="badge bg-red-lt">Refuse</span></td>
                       </tr>
                     ))}
