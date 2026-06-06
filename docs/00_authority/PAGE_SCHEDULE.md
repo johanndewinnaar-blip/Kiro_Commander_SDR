@@ -1,438 +1,368 @@
 # Page Schedule — Commander SDR
 
-**Purpose:** Complete page inventory derived from use case register + route registry + actual pages on disk. Validated against canonical data model.
+**Purpose:** Complete page inventory structured to mirror the sidebar navigation hierarchy (apps/web/src/registry/nav-groups.ts). Validated against canonical data model.
 **Status:** Active — update after each build.
 **Date baselined:** 2026-06-06
-
-**Validation method:** A page has Status: BUILT only if a `page.tsx` file physically exists on disk at the corresponding route path under `apps/web/src/app/`.
-
----
-
-## OPERATIONAL APP (boundary: operational)
-
-### Existing Pages (page.tsx physically exists)
+**Structure:** Mirrors nav-groups.ts. Each sidebar GROUP = section header. Child pages indented below. Detail views (reached by item click, not sidebar) listed separately.
 
 ---
 
-### PAGE-001: Command Centre
-- **Route:** /
-- **Boundary:** operational
-- **RBAC:** All authenticated
-- **Status:** BUILT
-- **Owning Spec:** 05-command-centre
-- **Build Unit:** Unit 16a (Operational Command Centre) — DONE
-- **Feature Backlog Ref:** BL-001 (data-point-to-metric mapping blocks Unit 16b aggregate metrics)
-- **Arch Debt:** —
-- **Use Cases Served:** UC-001, UC-002
+## OPERATIONAL APP
 
-**Available Data Points:**
-- Entities: case.ts, asset.ts, identity.ts, connector.ts, risk-object.ts
-- Fixtures: seed-cases, seed-assets, seed-identities, seed-connectors, seed-risk-objects
-- Resolvers: case-aggregation-resolver
+### Group 1: Case Management
 
-**System-Generated Outputs:**
-| Output | Data Source | Validated? | UC-ID |
-|---|---|---|---|
-| Case count by priority | case.ts (priority field), seed-cases | YES | UC-001 |
-| P0 active banner | case.ts (priority: P0, status: active), seed-cases | YES | UC-002 |
-| Asset count | asset.ts, seed-assets | YES | UC-001 |
-| Identity count | identity.ts, seed-identities | YES | UC-001 |
-| Connector status summary | connector.ts (state field), seed-connectors | YES | UC-001 |
-| Surface attribution breakdown | case.ts (surfaceAttribution), seed-cases | YES | UC-001 |
-
-**AI-Generated Outputs:**
-| AICAP ID | Output | Data Required | UC-ID |
-|---|---|---|---|
-| — | None currently | — | — |
-
-**Data Gaps:** None — all rendered outputs sourced from existing entities/fixtures.
-
----
-
-### PAGE-002: Case Queue
-- **Route:** /cases
-- **Boundary:** operational
-- **RBAC:** All authenticated
-- **Status:** BUILT
-- **Owning Spec:** 06-case-management
-- **Build Unit:** Unit 17 (Case Management UI) — DONE
-- **Feature Backlog Ref:** —
-- **Arch Debt:** —
-- **Use Cases Served:** UC-003, UC-004
-
-**Available Data Points:**
-- Entities: case.ts
-- Fixtures: seed-cases
-- Resolvers: —
-
-**System-Generated Outputs:**
-| Output | Data Source | Validated? | UC-ID |
-|---|---|---|---|
-| Case list with type/priority/status/owner | case.ts (all fields), seed-cases | YES | UC-003 |
-| Filter by case type | case.ts (caseType), CASE_TYPES constant | YES | UC-004 |
-| Filter by priority | case.ts (priority) | YES | UC-004 |
-| Filter by status | case.ts (status) | YES | UC-004 |
-
-**Data Gaps:** None.
-
----
-
-### PAGE-003: Case Detail
-- **Route:** /cases/:id
-- **Boundary:** operational
-- **RBAC:** All authenticated
-- **Status:** BUILT
-- **Owning Spec:** 06-case-management
-- **Build Unit:** Unit 17 (Case Management UI) — DONE
-- **Feature Backlog Ref:** —
-- **Arch Debt:** —
-- **Use Cases Served:** UC-005, UC-006, UC-007
-
-**Available Data Points:**
-- Entities: case.ts, risk-object.ts, evidence.ts, action.ts, observable.ts
-- Fixtures: seed-cases, seed-risk-objects, seed-evidence, seed-actions, seed-observables
-- Resolvers: case-router, case-sla-calculator, case-prioritiser, case-aggregation-resolver
-
-**System-Generated Outputs:**
-| Output | Data Source | Validated? | UC-ID |
-|---|---|---|---|
-| Case header (ref, title, type, priority) | case.ts fields | YES | UC-005 |
-| Routing rationale | case.ts (routingRationale), case-router resolver | YES | UC-006 |
-| SLA target + breach status | case.ts (sla field), case-sla-calculator | YES | UC-007 |
-| Related entities list | case.ts (relatedEntities) | YES | UC-005 |
-| Bound risk objects | risk-object.ts, seed-risk-objects | YES | UC-005 |
-| Evidence items | evidence.ts, seed-evidence | YES | UC-005 |
-| Actions/sub-actions | action.ts, seed-actions | YES | UC-005 |
-| ATT&CK bindings (COIM-G) | case.ts (attacks field) | YES | UC-005 |
-| Blast radius score (COIM-G) | case.ts (blastRadiusScore) | YES | UC-005 |
-
-**AI-Generated Outputs:**
-| AICAP ID | Output | Data Required | UC-ID |
-|---|---|---|---|
-| AICAP-001 | Summarise case context | case + risk objects + evidence + actions | UC-046 |
-| AICAP-002 | Recommend next best action | case + actions + strategy | UC-047 |
-| AICAP-006 | Draft case communication | case + threads + playbook | UC-051 |
-
-**Data Gaps:** None for system outputs. AICAP items require Commander AI integration (Phase 2).
-
----
-
-### PAGE-004: Case Analytics
-- **Route:** /cases/analytics
-- **Boundary:** operational
-- **RBAC:** CISO, SOM, Security Analyst
-- **Status:** BUILT
-- **Owning Spec:** 06-case-management
-- **Build Unit:** Unit 17 (Case Management UI) — DONE
-- **Feature Backlog Ref:** —
-- **Arch Debt:** —
-- **Use Cases Served:** UC-008
-
-**Available Data Points:**
-- Entities: case.ts
-- Fixtures: seed-cases
-- Resolvers: case-aggregation-resolver
-
-**System-Generated Outputs:**
-| Output | Data Source | Validated? | UC-ID |
-|---|---|---|---|
-| Case volume by type (chart) | case.ts (caseType), seed-cases | YES | UC-008 |
-| Case volume by priority (chart) | case.ts (priority), seed-cases | YES | UC-008 |
-| SLA breach rate | case.ts (sla.breached), seed-cases | YES | UC-008 |
-| Mean resolution time | case.ts (createdAt, updatedAt) | YES | UC-008 |
-| Team workload distribution | case.ts (team, owner), seed-cases | YES | UC-008 |
-
-**Data Gaps:** None.
-
----
-
-### PAGE-005: My Cases
-- **Route:** /cases/my
-- **Boundary:** operational
-- **RBAC:** All authenticated
-- **Status:** BUILT
-- **Owning Spec:** 06-case-management
-- **Build Unit:** Unit 17 (Case Management UI) — DONE
-- **Feature Backlog Ref:** —
-- **Arch Debt:** —
-- **Use Cases Served:** UC-009
-
-**Available Data Points:**
-- Entities: case.ts
-- Fixtures: seed-cases
-
-**System-Generated Outputs:**
-| Output | Data Source | Validated? | UC-ID |
-|---|---|---|---|
-| Assigned cases filtered by current user | case.ts (owner field), seed-cases | YES | UC-009 |
-
-**Data Gaps:** None.
-
----
-
-### PAGE-006: Asset Intelligence
-- **Route:** /assets
-- **Boundary:** operational
-- **RBAC:** All authenticated
-- **Status:** BUILT
-- **Owning Spec:** 19-asset-intelligence-surface
-- **Build Unit:** Unit 19 (Asset Intelligence Surface) — DONE
-- **Feature Backlog Ref:** —
-- **Arch Debt:** —
-- **Use Cases Served:** UC-010, UC-011
-
-**Available Data Points:**
-- Entities: asset.ts
-- Fixtures: seed-assets
-
-**System-Generated Outputs:**
-| Output | Data Source | Validated? | UC-ID |
-|---|---|---|---|
-| Asset inventory table | asset.ts, seed-assets | YES | UC-010 |
-| Coverage posture (EDR/vuln/patch/backup) | asset.ts (coverage field) | YES | UC-011 |
-| Criticality breakdown | asset.ts (criticality) | YES | UC-010 |
-| Surface attribution | asset.ts (surfaceAttribution) | YES | UC-010 |
-| Classification breakdown | asset.ts (classification) | YES | UC-010 |
-
-**AI-Generated Outputs:**
-| AICAP ID | Output | Data Required | UC-ID |
-|---|---|---|---|
-| AICAP-003 | Explain asset risk posture | asset + risk objects + verdicts | UC-048 |
-
-**Data Gaps:** None for system outputs.
-
----
-
-### PAGE-007: Identity Intelligence
-- **Route:** /identity
-- **Boundary:** operational
-- **RBAC:** CISO, SOM, Security Analyst, Identity/Access Specialist, Security Architect, Risk Analyst, Risk/Compliance/Audit
-- **Status:** BUILT
-- **Owning Spec:** 18-identity-intelligence-surface
-- **Build Unit:** Unit 18 (Identity Intelligence Surface) — DONE
-- **Feature Backlog Ref:** —
-- **Arch Debt:** —
-- **Use Cases Served:** UC-012, UC-013
-
-**Available Data Points:**
-- Entities: identity.ts
-- Fixtures: seed-identities
-
-**System-Generated Outputs:**
-| Output | Data Source | Validated? | UC-ID |
-|---|---|---|---|
-| Identity inventory | identity.ts, seed-identities | YES | UC-012 |
-| Risk score distribution | identity.ts (riskScore) | YES | UC-012 |
-| Privilege level breakdown | identity.ts (privilegeLevel) | YES | UC-013 |
-| Risk factors detail | identity.ts (riskFactors) | YES | UC-013 |
-| Authentication strength | identity.ts (authenticationStrength) | YES | UC-012 |
-| Status breakdown | identity.ts (status) | YES | UC-012 |
-
-**AI-Generated Outputs:**
-| AICAP ID | Output | Data Required | UC-ID |
-|---|---|---|---|
-| AICAP-004 | Explain identity risk factors | identity + risk factors + verdicts | UC-049 |
-
-**Data Gaps:** None for system outputs.
-
----
-
-### PAGE-008: External Operating Picture
-- **Route:** /operating-picture/external
-- **Boundary:** operational
-- **RBAC:** All authenticated
-- **Status:** BUILT
-- **Owning Spec:** 20-external-operating-picture
-- **Build Unit:** Unit 20 (External Operating Picture) — DONE
-- **Feature Backlog Ref:** —
-- **Arch Debt:** —
-- **Use Cases Served:** UC-014
-
-**Available Data Points:**
-- Entities: case.ts, risk-object.ts
-- Fixtures: seed-cases, seed-risk-objects
-
-**System-Generated Outputs:**
-| Output | Data Source | Validated? | UC-ID |
-|---|---|---|---|
-| External cases (surfaceAttribution: external) | case.ts, seed-cases | YES | UC-014 |
-| External risk objects | risk-object.ts, seed-risk-objects | YES | UC-014 |
-
-**Data Gaps:** None.
-
----
-
-### PAGE-009: Internal Operating Picture
-- **Route:** /operating-picture/internal
-- **Boundary:** operational
-- **RBAC:** CISO, SOM, Security Analyst, Identity/Access Specialist, Security Architect, Risk Analyst, Risk/Compliance/Audit
-- **Status:** BUILT
-- **Owning Spec:** 21-internal-operating-picture
-- **Build Unit:** Unit 21 (Internal Operating Picture) — DONE
-- **Feature Backlog Ref:** —
-- **Arch Debt:** —
-- **Use Cases Served:** UC-015
-
-**Available Data Points:**
-- Entities: case.ts, identity.ts, verdict.ts
-- Fixtures: seed-cases, seed-identities, seed-verdicts
-
-**System-Generated Outputs:**
-| Output | Data Source | Validated? | UC-ID |
-|---|---|---|---|
-| Internal cases (surfaceAttribution: internal) | case.ts, seed-cases | YES | UC-015 |
-| Identity risk overview | identity.ts, seed-identities | YES | UC-015 |
-| Verdict patterns (internal) | verdict.ts, seed-verdicts | YES | UC-015 |
-
-**Data Gaps:** None.
-
----
-
-### PAGE-010: War Room P0
-- **Route:** /war-room/p0
-- **Boundary:** operational
-- **RBAC:** All authenticated
-- **Status:** BUILT
-- **Owning Spec:** 24-security-c2-p0-war-room
-- **Build Unit:** Unit 37 (Security C2 / War Room) — Team 2, BLOCKED
-- **Feature Backlog Ref:** —
-- **Arch Debt:** —
-- **Use Cases Served:** UC-018
-
-**Available Data Points:**
-- Entities: war-room.ts, case.ts
-- Fixtures: seed-war-rooms, seed-cases
-
-**System-Generated Outputs:**
-| Output | Data Source | Validated? | UC-ID |
-|---|---|---|---|
-| Active war rooms | war-room.ts (status: activated/monitoring), seed-war-rooms | YES | UC-018 |
-| Bound P0 cases | case.ts (priority: P0), seed-cases | YES | UC-018 |
-| War room members | war-room.ts (members field), seed-war-rooms | YES | UC-018 |
-
-**Data Gaps:** None.
-
----
-
-### Scaffolded Routes (registered in routes.ts, no page.tsx on disk)
-
-| Route | Label | Owning Spec | Entities Available | Status |
+| Nav Item | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
-| /vulnerabilities | Vulnerability Management | 07-vulnerability-management | vulnerability-intelligence-record.ts, seed-vulnerability-intelligence | SCAFFOLD |
-| /exposure | Exposure Management | 08-exposure-management | risk-object.ts (exposure_drift type) | SCAFFOLD |
-| /controls | Control Coverage | 11-control-coverage-editable-baselines | control-framework.ts, seed-control-frameworks | SCAFFOLD |
-| /architecture | Architecture / Topology | 12-architecture-topology | — (no dedicated entity) | SCAFFOLD |
-| /governance | Governance Reporting | 22-governance-reporting | control-framework.ts, audit-event.ts | SCAFFOLD |
-| /ciso | CISO Dashboard | 23-ciso-dashboard | case.ts, risk-object.ts, asset.ts, identity.ts | SCAFFOLD |
-| /security-c2 | Security Command and Control | 13-security-c2 | — (future domain) | SCAFFOLD |
-| /ooda | OODA Views | 14-ooda-views | ooda-layer engine | SCAFFOLD |
-| /direction-boards | Direction Boards | 15-direction-boards | — (future domain) | SCAFFOLD |
-| /commander-ai | Commander AI | 20-commander-ai-core | commander-ai-core engine | SCAFFOLD |
-| /strategy | Strategy Centre | 43-strategy-layer-runtime-surface | strategy.ts, seed-strategies | SCAFFOLD (route registered as BUILD but page renders strategy data — no dedicated strategy page.tsx found beyond / which renders it) |
-| /transformation | Transformation & M&A | 01-application-shell | — (future domain) | SCAFFOLD |
+| My Cases | /cases/my | BUILT | Unit 17 | UC-009 |
+| All Cases | /cases | BUILT | Unit 17 | UC-003, UC-004 |
+| P0 Zero-Day | /war-room/p0 | BUILT | Unit 37 (Team 2) | UC-018 |
+| Case Analytics | /cases/analytics | BUILT | Unit 17 | UC-008 |
 
----
+**Detail views (reached by item click):**
 
-## TENANT ADMIN (boundary: tenant-admin)
-
-### Existing Pages
-
-### PAGE-011: Tenant Admin Overview
-- **Route:** /tenant-admin
-- **Boundary:** tenant-admin
-- **RBAC:** Tenant Admin
-- **Status:** SCAFFOLD (page.tsx exists but renders placeholder content)
-- **Owning Spec:** 18-tenant-admin
-- **Build Unit:** Unit 22 (Tenant Admin Surface) — DONE (v1 display)
-- **Feature Backlog Ref:** —
-- **Arch Debt:** ARCH-DEBT-047..050 (live enforcement deferred), ARCH-DEBT-019
-- **Use Cases Served:** UC-020
-
-**Available Data Points:**
-- Entities: strategy.ts (tenant-configurable surfaces), connector.ts
-- Fixtures: seed-strategies, seed-connectors
-
-**System-Generated Outputs:**
-| Output | Data Source | Validated? | UC-ID |
-|---|---|---|---|
-| Placeholder admin overview | Static content | YES | UC-020 |
-
-**Data Gaps:**
-| Output Needed | Missing | Blocks |
-|---|---|---|
-| Tenant configuration state | No tenant-config entity/fixture | Live tenant admin functionality |
-| User/RBAC management | No user entity/fixture | User management UI |
-
----
-
-### Scaffolded Routes (registered, no page.tsx)
-
-| Route | Label | RBAC | Owning Spec | Status |
+| Page | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
-| /settings/tenant | Tenant Overview | Tenant Admin | 18-tenant-admin | SCAFFOLD |
-| /settings/users-rbac | Users & RBAC | Tenant Admin | 19-rbac-entitlement-feature-flags | SCAFFOLD |
-| /settings/connectors | Connectors & Data Sources | Tenant Admin | 16-connector-framework | SCAFFOLD |
-| /settings/features | Feature Availability | Tenant Admin | 19-rbac-entitlement-feature-flags | SCAFFOLD |
-| /settings/sla | SLA Configuration | Tenant Admin | 18-tenant-admin | SCAFFOLD |
-| /settings/routing | Routing Configuration | Tenant Admin | 18-tenant-admin | SCAFFOLD |
-| /settings/validation | Validation Rules | Tenant Admin | 18-tenant-admin | SCAFFOLD |
-| /settings/closure-reopening | Closure & Reopening | Tenant Admin | 18-tenant-admin | SCAFFOLD |
-| /settings/p0-zero-day | P0 / Zero-Day Config | Tenant Admin | 18-tenant-admin | SCAFFOLD |
-| /settings/automation-boundaries | Automation Boundaries | Tenant Admin | 18-tenant-admin | SCAFFOLD |
-| /settings/commander-ai | Commander AI Config | Tenant Admin | 20-commander-ai-core | SCAFFOLD |
-| /settings/audit-export | Audit & Export | Tenant Admin | 18-tenant-admin | SCAFFOLD |
+| Case Detail | /cases/:id | BUILT | Unit 17 | UC-005, UC-006, UC-007 |
 
 ---
 
-## CONTROL PLANE (boundary: control-plane)
+### Group 2: Mission Control
 
-### Existing Pages
+| Nav Item | Route | Status | Build Unit | Use Cases |
+|---|---|---|---|---|
+| Mission Overview | /mission/overview | SCAFFOLD | — | — |
+| Mission Objectives | /mission/objectives | SCAFFOLD | — | — |
+| Mission Impact | /mission/impact | SCAFFOLD | — | — |
 
-### PAGE-012: Control Plane Overview
-- **Route:** /control-plane
-- **Boundary:** control-plane
-- **RBAC:** Seiertech Operator
-- **Status:** BUILT
-- **Owning Spec:** 18-tenant-admin (Control Plane section)
-- **Build Unit:** Unit 23 (Commercial Control Plane) — Team 2, BLOCKED
-- **Feature Backlog Ref:** BL-003 (USE_CASE_SCHEDULE.md + PAGE_INVENTORY.md gate artifacts unblock Unit 23)
-- **Arch Debt:** —
-- **Use Cases Served:** UC-019
+---
 
-**Available Data Points:**
-- Static content (commercial authority, rule packs, deployment rings descriptions)
+### Group 3: Fusion Map
 
-**System-Generated Outputs:**
-| Output | Data Source | Validated? | UC-ID |
+| Nav Item | Route | Status | Build Unit | Use Cases |
+|---|---|---|---|---|
+| Relationship Graph | /fusion-map | SCAFFOLD | — | — |
+| Blast Radius | /fusion-map/blast-radius | SCAFFOLD | — | — |
+| Mission Overlay | /fusion-map/mission | SCAFFOLD | — | — |
+| P0 Overlay | /fusion-map/p0 | SCAFFOLD | — | — |
+
+---
+
+### Group 4: Vulnerability Management
+
+| Nav Item | Route | Status | Build Unit | Use Cases |
+|---|---|---|---|---|
+| Overview | /vulnerabilities | SCAFFOLD | Unit 30 (Team 2) | UC-033 |
+| KEV & Critical | /vulnerabilities/kev | SCAFFOLD | Unit 30 (Team 2) | — |
+| Patch Intelligence | /vulnerabilities/patches | SCAFFOLD | Unit 30 (Team 2) | — |
+| Code & Supply Chain | /vulnerabilities/supply-chain | SCAFFOLD | Unit 30 (Team 2) | — |
+
+---
+
+### Group 5: Exposure Management
+
+| Nav Item | Route | Status | Build Unit | Use Cases |
+|---|---|---|---|---|
+| Attack Surface | /exposure | SCAFFOLD | Unit 31 (Team 2) | — |
+| Blast Zones | /exposure/blast-zones | SCAFFOLD | Unit 31 (Team 2) | — |
+| Coverage Gaps | /exposure/coverage-gaps | SCAFFOLD | Unit 31 (Team 2) | — |
+
+---
+
+### Group 6: Identity & Access
+
+| Nav Item | Route | Status | Build Unit | Use Cases |
+|---|---|---|---|---|
+| Identity Overview | /identity | BUILT | Unit 18 | UC-012, UC-013 |
+| Privileged Access | /identity/privileged | SCAFFOLD | Unit 18 | — |
+| Access Drift | /identity/drift | SCAFFOLD | Unit 18 | — |
+
+---
+
+### Group 7: Architecture
+
+| Nav Item | Route | Status | Build Unit | Use Cases |
+|---|---|---|---|---|
+| Architecture Overview | /architecture | SCAFFOLD | Unit 32 (Team 2) | — |
+| Architecture Drift | /architecture/drift | SCAFFOLD | Unit 32 (Team 2) | — |
+| Dependency Map | /architecture/dependencies | SCAFFOLD | Unit 32 (Team 2) | — |
+
+---
+
+### Group 8: Assets
+
+| Nav Item | Route | Status | Build Unit | Use Cases |
+|---|---|---|---|---|
+| Inventory | /assets | BUILT | Unit 19 | UC-010, UC-011 |
+| Ownership | /assets/ownership | SCAFFOLD | Unit 19 | — |
+| Classification | /assets/classification | SCAFFOLD | Unit 19 | — |
+
+---
+
+### Group 9: Controls
+
+| Nav Item | Route | Status | Build Unit | Use Cases |
+|---|---|---|---|---|
+| Control Coverage | /controls | SCAFFOLD | Unit 33 (Team 2) | UC-038 |
+| Control Strength | /controls/strength | SCAFFOLD | Unit 33 (Team 2) | — |
+| Framework Mapping | /controls/frameworks | SCAFFOLD | Unit 33 (Team 2) | — |
+
+---
+
+### Group 10: Coverage
+
+| Nav Item | Route | Status | Build Unit | Use Cases |
+|---|---|---|---|---|
+| Coverage Overview | /coverage | SCAFFOLD | — | — |
+| Scanner Coverage | /coverage/scanners | SCAFFOLD | — | — |
+| Telemetry Coverage | /coverage/telemetry | SCAFFOLD | — | — |
+
+---
+
+### Group 11: Tool Health
+
+| Nav Item | Route | Status | Build Unit | Use Cases |
+|---|---|---|---|---|
+| Tool Health | /tool-health | SCAFFOLD | Unit 46 (Team 2) | — |
+| Connectors | /tool-health/connectors | SCAFFOLD | Unit 46 (Team 2) | — |
+| Source Freshness | /tool-health/freshness | SCAFFOLD | Unit 46 (Team 2) | — |
+
+---
+
+### Group 12: Team Pulse
+
+| Nav Item | Route | Status | Build Unit | Use Cases |
+|---|---|---|---|---|
+| Workload | /team-pulse/workload | SCAFFOLD | — | — |
+| SLA Pressure | /team-pulse/sla | SCAFFOLD | — | — |
+| Escalation Queue | /team-pulse/escalation | SCAFFOLD | — | — |
+
+---
+
+### Group 13: Domain Pulse
+
+| Nav Item | Route | Status | Build Unit | Use Cases |
+|---|---|---|---|---|
+| Domain Overview | /domain-pulse | SCAFFOLD | — | — |
+| Failed Validation | /domain-pulse/failed-validation | SCAFFOLD | — | — |
+| Closure Blockers | /domain-pulse/closure-blockers | SCAFFOLD | — | — |
+
+---
+
+### Group 14: System Pulse
+
+| Nav Item | Route | Status | Build Unit | Use Cases |
+|---|---|---|---|---|
+| Engine Health | /system-pulse/engine | SCAFFOLD | — | — |
+| Queue Backlog | /system-pulse/queues | SCAFFOLD | — | — |
+| Data Freshness | /system-pulse/freshness | SCAFFOLD | — | — |
+
+---
+
+### Group 15: Platform
+
+| Nav Item | Route | Status | Build Unit | Use Cases |
+|---|---|---|---|---|
+| Platform Overview | /platform | SCAFFOLD | — | — |
+| Connectors & Data Sources | /platform/connectors | SCAFFOLD | Unit 4, Unit 38 | UC-030 |
+| Data Quality | /platform/data-quality | SCAFFOLD | — | — |
+| Rule Engine | /platform/rules | SCAFFOLD | — | — |
+| Model Management | /platform/models | SCAFFOLD | — | — |
+| Commander AI | /commander-ai | SCAFFOLD | Unit 40 | UC-046–053 (AICAP) |
+| Automation | /platform/automation | SCAFFOLD | — | — |
+| Feature Availability | /platform/features | SCAFFOLD | — | — |
+| Audit & Logs | /platform/audit | SCAFFOLD | Unit 43 | — |
+
+---
+
+### Group 16: Tenant Admin (sidebar shortcut)
+
+| Nav Item | Route | Status | Build Unit | Use Cases |
+|---|---|---|---|---|
+| Overview | /settings/tenant | SCAFFOLD | Unit 22 | — |
+| Baseline Configuration | /settings/baselines | SCAFFOLD | Unit 22 | — |
+| Users & Access | /settings/users-rbac | SCAFFOLD | Unit 22 | — |
+| Rules & Models | /settings/rules | SCAFFOLD | Unit 22 | — |
+| AI Configuration | /settings/commander-ai | SCAFFOLD | Unit 22 | — |
+| Audit | /settings/audit-export | SCAFFOLD | Unit 22 | — |
+
+---
+
+### Group 17: Governance
+
+| Nav Item | Route | Status | Build Unit | Use Cases |
+|---|---|---|---|---|
+| Compliance | /governance | SCAFFOLD | Unit 35 (Team 2) | — |
+| Policies & Standards | /governance/policies | SCAFFOLD | Unit 35 (Team 2) | — |
+| Exceptions | /governance/exceptions | SCAFFOLD | Unit 35 (Team 2) | — |
+
+---
+
+### Group 18: Reporting
+
+| Nav Item | Route | Status | Build Unit | Use Cases |
+|---|---|---|---|---|
+| Reports | /reporting | SCAFFOLD | Unit 35 (Team 2) | — |
+| Exports | /reporting/exports | SCAFFOLD | Unit 35 (Team 2) | — |
+| CISO Pack | /reporting/ciso-pack | SCAFFOLD | Unit 36 (Team 2) | UC-050 (AICAP) |
+
+---
+
+### Top Nav Workspaces (direct access)
+
+| Tab | Route | Status | Notes |
 |---|---|---|---|
-| Commercial authority overview | Static content | YES | UC-019 |
-| Rule/Model packs overview | Static content | YES | UC-019 |
-| Deployment rings overview | Static content | YES | UC-019 |
+| Command Centre | / | BUILT | Landing page (Unit 16a) |
+| Fusion Map | /fusion-map | SCAFFOLD | Group 3 entry |
+| Vulnerabilities | /vulnerabilities | SCAFFOLD | Group 4 entry |
+| Identity | /identity | BUILT | Group 6 entry |
+| Architecture | /architecture | SCAFFOLD | Group 7 entry |
+| CISO | /ciso | SCAFFOLD | Route registered, no nav group match |
 
-**Data Gaps:**
-| Output Needed | Missing | Blocks |
+---
+
+### Operating Pictures (detail drill-paths from Command Centre)
+
+| Page | Route | Status | Build Unit | Use Cases |
+|---|---|---|---|---|
+| External Operating Picture | /operating-picture/external | BUILT | Unit 20 | UC-014 |
+| Internal Operating Picture | /operating-picture/internal | BUILT | Unit 21 | UC-015 |
+
+---
+
+## TENANT ADMIN
+
+### Tenant Admin Panel (full route set from tenant-admin-routes.ts)
+
+| Nav Item | Route | Status | Build Unit | Use Cases |
+|---|---|---|---|---|
+| Tenant Admin Overview | /tenant-admin | SCAFFOLD | Unit 22 | UC-020 |
+| Tenant Overview | /settings/tenant | SCAFFOLD | Unit 22 | — |
+| Users & RBAC | /settings/users-rbac | SCAFFOLD | Unit 22 | — |
+| Connectors & Data Sources | /settings/connectors | SCAFFOLD | Unit 22 | — |
+| Feature Availability | /settings/features | SCAFFOLD | Unit 22 | — |
+| SLA Configuration | /settings/sla | SCAFFOLD | Unit 22 | — |
+| Routing Configuration | /settings/routing | SCAFFOLD | Unit 22 | — |
+| Validation Rules | /settings/validation | SCAFFOLD | Unit 22 | — |
+| Closure & Reopening | /settings/closure-reopening | SCAFFOLD | Unit 22 | — |
+| P0 / Zero-Day Config | /settings/p0-zero-day | SCAFFOLD | Unit 22 | — |
+| Automation Boundaries | /settings/automation-boundaries | SCAFFOLD | Unit 22 | — |
+| Commander AI Config | /settings/commander-ai | SCAFFOLD | Unit 22 | — |
+| Audit & Export | /settings/audit-export | SCAFFOLD | Unit 22 | — |
+
+**Arch Debt:** ARCH-DEBT-047..050 (live enforcement deferred), ARCH-DEBT-019
+
+---
+
+## CONTROL PLANE
+
+### Control Plane Sidebar (from CONTROL_PLANE_NAV_ITEMS)
+
+| Nav Item | Route | Status | Build Unit | Use Cases |
+|---|---|---|---|---|
+| Command Overview | /control-plane | BUILT | Unit 23 (Team 2) | UC-019 |
+| Customers | /control-plane/customers | SCAFFOLD | Unit 23 (Team 2) | — |
+| Tenants | /control-plane/tenants | SCAFFOLD | Unit 23 (Team 2) | — |
+| Licences & Entitlements | /control-plane/licences | SCAFFOLD | Unit 23 (Team 2) | — |
+| Product & Feature Control | /control-plane/features | SCAFFOLD | Unit 23 (Team 2) | — |
+| AI & Model Control | /control-plane/ai-models | SCAFFOLD | Unit 23 (Team 2) | — |
+| Rule & Policy Packs | /control-plane/rule-packs | SCAFFOLD | Unit 23 (Team 2) | — |
+| Baseline Profile Management | /control-plane/baselines | SCAFFOLD | Unit 23 (Team 2) | — |
+| Deployment & Release | /control-plane/deployment | SCAFFOLD | Unit 23 (Team 2) | — |
+| Support Operations | /control-plane/support | SCAFFOLD | Unit 23 (Team 2) | — |
+| Billing / Usage Evidence | /control-plane/billing | SCAFFOLD | Unit 23 (Team 2) | — |
+| Operator Audit | /control-plane/audit | SCAFFOLD | Unit 23 (Team 2) | — |
+
+**Feature Backlog Ref:** BL-003 (USE_CASE_SCHEDULE.md + PAGE_INVENTORY.md gate artifacts unblock Unit 23)
+
+---
+
+## DETAIL VIEWS (no sidebar nav item — reached by item interaction)
+
+| Page | Route | Status | Build Unit | Reached From | Use Cases |
+|---|---|---|---|---|---|
+| Case Detail | /cases/:id | BUILT | Unit 17 | /cases, /cases/my | UC-005, UC-006, UC-007 |
+
+---
+
+## RECONCILIATION
+
+### Nav Items Without Pages (SCAFFOLD — need building)
+
+These are registered in nav-groups.ts sidebar but have no page.tsx on disk:
+
+| Group | Nav Item | Route |
 |---|---|---|
-| Live tenant list | No commercial-tenant entity/fixture | Customer management |
-| Live entitlement state | No entitlement-profile entity/fixture | Entitlement management |
-| Live deployment ring state | No deployment-ring entity/fixture | Ring management |
+| Mission Control | Mission Overview | /mission/overview |
+| Mission Control | Mission Objectives | /mission/objectives |
+| Mission Control | Mission Impact | /mission/impact |
+| Fusion Map | Relationship Graph | /fusion-map |
+| Fusion Map | Blast Radius | /fusion-map/blast-radius |
+| Fusion Map | Mission Overlay | /fusion-map/mission |
+| Fusion Map | P0 Overlay | /fusion-map/p0 |
+| Vulnerability Mgmt | Overview | /vulnerabilities |
+| Vulnerability Mgmt | KEV & Critical | /vulnerabilities/kev |
+| Vulnerability Mgmt | Patch Intelligence | /vulnerabilities/patches |
+| Vulnerability Mgmt | Code & Supply Chain | /vulnerabilities/supply-chain |
+| Exposure Mgmt | Attack Surface | /exposure |
+| Exposure Mgmt | Blast Zones | /exposure/blast-zones |
+| Exposure Mgmt | Coverage Gaps | /exposure/coverage-gaps |
+| Identity & Access | Privileged Access | /identity/privileged |
+| Identity & Access | Access Drift | /identity/drift |
+| Architecture | Architecture Overview | /architecture |
+| Architecture | Architecture Drift | /architecture/drift |
+| Architecture | Dependency Map | /architecture/dependencies |
+| Assets | Ownership | /assets/ownership |
+| Assets | Classification | /assets/classification |
+| Controls | Control Coverage | /controls |
+| Controls | Control Strength | /controls/strength |
+| Controls | Framework Mapping | /controls/frameworks |
+| Coverage | Coverage Overview | /coverage |
+| Coverage | Scanner Coverage | /coverage/scanners |
+| Coverage | Telemetry Coverage | /coverage/telemetry |
+| Tool Health | Tool Health | /tool-health |
+| Tool Health | Connectors | /tool-health/connectors |
+| Tool Health | Source Freshness | /tool-health/freshness |
+| Team Pulse | Workload | /team-pulse/workload |
+| Team Pulse | SLA Pressure | /team-pulse/sla |
+| Team Pulse | Escalation Queue | /team-pulse/escalation |
+| Domain Pulse | Domain Overview | /domain-pulse |
+| Domain Pulse | Failed Validation | /domain-pulse/failed-validation |
+| Domain Pulse | Closure Blockers | /domain-pulse/closure-blockers |
+| System Pulse | Engine Health | /system-pulse/engine |
+| System Pulse | Queue Backlog | /system-pulse/queues |
+| System Pulse | Data Freshness | /system-pulse/freshness |
+| Platform | Platform Overview | /platform |
+| Platform | Connectors & Data Sources | /platform/connectors |
+| Platform | Data Quality | /platform/data-quality |
+| Platform | Rule Engine | /platform/rules |
+| Platform | Model Management | /platform/models |
+| Platform | Commander AI | /commander-ai |
+| Platform | Automation | /platform/automation |
+| Platform | Feature Availability | /platform/features |
+| Platform | Audit & Logs | /platform/audit |
+| Governance | Compliance | /governance |
+| Governance | Policies & Standards | /governance/policies |
+| Governance | Exceptions | /governance/exceptions |
+| Reporting | Reports | /reporting |
+| Reporting | Exports | /reporting/exports |
+| Reporting | CISO Pack | /reporting/ciso-pack |
+
+**Total scaffold nav items without pages: 52**
 
 ---
 
-### Scaffolded Routes (registered, no page.tsx)
+### Pages Without Nav Items (ORPHAN — need nav placement)
 
-| Route | Label | RBAC | Status |
+These pages exist on disk (page.tsx) but are NOT in nav-groups.ts sidebar:
+
+| Page | Route | Status | Notes |
 |---|---|---|---|
-| /control-plane/customers | Customers | Seiertech Operator | SCAFFOLD |
-| /control-plane/tenants | Tenants | Seiertech Operator | SCAFFOLD |
-| /control-plane/licences | Licences & Entitlements | Seiertech Operator | SCAFFOLD |
-| /control-plane/features | Product & Feature Control | Seiertech Operator | SCAFFOLD |
-| /control-plane/ai-models | AI & Model Control | Seiertech Operator | SCAFFOLD |
-| /control-plane/rule-packs | Rule & Policy Packs | Seiertech Operator | SCAFFOLD |
-| /control-plane/baselines | Baseline Profile Management | Seiertech Operator | SCAFFOLD |
-| /control-plane/deployment | Deployment & Release | Seiertech Operator | SCAFFOLD |
-| /control-plane/support | Support Operations | Seiertech Operator | SCAFFOLD |
-| /control-plane/billing | Billing / Usage Evidence | Seiertech Operator | SCAFFOLD |
-| /control-plane/audit | Operator Audit | Seiertech Operator | SCAFFOLD |
+| External Operating Picture | /operating-picture/external | BUILT | Drill-path from Command Centre; not in sidebar (intentional — detail view) |
+| Internal Operating Picture | /operating-picture/internal | BUILT | Drill-path from Command Centre; not in sidebar (intentional — detail view) |
+| Tenant Admin Overview | /tenant-admin | SCAFFOLD | Separate boundary — has own sidebar in layout.tsx |
+| Control Plane Overview | /control-plane | BUILT | Separate boundary — has own sidebar in layout.tsx |
+
+**Note:** Operating Picture pages are intentionally orphaned from the sidebar (they're drill-paths). Tenant Admin and Control Plane are separate boundaries with their own navigation. No true orphans detected.
 
 ---
 
@@ -440,12 +370,9 @@
 
 | Metric | Count |
 |---|---|
-| Total pages built (page.tsx on disk) | 12 |
-| Total routes registered | 48 |
-| Scaffolded routes (no page.tsx) | 36 |
-| Use cases: BUILT | 20 |
-| Use cases: NOT BUILT (data exists, no page) | 27 |
-| Use cases: SCAFFOLD | 1 |
-| Use cases: PROPOSED (AICAP) | 8 |
-| AICAP placements identified | 8 |
-| Data gaps identified | 5 |
+| Total BUILT pages (page.tsx on disk) | 12 |
+| Total SCAFFOLD nav items (no page.tsx) | 52 |
+| Sidebar nav groups (operational) | 18 |
+| Top nav workspace tabs | 6 |
+| Detail views (no nav item) | 3 |
+| True orphan pages | 0 |

@@ -55,3 +55,14 @@ The relationship:
 - New page proposed → check REBASELINED_BUILD_SEQUENCE for which unit delivers it
 - Architectural debt affecting a page → noted in PAGE_SCHEDULE
 - PAGE_SCHEDULE PROPOSED items without a build unit → candidates for NEW units in REBASELINED_BUILD_SEQUENCE (flag for owner decision)
+
+
+## Navigation Hierarchy Rule
+
+- PAGE_SCHEDULE mirrors nav-groups.ts structure
+- Every new page MUST declare which nav node it belongs under
+- If no nav node exists → either add to existing group or propose new group
+- Detail views (reached by item click) don't need nav items but appear in schedule
+- When a new spec surfaces new capability → it must find its nav home
+  (existing child link OR new child link under existing node OR new node)
+- New pages that "float" without a nav path are flagged ORPHAN
