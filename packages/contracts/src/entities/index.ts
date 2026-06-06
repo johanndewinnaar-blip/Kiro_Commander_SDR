@@ -405,6 +405,23 @@ export type {
 } from './pulse';
 export { PULSE_DOMAINS } from './pulse';
 
+// ─── Posture Metrics Config (Aggregate/Posture Command Centre — Unit 16b) ───
+export type {
+  PostureTimePeriod,
+  TrendDirection,
+  ThresholdBand,
+  PostureMetricDomain,
+  PostureMetricDataPoint,
+  StrategyThresholdRef,
+  PostureMetricPeriodSnapshot,
+  PostureMetricConfig,
+} from './posture-metrics-config';
+export {
+  POSTURE_TIME_PERIODS,
+  POSTURE_TIME_PERIOD_LABELS,
+  POSTURE_METRIC_DOMAINS,
+} from './posture-metrics-config';
+
 // ─── Report Entity ───────────────────────────────────────────────────────────
 export type { Report, ReportType, ReportStatus, ReportCadence } from './report';
 export { REPORT_TYPES, REPORT_STATUSES, REPORT_CADENCES } from './report';

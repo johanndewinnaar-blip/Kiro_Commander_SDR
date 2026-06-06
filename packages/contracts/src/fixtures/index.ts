@@ -57,3 +57,6 @@ export { seedReports } from './seed-reports';
 
 // ─── Platform Management Fixtures ────────────────────────────────────────────
 export { seedRules, seedModels, seedAutomationRules, seedFeatureRegistry } from './seed-platform';
+
+// ─── Posture Metrics Fixtures (Unit 16b — Aggregate Command Centre) ──────────
+export { seedPostureMetrics } from './seed-posture-metrics';
