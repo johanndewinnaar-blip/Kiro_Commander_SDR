@@ -20,6 +20,9 @@
 - **RBAC:** All authenticated
 - **Status:** BUILT
 - **Owning Spec:** 05-command-centre
+- **Build Unit:** Unit 16a (Operational Command Centre) — DONE
+- **Feature Backlog Ref:** BL-001 (data-point-to-metric mapping blocks Unit 16b aggregate metrics)
+- **Arch Debt:** —
 - **Use Cases Served:** UC-001, UC-002
 
 **Available Data Points:**
@@ -52,6 +55,9 @@
 - **RBAC:** All authenticated
 - **Status:** BUILT
 - **Owning Spec:** 06-case-management
+- **Build Unit:** Unit 17 (Case Management UI) — DONE
+- **Feature Backlog Ref:** —
+- **Arch Debt:** —
 - **Use Cases Served:** UC-003, UC-004
 
 **Available Data Points:**
@@ -77,6 +83,9 @@
 - **RBAC:** All authenticated
 - **Status:** BUILT
 - **Owning Spec:** 06-case-management
+- **Build Unit:** Unit 17 (Case Management UI) — DONE
+- **Feature Backlog Ref:** —
+- **Arch Debt:** —
 - **Use Cases Served:** UC-005, UC-006, UC-007
 
 **Available Data Points:**
@@ -114,6 +123,9 @@
 - **RBAC:** CISO, SOM, Security Analyst
 - **Status:** BUILT
 - **Owning Spec:** 06-case-management
+- **Build Unit:** Unit 17 (Case Management UI) — DONE
+- **Feature Backlog Ref:** —
+- **Arch Debt:** —
 - **Use Cases Served:** UC-008
 
 **Available Data Points:**
@@ -140,6 +152,9 @@
 - **RBAC:** All authenticated
 - **Status:** BUILT
 - **Owning Spec:** 06-case-management
+- **Build Unit:** Unit 17 (Case Management UI) — DONE
+- **Feature Backlog Ref:** —
+- **Arch Debt:** —
 - **Use Cases Served:** UC-009
 
 **Available Data Points:**
@@ -161,6 +176,9 @@
 - **RBAC:** All authenticated
 - **Status:** BUILT
 - **Owning Spec:** 19-asset-intelligence-surface
+- **Build Unit:** Unit 19 (Asset Intelligence Surface) — DONE
+- **Feature Backlog Ref:** —
+- **Arch Debt:** —
 - **Use Cases Served:** UC-010, UC-011
 
 **Available Data Points:**
@@ -191,6 +209,9 @@
 - **RBAC:** CISO, SOM, Security Analyst, Identity/Access Specialist, Security Architect, Risk Analyst, Risk/Compliance/Audit
 - **Status:** BUILT
 - **Owning Spec:** 18-identity-intelligence-surface
+- **Build Unit:** Unit 18 (Identity Intelligence Surface) — DONE
+- **Feature Backlog Ref:** —
+- **Arch Debt:** —
 - **Use Cases Served:** UC-012, UC-013
 
 **Available Data Points:**
@@ -222,6 +243,9 @@
 - **RBAC:** All authenticated
 - **Status:** BUILT
 - **Owning Spec:** 20-external-operating-picture
+- **Build Unit:** Unit 20 (External Operating Picture) — DONE
+- **Feature Backlog Ref:** —
+- **Arch Debt:** —
 - **Use Cases Served:** UC-014
 
 **Available Data Points:**
@@ -244,6 +268,9 @@
 - **RBAC:** CISO, SOM, Security Analyst, Identity/Access Specialist, Security Architect, Risk Analyst, Risk/Compliance/Audit
 - **Status:** BUILT
 - **Owning Spec:** 21-internal-operating-picture
+- **Build Unit:** Unit 21 (Internal Operating Picture) — DONE
+- **Feature Backlog Ref:** —
+- **Arch Debt:** —
 - **Use Cases Served:** UC-015
 
 **Available Data Points:**
@@ -267,6 +294,9 @@
 - **RBAC:** All authenticated
 - **Status:** BUILT
 - **Owning Spec:** 24-security-c2-p0-war-room
+- **Build Unit:** Unit 37 (Security C2 / War Room) — Team 2, BLOCKED
+- **Feature Backlog Ref:** —
+- **Arch Debt:** —
 - **Use Cases Served:** UC-018
 
 **Available Data Points:**
@@ -313,6 +343,9 @@
 - **RBAC:** Tenant Admin
 - **Status:** SCAFFOLD (page.tsx exists but renders placeholder content)
 - **Owning Spec:** 18-tenant-admin
+- **Build Unit:** Unit 22 (Tenant Admin Surface) — DONE (v1 display)
+- **Feature Backlog Ref:** —
+- **Arch Debt:** ARCH-DEBT-047..050 (live enforcement deferred), ARCH-DEBT-019
 - **Use Cases Served:** UC-020
 
 **Available Data Points:**
@@ -361,6 +394,9 @@
 - **RBAC:** Seiertech Operator
 - **Status:** BUILT
 - **Owning Spec:** 18-tenant-admin (Control Plane section)
+- **Build Unit:** Unit 23 (Commercial Control Plane) — Team 2, BLOCKED
+- **Feature Backlog Ref:** BL-003 (USE_CASE_SCHEDULE.md + PAGE_INVENTORY.md gate artifacts unblock Unit 23)
+- **Arch Debt:** —
 - **Use Cases Served:** UC-019
 
 **Available Data Points:**

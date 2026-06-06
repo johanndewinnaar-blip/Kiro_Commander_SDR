@@ -34,3 +34,24 @@ description: Maintain governance artefacts after each build. Validate against ca
 
 5. AI MARKERS:
    - Place `{/* AI-PLACEMENT: AICAP-XXX — [desc] */}` in code for each AICAP item
+
+
+## Connection to Existing Build System
+
+The following existing artefacts remain authoritative for their purpose:
+
+- `REBASELINED_BUILD_SEQUENCE.md` → build unit ORDER and DEPENDENCIES
+- `ARCHITECTURAL_DEBT_REGISTER.md` → structural/governance DEBT
+- `FEATURE_FUNCTION_BACKLOG.md` → absent CAPABILITIES
+- `debt-register.md` → code CONFORMANCE debt
+- `score-register.md` → conformance SCORES
+
+The new artefacts (USE_CASE_REGISTER + PAGE_SCHEDULE) COMPLEMENT these. They do NOT replace them.
+
+The relationship:
+
+- Build unit completed → USE_CASE_REGISTER updated with new use cases
+- Feature backlog item resolved → USE_CASE_REGISTER shows it as BUILT
+- New page proposed → check REBASELINED_BUILD_SEQUENCE for which unit delivers it
+- Architectural debt affecting a page → noted in PAGE_SCHEDULE
+- PAGE_SCHEDULE PROPOSED items without a build unit → candidates for NEW units in REBASELINED_BUILD_SEQUENCE (flag for owner decision)
