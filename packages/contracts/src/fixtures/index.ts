@@ -47,3 +47,13 @@ export { seedTeamsDecisionEvents } from './seed-teams-decision-events';
 
 // ─── War Room Communication Excellence Fixtures (WRCEP-1.0) ─────────────────
 export { seedWarRooms } from './seed-war-rooms';
+
+
+// ─── Pulse Fixtures ──────────────────────────────────────────────────────────
+export { seedTeamPulse, seedDomainPulse, seedSystemPulse } from './seed-pulse';
+
+// ─── Report Fixtures ─────────────────────────────────────────────────────────
+export { seedReports } from './seed-reports';
+
+// ─── Platform Management Fixtures ────────────────────────────────────────────
+export { seedRules, seedModels, seedAutomationRules, seedFeatureRegistry } from './seed-platform';
