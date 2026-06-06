@@ -60,29 +60,29 @@ describe('Operational App Shell', () => {
     expect(styles.pipe.background).toBe('#ffd21f');
   });
 
-  it('has exactly 6 top nav workspaces', () => {
-    expect(TOP_NAV_WORKSPACES.length).toBe(6);
+  it('has exactly 5 top nav workspaces', () => {
+    expect(TOP_NAV_WORKSPACES.length).toBe(5);
   });
 
-  it('top nav includes Command Centre, Fusion Map, Vulnerabilities, Identity, Architecture, CISO', () => {
+  it('top nav includes Command Centre, Fusion Map, Vulnerabilities, Identity, Architecture', () => {
     const labels = TOP_NAV_WORKSPACES.map((w) => w.label);
     expect(labels).toContain('Command Centre');
     expect(labels).toContain('Fusion Map');
     expect(labels).toContain('Vulnerabilities');
     expect(labels).toContain('Identity');
     expect(labels).toContain('Architecture');
-    expect(labels).toContain('CISO');
   });
 
-  it('has 18 sidebar navigation groups', () => {
-    expect(OPERATIONAL_NAV_GROUPS.length).toBe(18);
+  it('has 19 sidebar navigation groups', () => {
+    expect(OPERATIONAL_NAV_GROUPS.length).toBe(19);
   });
 
-  it('sidebar groups include Case Management, Vulnerability Management, Platform, Tenant Admin', () => {
+  it('sidebar groups include Case Management, Vulnerability Management, Platform, Tenant Admin, SOM', () => {
     const ids = OPERATIONAL_NAV_GROUPS.map((g) => g.id);
     expect(ids).toContain('case-management');
     expect(ids).toContain('vulnerability-management');
     expect(ids).toContain('platform');
+    expect(ids).toContain('som');
     expect(ids).toContain('tenant-admin');
   });
 

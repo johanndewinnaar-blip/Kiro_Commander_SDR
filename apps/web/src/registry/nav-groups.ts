@@ -31,7 +31,6 @@ export const TOP_NAV_WORKSPACES = [
   { label: 'Vulnerabilities', path: '/vulnerabilities' },
   { label: 'Identity', path: '/identity' },
   { label: 'Architecture', path: '/architecture' },
-  { label: 'CISO', path: '/ciso' },
 ] as const;
 
 /** 19 sidebar navigation groups per v11 shell reference */
@@ -233,6 +232,18 @@ export const OPERATIONAL_NAV_GROUPS: NavGroup[] = [
       { label: 'Reports', path: '/reporting', status: 'SCAFFOLD' },
       { label: 'Exports', path: '/reporting/exports', status: 'SCAFFOLD' },
       { label: 'CISO Pack', path: '/reporting/ciso-pack', status: 'SCAFFOLD' },
+    ],
+  },
+  // Group 19 — SOM (Security Operations Management)
+  {
+    id: 'som',
+    label: 'SOM',
+    subItems: [
+      { label: 'CISO Dashboard', path: '/som/ciso', status: 'SCAFFOLD' },
+      { label: 'Security Operations Manager', path: '/som/security-operations', status: 'SCAFFOLD' },
+      { label: 'Architecture Manager', path: '/som/architecture', status: 'SCAFFOLD' },
+      { label: 'Risk Manager', path: '/som/risk', status: 'SCAFFOLD' },
+      { label: 'Cloud Security Manager', path: '/som/cloud-security', status: 'SCAFFOLD' },
     ],
   },
 ];
