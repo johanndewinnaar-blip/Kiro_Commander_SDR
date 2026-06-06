@@ -132,9 +132,9 @@
 
 | Nav Item | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
-| Workload | /team-pulse/workload | SCAFFOLD | — | — |
-| SLA Pressure | /team-pulse/sla | SCAFFOLD | — | — |
-| Escalation Queue | /team-pulse/escalation | SCAFFOLD | — | — |
+| Workload | /team-pulse/workload | BUILT | Tier 3 batch | UC-PULSE-001 |
+| SLA Pressure | /team-pulse/sla | BUILT | Tier 3 batch | UC-PULSE-002 |
+| Escalation Queue | /team-pulse/escalation | BUILT | Tier 3 batch | UC-PULSE-003 |
 
 ---
 
@@ -142,9 +142,9 @@
 
 | Nav Item | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
-| Domain Overview | /domain-pulse | SCAFFOLD | — | — |
-| Failed Validation | /domain-pulse/failed-validation | SCAFFOLD | — | — |
-| Closure Blockers | /domain-pulse/closure-blockers | SCAFFOLD | — | — |
+| Domain Overview | /domain-pulse | BUILT | Tier 3 batch | UC-PULSE-004 |
+| Failed Validation | /domain-pulse/failed-validation | BUILT | Tier 3 batch | UC-PULSE-005 |
+| Closure Blockers | /domain-pulse/closure-blockers | BUILT | Tier 3 batch | UC-PULSE-006 |
 
 ---
 
@@ -152,9 +152,9 @@
 
 | Nav Item | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
-| Engine Health | /system-pulse/engine | SCAFFOLD | — | — |
-| Queue Backlog | /system-pulse/queues | SCAFFOLD | — | — |
-| Data Freshness | /system-pulse/freshness | SCAFFOLD | — | — |
+| Engine Health | /system-pulse/engine | BUILT | Tier 3 batch | UC-PULSE-007 |
+| Queue Backlog | /system-pulse/queues | BUILT | Tier 3 batch | UC-PULSE-008 |
+| Data Freshness | /system-pulse/freshness | BUILT | Tier 3 batch | UC-PULSE-009 |
 
 ---
 
@@ -164,12 +164,12 @@
 |---|---|---|---|---|
 | Platform Overview | /platform | SCAFFOLD | — | — |
 | Connectors & Data Sources | /platform/connectors | BUILT | Unit 4, Unit 38 | UC-030 |
-| Data Quality | /platform/data-quality | SCAFFOLD | — | — |
-| Rule Engine | /platform/rules | SCAFFOLD | — | — |
-| Model Management | /platform/models | SCAFFOLD | — | — |
+| Data Quality | /platform/data-quality | BUILT | Tier 3 batch | UC-PLAT-005 |
+| Rule Engine | /platform/rules | BUILT | Tier 3 batch | UC-PLAT-001 |
+| Model Management | /platform/models | BUILT | Tier 3 batch | UC-PLAT-002 |
 | Commander AI | /commander-ai | BUILT | Unit 40 | UC-046–053 (AICAP) |
-| Automation | /platform/automation | SCAFFOLD | — | — |
-| Feature Availability | /platform/features | SCAFFOLD | — | — |
+| Automation | /platform/automation | BUILT | Tier 3 batch | UC-PLAT-003 |
+| Feature Availability | /platform/features | BUILT | Tier 3 batch | UC-PLAT-004 |
 | Audit & Logs | /platform/audit | BUILT | Unit 43 | — |
 
 ---
@@ -201,9 +201,9 @@
 
 | Nav Item | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
-| Reports | /reporting | SCAFFOLD | Unit 35 | — |
-| Exports | /reporting/exports | SCAFFOLD | Unit 35 | — |
-| CISO Pack | /reporting/ciso-pack | SCAFFOLD | Unit 36 | UC-050 (AICAP) |
+| Reports | /reporting | BUILT | Tier 3 batch | UC-REPORT-001 |
+| Exports | /reporting/exports | BUILT | Tier 3 batch | UC-REPORT-002 |
+| CISO Pack | /reporting/ciso-pack | BUILT | Tier 3 batch | UC-REPORT-003 |
 
 ---
 
