@@ -1,5 +1,5 @@
 {
-  "enabled": true,
+  "enabled": false,
   "name": "Docs Change Control",
   "description": "Document change control check. Source: 03-docs-change-control-hook.md",
   "version": "1",

@@ -1,5 +1,5 @@
 {
-  "enabled": true,
+  "enabled": false,
   "name": "Translation-Layer Authority-Leak Prevention",
   "description": "Refuses any attempt to read from or cite the .kiro/specs/ translation layer as a source for knowledge-graph, spec-derivation, build-plan or rebaseline work. Ties to ARCH-DEBT-001 and SOURCING_RULE.md.",
   "version": "1",

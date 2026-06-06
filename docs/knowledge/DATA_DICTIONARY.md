@@ -699,6 +699,21 @@ These are code-conformance debt items (contract field removed, test fixtures not
 | `ExceptionState` | none, accepted_risk, compensating_control, waiver, deferred | Spec #55; CFM |
 | `MappingSource` | system, manual, ai_suggested | Spec #55; CFM |
 | `CoverageContribution` | full, partial, evidence_only | Spec #55; CFM |
+| `PlaybookStatus` | draft, active, superseded | Spec #26a; Communications Excellence Phase 1 |
+| `PlaybookStepAction` | send_acknowledgement, send_remediation_request, send_escalation, send_closure_notice, post_command_bridge, send_adaptive_card | Spec #26a; Communications Excellence Phase 1 |
+| `PlaybookExecutionStatus` | running, completed, aborted | Spec #26a; Communications Excellence Phase 1 |
+| `PlaybookStepExecutionStatus` | pending, executed, skipped, failed | Spec #26a; Communications Excellence Phase 1 |
+| `DetonationSource` | microsoft_defender, other | Spec #26a; Communications Excellence Phase 1 |
+| `DetonationOverallVerdict` | clean, suspicious, malicious | Spec #26a; Communications Excellence Phase 1 |
+| `DetonationCheckType` | url_detonation, attachment_sandboxing, header_anomaly, impersonation_scoring, reply_chain_hijacking | Spec #26a; Communications Excellence Phase 1 |
+| `DetonationCheckResult` | pass, fail, suspicious | Spec #26a; Communications Excellence Phase 1 |
+| `PhishingTriageVerdict` | malicious, suspicious, clean | Spec #26a; Communications Excellence Phase 1 |
+| `PhishingNotificationStatus` | pending, sent | Spec #26a; Communications Excellence Phase 1 |
+| `PhishingReportStatus` | received, triaging, verdicted, closed | Spec #26a; Communications Excellence Phase 1 |
+| `StixObjectType` | indicator, attack-pattern, malware, campaign, threat-actor, tool, vulnerability | Spec #26a; Communications Excellence Phase 1 |
+| `StixIngestStatus` | received, parsing, mapped, evaluated, complete | Spec #26a; Communications Excellence Phase 1 |
+| `TeamsRequestType` | approval, validation_confirmation, action_override, resource_assignment, escalation | Spec #26, Spec #44; Communications Excellence Phase 1 |
+| `TeamsDecision` | approved, denied, delegated, confirmed, disputed, need_more_time | Spec #26, Spec #44; Communications Excellence Phase 1 |
 
 ---
 
@@ -706,7 +721,7 @@ These are code-conformance debt items (contract field removed, test fixtures not
 
 **Purpose:** Complete surfacing of the data layer built to date. Existing work is explicitly accounted for, not silently assumed complete.
 
-### Entities Catalogued: 37 (+15 intelligence entities, +2 value objects, +1 communications entity, +1 overlay entity)
+### Entities Catalogued: 47 (+15 intelligence entities, +2 value objects, +7 communications entities, +1 overlay entity, +2 Commander AI entities)
 
 1. Asset ✅
 2. Case ✅
@@ -745,12 +760,20 @@ These are code-conformance debt items (contract field removed, test fixtures not
 35. Inbound_Email_Submission ✅ (Intelligence — value object)
 36. Case Communication Thread ⚠️ (Communications — contract + fixture, DB schema absent)
 37. War Room ⚠️ (Overlay — contract + fixture, DB schema absent)
+38. Commander AI Provider ⚠️ (AI — contract + fixture + resolver, DB schema absent)
+39. Commander AI Execution Audit ⚠️ (AI — contract interface only, DB schema + fixture absent)
+40. Communication Playbook ⚠️ (Communications — contract + fixture, DB schema absent)
+41. Playbook Execution ⚠️ (Communications — contract only, DB schema + fixture absent)
+42. Detonation Verdict ⚠️ (Communications — contract + fixture, DB schema absent)
+43. Phishing Report ⚠️ (Communications — contract + fixture, DB schema absent)
+44. STIX Bundle Ingest ⚠️ (Communications — contract + fixture, DB schema absent)
+45. Teams Decision Event ⚠️ (Communications — contract + fixture, DB schema absent)
 
 **Composed-object modules (catalogued under their consuming entity, no own table):**
 - `coim.ts` — COIM-A source-classification composed objects (FindingClass, SourceSeverity, SourceConfidence, SourceProduct, AttackMapping, ObservableRef, SourceClassification + `validateSourceClassification`). Catalogued under Risk Object (§4). Also consumed by Verdict entity (§12) for `SourceProduct` type. Satisfies the completeness gate for `packages/contracts/src/entities/coim.ts`.
 - `intelligence-common.ts` — Platform Intelligence shared type constants and value objects. Defines 16 array-form type constants (PlatformIntelligenceSourceType, PlatformRecordType, IocCategory [26 values], IocRelationshipState, TlpMarking, CveState, SourceFreshnessState, TenantSubscriptionState, EvaluationType, TenantExposureState, IocMatchType, IocCaseLinkType, ThreatHuntStatus, PushActionType, PushIntentStatus, AllowBlockListType) and 2 shared value objects (SourceAttributionEntry, RelationshipStateTransition). Consumed by: indicator-of-compromise.ts, ioc-case-link.ts, ioc-relationship.ts, platform-intelligence-record.ts, platform-intelligence-source.ts, push-action-intent.ts, tenant-intelligence-evaluation.ts, tenant-intelligence-subscription.ts, tenant-ioc-allowblock-entry.ts, tenant-ioc-match.ts, threat-hunt-record.ts, vulnerability-intelligence-record.ts. Referenced by fixtures: seed-iocs.ts, seed-platform-intelligence-sources.ts. Reuses existing COIM SourceSeverity (1–5) and SourceConfidence from coim.ts. Source: Spec #59 Intelligence Layer Architecture; Spec #61 Universal Security Signal Connector Contract (baseline v2.6.2). Coverage: provisional (source specs partially read per COVERAGE.md). No DB schema counterpart (type constants only — no own table). No fixture of its own (consumed by entity-level fixtures). No resolver. Satisfies the completeness gate for `packages/contracts/src/entities/intelligence-common.ts`.
 
-### Fixtures Found: 28
+### Fixtures Found: 36
 
 1. `seed-assets.ts` ✅
 2. `seed-cases.ts` ✅
@@ -780,8 +803,16 @@ These are code-conformance debt items (contract field removed, test fixtures not
 26. `seed-vulnerability-case-links.ts` ✅ (2 vulnerability case links)
 27. `seed-communication-threads.ts` ✅ (4 threads: 2 email, 2 teams; statuses: responded, awaiting_response, stale, closed)
 28. `seed-war-rooms.ts` ✅ (3 war rooms: activated, monitoring, closed)
+29. `seed-commander-ai-provider.ts` ✅ (1 platform-level provider: AWS Bedrock, NOT_CONNECTED, Phase 1 stub)
+30. `seed-communication-playbooks.ts` ✅ (Communications Excellence Phase 1 — structured playbooks with bounded conditions)
+31. `seed-detonation-verdicts.ts` ✅ (Communications Excellence Phase 1 — SOC detonation verdicts consumed read-only)
+32. `seed-phishing-reports.ts` ✅ (Communications Excellence Phase 1 — employee phishing reports lifecycle)
+33. `seed-stix-bundles.ts` ✅ (Communications Excellence Phase 1 — STIX bundle ingest records)
+34. `seed-teams-decision-events.ts` ✅ (Communications Excellence Phase 1 — Teams decision request/response events)
+35. `seed-inbound-email-submissions.ts` ✅ (Intelligence — inbound email submission value objects)
+36. `seed-push-action-intents.ts` ✅ (Intelligence — push action intents, mock statuses)
 
-### Resolvers Found: 13
+### Resolvers Found: 16
 
 1. `assignment-engine.ts` — case assignment logic
 2. `case-closure-evaluator.ts` — closure gate evaluation
@@ -796,6 +827,9 @@ These are code-conformance debt items (contract field removed, test fixtures not
 11. `validation-window-enforcer.ts` — validation window enforcement
 12. `executeTransition()` — lifecycle state machine (in case-lifecycle.ts)
 13. `case-aggregation-resolver.ts` — COIM-G case aggregate computation (`computeCaseAggregation`); computed/cached, non-governing
+14. `connector-pull-orchestrator.ts` — connector pull orchestration, state machine enforcement, conformance tier assessment
+15. `strategy-policy-lifecycle.ts` — strategy policy lifecycle management (`simulatePolicy()`)
+16. ❌ `commander-ai-provider-resolver.ts` — **MISSING FROM DISK** (referenced in entity #40 documentation but file does not exist in `packages/contracts/src/resolvers/`). PROPOSED: flag as ARCH-DEBT or remove from catalogue.
 
 ### Contract vs DB Schema Reconciliation
 
@@ -820,13 +854,29 @@ These are code-conformance debt items (contract field removed, test fixtures not
 - ControlEvaluation ✅ (CFM)
 - ControlMapping ✅ (CFM)
 
-**Divergences (3):**
+**Divergences (11):**
 - Strategy Policy ⚠️ — Contract `StrategySurfaceType` has 17 values (CMEP-1.0 extension); DB `strategySurfaceTypeEnum` has 13. Migration required to add: `sla-modifier`, `correlation-policy`, `effectiveness-targets`, `ssvc-decision-tree`.
 - Case Communication Thread ⚠️ — Contract + fixture exist; DB schema ABSENT. ARCH-DEBT-052 proposed.
 - War Room ⚠️ — Contract + fixture exist; DB schema ABSENT. ARCH-DEBT-053 proposed.
+- Commander AI Provider ⚠️ — Contract + fixture exist; resolver MISSING FROM DISK. DB schema ABSENT. ARCH-DEBT-054 proposed.
+- Commander AI Execution Audit ⚠️ — Contract interface defined; DB schema + fixture ABSENT. ARCH-DEBT-055 proposed.
+- Communication Playbook ⚠️ — Contract + fixture exist; DB schema ABSENT. ARCH-DEBT-056 proposed.
+- Playbook Execution ⚠️ — Contract exists; DB schema + fixture ABSENT. ARCH-DEBT-057 proposed.
+- Detonation Verdict ⚠️ — Contract + fixture exist; DB schema ABSENT. ARCH-DEBT-058 proposed.
+- Phishing Report ⚠️ — Contract + fixture exist; DB schema ABSENT. ARCH-DEBT-059 proposed.
+- STIX Bundle Ingest ⚠️ — Contract + fixture exist; DB schema ABSENT. ARCH-DEBT-060 proposed.
+- Teams Decision Event ⚠️ — Contract + fixture exist; DB schema ABSENT. ARCH-DEBT-061 proposed.
 
 **Proposed Architectural Debt Entries:**
 - ARCH-DEBT-NEW: Strategy Policy DB enum out of sync with contract (17 vs 13 surface types). Blocker: DB migration required before CMEP-1.0 surface policies can be persisted. Additionally, `seed-strategies.ts` lacks fixture entries for the 4 new surface types.
+- ARCH-DEBT-054: Commander AI Provider DB schema absent — contract + fixture exist but resolver MISSING FROM DISK and no persistence layer. Blocker: DB migration required before AI provider configuration can be persisted. Resolver needs recreation.
+- ARCH-DEBT-055: Commander AI Execution Audit DB schema + fixture absent — contract interface defined but no persistence layer or seed data. Blocker: DB migration + fixture required before AI execution audit records can be persisted.
+- ARCH-DEBT-056: Communication Playbook DB schema absent — contract + fixture exist. Blocker: DB migration required before playbooks can be persisted.
+- ARCH-DEBT-057: Playbook Execution DB schema + fixture absent — contract defined but no persistence layer or seed data. Blocker: DB migration + fixture required.
+- ARCH-DEBT-058: Detonation Verdict DB schema absent — contract + fixture exist. Blocker: DB migration required.
+- ARCH-DEBT-059: Phishing Report DB schema absent — contract + fixture exist. Blocker: DB migration required.
+- ARCH-DEBT-060: STIX Bundle Ingest DB schema absent — contract + fixture exist. Blocker: DB migration required.
+- ARCH-DEBT-061: Teams Decision Event DB schema absent — contract + fixture exist. Blocker: DB migration required.
 
 **Resolved Architectural Debt:**
 - ARCH-DEBT-030: Risk Object DB schema missing (contract + fixture exist) — ✅ RESOLVED (Unit 1)
@@ -1532,6 +1582,319 @@ Five entities forming the compliance/control-framework mapping layer:
 
 ---
 
+### 40. Commander AI Provider
+
+**Source:** Spec #13 Commander AI Architecture & Grounding Rules §3 (BYOM Provider Model)  
+**Baseline:** `docs/99_source_archive/baseline_v2_6_2/docs/02_child_specs/13_Commander_AI_Architecture_and_Grounding_Rules.md`  
+**Coverage:** Partial (Spec #13 initial portion, prior session) — **provisional (source partially read)**  
+**Contract:** `packages/contracts/src/entities/commander-ai-provider.ts`  
+**DB Schema:** ❌ NOT FOUND  
+**Fixture:** `packages/contracts/src/fixtures/seed-commander-ai-provider.ts` ✅ (1 platform-level provider)  
+**Resolver:** ❌ **MISSING FROM DISK** — `commander-ai-provider-resolver.ts` referenced in prior documentation but file does not exist in `packages/contracts/src/resolvers/`  
+**Status:** AVAILABLE (fixture exists)  
+**Doctrine:** Platform-level entity — NOT tenant-scoped. Owned by the Commercial Control Plane. Customers consume Commander AI capabilities; they do NOT configure providers directly. Phase 1: Stubbed foundation only. No live AWS calls. No credentials stored.
+
+| Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
+|-------|------|----------------------|--------------|---------------------|-------|
+| `providerId` | string | seeded | AVAILABLE | — | Unique provider configuration ID |
+| `providerName` | string | seeded | AVAILABLE | — | Display name |
+| `providerType` | AiProviderType (`'AWS_BEDROCK'`) | seeded | AVAILABLE | — | Provider type (only AWS_BEDROCK in Phase 1) |
+| `enabled` | boolean | seeded | AVAILABLE | — | Whether provider is enabled (false in Phase 1) |
+| `awsRegion` | string | seeded | AVAILABLE | — | AWS region for Bedrock deployment |
+| `interfaceType` | AiInterfaceType | seeded | AVAILABLE | — | `BEDROCK_AGENT` \| `BEDROCK_CONVERSE` |
+| `modelId` | string | seeded | AVAILABLE | — | Bedrock model ID (e.g. anthropic.claude-3-5-sonnet-20241022-v2:0) |
+| `agentId` | string | seeded | AVAILABLE | — | Bedrock Agent ID (placeholder in Phase 1) |
+| `agentAliasId` | string | seeded | AVAILABLE | — | Bedrock Agent Alias ID (placeholder in Phase 1) |
+| `connectionStatus` | AiConnectionStatus | seeded | AVAILABLE | — | `NOT_CONNECTED` \| `CONFIGURED_STUB` \| `READY_FOR_PHASE_2` |
+| `ragStatus` | AiRagStatus | seeded | AVAILABLE | — | `DORMANT` \| `ACTIVE` \| `DISABLED` |
+| `byokStatus` | AiByokStatus | seeded | AVAILABLE | — | `DEFERRED` \| `AVAILABLE` \| `DISABLED` |
+| `stsStatus` | AiStsStatus | seeded | AVAILABLE | — | `DEFERRED` \| `AVAILABLE` \| `DISABLED` |
+| `lastUpdated` | string (ISO 8601) | seeded | AVAILABLE | — | Last updated timestamp |
+
+**DB Schema Reconciliation:** ⚠️ **DIVERGENT — Contract + fixture + resolver exist, DB schema ABSENT.** No file at `packages/db/src/schema/` for commander-ai-provider. Proposed ARCH-DEBT entry: ARCH-DEBT-054.
+
+**Resolver detail:**
+- `resolveAiProviderStatus()` — returns `AiProviderResolution` (provider config, isOperational, statusSummary, phase, availableCapabilities, deferredCapabilities). Phase 1: always returns `isOperational: false`.
+- `canExecuteLive()` — returns boolean (true only when `enabled && connectionStatus === 'READY_FOR_PHASE_2'`). Phase 1: always returns false.
+
+---
+
+### 41. Commander AI Execution Audit
+
+**Source:** Spec #13 Commander AI Architecture & Grounding Rules §8 (Commander Execution Record)  
+**Baseline:** `docs/99_source_archive/baseline_v2_6_2/docs/02_child_specs/13_Commander_AI_Architecture_and_Grounding_Rules.md`  
+**Coverage:** Partial (Spec #13 initial portion, prior session) — **provisional (source partially read)**  
+**Contract:** `packages/contracts/src/entities/commander-ai-provider.ts` (co-located with CommanderAiProvider)  
+**DB Schema:** ❌ NOT FOUND  
+**Fixture:** ❌ NOT FOUND  
+**Resolver:** ❌ NOT FOUND  
+**Status:** FUTURE (no fixture, no DB schema)  
+**Doctrine:** Per Spec #13 §8: "Every AI invocation must create a Commander Execution Record." Phase 1: All records are STUBBED_PHASE_1. No live execution.
+
+| Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
+|-------|------|----------------------|--------------|---------------------|-------|
+| `executionId` | string | system-calculated | FUTURE | Missing fixture + DB schema | Unique execution ID |
+| `providerId` | string | system-calculated | FUTURE | Missing fixture + DB schema | Provider ID reference |
+| `providerType` | AiProviderType | system-calculated | FUTURE | Missing fixture + DB schema | Provider type at time of execution |
+| `interfaceType` | AiInterfaceType | system-calculated | FUTURE | Missing fixture + DB schema | Interface type used |
+| `requestTimestamp` | string (ISO 8601) | system-calculated | FUTURE | Missing fixture + DB schema | Request timestamp |
+| `status` | `'pending'` \| `'success'` \| `'failed'` \| `'stubbed'` | system-calculated | FUTURE | Missing fixture + DB schema | Execution status |
+| `inputTokens` | number | system-calculated | FUTURE | Missing fixture + DB schema | Input token count (0 in Phase 1) |
+| `outputTokens` | number | system-calculated | FUTURE | Missing fixture + DB schema | Output token count (0 in Phase 1) |
+| `modelId` | string | system-calculated | FUTURE | Missing fixture + DB schema | Model ID invoked |
+| `agentId` | string | system-calculated | FUTURE | Missing fixture + DB schema | Agent ID (if agent interface) |
+| `agentAliasId` | string | system-calculated | FUTURE | Missing fixture + DB schema | Agent Alias ID (if agent interface) |
+| `executionMode` | AiExecutionMode | system-calculated | FUTURE | Missing fixture + DB schema | `STUBBED_PHASE_1` \| `LIVE` |
+
+**DB Schema Reconciliation:** ⚠️ **DIVERGENT — Contract interface defined, DB schema + fixture ABSENT.** Proposed ARCH-DEBT entry: ARCH-DEBT-055.
+
+---
+
+### 42. Communication Playbook
+
+**Source:** Spec #26 Case Communication and Broadcast Channel, Spec #26a Closed-Loop Email Case Communication Lifecycle v1.2  
+**Coverage:** Partial (Spec #26 initial portion, Spec #26a initial portion read) — **provisional (source partially read)**  
+**Contract:** `packages/contracts/src/entities/communication-playbook.ts`  
+**DB Schema:** ❌ NOT FOUND  
+**Fixture:** `packages/contracts/src/fixtures/seed-communication-playbooks.ts` ✅  
+**Resolver:** ❌ NOT FOUND  
+**Status:** AVAILABLE (fixture exists)  
+**Doctrine:** Playbook conditions are BOUNDED (6 grammar patterns only — no unbounded DSL). All actions modelled as intent/status (no live execution in Phase 1).
+
+| Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
+|-------|------|----------------------|--------------|---------------------|-------|
+| `id` | string (CommonFields) | seeded | AVAILABLE | — | Deterministic ID from fixture |
+| `tenant` | TenantContext (CommonFields) | seeded | AVAILABLE | — | Tenant scope (tenantId, tenantName) |
+| `createdAt` | string ISO 8601 (CommonFields) | system-calculated | AVAILABLE | — | Record creation timestamp |
+| `updatedAt` | string ISO 8601 (CommonFields) | system-calculated | AVAILABLE | — | Record update timestamp |
+| `source` | SourceMetadata (CommonFields) | seeded | AVAILABLE | — | Provenance (connectorId, importRunId, sourceSystem, sourceTimestamp) |
+| `playbookId` | string | seeded | AVAILABLE | — | Playbook identifier |
+| `name` | string | seeded | AVAILABLE | — | Human-readable playbook name |
+| `trigger` | PlaybookTrigger (JSONB) | seeded | AVAILABLE | — | {caseType: CaseType, conditions: PlaybookCondition[]} |
+| `steps` | PlaybookStep[] (JSONB) | seeded | AVAILABLE | — | Ordered steps: {stepNumber, channel, action, template, recipients[], delay, condition} |
+| `version` | string | seeded | AVAILABLE | — | Playbook version (semantic) |
+| `status` | PlaybookStatus | seeded | AVAILABLE | — | `draft` \| `active` \| `superseded` |
+
+**Enums:**
+- `PlaybookStatus`: draft, active, superseded
+- `PlaybookStepAction`: send_acknowledgement, send_remediation_request, send_escalation, send_closure_notice, post_command_bridge, send_adaptive_card
+
+**Bounded Condition Grammar (6 patterns):**
+1. `always`
+2. `never`
+3. `case.{field} == '{value}'`
+4. `case.{field} IN ['{v1}', '{v2}']`
+5. `no_response_to_step_{N}`
+6. `time_since_step_{N} > {duration}`
+
+**Validation:** `validateCommunicationPlaybook()` — structural correctness (id, tenant.tenantId, playbookId, name, trigger.caseType, steps non-empty with valid actions and bounded conditions, version, status enum).
+
+**DB Schema Reconciliation:** ⚠️ **DIVERGENT — Contract + fixture exist, DB schema ABSENT.** Proposed ARCH-DEBT entry: ARCH-DEBT-056.
+
+---
+
+### 43. Playbook Execution
+
+**Source:** Spec #26 Case Communication and Broadcast Channel, Spec #26a Closed-Loop Email Case Communication Lifecycle v1.2  
+**Coverage:** Partial (Spec #26 initial portion, Spec #26a initial portion read) — **provisional (source partially read)**  
+**Contract:** `packages/contracts/src/entities/playbook-execution.ts`  
+**DB Schema:** ❌ NOT FOUND  
+**Fixture:** ❌ NOT FOUND (no dedicated fixture file)  
+**Resolver:** ❌ NOT FOUND  
+**Status:** AVAILABLE (contract defined, no fixture — tracks runtime state of playbook instances)  
+**Doctrine:** All actions modelled as intent/status (no live execution in Phase 1).
+
+| Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
+|-------|------|----------------------|--------------|---------------------|-------|
+| `id` | string (CommonFields) | system-calculated | AVAILABLE | — | Deterministic ID |
+| `tenant` | TenantContext (CommonFields) | system-calculated | AVAILABLE | — | Tenant scope (tenantId, tenantName) |
+| `createdAt` | string ISO 8601 (CommonFields) | system-calculated | AVAILABLE | — | Record creation timestamp |
+| `updatedAt` | string ISO 8601 (CommonFields) | system-calculated | AVAILABLE | — | Record update timestamp |
+| `source` | SourceMetadata (CommonFields) | system-calculated | AVAILABLE | — | Provenance |
+| `executionId` | string | system-calculated | AVAILABLE | — | Execution identifier |
+| `playbookId` | string | system-calculated | AVAILABLE | — | Ref → CommunicationPlaybook |
+| `caseId` | string | system-calculated | AVAILABLE | — | Case this execution is bound to |
+| `tenantId` | string | system-calculated | AVAILABLE | — | Tenant ID (denormalised) |
+| `currentStep` | number | system-calculated | AVAILABLE | — | Current step number being executed |
+| `stepStatuses` | StepExecutionStatus[] (JSONB) | system-calculated | AVAILABLE | — | Per-step: {stepNumber, status, executedAt, reason} |
+| `startedAt` | string ISO 8601 | system-calculated | AVAILABLE | — | When execution started |
+| `completedAt` | string ISO 8601 \| null | system-calculated | AVAILABLE | — | When execution completed (null if running) |
+| `status` | PlaybookExecutionStatus | system-calculated | AVAILABLE | — | `running` \| `completed` \| `aborted` |
+
+**Enums:**
+- `PlaybookExecutionStatus`: running, completed, aborted
+- `PlaybookStepExecutionStatus`: pending, executed, skipped, failed
+
+**Validation:** `validatePlaybookExecution()` — structural correctness (id, tenant.tenantId, executionId, playbookId, caseId, tenantId, currentStep ≥ 0, stepStatuses array with valid statuses, startedAt, status enum).
+
+**DB Schema Reconciliation:** ⚠️ **DIVERGENT — Contract exists, DB schema + fixture ABSENT.** Proposed ARCH-DEBT entry: ARCH-DEBT-057.
+
+---
+
+### 44. Detonation Verdict
+
+**Source:** Spec #26a Closed-Loop Email Case Communication Lifecycle v1.2 (detonation verdict binding)  
+**Coverage:** Partial (Spec #26a initial portion read) — **provisional (source partially read)**  
+**Contract:** `packages/contracts/src/entities/detonation-verdict.ts`  
+**DB Schema:** ❌ NOT FOUND  
+**Fixture:** `packages/contracts/src/fixtures/seed-detonation-verdicts.ts` ✅  
+**Resolver:** ❌ NOT FOUND  
+**Status:** AVAILABLE (fixture exists)  
+**Doctrine:** Connector class A (read-only SOC verdict consumption). SOC read-only boundary: consumed NOT produced by Commander. No live Graph API (Phase 1).
+
+| Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
+|-------|------|----------------------|--------------|---------------------|-------|
+| `id` | string (CommonFields) | seeded | AVAILABLE | — | Deterministic ID from fixture |
+| `tenant` | TenantContext (CommonFields) | seeded | AVAILABLE | — | Tenant scope (tenantId, tenantName) |
+| `createdAt` | string ISO 8601 (CommonFields) | system-calculated | AVAILABLE | — | Record creation timestamp |
+| `updatedAt` | string ISO 8601 (CommonFields) | system-calculated | AVAILABLE | — | Record update timestamp |
+| `source` | SourceMetadata (CommonFields) | seeded | AVAILABLE | — | Provenance |
+| `verdictId` | string | seeded | AVAILABLE | — | Verdict identifier |
+| `tenantId` | string | seeded | AVAILABLE | — | Tenant ID (denormalised) |
+| `emailMessageId` | string | seeded | AVAILABLE | — | Reference to the original email message |
+| `detonationSource` | DetonationSource | seeded | AVAILABLE | — | `microsoft_defender` \| `other` |
+| `overallVerdict` | DetonationOverallVerdict | seeded | AVAILABLE | — | `clean` \| `suspicious` \| `malicious` |
+| `checks` | DetonationCheck[] (JSONB) | seeded | AVAILABLE | — | Individual checks: {checkType, result, confidence (0-100), detail} |
+| `receivedAt` | string ISO 8601 | seeded | AVAILABLE | — | When verdict received from source |
+| `processedAt` | string ISO 8601 | seeded | AVAILABLE | — | When Commander processed the verdict |
+
+**Enums:**
+- `DetonationSource`: microsoft_defender, other
+- `DetonationOverallVerdict`: clean, suspicious, malicious
+- `DetonationCheckType`: url_detonation, attachment_sandboxing, header_anomaly, impersonation_scoring, reply_chain_hijacking
+- `DetonationCheckResult`: pass, fail, suspicious
+
+**Validation:** `validateDetonationVerdict()` — structural correctness (id, tenant.tenantId, verdictId, tenantId, emailMessageId, detonationSource enum, overallVerdict enum, checks array with valid checkType/result/confidence 0-100, receivedAt, processedAt).
+
+**DB Schema Reconciliation:** ⚠️ **DIVERGENT — Contract + fixture exist, DB schema ABSENT.** Proposed ARCH-DEBT entry: ARCH-DEBT-058.
+
+---
+
+### 45. Phishing Report
+
+**Source:** Spec #26a Closed-Loop Email Case Communication Lifecycle v1.2 (phishing lifecycle)  
+**Coverage:** Partial (Spec #26a initial portion read) — **provisional (source partially read)**  
+**Contract:** `packages/contracts/src/entities/phishing-report.ts`  
+**DB Schema:** ❌ NOT FOUND  
+**Fixture:** `packages/contracts/src/fixtures/seed-phishing-reports.ts` ✅  
+**Resolver:** ❌ NOT FOUND  
+**Status:** AVAILABLE (fixture exists)  
+**Doctrine:** SOC read-only boundary: verdicts consumed, not produced. All notifications modelled as intent/status (Phase 1).
+
+| Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
+|-------|------|----------------------|--------------|---------------------|-------|
+| `id` | string (CommonFields) | seeded | AVAILABLE | — | Deterministic ID from fixture |
+| `tenant` | TenantContext (CommonFields) | seeded | AVAILABLE | — | Tenant scope (tenantId, tenantName) |
+| `createdAt` | string ISO 8601 (CommonFields) | system-calculated | AVAILABLE | — | Record creation timestamp |
+| `updatedAt` | string ISO 8601 (CommonFields) | system-calculated | AVAILABLE | — | Record update timestamp |
+| `source` | SourceMetadata (CommonFields) | seeded | AVAILABLE | — | Provenance |
+| `reportId` | string | seeded | AVAILABLE | — | Report identifier |
+| `tenantId` | string | seeded | AVAILABLE | — | Tenant ID (denormalised) |
+| `reportedBy` | string | seeded | AVAILABLE | — | Employee who reported (ID or email) |
+| `reportedAt` | string ISO 8601 | seeded | AVAILABLE | — | When report was submitted |
+| `originalEmailRef` | string | seeded | AVAILABLE | — | Reference to the original email |
+| `detonationVerdictId` | string \| null | seeded | AVAILABLE | — | Ref → DetonationVerdict (null if not yet available) |
+| `triageVerdict` | PhishingTriageVerdict \| null | seeded | AVAILABLE | — | `malicious` \| `suspicious` \| `clean` \| null |
+| `observablesEmitted` | string[] | seeded | AVAILABLE | — | Observable IDs emitted from this report |
+| `riskObjectId` | string \| null | seeded | AVAILABLE | — | Risk Object ID (if malicious) |
+| `caseId` | string \| null | seeded | AVAILABLE | — | Case ID (if case was created) |
+| `employeeNotificationStatus` | PhishingNotificationStatus | seeded | AVAILABLE | — | `pending` \| `sent` |
+| `status` | PhishingReportStatus | seeded | AVAILABLE | — | `received` \| `triaging` \| `verdicted` \| `closed` |
+
+**Enums:**
+- `PhishingTriageVerdict`: malicious, suspicious, clean
+- `PhishingNotificationStatus`: pending, sent
+- `PhishingReportStatus`: received, triaging, verdicted, closed
+
+**Validation:** `validatePhishingReport()` — structural correctness (id, tenant.tenantId, reportId, tenantId, reportedBy, reportedAt, originalEmailRef, triageVerdict valid or null, observablesEmitted array, employeeNotificationStatus enum, status enum).
+
+**DB Schema Reconciliation:** ⚠️ **DIVERGENT — Contract + fixture exist, DB schema ABSENT.** Proposed ARCH-DEBT entry: ARCH-DEBT-059.
+
+---
+
+### 46. STIX Bundle Ingest
+
+**Source:** Spec #26a Closed-Loop Email Case Communication Lifecycle v1.2 (STIX bundle ingestion path)  
+**Coverage:** Partial (Spec #26a initial portion read) — **provisional (source partially read)**  
+**Contract:** `packages/contracts/src/entities/stix-bundle-ingest.ts`  
+**DB Schema:** ❌ NOT FOUND  
+**Fixture:** `packages/contracts/src/fixtures/seed-stix-bundles.ts` ✅  
+**Resolver:** ❌ NOT FOUND  
+**Status:** AVAILABLE (fixture exists)  
+**Doctrine:** No live STIX/TAXII feed consumption (Phase 1). All processing modelled as status progression.
+
+| Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
+|-------|------|----------------------|--------------|---------------------|-------|
+| `id` | string (CommonFields) | seeded | AVAILABLE | — | Deterministic ID from fixture |
+| `tenant` | TenantContext (CommonFields) | seeded | AVAILABLE | — | Tenant scope (tenantId, tenantName) |
+| `createdAt` | string ISO 8601 (CommonFields) | system-calculated | AVAILABLE | — | Record creation timestamp |
+| `updatedAt` | string ISO 8601 (CommonFields) | system-calculated | AVAILABLE | — | Record update timestamp |
+| `source` | SourceMetadata (CommonFields) | seeded | AVAILABLE | — | Provenance |
+| `ingestId` | string | seeded | AVAILABLE | — | Ingest record identifier |
+| `tenantId` | string | seeded | AVAILABLE | — | Tenant ID (denormalised) |
+| `sourceEmailId` | string | seeded | AVAILABLE | — | Ref → InboundEmailSubmission |
+| `bundleVersion` | string | seeded | AVAILABLE | — | STIX bundle version (e.g. "2.1") |
+| `objectsParsed` | number | seeded | AVAILABLE | — | Count of objects parsed from bundle |
+| `objectTypes` | StixObjectType[] (JSONB) | seeded | AVAILABLE | — | Types of STIX objects found |
+| `mappedObservableIds` | string[] | seeded | AVAILABLE | — | Observable IDs mapped from bundle |
+| `mappedIocIds` | string[] | seeded | AVAILABLE | — | IOC IDs mapped from bundle |
+| `relevanceScore` | number (0-100) | seeded | AVAILABLE | — | Computed from estate matching |
+| `caseCreated` | boolean | seeded | AVAILABLE | — | Whether a case was created |
+| `caseId` | string \| null | seeded | AVAILABLE | — | Case ID if case created |
+| `ingestedAt` | string ISO 8601 | seeded | AVAILABLE | — | When bundle was ingested |
+| `status` | StixIngestStatus | seeded | AVAILABLE | — | `received` \| `parsing` \| `mapped` \| `evaluated` \| `complete` |
+
+**Enums:**
+- `StixObjectType`: indicator, attack-pattern, malware, campaign, threat-actor, tool, vulnerability
+- `StixIngestStatus`: received, parsing, mapped, evaluated, complete
+
+**Validation:** `validateStixBundleIngest()` — structural correctness (id, tenant.tenantId, ingestId, tenantId, sourceEmailId, bundleVersion, objectsParsed ≥ 0, objectTypes valid, relevanceScore 0-100, ingestedAt, status enum).
+
+**DB Schema Reconciliation:** ⚠️ **DIVERGENT — Contract + fixture exist, DB schema ABSENT.** Proposed ARCH-DEBT entry: ARCH-DEBT-060.
+
+---
+
+### 47. Teams Decision Event
+
+**Source:** Spec #26 Case Communication and Broadcast Channel, Spec #44 P0 Zero-Day War Room (Teams integration)  
+**Coverage:** Partial (Spec #26 initial portion, Spec #44 initial portion read) — **provisional (source partially read)**  
+**Contract:** `packages/contracts/src/entities/teams-decision-event.ts`  
+**DB Schema:** ❌ NOT FOUND  
+**Fixture:** `packages/contracts/src/fixtures/seed-teams-decision-events.ts` ✅  
+**Resolver:** ❌ NOT FOUND  
+**Status:** AVAILABLE (fixture exists)  
+**Doctrine:** Teams decisions flow through Commander (never direct state mutation). Teams bot NEVER directly mutates case state. Commander validates actor authority → Commander executes transition. No live Teams bot (Phase 1). SOC read-only boundary preserved. Reused by War Room (§39) for approval flows.
+
+| Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
+|-------|------|----------------------|--------------|---------------------|-------|
+| `id` | string (CommonFields) | seeded | AVAILABLE | — | Deterministic ID from fixture |
+| `tenant` | TenantContext (CommonFields) | seeded | AVAILABLE | — | Tenant scope (tenantId, tenantName) |
+| `createdAt` | string ISO 8601 (CommonFields) | system-calculated | AVAILABLE | — | Record creation timestamp |
+| `updatedAt` | string ISO 8601 (CommonFields) | system-calculated | AVAILABLE | — | Record update timestamp |
+| `source` | SourceMetadata (CommonFields) | seeded | AVAILABLE | — | Provenance |
+| `eventId` | string | seeded | AVAILABLE | — | Event identifier |
+| `tenantId` | string | seeded | AVAILABLE | — | Tenant ID (denormalised) |
+| `caseId` | string | seeded | AVAILABLE | — | Case this decision relates to |
+| `requestType` | TeamsRequestType | seeded | AVAILABLE | — | `approval` \| `validation_confirmation` \| `action_override` \| `resource_assignment` \| `escalation` |
+| `cardId` | string | seeded | AVAILABLE | — | Reference to the posted Adaptive Card |
+| `requestedAt` | string ISO 8601 | seeded | AVAILABLE | — | When request was posted |
+| `respondedAt` | string ISO 8601 \| null | seeded | AVAILABLE | — | When response received (null if pending) |
+| `respondedBy` | string \| null | seeded | AVAILABLE | — | Who responded (null if pending) |
+| `decision` | TeamsDecision \| null | seeded | AVAILABLE | — | `approved` \| `denied` \| `delegated` \| `confirmed` \| `disputed` \| `need_more_time` \| null |
+| `validatedByCommander` | boolean | seeded | AVAILABLE | — | Whether Commander validated actor's authority |
+| `executedByCommander` | boolean | seeded | AVAILABLE | — | Whether Commander executed resulting action |
+| `auditEventRef` | string | seeded | AVAILABLE | — | Ref → Audit Event recording this decision |
+
+**Enums:**
+- `TeamsRequestType`: approval, validation_confirmation, action_override, resource_assignment, escalation
+- `TeamsDecision`: approved, denied, delegated, confirmed, disputed, need_more_time
+
+**Validation:** `validateTeamsDecisionEvent()` — structural correctness (id, tenant.tenantId, eventId, tenantId, caseId, requestType enum, cardId, requestedAt, decision valid or null, validatedByCommander boolean, executedByCommander boolean, auditEventRef).
+
+**DB Schema Reconciliation:** ⚠️ **DIVERGENT — Contract + fixture exist, DB schema ABSENT.** Proposed ARCH-DEBT entry: ARCH-DEBT-061.
+
+---
+
 ## Maintenance Rules
 
 1. **This artifact is mechanically derived.** Do NOT manually edit entity entries. Use the data-dictionary-generation.kiro.hook to update.
@@ -1542,5 +1905,5 @@ Five entities forming the compliance/control-framework mapping layer:
 
 ---
 
-**Last Updated:** 2026-06-03 (WarRoom entity added — entity #39 in catalogue. Contract + fixture exist; DB schema absent (ARCH-DEBT-053 proposed). Entity count 36→37. Fixture count 27→28. Resolver count unchanged at 13. Composed-object module count unchanged at 2.)  
+**Last Updated:** 2026-06-05 (Communications Excellence Phase 1 entities added — entries #42–#47 in catalogue: Communication Playbook, Playbook Execution, Detonation Verdict, Phishing Report, STIX Bundle Ingest, Teams Decision Event. All contract-defined; 5 of 6 have fixtures; all DB schemas absent (ARCH-DEBT-056–061 proposed). Commander AI Provider resolver flagged MISSING FROM DISK. Entity count 39→47. Fixture count 29→36. Resolver count 15→16 (includes 1 missing-from-disk flag). Divergence count 5→11. Composed-object module count unchanged at 2.)  
 **Snapshot Commit:** (to be recorded after commit)

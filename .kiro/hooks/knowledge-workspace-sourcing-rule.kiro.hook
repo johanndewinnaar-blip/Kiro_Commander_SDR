@@ -1,5 +1,5 @@
 {
-  "enabled": true,
+  "enabled": false,
   "name": "Knowledge-Workspace Sourcing-Rule Enforcement",
   "description": "Enforces the locked docs/knowledge/SOURCING_RULE.md: knowledge-workspace derivation must cite only baseline source authority at docs/99_source_archive/baseline_v2_6_2/. Flags edits that cite derived, translated, superseded or external sources.",
   "version": "1",

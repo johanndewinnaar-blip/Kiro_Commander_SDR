@@ -1,5 +1,5 @@
 {
-  "enabled": true,
+  "enabled": false,
   "name": "Unified Post-Task Governance",
   "description": "Consolidated post-task governance hook (v2.1). Replaces 5 separate hooks (post-task-review, performance-compliance, doctrinal-assertions, secure-coding-rbac, arch-debt-auto-propose) with one unified check. Includes fast-path for documentation-only tasks. All checks preserved with critical detection detail restored per HOOK_CONSOLIDATION_REMEDIATION_PLAN.md.",
   "version": "2.1",

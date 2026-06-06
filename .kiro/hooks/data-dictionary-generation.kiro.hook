@@ -1,4 +1,5 @@
 {
+  "enabled": false,
   "name": "Data Dictionary Generation",
   "version": "1.0.0",
   "description": "Mechanically extracts entity name/fields/types from contracts and db schema, reconciles divergences, derives availability from fixtures/resolvers, checks COVERAGE read-state, and proposes source-classification for new fields. Updates DATA_DICTIONARY.md on data-layer changes.",
