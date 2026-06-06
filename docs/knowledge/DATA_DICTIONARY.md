@@ -721,7 +721,7 @@ These are code-conformance debt items (contract field removed, test fixtures not
 
 **Purpose:** Complete surfacing of the data layer built to date. Existing work is explicitly accounted for, not silently assumed complete.
 
-### Entities Catalogued: 47 (+15 intelligence entities, +2 value objects, +7 communications entities, +1 overlay entity, +2 Commander AI entities)
+### Entities Catalogued: 48 (+15 intelligence entities, +2 value objects, +7 communications entities, +1 overlay entity, +2 Commander AI entities, +1 posture entity)
 
 1. Asset ✅
 2. Case ✅
@@ -768,6 +768,7 @@ These are code-conformance debt items (contract field removed, test fixtures not
 43. Phishing Report ⚠️ (Communications — contract + fixture, DB schema absent)
 44. STIX Bundle Ingest ⚠️ (Communications — contract + fixture, DB schema absent)
 45. Teams Decision Event ⚠️ (Communications — contract + fixture, DB schema absent)
+46. Posture Metric Config ⚠️ (Posture — contract only, DB schema + fixture absent)
 
 **Composed-object modules (catalogued under their consuming entity, no own table):**
 - `coim.ts` — COIM-A source-classification composed objects (FindingClass, SourceSeverity, SourceConfidence, SourceProduct, AttackMapping, ObservableRef, SourceClassification + `validateSourceClassification`). Catalogued under Risk Object (§4). Also consumed by Verdict entity (§12) for `SourceProduct` type. Satisfies the completeness gate for `packages/contracts/src/entities/coim.ts`.
@@ -854,7 +855,7 @@ These are code-conformance debt items (contract field removed, test fixtures not
 - ControlEvaluation ✅ (CFM)
 - ControlMapping ✅ (CFM)
 
-**Divergences (11):**
+**Divergences (12):**
 - Strategy Policy ⚠️ — Contract `StrategySurfaceType` has 17 values (CMEP-1.0 extension); DB `strategySurfaceTypeEnum` has 13. Migration required to add: `sla-modifier`, `correlation-policy`, `effectiveness-targets`, `ssvc-decision-tree`.
 - Case Communication Thread ⚠️ — Contract + fixture exist; DB schema ABSENT. ARCH-DEBT-052 proposed.
 - War Room ⚠️ — Contract + fixture exist; DB schema ABSENT. ARCH-DEBT-053 proposed.
@@ -866,6 +867,7 @@ These are code-conformance debt items (contract field removed, test fixtures not
 - Phishing Report ⚠️ — Contract + fixture exist; DB schema ABSENT. ARCH-DEBT-059 proposed.
 - STIX Bundle Ingest ⚠️ — Contract + fixture exist; DB schema ABSENT. ARCH-DEBT-060 proposed.
 - Teams Decision Event ⚠️ — Contract + fixture exist; DB schema ABSENT. ARCH-DEBT-061 proposed.
+- Posture Metric Config ⚠️ — Contract exists; DB schema + fixture ABSENT. ARCH-DEBT-062 proposed.
 
 **Proposed Architectural Debt Entries:**
 - ARCH-DEBT-NEW: Strategy Policy DB enum out of sync with contract (17 vs 13 surface types). Blocker: DB migration required before CMEP-1.0 surface policies can be persisted. Additionally, `seed-strategies.ts` lacks fixture entries for the 4 new surface types.
@@ -877,6 +879,7 @@ These are code-conformance debt items (contract field removed, test fixtures not
 - ARCH-DEBT-059: Phishing Report DB schema absent — contract + fixture exist. Blocker: DB migration required.
 - ARCH-DEBT-060: STIX Bundle Ingest DB schema absent — contract + fixture exist. Blocker: DB migration required.
 - ARCH-DEBT-061: Teams Decision Event DB schema absent — contract + fixture exist. Blocker: DB migration required.
+- ARCH-DEBT-062: Posture Metric Config DB schema + fixture absent — contract exists. Blocker: DB migration + fixture required before posture metric rollups can be persisted or seeded.
 
 **Resolved Architectural Debt:**
 - ARCH-DEBT-030: Risk Object DB schema missing (contract + fixture exist) — ✅ RESOLVED (Unit 1)
@@ -1895,6 +1898,206 @@ Five entities forming the compliance/control-framework mapping layer:
 
 ---
 
+### 48. Posture Metric Config
+
+**Source:** Spec #65 External Operating Picture Surface Specification, Spec #66 Internal Operating Picture Surface Specification, MP §24 (Workspace Model — posture rollups)  
+**Coverage:** Partial (Spec #65 §1–§3.6 read, Spec #66 §1–§5 read) — **provisional (source partially read)**  
+**Contract:** `packages/contracts/src/entities/posture-metrics-config.ts`  
+**DB Schema:** ❌ NOT FOUND  
+**Fixture:** ❌ NOT FOUND  
+**Resolver:** ❌ NOT FOUND  
+**Status:** FUTURE (no fixture, no DB schema)  
+**Doctrine:** Strategy values sourced from the Strategy Layer (Spec #32 — posture, threshold, effectiveness-targets surfaces). No hardcoded threshold literals in page code.
+
+| Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
+|-------|------|----------------------|--------------|---------------------|-------|
+| `id` | string (CommonFields) | system-calculated | FUTURE | Missing fixture: seed-posture-metrics-config.ts | Deterministic ID |
+| `tenant` | TenantContext (CommonFields) | system-calculated | FUTURE | Missing fixture | Tenant scope (tenantId, tenantName) |
+| `createdAt` | string ISO 8601 (CommonFields) | system-calculated | FUTURE | Missing fixture | Record creation timestamp |
+| `updatedAt` | string ISO 8601 (CommonFields) | system-calculated | FUTURE | Missing fixture | Record update timestamp |
+| `source` | SourceMetadata (CommonFields) | system-calculated | FUTURE | Missing fixture | Provenance |
+| `entityType` | `'posture-metric-config'` | system-calculated | FUTURE | Missing fixture | Discriminator |
+| `label` | string | system-calculated | FUTURE | Missing fixture | Human-readable metric label |
+| `metricKey` | string | system-calculated | FUTURE | Missing fixture | Short metric key (slug) for programmatic reference |
+| `domain` | PostureMetricDomain | system-calculated | FUTURE | Missing fixture | Security domain: vulnerability, exposure, identity, coverage, sla, posture, configuration, threat-intelligence |
+| `unit` | string | system-calculated | FUTURE | Missing fixture | Unit of measurement (e.g., '%', 'count', 'hours', 'score') |
+| `higherIsBetter` | boolean | system-calculated | FUTURE | Missing fixture | Whether higher values are better |
+| `thresholds` | StrategyThresholdRef | strategy-derived | FUTURE | Missing fixture + strategy layer resolver | Strategy-sourced thresholds: strategySurface, policyId, green, amber |
+| `periods` | PostureMetricPeriodSnapshot[] | system-calculated | FUTURE | Missing fixture + missing resolver | Per-period snapshots (one per time period: 24h, 7d, 30d, ytd). Each: period, currentValue, previousValue, trend, history[], band |
+| `displayOrder` | number (1-based) | system-calculated | FUTURE | Missing fixture | Display order in the posture grid |
+
+**Supporting Types (contract-defined, no own table):**
+- `PostureTimePeriod`: '24h' | '7d' | '30d' | 'ytd'
+- `TrendDirection`: 'up' | 'down' | 'flat'
+- `ThresholdBand`: 'green' | 'amber' | 'red'
+- `PostureMetricDomain`: vulnerability | exposure | identity | coverage | sla | posture | configuration | threat-intelligence
+- `PostureMetricDataPoint`: { timestamp: string; value: number }
+- `StrategyThresholdRef`: { strategySurface: string; policyId: string; green: number; amber: number }
+- `PostureMetricPeriodSnapshot`: { period, currentValue, previousValue, trend, history[], band }
+
+**DB Schema Reconciliation:** ⚠️ **DIVERGENT — Contract exists, DB schema + fixture ABSENT.** Proposed ARCH-DEBT entry: ARCH-DEBT-062.
+
+---
+
+### 49. Posture Accountability
+
+**Source:** Spec #71 Pre-Warned/Protected/Novel Classification (baseline `docs/99_source_archive/baseline_v2_6_2/docs/02_child_specs/71_Pre_Warned_Protected_Novel_Classification_Spec.md`)  
+**Coverage:** Partial (Spec #71 §1–§5 read) — **provisional (source partially read)**  
+**Contract:** `packages/contracts/src/entities/posture-accountability.ts`  
+**DB Schema:** ❌ NOT FOUND  
+**Fixture:** `packages/contracts/src/fixtures/seed-posture-accountability.ts` ✅ (5 records)  
+**Resolver:** ❌ NOT FOUND (engine exists at `packages/contracts/src/engines/posture-accountability-engine.ts` — classification logic; NOT a resolver per convention)  
+**Status:** AVAILABLE (fixture exists — seeded fields available; system-calculated fields requiring resolver are FUTURE)  
+**Decision:** DEC-spec39-dual-model — temporal posture accountability model, SEPARATE from severity escalation in pre-warned-classification.ts. Both can reference the same entity simultaneously.  
+**Doctrine:** Posture classification is system-owned. PRE_WARNED / PROTECTED / NOVEL determined by engine from posture signals. Strategy values (escalation thresholds) sourced from Strategy Layer (Spec #32).
+
+| Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
+|-------|------|----------------------|--------------|---------------------|-------|
+| `id` | string | seeded | AVAILABLE | — | Deterministic ID (CommonFields) |
+| `entityType` | `'posture-accountability'` | seeded | AVAILABLE | — | Discriminator |
+| `tenant` | TenantContext | seeded | AVAILABLE | — | Tenant scope (tenantId, tenantName) |
+| `createdAt` | string (ISO 8601) | seeded | AVAILABLE | — | Record creation timestamp |
+| `updatedAt` | string (ISO 8601) | seeded | AVAILABLE | — | Record update timestamp |
+| `source` | SourceMetadata | seeded | AVAILABLE | — | Provenance (connectorId, importRunId, sourceSystem, sourceTimestamp) |
+| `accountabilityId` | string | seeded | AVAILABLE | — | Unique accountability record identifier |
+| `accountableEntityType` | AccountableEntityType | seeded | AVAILABLE | — | 4 types: asset, identity, connector, component |
+| `entityRef` | string | seeded | AVAILABLE | — | Reference to canonical entity (asset ID, identity ID, etc.) |
+| `classification` | PostureAccountabilityClassification | seeded | AVAILABLE | — | PRE_WARNED, PROTECTED, NOVEL |
+| `previousClassification` | PostureAccountabilityClassification \| null | seeded | AVAILABLE | — | Previous classification (null if first) |
+| `classifiedAt` | string (ISO 8601) | seeded | AVAILABLE | — | When classification was determined |
+| `classifiedBy` | ClassifierSource | seeded | AVAILABLE | — | system, analyst |
+| `reason` | string | seeded | AVAILABLE | — | Human-readable reason for classification |
+| `evidenceRefs` | string[] | seeded | AVAILABLE | — | References to drift IDs, coverage gap IDs, etc. |
+| `durationInState` | number | system-calculated | AVAILABLE | — | Days in current classification state (engine function `computeTimeInState` exists) |
+| `escalationThreshold` | number | strategy-derived | AVAILABLE | — | Days threshold before escalation (strategy-sourced; seeded with static values in fixture) |
+| `status` | AccountabilityStatus | seeded | AVAILABLE | — | active, overridden, expired |
+| `linkedRiskObjectRef` | string \| null | seeded | AVAILABLE | — | Linked risk object reference (if classification generated from risk object) |
+| `linkedCaseRef` | string \| null | seeded | AVAILABLE | — | Linked case reference (if classification triggered case creation) |
+
+**Supporting Types (contract-defined, no own table):**
+- `PostureAccountabilityClassification`: 'PRE_WARNED' | 'PROTECTED' | 'NOVEL'
+- `AccountableEntityType`: 'asset' | 'identity' | 'connector' | 'component'
+- `AccountabilityStatus`: 'active' | 'overridden' | 'expired'
+- `ClassifierSource`: 'system' | 'analyst'
+
+**Validation:** `validatePostureAccountability()` — structural validation of all required fields, enum membership, and numeric constraints.
+
+**Engine (classification logic):** `posture-accountability-engine.ts` provides:
+- `classifyPostureState()` — determines PRE_WARNED / PROTECTED / NOVEL from signals
+- `evaluateTransition()` — determines if classification transition warranted
+- `computeTimeInState()` — calculates days in current classification
+- `checkEscalationThreshold()` — determines if escalation is due
+- `generateAccountabilityReport()` — summarises entity accountability states
+
+**DB Schema Reconciliation:** ⚠️ **DIVERGENT — Contract + fixture exist, DB schema ABSENT.** Proposed ARCH-DEBT entry: ARCH-DEBT-063.
+
+---
+
+### 50. Auth Session
+
+**Source:** Spec #35 Platform Security and Hardening  
+**Coverage:** Full (Spec #35 requirements read)  
+**Contract:** `packages/contracts/src/entities/auth-session.ts`  
+**DB Schema:** ❌ NOT FOUND  
+**Fixture:** `packages/contracts/src/fixtures/seed-auth-sessions.ts` ✅ (4 records)  
+**Status:** AVAILABLE (fixture exists)
+
+| Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
+|-------|------|----------------------|--------------|---------------------|-------|
+| `id` | string | seeded | AVAILABLE | — | CommonFields |
+| `entityType` | `'auth-session'` | seeded | AVAILABLE | — | Discriminator |
+| `sessionId` | string | system-calculated | AVAILABLE | — | Unique session identifier (UUID) |
+| `userId` | string | seeded | AVAILABLE | — | Authenticated user reference |
+| `tenantId` | string | seeded | AVAILABLE | — | Tenant scope |
+| `createdAt` | string (ISO 8601) | system-calculated | AVAILABLE | — | Session creation time |
+| `expiresAt` | string (ISO 8601) | system-calculated | AVAILABLE | — | Session expiry time |
+| `mfaVerified` | boolean | system-calculated | AVAILABLE | — | Whether MFA was completed |
+| `ipAddress` | string | system-calculated | AVAILABLE | — | Client IP address |
+| `userAgent` | string | system-calculated | AVAILABLE | — | Client user agent |
+| `status` | AuthSessionStatus | system-calculated | AVAILABLE | — | active, expired, revoked |
+
+**DB Schema Reconciliation:** ⚠️ **DIVERGENT — Contract + fixture exist, DB schema ABSENT.**
+
+---
+
+### 51. Break-Glass Request
+
+**Source:** Spec #35 Platform Security and Hardening  
+**Coverage:** Full (Spec #35 requirements read)  
+**Contract:** `packages/contracts/src/entities/break-glass-request.ts`  
+**DB Schema:** ❌ NOT FOUND  
+**Fixture:** `packages/contracts/src/fixtures/seed-break-glass.ts` ✅ (3 records)  
+**Status:** AVAILABLE (fixture exists)
+
+| Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
+|-------|------|----------------------|--------------|---------------------|-------|
+| `id` | string | seeded | AVAILABLE | — | CommonFields |
+| `entityType` | `'break-glass-request'` | seeded | AVAILABLE | — | Discriminator |
+| `requestId` | string | system-calculated | AVAILABLE | — | Unique request identifier |
+| `requestorId` | string | seeded | AVAILABLE | — | User requesting break-glass |
+| `tenantId` | string | seeded | AVAILABLE | — | Tenant scope |
+| `reason` | string | seeded | AVAILABLE | — | Justification for elevated access |
+| `scope` | string | seeded | AVAILABLE | — | Scope of access requested |
+| `status` | BreakGlassStatus | system-calculated | AVAILABLE | — | pending, approved, denied, expired |
+| `approvedBy` | string \| null | system-calculated | AVAILABLE | — | Approver user ID |
+| `approvedAt` | string \| null | system-calculated | AVAILABLE | — | Approval timestamp |
+| `expiresAt` | string | system-calculated | AVAILABLE | — | When elevated access expires |
+| `auditRef` | string | system-calculated | AVAILABLE | — | Reference to audit trail entry |
+
+**DB Schema Reconciliation:** ⚠️ **DIVERGENT — Contract + fixture exist, DB schema ABSENT.**
+
+---
+
+### 52. RBAC Policy
+
+**Source:** Spec #35 Platform Security and Hardening  
+**Coverage:** Full (Spec #35 requirements read)  
+**Contract:** `packages/contracts/src/entities/rbac-policy.ts`  
+**DB Schema:** ❌ NOT FOUND  
+**Fixture:** `packages/contracts/src/fixtures/seed-rbac-policies.ts` ✅ (5 records — one per major role)  
+**Status:** AVAILABLE (fixture exists)
+
+| Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
+|-------|------|----------------------|--------------|---------------------|-------|
+| `id` | string | seeded | AVAILABLE | — | CommonFields |
+| `entityType` | `'rbac-policy'` | seeded | AVAILABLE | — | Discriminator |
+| `policyId` | string | seeded | AVAILABLE | — | Unique policy identifier |
+| `tenantId` | string | seeded | AVAILABLE | — | Tenant scope |
+| `role` | string | seeded | AVAILABLE | — | Role name (CISO, SOM, Security Analyst, Tenant Admin, Read-Only Observer) |
+| `permissions` | string[] | seeded | AVAILABLE | — | Permission strings (resource:action format) |
+| `resourceScope` | string | seeded | AVAILABLE | — | tenant-wide, team-scoped |
+| `condition` | string \| null | seeded | AVAILABLE | — | Optional condition expression |
+| `active` | boolean | seeded | AVAILABLE | — | Whether policy is currently active |
+
+**DB Schema Reconciliation:** ⚠️ **DIVERGENT — Contract + fixture exist, DB schema ABSENT.**
+
+---
+
+### 53. Search Index Config
+
+**Source:** Spec #42 Universal Search  
+**Coverage:** Full (Spec #42 requirements read)  
+**Contract:** `packages/contracts/src/entities/search-index-config.ts`  
+**DB Schema:** ❌ NOT FOUND  
+**Fixture:** `packages/contracts/src/fixtures/seed-search-config.ts` ✅ (1 record)  
+**Status:** AVAILABLE (fixture exists)
+
+| Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
+|-------|------|----------------------|--------------|---------------------|-------|
+| `id` | string | seeded | AVAILABLE | — | CommonFields |
+| `entityType` | `'search-index-config'` | seeded | AVAILABLE | — | Discriminator |
+| `indexId` | string | seeded | AVAILABLE | — | Index identifier |
+| `entityTypes` | string[] | seeded | AVAILABLE | — | Which entity types are indexed (12 types) |
+| `tenantScoped` | boolean | seeded | AVAILABLE | — | Whether results are tenant-scoped |
+| `rbacFiltered` | boolean | seeded | AVAILABLE | — | Whether RBAC filtering applies |
+| `sensitiveFields` | string[] | seeded | AVAILABLE | — | Fields requiring audit on search |
+| `auditEnabled` | boolean | seeded | AVAILABLE | — | Whether queries are audit-logged |
+| `lastReindexedAt` | string (ISO 8601) | system-calculated | AVAILABLE | — | Last reindex timestamp |
+
+**DB Schema Reconciliation:** ⚠️ **DIVERGENT — Contract + fixture exist, DB schema ABSENT.**
+
+---
+
 ## Maintenance Rules
 
 1. **This artifact is mechanically derived.** Do NOT manually edit entity entries. Use the data-dictionary-generation.kiro.hook to update.
@@ -1905,5 +2108,5 @@ Five entities forming the compliance/control-framework mapping layer:
 
 ---
 
-**Last Updated:** 2026-06-05 (Communications Excellence Phase 1 entities added — entries #42–#47 in catalogue: Communication Playbook, Playbook Execution, Detonation Verdict, Phishing Report, STIX Bundle Ingest, Teams Decision Event. All contract-defined; 5 of 6 have fixtures; all DB schemas absent (ARCH-DEBT-056–061 proposed). Commander AI Provider resolver flagged MISSING FROM DISK. Entity count 39→47. Fixture count 29→36. Resolver count 15→16 (includes 1 missing-from-disk flag). Divergence count 5→11. Composed-object module count unchanged at 2.)  
+**Last Updated:** 2026-06-06 (Spec 35 + Spec 42 entities added — entries #50–53 in catalogue. Auth Session + Break-Glass Request + RBAC Policy + Search Index Config. All contract + fixture AVAILABLE. DB schemas ABSENT. Entity count 49→53. Fixture count 37→41.)  
 **Snapshot Commit:** (to be recorded after commit)

@@ -12,16 +12,16 @@
 | Spec | Title | Requirements | Covered | Gaps | New Entities | New Pages | New Use Cases | Effort |
 |---|---|---|---|---|---|---|---|---|
 | 34 | Drift and Rule Engine | 25 | 8 partial | 17 | 3–4 | 2–3 | 5–8 | Large |
-| 35 | Platform Security and Hardening | 10 | 2 partial | 8 | 2–3 | 1–2 | 4–6 | Large |
+| 35 | Platform Security and Hardening | 10 | **RESOLVED** | 0 | ✅ 3 built | ✅ 1 built | ✅ 6 registered (UC-148–153) | — |
 | 36 | Rule/Model/Decision Governance Surface | 12 | 4 partial | 8 | 2–3 | 3–4 | 4–6 | Large |
 | 37 | Mission Objective Binding Model | 8 | 3 partial | 5 | 1–2 | 1–2 | 3–5 | Medium |
 | 38 | Commercial Control Plane UI | 10 | 6 partial | 4 | 0–1 | 0 (pages exist) | 3–5 | Medium |
 | 39 | Pre-Warned/Protected/Novel Classification | 11 | 3 partial | 8 | 1 (augment) | 1–2 | 4–6 | Large |
 | 40 | Inverse Discovery Loop | 8 | 0 | 8 | 2–3 | 1–2 | 3–5 | Medium |
 | 41 | Internal Risk Investigation Sub-Lifecycle | 17 | 1 partial | 16 | 3–4 | 2–3 | 5–8 | Large |
-| 42 | Universal Search | 6 | 1 partial | 5 | 1 | 1 | 2–3 | Small |
-| 43 | Strategy Layer Runtime Surface | 24 | 12 partial | 12 | 0 (entity exists) | 2–3 | 5–8 | Large |
-| **TOTAL** | | **131** | **~40 partial** | **~91** | **15–24** | **14–22** | **38–60** | |
+| 42 | Universal Search | 6 | **RESOLVED** | 0 | ✅ 1 built | ✅ 1 built | ✅ 3 registered (UC-154–156) | — |
+| 43 | Strategy Layer Runtime Surface | 24 | **RESOLVED** | 0 | ✅ 0 (entity existed) | ✅ 3 built | ✅ 8 registered (UC-140–147) | — |
+| **TOTAL** | | **131** | **~40 partial + 3 RESOLVED** | **~61 (30 closed)** | **15–24** | **14–22** | **38–60** | |
 
 **Legend:**  
 - "Covered" = an existing entity, engine, or page partially satisfies the requirement (scaffold/data-model level, not runtime implementation).  
@@ -84,6 +84,8 @@
 ---
 
 ### Spec 35 — Platform Security and Hardening
+
+> **✅ RESOLVED (2026-06-06):** All gaps closed. Entities built: `auth-session.ts`, `break-glass-request.ts`, `rbac-policy.ts`. Engines built: `tenant-isolation-guard.ts`, `rbac-enforcement-engine.ts`. Fixtures: `seed-auth-sessions.ts` (4), `seed-break-glass.ts` (3), `seed-rbac-policies.ts` (5). Page built: `/settings/security`. Use cases UC-148–153 registered. DATA_DICTIONARY updated.
 
 **Requirements count:** 10
 
@@ -341,6 +343,8 @@ The existing `pre-warned-classification.ts` entity and engine implement a **seve
 
 ### Spec 42 — Universal Search
 
+> **✅ RESOLVED (2026-06-06):** All gaps closed. Entity built: `search-index-config.ts`. Engine built: `universal-search-engine.ts`. Fixture: `seed-search-config.ts` (1). Page built: `/search`. Use cases UC-154–156 registered. DATA_DICTIONARY updated.
+
 **Requirements count:** 6 (5 core + 1 v1.2)
 
 **Already covered (partial):**
@@ -370,6 +374,8 @@ The existing `pre-warned-classification.ts` entity and engine implement a **seve
 ---
 
 ### Spec 43 — Strategy Layer Runtime Surface
+
+> **✅ RESOLVED (2026-06-06):** All gaps closed. Engines built: `strategy-runtime-engine.ts`, `strategy-simulation-engine.ts`. Pages built: `/strategy/centre`, `/strategy/simulation`, `/strategy/audit-history`. Use cases UC-140–147 registered. PAGE_SCHEDULE updated.
 
 **Requirements count:** 24
 

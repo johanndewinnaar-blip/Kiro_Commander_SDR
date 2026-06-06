@@ -171,6 +171,7 @@
 | Automation | /platform/automation | BUILT | Tier 3 batch | UC-PLAT-003 |
 | Feature Availability | /platform/features | BUILT | Tier 3 batch | UC-PLAT-004 |
 | Audit & Logs | /platform/audit | BUILT | Unit 43 | — |
+| Universal Search | /search | BUILT | Spec 42 | UC-154 |
 
 ---
 
@@ -183,6 +184,7 @@
 | Users & Access | /settings/users-rbac | SCAFFOLD | Unit 22 | UC-099 |
 | Rules & Models | /settings/rules | SCAFFOLD | Unit 22 | UC-100 |
 | AI Configuration | /settings/commander-ai | SCAFFOLD | Unit 22 | — |
+| Security | /settings/security | BUILT | Spec 35 | UC-151, UC-148, UC-152 |
 | Audit | /settings/audit-export | SCAFFOLD | Unit 22 | UC-098 |
 
 ---
@@ -194,6 +196,16 @@
 | Compliance | /governance | BUILT | Unit 35 | UC-086 |
 | Policies & Standards | /governance/policies | SCAFFOLD | Unit 35 | UC-087 |
 | Exceptions | /governance/exceptions | SCAFFOLD | Unit 35 | UC-088 |
+
+---
+
+### Group: Strategy
+
+| Nav Item | Route | Status | Build Unit | Use Cases |
+|---|---|---|---|---|
+| Strategy Centre | /strategy/centre | BUILT | Spec 43 | UC-140, UC-142, UC-144, UC-146 |
+| Policy Simulation | /strategy/simulation | BUILT | Spec 43 | UC-141 |
+| Audit History | /strategy/audit-history | BUILT | Spec 43 | UC-143 |
 
 ---
 
@@ -389,8 +401,8 @@ These pages exist on disk (page.tsx) but are NOT in nav-groups.ts sidebar:
 
 | Metric | Count |
 |---|---|
-| Total BUILT pages (page.tsx on disk) | 34 |
-| Total SCAFFOLD nav items (no page.tsx) | 30 |
+| Total BUILT pages (page.tsx on disk) | 36 |
+| Total SCAFFOLD nav items (no page.tsx) | 28 |
 | Sidebar nav groups (operational) | 19 |
 | Top nav workspace tabs | 5 |
 | Detail views (no nav item) | 3 |

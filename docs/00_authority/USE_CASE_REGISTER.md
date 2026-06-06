@@ -175,6 +175,24 @@
 | UC-137 | Compute pre-warned classification pipeline | System | — | — | pre-warned-classification-engine.ts | SYSTEM | — | Unit 29 | NOT BUILT |
 | UC-138 | Enforce push governance rules | System | — | — | push-governance-engine.ts | SYSTEM | — | Unit 42 | NOT BUILT |
 | UC-139 | Compute security tool intelligence metrics | System | — | — | security-tool-intelligence-engine.ts | SYSTEM | — | Unit 45 | NOT BUILT |
+| UC-140 | Configure strategy policy (any of 19 surface types) | SOM | operational | /strategy/centre | strategy.ts, seed-strategies | SYSTEM | — | Spec 43 | NOT BUILT |
+| UC-141 | Simulate strategy policy change before activation | SOM | operational | /strategy/simulation | strategy.ts, seed-strategies, strategy-simulation-engine.ts | SYSTEM | — | Spec 43 | NOT BUILT |
+| UC-142 | Approve strategy policy (approval workflow) | SOM | operational | /strategy/centre | strategy.ts, seed-strategies | SYSTEM | — | Spec 43 | NOT BUILT |
+| UC-143 | View strategy policy audit history | SOM, CISO | operational | /strategy/audit-history | strategy.ts, seed-strategies, audit-event.ts | SYSTEM | — | Spec 43 | NOT BUILT |
+| UC-144 | Preview effective policy state | SOM | operational | /strategy/centre | strategy.ts, seed-strategies | SYSTEM | — | Spec 43 | NOT BUILT |
+| UC-145 | Trigger runtime binding recalculation | System | — | — | strategy-runtime-engine.ts | SYSTEM | — | Spec 43 | NOT BUILT |
+| UC-146 | View Strategy Centre (unified config) | SOM | operational | /strategy/centre | strategy.ts, seed-strategies | SYSTEM | — | Spec 43 | NOT BUILT |
+| UC-147 | Enforce build-blocking gate (no strategy-dependent feature ships without coverage) | System | — | — | strategy-runtime-engine.ts | SYSTEM | — | Spec 43 | NOT BUILT |
+| UC-148 | Authenticate via SSO/OIDC | All users | operational | — | auth-session.ts, seed-auth-sessions | SYSTEM | — | Spec 35 | NOT BUILT |
+| UC-149 | Manage server-side sessions | System | — | — | auth-session.ts, rbac-enforcement-engine.ts | SYSTEM | — | Spec 35 | NOT BUILT |
+| UC-150 | Enforce tenant isolation | System | — | — | tenant-isolation-guard.ts | SYSTEM | — | Spec 35 | NOT BUILT |
+| UC-151 | Request break-glass access | SOM, Admin | operational | /settings/security | break-glass-request.ts, seed-break-glass | SYSTEM | — | Spec 35 | NOT BUILT |
+| UC-152 | Enforce RBAC at route/action level | System | — | — | rbac-enforcement-engine.ts, rbac-policy.ts | SYSTEM | — | Spec 35 | NOT BUILT |
+| UC-153 | Audit sensitive access | System | — | — | rbac-enforcement-engine.ts, audit-event.ts | SYSTEM | — | Spec 35 | NOT BUILT |
+
+| UC-154 | Search across all governed entities | All authenticated | operational | /search | search-index-config.ts, universal-search-engine.ts, seed-search-config | SYSTEM | — | Spec 42 | BUILT |
+| UC-155 | Audit sensitive search queries | System | — | — | universal-search-engine.ts (auditSensitiveSearch), audit-event.ts | SYSTEM | — | Spec 42 | NOT BUILT (engine exists, audit trail deferred) |
+| UC-156 | Configure search index | Admin | tenant-admin | /settings/search | search-index-config.ts, seed-search-config | SYSTEM | — | Spec 42 | NOT BUILT (entity exists, no dedicated config page) |
 
 ---
 

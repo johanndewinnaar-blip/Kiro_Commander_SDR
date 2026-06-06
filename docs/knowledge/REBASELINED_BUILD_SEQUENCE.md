@@ -2618,6 +2618,14 @@ Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's o
 
 **Foundation correction (Team 1):** Unit 0 (closed ARCH-DEBT-033, `common.ts` contract-vs-source drift) — DONE.
 
+---
+
+## Gap Closure Log
+
+| Date | Specs | Summary |
+|---|---|---|
+| 2026-06-06 | Spec 43, 35, 42 | Strategy runtime + simulation engines, Strategy Centre pages (3), security settings page, universal search page. Entities: auth-session, break-glass-request, rbac-policy, search-index-config. Engines: strategy-runtime-engine, strategy-simulation-engine, tenant-isolation-guard, rbac-enforcement-engine, universal-search-engine. Use cases UC-140–156 registered. DATA_DICTIONARY entries 50–53. |
+
 **Foundational units (Team 1):** 22 (Units 1-22, 38, 40, 43)
 
 **Team 2 units (future derivation stream):** 27 (Units 23-37, 39, 41-42, 44-49)
