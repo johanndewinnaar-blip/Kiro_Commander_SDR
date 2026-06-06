@@ -15,7 +15,7 @@
 |---|---|---|---|---|
 | My Cases | /cases/my | BUILT | Unit 17 | UC-009 |
 | All Cases | /cases | BUILT | Unit 17 | UC-003, UC-004 |
-| P0 Zero-Day | /war-room/p0 | BUILT | Unit 37 (Team 2) | UC-018 |
+| P0 Zero-Day | /war-room/p0 | BUILT | Unit 37 | UC-018 |
 | Case Analytics | /cases/analytics | BUILT | Unit 17 | UC-008 |
 
 **Detail views (reached by item click):**
@@ -51,10 +51,10 @@
 
 | Nav Item | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
-| Overview | /vulnerabilities | BUILT | Unit 30 (Team 2) | UC-033 |
-| KEV & Critical | /vulnerabilities/kev | SCAFFOLD | Unit 30 (Team 2) | — |
-| Patch Intelligence | /vulnerabilities/patches | SCAFFOLD | Unit 30 (Team 2) | — |
-| Code & Supply Chain | /vulnerabilities/supply-chain | SCAFFOLD | Unit 30 (Team 2) | — |
+| Overview | /vulnerabilities | BUILT | Unit 30 | UC-033 |
+| KEV & Critical | /vulnerabilities/kev | SCAFFOLD | Unit 30 | — |
+| Patch Intelligence | /vulnerabilities/patches | SCAFFOLD | Unit 30 | — |
+| Code & Supply Chain | /vulnerabilities/supply-chain | SCAFFOLD | Unit 30 | — |
 
 ---
 
@@ -62,9 +62,9 @@
 
 | Nav Item | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
-| Attack Surface | /exposure | SCAFFOLD | Unit 31 (Team 2) | — |
-| Blast Zones | /exposure/blast-zones | SCAFFOLD | Unit 31 (Team 2) | — |
-| Coverage Gaps | /exposure/coverage-gaps | SCAFFOLD | Unit 31 (Team 2) | — |
+| Attack Surface | /exposure | SCAFFOLD | Unit 31 | — |
+| Blast Zones | /exposure/blast-zones | SCAFFOLD | Unit 31 | — |
+| Coverage Gaps | /exposure/coverage-gaps | SCAFFOLD | Unit 31 | — |
 
 ---
 
@@ -82,9 +82,9 @@
 
 | Nav Item | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
-| Architecture Overview | /architecture | SCAFFOLD | Unit 32 (Team 2) | — |
-| Architecture Drift | /architecture/drift | SCAFFOLD | Unit 32 (Team 2) | — |
-| Dependency Map | /architecture/dependencies | SCAFFOLD | Unit 32 (Team 2) | — |
+| Architecture Overview | /architecture | SCAFFOLD | Unit 32 | — |
+| Architecture Drift | /architecture/drift | SCAFFOLD | Unit 32 | — |
+| Dependency Map | /architecture/dependencies | SCAFFOLD | Unit 32 | — |
 
 ---
 
@@ -102,9 +102,9 @@
 
 | Nav Item | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
-| Control Coverage | /controls | BUILT | Unit 33 (Team 2) | UC-038 |
-| Control Strength | /controls/strength | SCAFFOLD | Unit 33 (Team 2) | — |
-| Framework Mapping | /controls/frameworks | SCAFFOLD | Unit 33 (Team 2) | — |
+| Control Coverage | /controls | BUILT | Unit 33 | UC-038 |
+| Control Strength | /controls/strength | SCAFFOLD | Unit 33 | — |
+| Framework Mapping | /controls/frameworks | SCAFFOLD | Unit 33 | — |
 
 ---
 
@@ -122,9 +122,9 @@
 
 | Nav Item | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
-| Tool Health | /tool-health | BUILT | Unit 46 (Team 2) | — |
-| Connectors | /tool-health/connectors | BUILT | Unit 46 (Team 2) | — |
-| Source Freshness | /tool-health/freshness | BUILT | Unit 46 (Team 2) | — |
+| Tool Health | /tool-health | BUILT | Unit 46 | — |
+| Connectors | /tool-health/connectors | BUILT | Unit 46 | — |
+| Source Freshness | /tool-health/freshness | BUILT | Unit 46 | — |
 
 ---
 
@@ -191,9 +191,9 @@
 
 | Nav Item | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
-| Compliance | /governance | BUILT | Unit 35 (Team 2) | — |
-| Policies & Standards | /governance/policies | SCAFFOLD | Unit 35 (Team 2) | — |
-| Exceptions | /governance/exceptions | SCAFFOLD | Unit 35 (Team 2) | — |
+| Compliance | /governance | BUILT | Unit 35 | — |
+| Policies & Standards | /governance/policies | SCAFFOLD | Unit 35 | — |
+| Exceptions | /governance/exceptions | SCAFFOLD | Unit 35 | — |
 
 ---
 
@@ -201,9 +201,9 @@
 
 | Nav Item | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
-| Reports | /reporting | SCAFFOLD | Unit 35 (Team 2) | — |
-| Exports | /reporting/exports | SCAFFOLD | Unit 35 (Team 2) | — |
-| CISO Pack | /reporting/ciso-pack | SCAFFOLD | Unit 36 (Team 2) | UC-050 (AICAP) |
+| Reports | /reporting | SCAFFOLD | Unit 35 | — |
+| Exports | /reporting/exports | SCAFFOLD | Unit 35 | — |
+| CISO Pack | /reporting/ciso-pack | SCAFFOLD | Unit 36 | UC-050 (AICAP) |
 
 ---
 
@@ -259,18 +259,18 @@
 
 | Nav Item | Route | Status | Build Unit | Use Cases |
 |---|---|---|---|---|
-| Command Overview | /control-plane | BUILT | Unit 23 (Team 2) | UC-019 |
-| Customers | /control-plane/customers | SCAFFOLD | Unit 23 (Team 2) | — |
-| Tenants | /control-plane/tenants | SCAFFOLD | Unit 23 (Team 2) | — |
-| Licences & Entitlements | /control-plane/licences | SCAFFOLD | Unit 23 (Team 2) | — |
-| Product & Feature Control | /control-plane/features | SCAFFOLD | Unit 23 (Team 2) | — |
-| AI & Model Control | /control-plane/ai-models | SCAFFOLD | Unit 23 (Team 2) | — |
-| Rule & Policy Packs | /control-plane/rule-packs | SCAFFOLD | Unit 23 (Team 2) | — |
-| Baseline Profile Management | /control-plane/baselines | SCAFFOLD | Unit 23 (Team 2) | — |
-| Deployment & Release | /control-plane/deployment | SCAFFOLD | Unit 23 (Team 2) | — |
-| Support Operations | /control-plane/support | SCAFFOLD | Unit 23 (Team 2) | — |
-| Billing / Usage Evidence | /control-plane/billing | SCAFFOLD | Unit 23 (Team 2) | — |
-| Operator Audit | /control-plane/audit | SCAFFOLD | Unit 23 (Team 2) | — |
+| Command Overview | /control-plane | BUILT | Unit 23 | UC-019 |
+| Customers | /control-plane/customers | SCAFFOLD | Unit 23 | — |
+| Tenants | /control-plane/tenants | SCAFFOLD | Unit 23 | — |
+| Licences & Entitlements | /control-plane/licences | SCAFFOLD | Unit 23 | — |
+| Product & Feature Control | /control-plane/features | SCAFFOLD | Unit 23 | — |
+| AI & Model Control | /control-plane/ai-models | SCAFFOLD | Unit 23 | — |
+| Rule & Policy Packs | /control-plane/rule-packs | SCAFFOLD | Unit 23 | — |
+| Baseline Profile Management | /control-plane/baselines | SCAFFOLD | Unit 23 | — |
+| Deployment & Release | /control-plane/deployment | SCAFFOLD | Unit 23 | — |
+| Support Operations | /control-plane/support | SCAFFOLD | Unit 23 | — |
+| Billing / Usage Evidence | /control-plane/billing | SCAFFOLD | Unit 23 | — |
+| Operator Audit | /control-plane/audit | SCAFFOLD | Unit 23 | — |
 
 **Feature Backlog Ref:** BL-003 (USE_CASE_SCHEDULE.md + PAGE_INVENTORY.md gate artifacts unblock Unit 23)
 

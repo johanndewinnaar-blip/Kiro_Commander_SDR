@@ -36,8 +36,8 @@
 | UC-015 | View internal operating picture | CISO, SOM, Security Analyst, Identity/Access Specialist, Security Architect, Risk Analyst, Risk/Compliance/Audit | operational | /operating-picture/internal | case.ts (surfaceAttribution: internal), identity.ts, verdict.ts, seed-cases, seed-identities, seed-verdicts | SYSTEM | — | Unit 21 | BUILT |
 | UC-016 | View strategy centre | SOM, CISO, Tenant Admin | operational | /strategy | strategy.ts, seed-strategies | SYSTEM | — | Unit 6 | BUILT |
 | UC-017 | View strategy policy configuration | SOM, CISO, Tenant Admin | operational | /strategy | strategy.ts (configuration field), seed-strategies | SYSTEM | — | Unit 6 | BUILT |
-| UC-018 | View war room P0 coordination | All authenticated | operational | /war-room/p0 | war-room.ts, seed-war-rooms, case.ts (P0 cases) | SYSTEM | — | Unit 37 (Team 2, BLOCKED) | BUILT |
-| UC-019 | View control plane overview | Seiertech Operator | control-plane | /control-plane | — (static content) | SYSTEM | — | Unit 23 (Team 2, BLOCKED) | BUILT |
+| UC-018 | View war room P0 coordination | All authenticated | operational | /war-room/p0 | war-room.ts, seed-war-rooms, case.ts (P0 cases) | SYSTEM | — | Unit 37  | BUILT |
+| UC-019 | View control plane overview | Seiertech Operator | control-plane | /control-plane | — (static content) | SYSTEM | — | Unit 23  | BUILT |
 | UC-020 | View tenant admin overview | Tenant Admin | tenant-admin | /tenant-admin | — (scaffold display) | SYSTEM | — | Unit 22 | SCAFFOLD |
 | UC-021 | Resolve case priority | System | — | — | case-prioritiser resolver, strategy.ts (prioritisation-weight surface) | SYSTEM | — | Unit 9 | NOT BUILT (resolver exists, no direct UI) |
 | UC-022 | Resolve case routing | System | — | — | case-router resolver, assignment-engine resolver, strategy.ts (routing surface) | SYSTEM | — | Unit 8 | NOT BUILT (resolver exists, no direct UI) |
@@ -55,10 +55,10 @@
 | UC-034 | View vendor advisories | All authenticated | operational | — | vendor-advisory.ts, seed-vendor-advisories | SYSTEM | — | Unit 50 | NOT BUILT (entity/fixture exist, no page) |
 | UC-035 | View threat hunt records | All authenticated | operational | — | threat-hunt-record.ts, seed-threat-hunts | SYSTEM | — | Unit 50 | NOT BUILT (entity/fixture exist, no page) |
 | UC-036 | View platform intelligence sources | Seiertech Operator | operational | — | platform-intelligence-source.ts, seed-platform-intelligence-sources | SYSTEM | — | Unit 50 | NOT BUILT (entity/fixture exist, no page) |
-| UC-037 | View push action intents | SOM | operational | — | push-action-intent.ts, seed-push-action-intents | SYSTEM | — | Unit 42 (Team 2, BLOCKED) | NOT BUILT (entity/fixture exist, no page) |
-| UC-038 | View control framework compliance | All authenticated | operational | /controls | control-framework.ts, seed-control-frameworks | SYSTEM | — | Unit 33 (Team 2, BLOCKED) | BUILT |
-| UC-039 | View case communication threads | All authenticated | operational | — | case-communication-thread.ts, seed-communication-threads | SYSTEM | — | Unit 44 (Team 2, BLOCKED) | NOT BUILT (entity/fixture exist, no dedicated page) |
-| UC-040 | View communication playbooks | SOM, Tenant Admin | operational | — | communication-playbook.ts, seed-communication-playbooks | SYSTEM | — | Unit 44 (Team 2, BLOCKED) | NOT BUILT (entity/fixture exist, no page) |
+| UC-037 | View push action intents | SOM | operational | — | push-action-intent.ts, seed-push-action-intents | SYSTEM | — | Unit 42  | NOT BUILT (entity/fixture exist, no page) |
+| UC-038 | View control framework compliance | All authenticated | operational | /controls | control-framework.ts, seed-control-frameworks | SYSTEM | — | Unit 33  | BUILT |
+| UC-039 | View case communication threads | All authenticated | operational | — | case-communication-thread.ts, seed-communication-threads | SYSTEM | — | Unit 44  | NOT BUILT (entity/fixture exist, no dedicated page) |
+| UC-040 | View communication playbooks | SOM, Tenant Admin | operational | — | communication-playbook.ts, seed-communication-playbooks | SYSTEM | — | Unit 44  | NOT BUILT (entity/fixture exist, no page) |
 | UC-041 | View detonation verdicts | Security Analyst | operational | — | detonation-verdict.ts, seed-detonation-verdicts | SYSTEM | — | — | NOT BUILT (entity/fixture exist, no page) |
 | UC-042 | View phishing reports | Security Analyst | operational | — | phishing-report.ts, seed-phishing-reports | SYSTEM | — | — | NOT BUILT (entity/fixture exist, no page) |
 | UC-043 | View inbound email submissions | Security Analyst | operational | — | inbound-email-submission.ts, seed-inbound-email-submissions | SYSTEM | — | — | NOT BUILT (entity/fixture exist, no page) |
@@ -68,14 +68,14 @@
 | UC-047 | AI: Recommend next best action for case | All authenticated | operational | /cases/:id | case.ts, action.ts, strategy.ts | AICAP | AICAP-002 | Unit 40 | PROPOSED |
 | UC-048 | AI: Explain asset risk posture | All authenticated | operational | /assets | asset.ts, risk-object.ts, verdict.ts | AICAP | AICAP-003 | Unit 40 | PROPOSED |
 | UC-049 | AI: Explain identity risk factors | All authenticated | operational | /identity | identity.ts (riskFactors), verdict.ts | AICAP | AICAP-004 | Unit 40 | PROPOSED |
-| UC-050 | AI: Generate executive risk briefing | CISO | operational | /ciso | case.ts, risk-object.ts, asset.ts, identity.ts | AICAP | AICAP-005 | Unit 40, Unit 36 (Team 2, BLOCKED) | PROPOSED |
-| UC-051 | AI: Draft case communication | All authenticated | operational | /cases/:id | case.ts, case-communication-thread.ts, communication-playbook.ts | AICAP | AICAP-006 | Unit 40, Unit 44 (Team 2, BLOCKED) | PROPOSED |
+| UC-050 | AI: Generate executive risk briefing | CISO | operational | /ciso | case.ts, risk-object.ts, asset.ts, identity.ts | AICAP | AICAP-005 | Unit 40, Unit 36  | PROPOSED |
+| UC-051 | AI: Draft case communication | All authenticated | operational | /cases/:id | case.ts, case-communication-thread.ts, communication-playbook.ts | AICAP | AICAP-006 | Unit 40, Unit 44  | PROPOSED |
 | UC-052 | AI: Explain drift finding context | All authenticated | operational | — | risk-object.ts (configuration_drift), strategy.ts | AICAP | AICAP-007 | Unit 40 | PROPOSED |
 | UC-053 | AI: Correlate IOC to estate exposure | All authenticated | operational | — | indicator-of-compromise.ts, tenant-ioc-match.ts, asset.ts | AICAP | AICAP-008 | Unit 40, Unit 50 | PROPOSED |
-| UC-054 | Evaluate vulnerability SSVC decision | System | — | — | vuln-ssvc-evaluator (profiles/vulnerability/) | SYSTEM | — | Unit 27 (Team 2, BLOCKED) | NOT BUILT (profile code exists, no UI) |
-| UC-055 | Resolve vulnerability SLA modifiers | System | — | — | vuln-sla-modifiers (profiles/vulnerability/) | SYSTEM | — | Unit 27 (Team 2, BLOCKED) | NOT BUILT (profile code exists, no UI) |
-| UC-056 | Resolve vulnerability closure gates | System | — | — | vuln-closure-gates (profiles/vulnerability/) | SYSTEM | — | Unit 27 (Team 2, BLOCKED) | NOT BUILT (profile code exists, no UI) |
-| UC-057 | Resolve vulnerability reopening triggers | System | — | — | vuln-reopening-triggers (profiles/vulnerability/) | SYSTEM | — | Unit 27 (Team 2, BLOCKED) | NOT BUILT (profile code exists, no UI) |
+| UC-054 | Evaluate vulnerability SSVC decision | System | — | — | vuln-ssvc-evaluator (profiles/vulnerability/) | SYSTEM | — | Unit 27  | NOT BUILT (profile code exists, no UI) |
+| UC-055 | Resolve vulnerability SLA modifiers | System | — | — | vuln-sla-modifiers (profiles/vulnerability/) | SYSTEM | — | Unit 27  | NOT BUILT (profile code exists, no UI) |
+| UC-056 | Resolve vulnerability closure gates | System | — | — | vuln-closure-gates (profiles/vulnerability/) | SYSTEM | — | Unit 27  | NOT BUILT (profile code exists, no UI) |
+| UC-057 | Resolve vulnerability reopening triggers | System | — | — | vuln-reopening-triggers (profiles/vulnerability/) | SYSTEM | — | Unit 27  | NOT BUILT (profile code exists, no UI) |
 | UC-058 | View Teams decision events | SOM | operational | — | teams-decision-event.ts, seed-teams-decision-events | SYSTEM | — | — | NOT BUILT (entity/fixture exist, no page) |
 
 ---

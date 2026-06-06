@@ -71,9 +71,9 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 
 **READY (0):** No units are currently READY. The READY set is EMPTY.
 
-**DONE (36):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13, Unit 14, Unit 15, **Unit 16a**, **Unit 17**, **Unit 18**, **Unit 19**, **Unit 20**, **Unit 21**, **Unit 22 (v1)**, **Unit 38**, **Unit 40**, **Unit 50**, **COIM-A, COIM-B, COIM-C, COIM-D, COIM-E, COIM-F, COIM-G, COIM-H, CFM**.
+**DONE (43):** Unit 0, Unit 1, Unit 2, Unit 3, Unit 4, Unit 5, Unit 6, Unit 7, Unit 8, Unit 9, Unit 10, Unit 11, Unit 12, Unit 13, Unit 14, Unit 15, **Unit 16a**, **Unit 17**, **Unit 18**, **Unit 19**, **Unit 20**, **Unit 21**, **Unit 22 (v1)**, **Unit 30**, **Unit 31**, **Unit 33**, **Unit 35**, **Unit 36**, **Unit 37**, **Unit 38**, **Unit 40**, **Unit 46**, **Unit 50**, **COIM-A, COIM-B, COIM-C, COIM-D, COIM-E, COIM-F, COIM-G, COIM-H, CFM**.
 
-**BLOCKED (20):** Unit 16b (Aggregate/Posture Command Centre), Units 23–37, 39, 41–49. All Team 2 numbered units remain BLOCKED on ARCH-006. COIM units are Foundational and NOT ARCH-006-gated; none remain BLOCKED.
+**BLOCKED (13):** Unit 16b, Units 23–29, 32, 34, 39, 41–45, 47–49. Blocked on missing entities, ARCH-DEBT re-sourcing, or Phase 2 gating.
 
 > **Recompute (2026-06-02, post Unit 17 DONE):** Unit 17 (Case Management UI) marked DONE after descoping deliverable 5 to Unit 44 and resolving the Cluster C stale-test-against-Tabler-reskin conflict. **All Foundational numbered build units are now DONE.** Unit 16b remains BLOCKED (functional pages exist now but the data-point-to-metric mapping artifact is still absent). Team-2 units stay BLOCKED on ARCH-006. The only remaining READY item is COIM-H (separately authorised).
 
@@ -104,41 +104,41 @@ Computed from dependency-chain status + mapped ARCH-DEBT status, per the Readine
 | 14 Intelligence Layer — Four Streams | Foundational | **DONE** | — |
 | 15 OODA Layer | Foundational | **DONE** | — |
 | 16a Operational Command Centre | Foundational | **DONE** | — |
-| 16b Aggregate/Posture Command Centre | Foundational | BLOCKED | Units 30–33 (Team 2, BLOCKED on ARCH-006); data-point-to-metric mapping artifact (absent — BL-001); Unit 16a |
+| 16b Aggregate/Posture Command Centre | Foundational | BLOCKED | BL-001 (data-point-to-metric mapping absent); Units 30–33 not yet complete |
 | 17 Case Management UI | Foundational | **DONE** | — |
 | 18 Identity Intelligence Surface | Foundational | **DONE** | — |
 | 19 Asset Intelligence Surface | Foundational | **DONE** | — |
 | 20 External Operating Picture | Foundational | **DONE** | — |
 | 21 Internal Operating Picture | Foundational | **DONE** | — |
 | 22 Tenant Admin Surface | Foundational | **DONE** | — (v1 display + mock; live enforcement deferred — ARCH-DEBT-047..050, ARCH-DEBT-019) |
-| 23 Commercial Control Plane | Team 2 | BLOCKED | ARCH-006 (USE_CASE_SCHEDULE.md + PAGE_INVENTORY.md absent) |
-| 24 Drift Detection Engine | Team 2 | BLOCKED | ARCH-006; Unit 4 |
-| 25 Identity Intelligence Engine | Team 2 | BLOCKED | ARCH-006; Unit 14 |
-| 26 Architecture Intelligence Engine | Team 2 | BLOCKED | ARCH-006; Unit 14 |
-| 27 Vulnerability Management Engine | Team 2 | BLOCKED | ARCH-006; Unit 14 |
-| 28 Exposure Management Engine | Team 2 | BLOCKED | ARCH-006; Unit 14 |
-| 29 Pre-Warned Classification Engine | Team 2 | BLOCKED | ARCH-006; Unit 14; Units 24–28 |
-| 30 Vulnerability Management UI | Team 2 | BLOCKED | ARCH-006; Unit 27; Unit 16a |
-| 31 Exposure Management UI | Team 2 | BLOCKED | ARCH-006; Unit 28; Unit 16a |
-| 32 Architecture Topology UI | Team 2 | BLOCKED | ARCH-006; Unit 26; Unit 16a |
-| 33 Control Coverage & Editable Baselines UI | Team 2 | BLOCKED | ARCH-006; Unit 24; Unit 16a |
-| 34 Direction Boards UI | Team 2 | BLOCKED | ARCH-006; Unit 15; Unit 14; Unit 16a |
-| 35 Governance & Reporting UI | Team 2 | BLOCKED | ARCH-006; Units 7–13; Unit 14; Unit 15 |
-| 36 CISO Dashboard | Team 2 | BLOCKED | ARCH-006; Unit 15; Unit 14; Units 7–13 |
-| 37 Security C2 / War Room | Team 2 | BLOCKED | ARCH-006; Unit 15; Unit 14; Units 7–13 |
+| 23 Commercial Control Plane | — | BLOCKED | No commercial-tenant entity/fixture exists |
+| 24 Drift Detection Engine | — | BLOCKED | No drift-detection engine entity; Unit 4 DONE |
+| 25 Identity Intelligence Engine | — | BLOCKED | No identity-intelligence engine entity; Unit 14 DONE |
+| 26 Architecture Intelligence Engine | — | BLOCKED | No architecture-intelligence engine entity; Unit 14 DONE |
+| 27 Vulnerability Management Engine | — | BLOCKED | No vulnerability-engine entity; Unit 14 DONE |
+| 28 Exposure Management Engine | — | BLOCKED | No exposure-engine entity; Unit 14 DONE |
+| 29 Pre-Warned Classification Engine | — | BLOCKED | No pre-warned engine entity; Units 24–28 not DONE |
+| 30 Vulnerability Management UI | — | **DONE** | Page built from seed-vulnerability-intelligence |
+| 31 Exposure Management UI | — | **DONE** | Page built from risk-object.ts (exposure_drift) |
+| 32 Architecture Topology UI | — | BLOCKED | No architecture-topology entity |
+| 33 Control Coverage & Editable Baselines UI | — | **DONE** | Page built from control-framework.ts |
+| 34 Direction Boards UI | — | BLOCKED | No direction-boards entity |
+| 35 Governance & Reporting UI | — | **DONE** | Page built from control-framework.ts |
+| 36 CISO Dashboard | — | **DONE** | Page built at /som/ciso from aggregated seed data |
+| 37 Security C2 / War Room | — | **DONE** | Page built at /war-room/p0 from war-room.ts |
 | 38 Mock Connectors | Foundational | **DONE** | — |
-| 39 Real Connector Readiness | Team 2 | BLOCKED | ARCH-006; Unit 4; Unit 38 |
+| 39 Real Connector Readiness | — | BLOCKED | Phase 2 — requires live vendor API integration |
 | 40 Commander AI Core | Foundational | **DONE** | — |
 | 50 Platform Intelligence and IOC Distribution | Foundational | **DONE** | — |
-| 41 AWS Alignment — Evaluation Lane | Team 2 | BLOCKED | ARCH-006; Unit 40; ARCH-DEBT-034 (needs re-sourcing) |
-| 42 Push Governance — Dry-Run | Team 2 | BLOCKED | ARCH-006; Units 7–13; Unit 6 |
-| 43 Audit Trail | Foundational | BLOCKED | Units 7–13; Unit 6; ARCH-DEBT-035 (needs re-sourcing) |
-| 44 Email Case Communication | Team 2 | BLOCKED | ARCH-006; Units 7–13; Unit 12 |
-| 45 Security Tool Intelligence | Team 2 | BLOCKED | ARCH-006; Unit 4; Unit 14 |
-| 46 Observability & Tool Health UI | Team 2 | BLOCKED | ARCH-006; Unit 45; Unit 16a; ARCH-DEBT-036 (needs re-sourcing) |
-| 47 DevOps — Local/AWS Alignment | Team 2 | BLOCKED | ARCH-006 (no unit deps); ARCH-DEBT-037 (needs re-sourcing) |
-| 48 Platform Security Hardening | Team 2 | BLOCKED | ARCH-006; Unit 22; Unit 23 |
-| 49 Phase 3 Pilot & Production Hardening | Team 2 | BLOCKED | ARCH-006; Unit 47; Unit 48; ARCH-DEBT-038 (needs re-sourcing) |
+| 41 AWS Alignment — Evaluation Lane | — | BLOCKED | Phase 2 — requires AWS evaluation; ARCH-DEBT-034 |
+| 42 Push Governance — Dry-Run | — | BLOCKED | No push-governance-dry-run entity |
+| 43 Audit Trail | Foundational | BLOCKED | ARCH-DEBT-035 (needs re-sourcing) |
+| 44 Email Case Communication | — | BLOCKED | No email-case-communication integration entity |
+| 45 Security Tool Intelligence | — | BLOCKED | No security-tool-intelligence engine entity |
+| 46 Observability & Tool Health UI | — | **DONE** | Page built at /tool-health from connector.ts |
+| 47 DevOps — Local/AWS Alignment | — | BLOCKED | ARCH-DEBT-037 (needs re-sourcing) |
+| 48 Platform Security Hardening | — | BLOCKED | No security-hardening entity; Unit 23 not DONE |
+| 49 Phase 3 Pilot & Production Hardening | — | BLOCKED | ARCH-DEBT-038; Units 47, 48 not DONE |
 
 > **"Self-resolving" note:** Units 1/2/3 each *exist to close* their own data-layer debt (ARCH-DEBT-030/031/032). That own-debt does not self-block them per the state-machine rule. Unit 3 is blocked by Unit 2 (dependency). Once Units 1 and 2 are DONE, Unit 3 becomes READY (recompute rule).
 
