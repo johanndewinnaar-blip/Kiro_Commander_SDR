@@ -62,7 +62,7 @@ export function OperationalSidebar() {
         bottom: 0,
         left: 0,
         width: sidebarWidth,
-        background: `linear-gradient(180deg, ${primitiveBrand.navy2}, #030e1e)`,
+        background: `linear-gradient(180deg, ${primitiveBrand.navy2}, var(--tblr-bg-surface-dark))`,
         borderRight: '1px solid rgba(255,255,255,0.10)',
         color: standardTokens.chrome.navText,
         display: 'flex',

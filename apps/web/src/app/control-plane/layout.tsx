@@ -9,7 +9,7 @@ import { CONTROL_PLANE_NAV_ITEMS, CONTROL_PLANE_TOP_NAV } from '@/registry/nav-g
  * Source: docs/06_ui_build_reference/commander-commercial-control-plane-shell-v3-admin-navigation.html
  *
  * Visual language:
- * - Black/dark chrome (#050505 top bar, #080808 sidebar, #0d0d0d content)
+ * - Dark chrome (token-driven surfaces)
  * - Navy underline on top bar bottom
  * - INTERNAL environment badge
  * - "PROD ACTIONS REQUIRE APPROVAL" header tile
@@ -25,7 +25,7 @@ export default function ControlPlaneLayout({ children }: { children: React.React
           top: chrome.topBarHeight,
           bottom: 0,
           width: '330px',
-          background: '#080808',
+          background: colors.controlPlane.panel,
           borderRight: `1px solid ${colors.controlPlane.line}`,
         }}
         aria-label="Control Plane navigation"
@@ -43,7 +43,7 @@ export default function ControlPlaneLayout({ children }: { children: React.React
                 padding: '0 10px',
                 fontWeight: 700,
                 fontSize: '12px',
-                color: i === 0 ? '#fff' : '#ddd',
+                color: i === 0 ? colors.controlPlane.text : colors.controlPlane.muted,
                 marginBottom: '7px',
               }}
             >
@@ -78,7 +78,7 @@ export default function ControlPlaneLayout({ children }: { children: React.React
           {/* Brand — COMMANDER COMMERCIAL CONTROL */}
           <div style={{ width: '330px', height: '100%', display: 'flex', alignItems: 'center', padding: '0 18px', borderRight: `1px solid ${colors.controlPlane.line}`, gap: '10px' }}>
             <span style={{ letterSpacing: typography.letterSpacing.displayWide, fontSize: '22px', fontWeight: 700, color: colors.brand.commander }}>COMMANDER</span>
-            <span style={{ letterSpacing: typography.letterSpacing.displayWide, fontSize: '22px', fontWeight: 700, color: '#fff' }}>COMMERCIAL CONTROL</span>
+            <span style={{ letterSpacing: typography.letterSpacing.displayWide, fontSize: '22px', fontWeight: 700, color: colors.controlPlane.text }}>COMMERCIAL CONTROL</span>
           </div>
           {/* Top nav tabs */}
           <nav style={{ display: 'flex', height: '100%' }}>
@@ -90,7 +90,7 @@ export default function ControlPlaneLayout({ children }: { children: React.React
                   display: 'flex',
                   alignItems: 'center',
                   padding: '0 16px',
-                  color: i === 0 ? '#fff' : '#bdbdbd',
+                  color: i === 0 ? colors.controlPlane.text : colors.controlPlane.muted,
                   borderBottom: i === 0 ? `3px solid ${colors.controlPlane.text}` : '3px solid transparent',
                   fontWeight: 600,
                   fontSize: '14px',
@@ -103,12 +103,12 @@ export default function ControlPlaneLayout({ children }: { children: React.React
           </nav>
           {/* Tools */}
           <div style={{ marginLeft: 'auto', display: 'flex', gap: '10px', alignItems: 'center', padding: '0 16px' }}>
-            <label style={{ width: chrome.searchWidth, height: chrome.iconSize, border: `1px solid #333`, background: '#151515', padding: '0 12px', display: 'flex', alignItems: 'center' }}>
-              <input placeholder="Search customers, tenants, licences, features, rules…" style={{ width: '100%', height: '100%', background: 'transparent', border: 0, color: '#fff', outline: 'none', fontSize: '14px' }} />
+            <label style={{ width: chrome.searchWidth, height: chrome.iconSize, border: `1px solid ${colors.controlPlane.line}`, background: colors.controlPlane.black, padding: '0 12px', display: 'flex', alignItems: 'center' }}>
+              <input placeholder="Search customers, tenants, licences, features, rules…" style={{ width: '100%', height: '100%', background: 'transparent', border: 0, color: colors.controlPlane.text, outline: 'none', fontSize: '14px' }} />
             </label>
             {/* INTERNAL badge */}
-            <div style={{ border: '1px solid #5c2626', color: '#ffb4b4', padding: '9px 12px', fontWeight: 700, fontSize: '12px' }}>INTERNAL</div>
-            <div style={{ borderLeft: `1px solid #333`, paddingLeft: '12px', color: '#ccc', fontSize: '14px' }}>Operator</div>
+            <div style={{ border: `1px solid ${colors.status.critical}`, color: colors.status.critical, padding: '9px 12px', fontWeight: 700, fontSize: '12px' }}>INTERNAL</div>
+            <div style={{ borderLeft: `1px solid ${colors.controlPlane.line}`, paddingLeft: '12px', color: colors.controlPlane.muted, fontSize: '14px' }}>Operator</div>
           </div>
         </header>
 
@@ -118,7 +118,7 @@ export default function ControlPlaneLayout({ children }: { children: React.React
             <small style={{ color: colors.controlPlane.muted, textTransform: 'uppercase', letterSpacing: typography.letterSpacing.eyebrow, fontSize: '11px' }}>Commander Commercial Control Plane › v2.5 shell reference</small>
             <h1 style={{ margin: '4px 0 0', color: colors.controlPlane.text, fontSize: '24px', fontWeight: 700, lineHeight: '1.2' }}>Command Overview</h1>
           </div>
-          <div style={{ border: '1px solid #5c2626', color: '#ffb4b4', padding: '9px 12px', fontWeight: 700, fontSize: '12px' }}>PROD ACTIONS REQUIRE APPROVAL</div>
+          <div style={{ border: `1px solid ${colors.status.critical}`, color: colors.status.critical, padding: '9px 12px', fontWeight: 700, fontSize: '12px' }}>PROD ACTIONS REQUIRE APPROVAL</div>
         </section>
 
         {/* Content */}

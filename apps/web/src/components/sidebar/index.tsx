@@ -35,21 +35,21 @@ const DEFAULT_EXPANDED_GROUP = 'case-management';
 
 const SIDEBAR_STYLES = `
   /* ── Scrollbar — visible at rest, brighter on hover ── */
-  .cmdr-sidebar-menu {
+  .navbar-vertical .navbar-nav {
     scrollbar-width: thin;
-    scrollbar-color: rgba(255,255,255,0.28) transparent;
+    scrollbar-color: var(--tblr-border-color) transparent;
   }
-  .cmdr-sidebar-menu::-webkit-scrollbar { width: 4px; }
-  .cmdr-sidebar-menu::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); }
-  .cmdr-sidebar-menu::-webkit-scrollbar-thumb {
-    background: rgba(255,255,255,0.28);
+  .navbar-vertical .navbar-nav::-webkit-scrollbar { width: 4px; }
+  .navbar-vertical .navbar-nav::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); }
+  .navbar-vertical .navbar-nav::-webkit-scrollbar-thumb {
+    background: var(--tblr-border-color);
   }
-  .cmdr-sidebar-menu::-webkit-scrollbar-thumb:hover {
-    background: rgba(255,255,255,0.5);
+  .navbar-vertical .navbar-nav::-webkit-scrollbar-thumb:hover {
+    background: var(--tblr-border-color-active);
   }
 
   /* ── Nav link base ── */
-  .cmdr-sidebar .nav-link {
+  .navbar-vertical.commander-nav .nav-link {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -57,7 +57,7 @@ const SIDEBAR_STYLES = `
     height: 40px;
     font-size: 0.875rem;
     font-weight: 500;
-    color: rgba(255,255,255,0.92) !important;
+    color: var(--tblr-nav-link-color) !important;
     background: transparent !important;
     border: none;
     border-radius: 0 !important;
@@ -68,39 +68,39 @@ const SIDEBAR_STYLES = `
     text-decoration: none;
   }
 
-  .cmdr-sidebar .nav-link:hover {
-    color: #ffffff !important;
+  .navbar-vertical.commander-nav .nav-link:hover {
+    color: var(--tblr-light) !important;
     background: rgba(255,255,255,0.07) !important;
   }
 
-  .cmdr-sidebar .nav-link.active {
-    color: #ffffff !important;
+  .navbar-vertical.commander-nav .nav-link.active {
+    color: var(--tblr-light) !important;
     background: rgba(255,255,255,0.10) !important;
   }
 
   /* ── Sub-item nav links ── */
-  .cmdr-sidebar .cmdr-subitem .nav-link {
+  .navbar-vertical.commander-nav .nav-item-nested .nav-link {
     height: 34px;
     font-size: 0.8125rem;
     font-weight: 400;
     padding-left: 2.75rem;
-    color: rgba(255,255,255,0.70) !important;
+    color: var(--tblr-secondary-color) !important;
   }
 
-  .cmdr-sidebar .cmdr-subitem .nav-link:hover {
-    color: rgba(255,255,255,0.92) !important;
+  .navbar-vertical.commander-nav .nav-item-nested .nav-link:hover {
+    color: var(--tblr-nav-link-color) !important;
     background: rgba(255,255,255,0.05) !important;
   }
 
-  .cmdr-sidebar .cmdr-subitem .nav-link.active {
-    color: #ffffff !important;
+  .navbar-vertical.commander-nav .nav-item-nested .nav-link.active {
+    color: var(--tblr-light) !important;
     background: rgba(255,255,255,0.08) !important;
-    border-left: 2px solid rgba(255,255,255,0.45);
+    border-left: 2px solid var(--tblr-border-color-active);
     padding-left: calc(2.75rem - 2px);
   }
 
   /* ── Nav link icon — 14px to match text ── */
-  .cmdr-sidebar .nav-link-icon {
+  .navbar-vertical.commander-nav .nav-link-icon {
     flex-shrink: 0;
     display: flex;
     align-items: center;
@@ -110,18 +110,18 @@ const SIDEBAR_STYLES = `
     opacity: 0.80;
   }
 
-  .cmdr-sidebar .nav-link-icon svg {
+  .navbar-vertical.commander-nav .nav-link-icon svg {
     width: 14px !important;
     height: 14px !important;
   }
 
-  .cmdr-sidebar .nav-link:hover .nav-link-icon,
-  .cmdr-sidebar .nav-link.active .nav-link-icon {
+  .navbar-vertical.commander-nav .nav-link:hover .nav-link-icon,
+  .navbar-vertical.commander-nav .nav-link.active .nav-link-icon {
     opacity: 1;
   }
 
   /* ── Nav link title ── */
-  .cmdr-sidebar .nav-link-title {
+  .navbar-vertical.commander-nav .nav-link-title {
     flex: 1;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -129,20 +129,22 @@ const SIDEBAR_STYLES = `
   }
 
   /* ── Build status badge ── */
-  .cmdr-sidebar .cmdr-badge {
+  .navbar-vertical.commander-nav .badge {
     flex-shrink: 0;
     font-size: 0.5625rem;
     font-weight: 600;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.35);
-    border: 1px solid rgba(255,255,255,0.15);
+    color: var(--tblr-secondary-color);
+    border: 1px solid var(--tblr-border-color);
     padding: 1px 4px;
     line-height: 1.4;
+    background: transparent;
+    border-radius: 0;
   }
 
   /* ── Chevron — small, subtle, right-aligned ── */
-  .cmdr-sidebar .cmdr-chevron {
+  .navbar-vertical.commander-nav .nav-link-toggle {
     flex-shrink: 0;
     display: flex;
     align-items: center;
@@ -150,33 +152,33 @@ const SIDEBAR_STYLES = `
     transition: transform 200ms ease, opacity 200ms ease;
   }
 
-  .cmdr-sidebar .cmdr-chevron svg {
+  .navbar-vertical.commander-nav .nav-link-toggle svg {
     width: 12px !important;
     height: 12px !important;
   }
 
-  .cmdr-sidebar .nav-link:hover .cmdr-chevron,
-  .cmdr-sidebar .nav-link.active .cmdr-chevron {
+  .navbar-vertical.commander-nav .nav-link:hover .nav-link-toggle,
+  .navbar-vertical.commander-nav .nav-link.active .nav-link-toggle {
     opacity: 0.55;
   }
 
   /* ── Footer border ── */
-  .cmdr-sidebar-footer {
-    border-top: 1px solid rgba(255,255,255,0.08);
+  .navbar-vertical.commander-nav .navbar-footer {
+    border-top: 1px solid var(--tblr-border-color);
   }
 
   /* ── Brand block (expanded) ── */
-  .cmdr-brand {
+  .navbar-vertical.commander-nav .navbar-brand {
     flex-shrink: 0;
     padding: 1.125rem 0.875rem 1rem;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
+    border-bottom: 1px solid var(--tblr-border-color);
     min-height: 72px;
     display: flex;
     flex-direction: column;
     justify-content: center;
   }
 
-  .cmdr-brand-wordmark {
+  .navbar-vertical.commander-nav .navbar-brand-text {
     display: flex;
     align-items: baseline;
     gap: 0.3rem;
@@ -187,90 +189,90 @@ const SIDEBAR_STYLES = `
     white-space: nowrap;
   }
 
-  .cmdr-brand-gold { color: #ffd21f; }
-  .cmdr-brand-white { color: #ffffff; }
+  .navbar-vertical.commander-nav .brand-commander { color: #ffd21f; }
+  .navbar-vertical.commander-nav .brand-sdr { color: var(--tblr-light); }
 
-  .cmdr-brand-sub {
+  .navbar-vertical.commander-nav .navbar-brand-sub {
     font-size: 0.6875rem;
     font-weight: 400;
-    color: rgba(255,255,255,0.38);
+    color: var(--tblr-secondary-color);
     margin-top: 4px;
     line-height: 1;
     white-space: nowrap;
   }
 
-  /* ── Brand block (collapsed) — Issue 2: LayoutDashboard icon ── */
-  .cmdr-brand-collapsed {
+  /* ── Brand block (collapsed) ── */
+  .navbar-vertical.commander-nav .navbar-brand-icon {
     flex-shrink: 0;
     height: 72px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
+    border-bottom: 1px solid var(--tblr-border-color);
     text-decoration: none;
-    color: rgba(255,255,255,0.85);
+    color: var(--tblr-nav-link-color);
     transition: color 150ms ease;
   }
 
-  .cmdr-brand-collapsed:hover {
-    color: #ffffff;
+  .navbar-vertical.commander-nav .navbar-brand-icon:hover {
+    color: var(--tblr-light);
     background: rgba(255,255,255,0.06);
   }
 
-  .cmdr-brand-collapsed svg {
+  .navbar-vertical.commander-nav .navbar-brand-icon svg {
     width: 20px !important;
     height: 20px !important;
   }
 
-  /* ── Collapsed icon rail — Issues 1, 3, 4 ── */
-  .cmdr-rail-item {
+  /* ── Collapsed icon rail ── */
+  .navbar-vertical.commander-nav .nav-icon-rail {
     width: 100%;
     height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: rgba(255,255,255,0.75);
+    color: var(--tblr-secondary-color);
     cursor: pointer;
     position: relative;
     transition: background 150ms ease, color 150ms ease;
   }
 
-  .cmdr-rail-item:hover {
-    color: #ffffff;
+  .navbar-vertical.commander-nav .nav-icon-rail:hover {
+    color: var(--tblr-light);
     background: rgba(255,255,255,0.07);
   }
 
-  .cmdr-rail-item svg {
+  .navbar-vertical.commander-nav .nav-icon-rail svg {
     width: 16px !important;
     height: 16px !important;
   }
 
-  /* ── Issue 6: CSS tooltip on collapsed rail items ── */
-  .cmdr-rail-item::after {
+  /* ── CSS tooltip on collapsed rail items ── */
+  .navbar-vertical.commander-nav .nav-icon-rail::after {
     content: attr(data-tooltip);
     position: absolute;
     left: calc(100% + 8px);
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(15, 25, 40, 0.96);
-    color: rgba(255,255,255,0.92);
+    background: var(--tblr-bg-surface-dark);
+    color: var(--tblr-nav-link-color);
     font-size: 0.75rem;
     font-weight: 500;
     white-space: nowrap;
     padding: 4px 8px;
-    border: 1px solid rgba(255,255,255,0.12);
+    border: 1px solid var(--tblr-border-color);
     pointer-events: none;
     opacity: 0;
     transition: opacity 120ms ease;
     z-index: 200;
   }
 
-  .cmdr-rail-item:hover::after {
+  .navbar-vertical.commander-nav .nav-icon-rail:hover::after {
     opacity: 1;
   }
 
   /* ── Collapsed footer button ── */
-  .cmdr-footer-collapsed {
+  .navbar-vertical.commander-nav .nav-link-collapse {
     width: 100%;
     height: 40px;
     display: flex;
@@ -279,16 +281,16 @@ const SIDEBAR_STYLES = `
     background: transparent;
     border: none;
     cursor: pointer;
-    color: rgba(255,255,255,0.5);
+    color: var(--tblr-secondary-color);
     transition: color 150ms ease, background 150ms ease;
   }
 
-  .cmdr-footer-collapsed:hover {
-    color: rgba(255,255,255,0.85);
+  .navbar-vertical.commander-nav .nav-link-collapse:hover {
+    color: var(--tblr-nav-link-color);
     background: rgba(255,255,255,0.06);
   }
 
-  .cmdr-footer-collapsed svg {
+  .navbar-vertical.commander-nav .nav-link-collapse svg {
     width: 14px !important;
     height: 14px !important;
   }
@@ -320,7 +322,7 @@ function BrandBlock({ collapsed }: { collapsed: boolean }) {
     return (
       <BrandErrorBoundary>
         {/* Issue 2: LayoutDashboard icon, links to Command Centre */}
-        <a href="/" className="cmdr-brand-collapsed" aria-label="Command Centre">
+        <a href="/" className="navbar-brand-icon" aria-label="Command Centre">
           {getIcon('command-centre', { size: 'nav', 'aria-hidden': true })}
         </a>
       </BrandErrorBoundary>
@@ -328,14 +330,14 @@ function BrandBlock({ collapsed }: { collapsed: boolean }) {
   }
 
   return (
-    <div className="cmdr-brand">
+    <div className="navbar-brand">
       {/* Line 1: COMMANDER (gold) SDR (white) */}
-      <div className="cmdr-brand-wordmark">
-        <span className="cmdr-brand-gold">COMMANDER</span>
-        <span className="cmdr-brand-white">SDR</span>
+      <div className="navbar-brand-text">
+        <span className="brand-commander">COMMANDER</span>
+        <span className="brand-sdr">SDR</span>
       </div>
       {/* Line 2: Seiertech ® — below, muted */}
-      <div className="cmdr-brand-sub">Seiertech ®</div>
+      <div className="navbar-brand-sub">Seiertech ®</div>
     </div>
   );
 }
@@ -376,12 +378,12 @@ function NavGroupRow({ group, isExpanded, isActive, activeItemPath, onToggle }: 
 
         {/* Build status badge */}
         {group.badge && (
-          <span className="cmdr-badge">{group.badge}</span>
+          <span className="badge">{group.badge}</span>
         )}
 
         {/* Chevron */}
         <span
-          className="cmdr-chevron"
+          className="nav-link-toggle"
           style={{ transform: isExpanded ? 'rotate(90deg)' : 'rotate(0deg)' }}
         >
           {getIcon('collapse-footer', { size: 'nav', 'aria-hidden': true })}
@@ -394,7 +396,7 @@ function NavGroupRow({ group, isExpanded, isActive, activeItemPath, onToggle }: 
           {group.subItems.map((item) => {
             const itemActive = activeItemPath === item.path;
             return (
-              <li key={item.path} className="nav-item cmdr-subitem">
+              <li key={item.path} className="nav-item nav-item-nested">
                 <a
                   href={item.path}
                   className={`nav-link${itemActive ? ' active' : ''}`}
@@ -468,7 +470,7 @@ function ScrollableMenu({ collapsed }: { collapsed: boolean }) {
   if (collapsed) {
     return (
       <div
-        className="cmdr-sidebar-menu"
+        className="navbar-nav"
         style={{
           flex: 1,
           overflowY: 'auto',
@@ -484,7 +486,7 @@ function ScrollableMenu({ collapsed }: { collapsed: boolean }) {
           // Issue 6: data-tooltip drives CSS ::after tooltip
           <div
             key={group.id}
-            className="cmdr-rail-item"
+            className="nav-icon-rail"
             data-tooltip={group.label}
             role="button"
             tabIndex={0}
@@ -504,7 +506,7 @@ function ScrollableMenu({ collapsed }: { collapsed: boolean }) {
   // Expanded — full nav list
   return (
     <ul
-      className="navbar-nav cmdr-sidebar-menu"
+      className="navbar-nav"
       style={{
         flex: 1,
         overflowY: 'auto',
@@ -542,10 +544,10 @@ function CollapseFooter({
   if (collapsed) {
     // Collapsed: centred chevron-right (rotate 180° of ChevronLeft = points right)
     return (
-      <div className="cmdr-sidebar-footer">
+      <div className="navbar-footer">
         <button
           type="button"
-          className="cmdr-footer-collapsed"
+          className="nav-link-collapse"
           onClick={toggleCollapsed}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleCollapsed(); }
@@ -562,7 +564,7 @@ function CollapseFooter({
 
   // Expanded: chevron-left icon + "Collapse" label
   return (
-    <div className="cmdr-sidebar-footer">
+    <div className="navbar-footer">
       <button
         type="button"
         className="nav-link"
@@ -597,7 +599,7 @@ export function Sidebar() {
       <style>{SIDEBAR_STYLES}</style>
 
       <aside
-        className="cmdr-sidebar navbar navbar-vertical navbar-expand-lg"
+        className="commander-nav navbar navbar-vertical navbar-expand-lg"
         data-bs-theme="dark"
         aria-label="Primary navigation"
         style={{
@@ -606,7 +608,7 @@ export function Sidebar() {
           bottom: 0,
           left: 0,
           width: sidebarWidth,
-          background: '#040a11',
+          background: 'var(--tblr-bg-surface-dark)',
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',

@@ -13,8 +13,8 @@
 | Status | Count |
 |--------|-------|
 | Open | 0 |
-| Scheduled | 2 |
-| Resolved | 6 |
+| Scheduled | 0 |
+| Resolved | 8 |
 | **Total** | **8** |
 
 ---
@@ -53,11 +53,12 @@
 **Violated Assertion:** DSC-004 (Vivid Semantic Colour), DSC-012 (Mode Support)  
 **Debt Type:** Structural  
 **Description:** Hardcoded hex colors (#ffffff, #8ca6c2, #040a11, etc.) in chrome elements instead of Tabler CSS variables. Breaks dark/light mode compatibility and violates semantic color doctrine.  
-**Scope of Fix:** Chrome token migration — replace all hardcoded colors with Tabler CSS variables (var(--tblr-body-color), var(--tblr-border-color), etc.). Ensure light/dark mode compatibility. Part of shell Tabler conversion.  
+**Scope of Fix:** Replaced all hardcoded hex colors with Tabler CSS variables (var(--tblr-light), var(--tblr-secondary), var(--tblr-border-color), var(--tblr-bg-surface-dark), var(--tblr-nav-link-color), var(--tblr-secondary-color)) and semantic token references (colors.controlPlane.*, colors.chrome.*). Chrome now inherits from Tabler's theme system and supports dark/light mode via data-bs-theme.  
 **Scheduled Resolution:** Shell Tabler Conversion spec (includes sidebar, header, layout components)  
-**Status:** Scheduled  
+**Status:** Resolved  
+**Resolved:** 2026-06-08  
 **Date Logged:** 2026-05-30  
-**Last Checked:** 2026-05-30  
+**Last Checked:** 2026-06-08  
 
 ### DEBT-004: Custom CSS Classes in Components
 
@@ -65,11 +66,12 @@
 **Violated Assertion:** DSC-003 (Tabler Classes Only)  
 **Debt Type:** Structural  
 **Description:** Custom CSS classes (cmdr-sidebar, cmdr-brand, cmdr-rail-item, etc.) instead of Tabler structural classes. Part of v3 shell system that predates Tabler adoption.  
-**Scope of Fix:** Component Tabler migration — convert custom CSS classes to Tabler equivalents (navbar, nav-link, card, etc.), remove custom stylesheets, use Tabler component patterns. Preserve visual design through Tabler customization.  
+**Scope of Fix:** Converted all custom cmdr-* CSS classes to Tabler equivalents: cmdr-sidebar → commander-nav (with navbar navbar-vertical), cmdr-brand → navbar-brand, cmdr-brand-wordmark → navbar-brand-text, cmdr-badge → badge, cmdr-chevron → nav-link-toggle, cmdr-rail-item → nav-icon-rail, cmdr-sidebar-footer → navbar-footer, cmdr-footer-collapsed → nav-link-collapse, cmdr-subitem → nav-item-nested, cmdr-brand-collapsed → navbar-brand-icon, cmdr-topnav → nav-topnav. Removed all custom cmdr-* CSS rules.  
 **Scheduled Resolution:** Shell Tabler Conversion spec (comprehensive component migration)  
-**Status:** Scheduled  
+**Status:** Resolved  
+**Resolved:** 2026-06-08  
 **Date Logged:** 2026-05-30  
-**Last Checked:** 2026-05-30  
+**Last Checked:** 2026-06-08  
 
 ### DEBT-005: New Entities Missing from SYSTEM_KNOWLEDGE_GRAPH §19
 

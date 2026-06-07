@@ -28,8 +28,8 @@ export default function TenantAdminLayout({ children }: { children: React.ReactN
           left: 0,
           width: chrome.sidebarWidth,
           background: `linear-gradient(180deg, ${colors.navy.sidebar}, ${colors.navy.sidebarEnd})`,
-          borderRight: '1px solid #0b1e38',
-          color: '#dcecff',
+          borderRight: `1px solid ${colors.chrome.lineDark}`,
+          color: colors.chrome.textSubtle,
           display: 'flex',
           flexDirection: 'column',
         }}
@@ -72,7 +72,7 @@ export default function TenantAdminLayout({ children }: { children: React.ReactN
             background: colors.navy.primary,
             display: 'flex',
             alignItems: 'center',
-            color: '#fff',
+            color: colors.chrome.textMuted,
             borderBottom: `1px solid ${colors.navy.primary}`,
           }}
         >
@@ -83,7 +83,7 @@ export default function TenantAdminLayout({ children }: { children: React.ReactN
             <span style={{ fontFamily: typography.fontFamily.body, fontSize: typography.fontSize.brandLg, letterSpacing: typography.letterSpacing.display, fontWeight: 700, color: colors.brand.sdr }}>SDR</span>
             <span style={{ fontSize: primitiveTypeScale.micro, color: colors.controlPlane.muted, marginLeft: '4px' }}>· TENANT ADMIN</span>
           </div>
-          <div style={{ marginLeft: 'auto', padding: '0 16px', fontSize: typography.fontSize.base, color: '#8ca6c2' }}>
+          <div style={{ marginLeft: 'auto', padding: '0 16px', fontSize: typography.fontSize.base, color: colors.chrome.textSubtle }}>
             Tenant Administration
           </div>
         </header>

@@ -62,11 +62,11 @@ export function OperationalTopBar() {
             <span style={{ fontFamily: primitiveFonts.body, fontSize: primitiveTypeScale.display, letterSpacing: primitiveLetterSpacing.displayWide, fontWeight: 700, color: primitiveBrand.cream }}>SEIERTECH</span>
             <span style={{ height: '23px', width: '1px', background: primitiveBrand.gold, flexShrink: 0 }} />
             <span style={{ fontFamily: primitiveFonts.body, fontSize: primitiveTypeScale.display, letterSpacing: primitiveLetterSpacing.display, fontWeight: 700, color: primitiveBrand.gold }}>COMMANDER</span>
-            <span style={{ fontFamily: primitiveFonts.body, fontSize: primitiveTypeScale.display, letterSpacing: primitiveLetterSpacing.display, fontWeight: 700, color: '#ffffff' }}>SDR</span>
+            <span style={{ fontFamily: primitiveFonts.body, fontSize: primitiveTypeScale.display, letterSpacing: primitiveLetterSpacing.display, fontWeight: 700, color: 'var(--tblr-light)' }}>SDR</span>
           </>
         )}
         {collapsed && (
-          <span style={{ color: '#ffffff', fontSize: '20px' }}>⌂</span>
+          <span style={{ color: 'var(--tblr-light)', fontSize: '20px' }}>⌂</span>
         )}
       </a>
 
@@ -97,10 +97,10 @@ export function OperationalTopBar() {
       <div style={{ marginLeft: 'auto', height: '100%', display: 'flex', alignItems: 'center', gap: '12px', padding: `0 ${componentTokens.cardPadding}`, borderLeft: '1px solid rgba(255,255,255,0.14)' }}>
         {/* Search */}
         <label style={{ width: componentTokens.searchWidth, height: componentTokens.inputHeight, border: '1px solid rgba(255,255,255,0.24)', display: 'flex', alignItems: 'center', padding: '0 12px', background: 'rgba(255,255,255,0.075)' }}>
-          <input placeholder="Search cases, assets, CVEs, identities, rules…" aria-label="Global search" style={{ width: '100%', border: 0, background: 'transparent', color: '#fff', outline: 'none', fontFamily: primitiveFonts.body, fontSize: primitiveTypeScale.body }} />
+          <input placeholder="Search cases, assets, CVEs, identities, rules…" aria-label="Global search" style={{ width: '100%', border: 0, background: 'transparent', color: 'var(--tblr-light)', outline: 'none', fontFamily: primitiveFonts.body, fontSize: primitiveTypeScale.body }} />
         </label>
         {/* Commander AI button */}
-        <a style={{ height: componentTokens.inputHeight, border: `1px solid rgba(255,255,255,0.24)`, color: primitiveBrand.navy, background: '#fff', fontWeight: 800, padding: '0 12px', display: 'flex', alignItems: 'center', textDecoration: 'none', fontSize: primitiveTypeScale.body }}>Commander AI</a>
+        <a style={{ height: componentTokens.inputHeight, border: `1px solid rgba(255,255,255,0.24)`, color: primitiveBrand.navy, background: 'var(--tblr-light)', fontWeight: 800, padding: '0 12px', display: 'flex', alignItems: 'center', textDecoration: 'none', fontSize: primitiveTypeScale.body }}>Commander AI</a>
         {/* Mode toggle */}
         <button
           type="button"
@@ -112,10 +112,10 @@ export function OperationalTopBar() {
         </button>
         {/* User avatar */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', borderLeft: '1px solid rgba(255,255,255,0.14)', paddingLeft: '12px' }}>
-          <div style={{ width: componentTokens.avatarSize, height: componentTokens.avatarSize, border: '1px solid rgba(255,255,255,0.2)', display: 'grid', placeItems: 'center', color: '#ffffff', fontFamily: primitiveFonts.body, fontSize: primitiveTypeScale.caption, fontWeight: 700 }}>JS</div>
+          <div style={{ width: componentTokens.avatarSize, height: componentTokens.avatarSize, border: '1px solid rgba(255,255,255,0.2)', display: 'grid', placeItems: 'center', color: 'var(--tblr-light)', fontFamily: primitiveFonts.body, fontSize: primitiveTypeScale.caption, fontWeight: 700 }}>JS</div>
           <div>
             <b style={{ display: 'block', fontSize: primitiveTypeScale.caption }}>Jane Smith</b>
-            <span style={{ display: 'block', fontSize: primitiveTypeScale.micro, color: '#8ca6c2' }}>Analyst</span>
+            <span style={{ display: 'block', fontSize: primitiveTypeScale.micro, color: 'var(--tblr-secondary)' }}>Analyst</span>
           </div>
         </div>
       </div>

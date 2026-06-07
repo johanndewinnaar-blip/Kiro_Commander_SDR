@@ -76,14 +76,14 @@ function TopNav({ mode }: { mode: WorkspaceMode }) {
   return (
     // Plain flex row — deliberately NOT using Tabler's .navbar-nav/.nav-link/.active
     // classes, so Tabler's blue ::after active indicator cannot render at all.
-    <div className="cmdr-topnav" style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
+    <div className="nav-topnav" style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
       {TOP_NAV_WORKSPACES.map((item, index) => {
         const isActive = pathname === item.path;
         return (
           <a
             key={item.path}
             href={item.path}
-            className="cmdr-topnav-link"
+            className="nav-topnav-link"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -345,7 +345,7 @@ export function Header({ style }: HeaderProps) {
     <>
       <style>{`
         /* Top-nav hover (custom class — no Tabler navbar involvement) */
-        .commander-header .cmdr-topnav-link:hover {
+        .commander-header .nav-topnav-link:hover {
           background: rgba(128,128,128,0.07);
         }
         /* Square corners, no shadows on header controls */
