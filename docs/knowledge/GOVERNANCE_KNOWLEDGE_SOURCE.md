@@ -99,10 +99,10 @@ Links:
 Spec requirement → UC registered → DATA_DICTIONARY entry → Entity .ts → Fixture seed-*.ts → Engine .ts → Page page.tsx
 
 Current counts:
-- Entities: 87 (packages/contracts/src/entities/)
-- Fixtures: 82 (packages/contracts/src/fixtures/)
-- Engines: 38 (packages/contracts/src/engines/)
-- Pages: 110+ (apps/web/src/app/**/page.tsx)
+- Entities: 86 (packages/contracts/src/entities/, excl index.ts)
+- Fixtures: 81 (packages/contracts/src/fixtures/, excl index.ts)
+- Engines: 37 (packages/contracts/src/engines/, excl index.ts)
+- Pages: 106 (apps/web/src/app/**/page.tsx)
 
 ### 3.2 Page Data Rendering
 Pages MUST render:
@@ -263,12 +263,18 @@ Links:
 ## SECTION 7 — BUILD QUEUE & STATUS
 
 ### 7.1 Current State
-- Pages: 110+ (apps/web/src/app/**/page.tsx)
-- Entities: 87 (packages/contracts/src/entities/ — includes index.ts)
-- Engines: 38 (packages/contracts/src/engines/ — includes index.ts)
-- Fixtures: 82 (packages/contracts/src/fixtures/ — includes index.ts)
-- Use cases: 212 (UC-001 to UC-212)
+- Pages: 106 (apps/web/src/app/**/page.tsx)
+- Entities: 86 (packages/contracts/src/entities/*.ts, excl index.ts)
+- Engines: 37 (packages/contracts/src/engines/*.ts, excl index.ts)
+- Fixtures: 81 (packages/contracts/src/fixtures/*.ts, excl index.ts)
+- Use cases: 229 (UC-001–UC-212 + UC-PULSE-001–009 + UC-REPORT-001–003 + UC-PLAT-001–005)
 - Domains: 46
+- DATA_DICTIONARY entries: 77
+- AICAP markers: 77 (across 55 pages)
+- Conformance assertions: 51
+- Pre-commit checks: 10
+- Steering files: 22
+- Kiro hooks: 11
 - TSC errors: 0
 - All 10 specs (34-43): RESOLVED
 - All placeholder debt: RESOLVED
@@ -383,10 +389,10 @@ Key files: SYSTEM_KNOWLEDGE_GRAPH.md, DOMAIN_REGISTER.md, RELATIONSHIP_MAP.md, D
 ### Code Locations
 | Location | Contents | Count |
 |---|---|---|
-| packages/contracts/src/entities/ | Canonical entity interfaces | 87 |
-| packages/contracts/src/engines/ | Processing logic | 38 |
-| packages/contracts/src/fixtures/ | Seed data | 82 |
-| apps/web/src/app/ | Page components | 110+ |
+| packages/contracts/src/entities/ | Canonical entity interfaces | 86 (excl index) |
+| packages/contracts/src/engines/ | Processing logic | 37 (excl index) |
+| packages/contracts/src/fixtures/ | Seed data | 81 (excl index) |
+| apps/web/src/app/ | Page components | 106 |
 | apps/api/ | Backend API (scaffold only) | 0 |
 
 ---
