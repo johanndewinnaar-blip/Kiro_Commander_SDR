@@ -11,17 +11,17 @@
 
 | Spec | Title | Requirements | Covered | Gaps | New Entities | New Pages | New Use Cases | Effort |
 |---|---|---|---|---|---|---|---|---|
-| 34 | Drift and Rule Engine | 25 | 8 partial | 17 | 3–4 | 2–3 | 5–8 | Large |
+| 34 | Drift and Rule Engine | 25 | **RESOLVED** | 0 | ✅ 3 built | ✅ 2 built | ✅ 8 registered (UC-167–174) | — |
 | 35 | Platform Security and Hardening | 10 | **RESOLVED** | 0 | ✅ 3 built | ✅ 1 built | ✅ 6 registered (UC-148–153) | — |
 | 36 | Rule/Model/Decision Governance Surface | 12 | 4 partial | 8 | 2–3 | 3–4 | 4–6 | Large |
-| 37 | Mission Objective Binding Model | 8 | 3 partial | 5 | 1–2 | 1–2 | 3–5 | Medium |
-| 38 | Commercial Control Plane UI | 10 | 6 partial | 4 | 0–1 | 0 (pages exist) | 3–5 | Medium |
+| 37 | Mission Objective Binding Model | 8 | **RESOLVED** | 0 | ✅ 1 built | ✅ 1 built | ✅ 5 registered (UC-162–166) | — |
+| 38 | Commercial Control Plane UI | 10 | **RESOLVED** | 0 | ✅ 1 built | ✅ 1 built | ✅ 5 registered (UC-157–161) | — |
 | 39 | Pre-Warned/Protected/Novel Classification | 11 | 3 partial | 8 | 1 (augment) | 1–2 | 4–6 | Large |
 | 40 | Inverse Discovery Loop | 8 | 0 | 8 | 2–3 | 1–2 | 3–5 | Medium |
 | 41 | Internal Risk Investigation Sub-Lifecycle | 17 | 1 partial | 16 | 3–4 | 2–3 | 5–8 | Large |
 | 42 | Universal Search | 6 | **RESOLVED** | 0 | ✅ 1 built | ✅ 1 built | ✅ 3 registered (UC-154–156) | — |
 | 43 | Strategy Layer Runtime Surface | 24 | **RESOLVED** | 0 | ✅ 0 (entity existed) | ✅ 3 built | ✅ 8 registered (UC-140–147) | — |
-| **TOTAL** | | **131** | **~40 partial + 3 RESOLVED** | **~61 (30 closed)** | **15–24** | **14–22** | **38–60** | |
+| **TOTAL** | | **131** | **~34 partial + 6 RESOLVED** | **~61 (56 closed)** | **15–24** | **14–22** | **38–60** | |
 
 **Legend:**  
 - "Covered" = an existing entity, engine, or page partially satisfies the requirement (scaffold/data-model level, not runtime implementation).  
@@ -35,6 +35,8 @@
 ---
 
 ### Spec 34 — Drift and Rule Engine
+
+> **✅ RESOLVED (2026-06-06):** Drift/rule engine data-model + engine gaps closed. Entities built: `finding.ts`, `risk-scoring-engine.ts`, `blast-radius-engine.ts`. Engines built: `rule-validation-engine.ts` (schema/operator-whitelist/code-execution-rejection/tenant-scope), `rule-execution-engine.ts` (active-only execution → findings), `suppression-engine.ts` (dedupe + suppression). Fixtures: `seed-findings.ts` (5), `seed-risk-scores.ts` (4), `seed-blast-radius.ts` (3). Pages built: `/platform/rules/validation`, `/platform/rules/simulation`. `RuleDefinition` augmented with version-lifecycle fields (previousVersion, effectiveDate, approvedBy, simulationRef, rollbackTarget). Use cases UC-167–174 registered; PAGE_SCHEDULE + DATA_DICTIONARY updated. Residual UI surfaces (YAML authoring form UC-167, finding-management UC-173, telemetry view UC-172, promote/rollback UI UC-174) tracked as deferred in USE_CASE_REGISTER.
 
 **Requirements count:** 25 (14 core + 10 v1.2 engine enumeration + 1 v1.2 attack-path)
 
@@ -161,6 +163,8 @@
 
 ### Spec 37 — Mission Objective Binding Model
 
+> **✅ RESOLVED (2026-06-06):** Mission-objective binding gaps closed. Entity built: `mission-binding.ts` (`mission.ts` augmented). Engine built: `mission-impact-engine.ts`. Fixtures: `seed-mission-bindings.ts`, `seed-missions.ts`. Page built: `/settings/missions`. Use cases UC-162–166 registered; DATA_DICTIONARY + PAGE_SCHEDULE updated. Case-detail mission-impact panel (UC-165) tracked as deferred in USE_CASE_REGISTER.
+
 **Requirements count:** 8
 
 **Already covered (partial):**
@@ -195,6 +199,8 @@
 ---
 
 ### Spec 38 — Commercial Control Plane UI
+
+> **✅ RESOLVED (2026-06-06):** Commercial control-plane gaps closed. Entity built: `entitlement-manifest.ts`. Engine built: `entitlement-enforcement-engine.ts`. Fixture: `seed-entitlements.ts` (3). Page built: `/control-plane/entitlements`. Use cases UC-157–161 registered; DATA_DICTIONARY + PAGE_SCHEDULE updated. Deployment-ring (UC-159) and emergency-control (UC-161) surfaces tracked as deferred (SCAFFOLD) in USE_CASE_REGISTER.
 
 **Requirements count:** 10 (9 core + 1 v1.2 boundary)
 
