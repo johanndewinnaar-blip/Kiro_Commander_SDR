@@ -5,7 +5,7 @@ import { PageContainer } from '@/components/page-container';
 import { seedTopology } from '../../../../../packages/contracts/src/fixtures/seed-topology';
 import { componentTokens } from '../../../../../packages/ui/src/tokens/components';
 import { primitiveTypeScale, primitiveSpacing, primitiveFontWeight, primitiveFonts, primitiveLetterSpacing, primitiveSignal } from '../../../../../packages/ui/src/tokens/primitives';
-import { ReactFlow, Background, Controls, Node, Edge, Position } from '@xyflow/react';
+import { Sankey, ResponsiveContainer, Tooltip } from 'recharts';
 import { useMemo, useState } from 'react';
 
 import '@xyflow/react/dist/style.css';
@@ -78,51 +78,38 @@ export default function FusionMapPage() {
     }));
   }, [edges, tokens]);
 
-  // Simple Sankey data transformation
+  // Fixed Sankey data - correct Recharts format
   const sankeyData = useMemo(() => {
-    // Create simplified domain flow for Sankey
-    const nodes: Array<{ name: string }> = [];
-    const links: Array<{ source: number; target: number; value: number }> = [];
+    const nodes = [];
+    const links = [];
     
-    // Get unique domains
-    const domains = new Set<string>();
+    // Add all unique node labels from actual data
+    const nodeSet = new Set();
     edges.forEach(edge => {
       const sourceNode = nodeMap.get(edge.sourceNodeId);
       const targetNode = nodeMap.get(edge.targetNodeId);
-      if (sourceNode) domains.add(sourceNode.domain);
-      if (targetNode) domains.add(targetNode.domain);
+      if (sourceNode) nodeSet.add(sourceNode.label);
+      if (targetNode) nodeSet.add(targetNode.label);
     });
-
-    // Add domains as nodes
-    const domainArray = Array.from(domains);
-    domainArray.forEach(domain => {
-      nodes.push({ name: domain });
-    });
-
-    // Create domain-to-domain flows
-    const domainFlows = new Map<string, number>();
+    
+    // Convert to nodes array
+    const nodeArray = Array.from(nodeSet);
+    nodeArray.forEach(label => nodes.push({ name: label }));
+    
+    // Add links with correct indices
     edges.forEach(edge => {
       const sourceNode = nodeMap.get(edge.sourceNodeId);
       const targetNode = nodeMap.get(edge.targetNodeId);
       if (sourceNode && targetNode) {
-        const flowKey = `${sourceNode.domain}→${targetNode.domain}`;
-        const currentFlow = domainFlows.get(flowKey) || 0;
-        domainFlows.set(flowKey, currentFlow + edge.weight);
-      }
-    });
-
-    // Convert flows to links
-    domainFlows.forEach((totalWeight, flowKey) => {
-      const [sourceDomain, targetDomain] = flowKey.split('→');
-      const sourceIndex = domainArray.indexOf(sourceDomain);
-      const targetIndex = domainArray.indexOf(targetDomain);
-      
-      if (sourceIndex !== -1 && targetIndex !== -1 && sourceIndex !== targetIndex) {
-        links.push({
-          source: sourceIndex,
-          target: targetIndex,
-          value: Math.round(totalWeight * 100)
-        });
+        const sourceIndex = nodeArray.indexOf(sourceNode.label);
+        const targetIndex = nodeArray.indexOf(targetNode.label);
+        if (sourceIndex !== -1 && targetIndex !== -1 && sourceIndex !== targetIndex) {
+          links.push({
+            source: sourceIndex,
+            target: targetIndex,
+            value: Math.round(edge.weight * 100)
+          });
+        }
       }
     });
 
@@ -204,144 +191,18 @@ export default function FusionMapPage() {
       <div style={{ background: tokens.surface.elevated, border: `1px solid ${tokens.border.default}`, padding: componentTokens.cardPadding, marginBottom: componentTokens.gridGap }}>
         <h3 style={{ fontSize: primitiveTypeScale.h4, fontWeight: primitiveFontWeight.semibold, color: tokens.text.primary, margin: `0 0 ${componentTokens.cardHeaderMargin}` }}>Domain Relationship Flow</h3>
         
-        {/* Proper Sankey Diagram */}
+        {/* Recharts Sankey - Fixed Data Format */}
         <div style={{ height: '200px', marginBottom: componentTokens.gridGap }}>
-          <svg width="100%" height="100%" viewBox="0 0 800 200" style={{ border: `1px solid ${tokens.border.subtle}` }}>
-            {(() => {
-              // Build proper Sankey data structure
-              const domains = ['identity', 'network', 'endpoint', 'vulnerability'];
-              const nodeWidth = 20;
-              const nodeSpacing = 200;
-              const totalHeight = 160;
-              
-              // Calculate flows between domains
-              const flows = new Map();
-              edges.forEach(edge => {
-                const sourceNode = nodeMap.get(edge.sourceNodeId);
-                const targetNode = nodeMap.get(edge.targetNodeId);
-                if (sourceNode && targetNode && sourceNode.domain !== targetNode.domain) {
-                  const flowKey = `${sourceNode.domain}→${targetNode.domain}`;
-                  const current = flows.get(flowKey) || { weight: 0, count: 0, relationships: [] };
-                  flows.set(flowKey, {
-                    weight: current.weight + edge.weight,
-                    count: current.count + 1,
-                    relationships: [...current.relationships, edge.relationshipType]
-                  });
-                }
-              });
-
-              // Calculate node heights based on total flow
-              const nodeFlows = new Map();
-              domains.forEach(domain => {
-                let inFlow = 0;
-                let outFlow = 0;
-                flows.forEach((flow, key) => {
-                  const [source, target] = key.split('→');
-                  if (target === domain) inFlow += flow.weight;
-                  if (source === domain) outFlow += flow.weight;
-                });
-                nodeFlows.set(domain, Math.max(inFlow, outFlow, 0.5));
-              });
-
-              const maxFlow = Math.max(...nodeFlows.values());
-
-              return (
-                <>
-                  {/* Draw Sankey flow bands */}
-                  {Array.from(flows.entries()).map(([flowKey, flow], i) => {
-                    const [sourceDomain, targetDomain] = flowKey.split('→');
-                    const sourceIndex = domains.indexOf(sourceDomain);
-                    const targetIndex = domains.indexOf(targetDomain);
-                    
-                    if (sourceIndex === -1 || targetIndex === -1) return null;
-                    
-                    const x1 = 100 + sourceIndex * nodeSpacing + nodeWidth;
-                    const x2 = 100 + targetIndex * nodeSpacing;
-                    const flowHeight = (flow.weight / maxFlow) * 40; // Max 40px height for flow
-                    const y = 80 + (i * 15) % 60; // Stagger flows vertically
-                    
-                    // Create proper Sankey path with tapered edges
-                    const controlX1 = x1 + 60;
-                    const controlX2 = x2 - 60;
-                    
-                    return (
-                      <g key={flowKey}>
-                        <path
-                          d={`
-                            M ${x1} ${y}
-                            C ${controlX1} ${y} ${controlX2} ${y} ${x2} ${y}
-                            L ${x2} ${y + flowHeight}
-                            C ${controlX2} ${y + flowHeight} ${controlX1} ${y + flowHeight} ${x1} ${y + flowHeight}
-                            Z
-                          `}
-                          fill={primitiveSignal.info}
-                          fillOpacity="0.6"
-                          stroke={primitiveSignal.info}
-                          strokeWidth="1"
-                        />
-                        {/* Flow label */}
-                        <text
-                          x={(x1 + x2) / 2}
-                          y={y + flowHeight / 2}
-                          textAnchor="middle"
-                          fill={tokens.text.muted}
-                          fontSize="10"
-                          dy="4"
-                        >
-                          {flow.weight.toFixed(1)}
-                        </text>
-                      </g>
-                    );
-                  })}
-                  
-                  {/* Draw domain nodes */}
-                  {domains.map((domain, i) => {
-                    const nodeHeight = (nodeFlows.get(domain) / maxFlow) * 80 + 20; // Min 20px height
-                    const x = 100 + i * nodeSpacing;
-                    const y = 100 - nodeHeight / 2;
-                    
-                    return (
-                      <g key={domain}>
-                        <rect
-                          x={x}
-                          y={y}
-                          width={nodeWidth}
-                          height={nodeHeight}
-                          fill={tokens.surface.elevated}
-                          stroke={tokens.border.default}
-                          strokeWidth="2"
-                        />
-                        <text
-                          x={x + nodeWidth / 2}
-                          y={y - 8}
-                          textAnchor="middle"
-                          fill={tokens.text.primary}
-                          fontSize="12"
-                          fontWeight="600"
-                        >
-                          {domain}
-                        </text>
-                        <text
-                          x={x + nodeWidth / 2}
-                          y={y + nodeHeight + 15}
-                          textAnchor="middle"
-                          fill={tokens.text.muted}
-                          fontSize="10"
-                        >
-                          {nodeFlows.get(domain).toFixed(1)}
-                        </text>
-                      </g>
-                    );
-                  })}
-                  
-                  {/* Legend */}
-                  <text x={50} y={30} fill={tokens.text.muted} fontSize="11" fontWeight="500">
-                    Domain Flow Weights (Sankey Diagram)
-                  </text>
-                </>
-              );
-            })()}
-          </svg>
+          <ResponsiveContainer width="100%" height="100%">
+            <Sankey
+              data={sankeyData}
+              nodeWidth={15}
+              nodePadding={10}
+              margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
+            >
+              <Tooltip />
+            </Sankey>
+          </ResponsiveContainer>
         </div>
 
         {/* Flow Summary Table */}
