@@ -487,3 +487,43 @@ export {
   BOUND_BY_OPTIONS,
   validateMissionBinding,
 } from './mission-binding';
+
+// ─── Finding (Spec 34 — Drift & Rule Engine) ─────────────────────────────────
+export type {
+  Finding,
+  FindingStatus,
+  AffectedEntityType,
+  ProposedAction,
+  ProposedActionType,
+  FindingValidation,
+} from './finding';
+export {
+  FINDING_STATUSES,
+  AFFECTED_ENTITY_TYPES,
+  PROPOSED_ACTION_TYPES,
+  validateFinding,
+} from './finding';
+
+// ─── Risk Score (Spec 34 — Drift & Rule Engine) ──────────────────────────────
+export type {
+  RiskScore,
+  RiskFactor,
+  ScoredEntityType,
+  RiskScoreValidation,
+} from './risk-scoring-engine';
+export {
+  SCORED_ENTITY_TYPES,
+  validateRiskScore,
+} from './risk-scoring-engine';
+
+// ─── Blast Radius (Spec 34 — Drift & Rule Engine) ────────────────────────────
+export type {
+  BlastRadius,
+  AffectedEntity,
+  BlastAffectedEntityType,
+  BlastRadiusValidation,
+} from './blast-radius-engine';
+export {
+  BLAST_AFFECTED_ENTITY_TYPES,
+  validateBlastRadius,
+} from './blast-radius-engine';

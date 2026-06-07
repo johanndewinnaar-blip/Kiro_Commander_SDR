@@ -69,3 +69,8 @@ export { seedEntitlements } from './seed-entitlements';
 
 // ─── Mission Binding Fixtures (Spec 37 — Mission Objective Binding Model) ────
 export { seedMissionBindings } from './seed-mission-bindings';
+
+// ─── Drift & Rule Engine Fixtures (Spec 34) ──────────────────────────────────
+export { seedFindings } from './seed-findings';
+export { seedRiskScores } from './seed-risk-scores';
+export { seedBlastRadius } from './seed-blast-radius';

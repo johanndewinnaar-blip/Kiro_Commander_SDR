@@ -41,6 +41,17 @@ export interface RuleDefinition extends CommonFields {
   triggerCount: number;
   /** Description */
   description: string;
+  // ─── Version lifecycle (Spec 34 — promote/rollback governance) ─────────────
+  /** Prior version this version superseded (for rollback lineage) */
+  previousVersion?: string;
+  /** When this version becomes/became effective */
+  effectiveDate?: string;
+  /** Who approved this version for activation */
+  approvedBy?: string;
+  /** Reference to the blast-radius simulation that backed activation */
+  simulationRef?: string;
+  /** Version to roll back to if this version is reverted */
+  rollbackTarget?: string;
 }
 
 // ─── Model Management ────────────────────────────────────────────────────────

@@ -166,6 +166,8 @@
 | Connectors & Data Sources | /platform/connectors | BUILT | Unit 4, Unit 38 | UC-030 |
 | Data Quality | /platform/data-quality | BUILT | Tier 3 batch | UC-PLAT-005 |
 | Rule Engine | /platform/rules | BUILT | Tier 3 batch | UC-PLAT-001 |
+| Rule Validation | /platform/rules/validation | BUILT | Spec 34 | UC-168 |
+| Rule Simulation | /platform/rules/simulation | BUILT | Spec 34 | UC-171 |
 | Model Management | /platform/models | BUILT | Tier 3 batch | UC-PLAT-002 |
 | Commander AI | /commander-ai | BUILT | Unit 40 | UC-046–053 (AICAP) |
 | Automation | /platform/automation | BUILT | Tier 3 batch | UC-PLAT-003 |
@@ -368,6 +370,8 @@ These are registered in nav-groups.ts sidebar but have no page.tsx on disk:
 | Platform | Connectors & Data Sources | /platform/connectors |
 | Platform | Data Quality | /platform/data-quality |
 | Platform | Rule Engine | /platform/rules |
+| Platform | Rule Validation | /platform/rules/validation |
+| Platform | Rule Simulation | /platform/rules/simulation |
 | Platform | Model Management | /platform/models |
 | Platform | Commander AI | /commander-ai |
 | Platform | Automation | /platform/automation |

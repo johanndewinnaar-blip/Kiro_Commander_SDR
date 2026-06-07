@@ -287,3 +287,45 @@ export {
   evaluateBindingRules,
   suggestBindings,
 } from './mission-impact-engine';
+
+// Spec 34: Rule Validation Engine (pre-activation security envelope)
+export type {
+  RuleSpec,
+  RuleConditionSpec,
+  RuleValidationResult,
+  WhitelistedOperator,
+} from './rule-validation-engine';
+export {
+  OPERATOR_WHITELIST,
+  validateRuleSchema,
+  checkOperatorWhitelist,
+  rejectCodeExecution,
+  validateTenantScope,
+  validateRule,
+} from './rule-validation-engine';
+
+// Spec 34: Rule Execution Engine (active-rule evaluation → findings)
+export type {
+  EvaluableEntity,
+  TenantExecutionContext,
+  RuleMatcher,
+  RuleExecutionResult,
+} from './rule-execution-engine';
+export {
+  buildTenantContext,
+  guardActiveOnly,
+  emitFinding,
+  executeRule,
+  executeRules,
+} from './rule-execution-engine';
+
+// Spec 34: Suppression Engine (dedupe + suppression)
+export type {
+  DedupeResult,
+  SuppressionRule,
+} from './suppression-engine';
+export {
+  checkDedupeKey,
+  deduplicateFinding,
+  suppressByRule,
+} from './suppression-engine';

@@ -193,6 +193,8 @@ export const OPERATIONAL_NAV_GROUPS: NavGroup[] = [
       { label: 'Connectors & Data Sources', path: '/platform/connectors', status: 'SCAFFOLD' },
       { label: 'Data Quality', path: '/platform/data-quality', status: 'BUILD' },
       { label: 'Rule Engine', path: '/platform/rules', status: 'BUILD' },
+      { label: 'Rule Validation', path: '/platform/rules/validation', status: 'BUILD' },
+      { label: 'Rule Simulation', path: '/platform/rules/simulation', status: 'BUILD' },
       { label: 'Model Management', path: '/platform/models', status: 'BUILD' },
       { label: 'Commander AI', path: '/commander-ai', status: 'BUILD' },
       { label: 'Automation', path: '/platform/automation', status: 'BUILD' },

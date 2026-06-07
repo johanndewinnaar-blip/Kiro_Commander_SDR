@@ -2167,3 +2167,91 @@ Five entities forming the compliance/control-framework mapping layer:
 
 **Last Updated:** 2026-06-06 (Spec 37 + Spec 38 entities added — entries #54–56 in catalogue. Entitlement Manifest + Mission + Mission Binding. All contract + fixture AVAILABLE. DB schemas ABSENT. Entity count 53→56. Fixture count 41→44.)  
 **Snapshot Commit:** (to be recorded after commit)
+
+### 57. Finding
+
+**Source:** Spec #34 Drift and Rule Engine  
+**Coverage:** Full (Spec #34 requirements read)  
+**Contract:** `packages/contracts/src/entities/finding.ts`  
+**DB Schema:** ❌ NOT FOUND  
+**Fixture:** `packages/contracts/src/fixtures/seed-findings.ts` ✅ (5 records)  
+**Status:** AVAILABLE (fixture exists)  
+**Domain:** D-04 (Drift & Rule Engine)  
+**Use Cases:** Spec 34, UC-169, UC-170, UC-173
+
+| Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
+|-------|------|----------------------|--------------|---------------------|-------|
+| `id` | string | seeded | AVAILABLE | — | CommonFields |
+| `entityType` | `'finding'` | seeded | AVAILABLE | — | Discriminator |
+| `findingId` | string | seeded | AVAILABLE | — | Unique finding id |
+| `ruleRef` | string | seeded | AVAILABLE | — | Emitting rule (RuleDefinition) |
+| `tenantId` | string | seeded | AVAILABLE | — | Tenant scope |
+| `severity` | number (1–5) | seeded | AVAILABLE | — | Validated range |
+| `confidence` | number (0–100) | seeded | AVAILABLE | — | Validated range |
+| `dedupeKey` | string | derived | AVAILABLE | — | Collapses duplicate active findings |
+| `affectedEntityType` | enum | seeded | AVAILABLE | — | asset/identity/control/… |
+| `affectedEntityRef` | string | seeded | AVAILABLE | — | Canonical reference |
+| `proposedActions` | ProposedAction[] | seeded | AVAILABLE | — | Recommendations only (never auto-executed) |
+| `status` | enum | seeded | AVAILABLE | — | new/acknowledged/suppressed/resolved/false_positive (system-owned) |
+| `detectedAt` | string | seeded | AVAILABLE | — | Detection time |
+| `resolvedAt?` | string | seeded | AVAILABLE | — | Optional |
+| `suppressionReason?` | string | seeded | AVAILABLE | — | Required when suppressed |
+
+**DB Schema Reconciliation:** ⚠️ **DIVERGENT — Contract + fixture exist, DB schema ABSENT.**
+
+---
+
+### 58. Risk Score
+
+**Source:** Spec #34 Drift and Rule Engine  
+**Coverage:** Full (Spec #34 requirements read)  
+**Contract:** `packages/contracts/src/entities/risk-scoring-engine.ts`  
+**DB Schema:** ❌ NOT FOUND  
+**Fixture:** `packages/contracts/src/fixtures/seed-risk-scores.ts` ✅ (4 records)  
+**Status:** AVAILABLE (fixture exists)  
+**Domain:** D-04 (Drift & Rule Engine)  
+**Use Cases:** Spec 34, UC-169, UC-172
+
+| Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
+|-------|------|----------------------|--------------|---------------------|-------|
+| `id` | string | seeded | AVAILABLE | — | CommonFields |
+| `entityType` | `'risk-score'` | seeded | AVAILABLE | — | Discriminator |
+| `scoringId` | string | seeded | AVAILABLE | — | Unique scoring id |
+| `scoredEntityType` | enum | seeded | AVAILABLE | — | Spec field `entityType` renamed to avoid discriminant clash |
+| `scoredEntityRef` | string | seeded | AVAILABLE | — | Spec field `entityRef` renamed for the same reason |
+| `riskScore` | number (0–100) | seeded | AVAILABLE | — | Validated range |
+| `factors` | RiskFactor[] | seeded | AVAILABLE | — | Contributions sum ≤ 100 |
+| `computedAt` | string | seeded | AVAILABLE | — | Computation time |
+| `model` | string | seeded | AVAILABLE | — | Model id |
+| `version` | string | seeded | AVAILABLE | — | Model version |
+
+**DB Schema Reconciliation:** ⚠️ **DIVERGENT — Contract + fixture exist, DB schema ABSENT.**
+
+---
+
+### 59. Blast Radius
+
+**Source:** Spec #34 Drift and Rule Engine  
+**Coverage:** Full (Spec #34 requirements read)  
+**Contract:** `packages/contracts/src/entities/blast-radius-engine.ts`  
+**DB Schema:** ❌ NOT FOUND  
+**Fixture:** `packages/contracts/src/fixtures/seed-blast-radius.ts` ✅ (3 records)  
+**Status:** AVAILABLE (fixture exists)  
+**Domain:** D-04 (Drift & Rule Engine)  
+**Use Cases:** Spec 34, UC-171
+
+| Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
+|-------|------|----------------------|--------------|---------------------|-------|
+| `id` | string | seeded | AVAILABLE | — | CommonFields |
+| `entityType` | `'blast-radius'` | seeded | AVAILABLE | — | Discriminator |
+| `computationId` | string | seeded | AVAILABLE | — | Unique computation id |
+| `originEntityRef` | string | seeded | AVAILABLE | — | Origin reference |
+| `originEntityType` | enum | seeded | AVAILABLE | — | asset/identity/rule/… |
+| `affectedEntities` | AffectedEntity[] | seeded | AVAILABLE | — | Reachable impact set |
+| `totalImpactScore` | number (0–100) | seeded | AVAILABLE | — | Validated range |
+| `depth` | number | seeded | AVAILABLE | — | Max traversal depth |
+| `computedAt` | string | seeded | AVAILABLE | — | Computation time |
+
+**DB Schema Reconciliation:** ⚠️ **DIVERGENT — Contract + fixture exist, DB schema ABSENT.**
+
+---

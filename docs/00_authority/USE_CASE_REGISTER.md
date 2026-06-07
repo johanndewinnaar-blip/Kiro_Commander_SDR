@@ -220,3 +220,12 @@
 | UC-164 | Calculate mission impact from risk objects | System | — | — | mission-impact-engine.ts, mission-binding.ts, risk-object.ts | SYSTEM | — | Spec 37 | NOT BUILT (engine exists, no direct UI) |
 | UC-165 | View mission impact panel on case detail | All authenticated | operational | /cases/:id | mission-impact-engine.ts, mission-binding.ts | SYSTEM | — | Spec 37 | NOT BUILT (engine exists, case detail deferred) |
 | UC-166 | Approve Tier 0/1 mission changes | CISO | operational | /settings/missions | mission.ts | SYSTEM | — | Spec 37 | SCAFFOLD |
+
+| UC-167 | Author drift/detection rule (YAML format) | SOM, Security Architect | platform | /platform/rules | rule-validation-engine.ts, platform-management.ts (RuleDefinition), seed-platform | SYSTEM | — | Spec 34 | NOT BUILT (validation engine + rule registry exist; YAML authoring form deferred) |
+| UC-168 | Validate rule before activation | System | platform | /platform/rules/validation | rule-validation-engine.ts | SYSTEM | — | Spec 34 | BUILT |
+| UC-169 | Execute active rules against tenant context | System | — | — | rule-execution-engine.ts, finding.ts, seed-findings | SYSTEM | — | Spec 34 | BUILT (engine) |
+| UC-170 | Suppress/deduplicate findings | System | — | — | suppression-engine.ts, finding.ts, seed-findings | SYSTEM | — | Spec 34 | BUILT (engine) |
+| UC-171 | Simulate rule change (blast radius) | SOM | platform | /platform/rules/simulation | blast-radius-engine.ts, seed-blast-radius | SYSTEM | — | Spec 34 | BUILT |
+| UC-172 | View rule health telemetry | SOM | platform | /platform/rules | risk-scoring-engine.ts, seed-risk-scores, platform-management.ts | SYSTEM | — | Spec 34 | PARTIAL (risk-scoring entity + fixtures exist; dedicated telemetry view deferred) |
+| UC-173 | Manage finding lifecycle | Analyst | platform | /platform/rules | finding.ts, seed-findings, suppression-engine.ts | SYSTEM | — | Spec 34 | NOT BUILT (finding entity + lifecycle + suppression exist; finding-management UI deferred) |
+| UC-174 | Promote/rollback rule versions | SOM | platform | /platform/rules | platform-management.ts (RuleDefinition version fields) | SYSTEM | — | Spec 34 | NOT BUILT (entity version lifecycle fields exist; promote/rollback UI deferred) |
