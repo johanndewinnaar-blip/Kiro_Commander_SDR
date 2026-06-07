@@ -49,3 +49,22 @@ Before any knowledge artefact is written:
 ## Authority precedence (unchanged)
 
 This workspace sits beneath the programme authority order in `AGENTS.md`. The baseline v2.6.2 archive is the top source. This rule does not override that order; it operationalises it for knowledge work.
+
+
+
+---
+
+## Programme-Wide Application (extension — 2026-06-07)
+
+This sourcing rule applies to ALL governance and authority documents across the repository, not just the knowledge workspace. Specifically:
+
+- `docs/00_authority/` — No document may cite `.kiro/specs/` as source authority
+- `docs/knowledge/` — Already governed (above)
+- `.kiro/steering/` — No steering file may cite `.kiro/specs/` as source authority
+- `DECISIONS.md` — Decisions must cite baseline spec #N, not translation-layer folders
+
+Baseline source files in `docs/99_source_archive/baseline_v2_6_2/` are the ONLY valid source citations for any governance, authority, or build-planning document.
+
+The pre-commit hook CHECK 1 enforces this mechanically for knowledge/authority/build-pack files.
+
+**Rationale:** The knowledge workspace SOURCING_RULE was originally scoped only to `docs/knowledge/`. Gap G-09 in GOVERNANCE_MAP.md identified that nothing prevented other artifacts from citing the translation layer. This extension closes that gap programme-wide.

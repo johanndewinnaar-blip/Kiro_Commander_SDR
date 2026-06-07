@@ -266,6 +266,51 @@ if [[ -n "$new_pages_all" ]]; then
 fi
 
 # ----------------------------------------------------------------
+# CHECK 8 — AICAP_REGISTER co-staging for pages with AI-PLACEMENT.
+# ----------------------------------------------------------------
+
+new_pages_ai=$(git diff --cached --name-only --diff-filter=A | grep -E '^apps/web/src/app/.*page\.tsx$' || true)
+if [[ -n "$new_pages_ai" ]]; then
+    while IFS= read -r page; do
+        [[ -z "$page" ]] && continue
+        blob=$(git show ":$page" 2>/dev/null) || continue
+        if printf '%s' "$blob" | grep -q 'AI-PLACEMENT'; then
+            if ! echo "$staged_files" | grep -q 'docs/00_authority/AICAP_REGISTER.md'; then
+                note "AICAP" "$page" \
+                    "Page with AI-PLACEMENT marker but AICAP_REGISTER.md not staged. Update register."
+            fi
+        fi
+    done <<< "$new_pages_ai"
+fi
+
+# ----------------------------------------------------------------
+# CHECK 9 — SYSTEM_KNOWLEDGE_GRAPH co-staging for new entities.
+# ----------------------------------------------------------------
+
+new_ents_graph=$(git diff --cached --name-only --diff-filter=A | grep -E '^packages/contracts/src/entities/.*\.ts$' || true)
+if [[ -n "$new_ents_graph" ]]; then
+    if ! echo "$staged_files" | grep -q 'docs/knowledge/SYSTEM_KNOWLEDGE_GRAPH.md'; then
+        note "KNOWLEDGE-GRAPH" "new entity" \
+            "New entity staged — verify SYSTEM_KNOWLEDGE_GRAPH.md is current. Update if new domain introduced."
+    fi
+fi
+
+# ----------------------------------------------------------------
+# CHECK 10 — DATA_DICTIONARY sync on modified entity files.
+# ----------------------------------------------------------------
+
+modified_entities=$(git diff --cached --name-only --diff-filter=M | grep -E '^packages/contracts/src/entities/.*\.ts$' || true)
+if [[ -n "$modified_entities" ]]; then
+    if ! echo "$staged_files" | grep -q 'docs/knowledge/DATA_DICTIONARY.md'; then
+        while IFS= read -r f; do
+            [[ -z "$f" ]] && continue
+            note "DICT-SYNC" "$f" \
+                "Entity modified but DATA_DICTIONARY.md not staged. Verify field list is still accurate."
+        done <<< "$modified_entities"
+    fi
+fi
+
+# ----------------------------------------------------------------
 # Governance runner (ARCH-008 integrity backstop).
 # ----------------------------------------------------------------
 
