@@ -12,10 +12,10 @@
 
 | Status | Count |
 |--------|-------|
-| Open | 0 |
+| Open | 4 |
 | Scheduled | 4 |
 | Resolved | 0 |
-| **Total** | **4** |
+| **Total** | **8** |
 
 ---
 
@@ -68,6 +68,54 @@
 **Status:** Scheduled  
 **Date Logged:** 2026-05-30  
 **Last Checked:** 2026-05-30  
+
+### DEBT-005: New Entities Missing from SYSTEM_KNOWLEDGE_GRAPH §19
+
+**File:** `docs/knowledge/SYSTEM_KNOWLEDGE_GRAPH.md`  
+**Violated Assertion:** Chain Maintenance Rule — SYSTEM_KNOWLEDGE_GRAPH.md must be updated in the SAME commit when a new entity introduces a domain or cross-domain relationship  
+**Debt Type:** Quick  
+**Description:** Five entities created during placeholder debt resolution (`governed-compose.ts`, `notification.ts`, `case-follow.ts`, `cloud-security-posture.ts`, `case-transition-audit.ts`) are not documented in SYSTEM_KNOWLEDGE_GRAPH.md §19. They serve existing domains (Case Management, Communication, SOM/Cloud Security) but lack knowledge graph entries.  
+**Scope of Fix:** Add a §19.11 "Placeholder Debt Resolution Entities" subsection documenting all 5 entities with their architectural layers, governing specs, and domain register mappings.  
+**Scheduled Resolution:** Next governance documentation pass  
+**Status:** Open  
+**Date Logged:** 2026-06-07  
+**Last Checked:** 2026-06-07  
+
+### DEBT-006: New Entities Missing from RELATIONSHIP_MAP
+
+**File:** `docs/knowledge/RELATIONSHIP_MAP.md`  
+**Violated Assertion:** Chain Maintenance Rule — RELATIONSHIP_MAP.md must be updated in the SAME commit when a new entity creates a cross-entity relationship not already documented  
+**Debt Type:** Quick  
+**Description:** Five entities (`governed-compose.ts`, `notification.ts`, `case-follow.ts`, `cloud-security-posture.ts`, `case-transition-audit.ts`) have cross-entity relationships (e.g., governed-compose → case/email-communication, notification → case/user, case-follow → case/user, case-transition-audit → case/sub-action) that are not documented in RELATIONSHIP_MAP.md.  
+**Scope of Fix:** Add relationship entries for each of the 5 entities documenting their inbound/outbound entity relationships and which pages surface them.  
+**Scheduled Resolution:** Next governance documentation pass  
+**Status:** Open  
+**Date Logged:** 2026-06-07  
+**Last Checked:** 2026-06-07  
+
+### DEBT-007: New Entity Pages Missing AICAP Entries
+
+**File:** `docs/00_authority/AICAP_REGISTER.md`  
+**Violated Assertion:** Chain Maintenance Rule — AICAP_REGISTER.md must be updated in the SAME commit when a new page.tsx includes an AI-PLACEMENT marker  
+**Debt Type:** Quick  
+**Description:** Pages that render the 5 new debt-resolution entities (cases/[id], cases/my, som/cloud-security) were updated without corresponding AICAP_REGISTER.md entries for any AI-PLACEMENT markers in those sections.  
+**Scope of Fix:** Audit the 3 pages for AI-PLACEMENT markers referencing the 5 new entities. Add AICAP entries for any found, or confirm none exist (in which case this debt can be closed as N/A).  
+**Scheduled Resolution:** Next governance documentation pass  
+**Status:** Open  
+**Date Logged:** 2026-06-07  
+**Last Checked:** 2026-06-07  
+
+### DEBT-008: GOVERNANCE_KNOWLEDGE_SOURCE §7 Counts Conservative
+
+**File:** `docs/knowledge/GOVERNANCE_KNOWLEDGE_SOURCE.md`  
+**Violated Assertion:** ARCH-011 (Governance Knowledge Source Staleness)  
+**Debt Type:** Quick  
+**Description:** Section 7 states Entities: 82+, Fixtures: 77+. Actual counts are Entities: 87, Fixtures: 82. While within 10% tolerance (6% and 6.5% respectively) and the "+" suffix makes them technically not wrong, the stated floor values should be updated to reflect current state for accuracy.  
+**Scope of Fix:** Update GOVERNANCE_KNOWLEDGE_SOURCE.md §7.1 counts to: Pages: 110+, Entities: 87+, Engines: 38+, Fixtures: 82+.  
+**Scheduled Resolution:** Next governance documentation pass  
+**Status:** Open  
+**Date Logged:** 2026-06-07  
+**Last Checked:** 2026-06-07  
 
 ---
 
@@ -155,5 +203,5 @@ Manual entry addition is not permitted. All debt must be detected and classified
 
 ---
 
-**Last Updated:** 2026-05-30  
+**Last Updated:** 2026-06-07  
 **Next Pipeline Run:** TBD
