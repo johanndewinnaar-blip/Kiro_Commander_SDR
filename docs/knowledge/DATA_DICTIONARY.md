@@ -2746,3 +2746,80 @@ Five entities forming the compliance/control-framework mapping layer:
 **Status:** AVAILABLE
 
 ---
+
+### 85. Coverage
+
+**Source:** Master Technical Specification §Coverage Management, Spec #57 Security Command and Control Doctrine  
+**Contract:** `packages/contracts/src/entities/coverage.ts`  
+**Interface:** `Coverage`  
+**Status:** AVAILABLE  
+**Owning Domain:** D-12 Control Coverage (DOMAIN_REGISTER.md)  
+**Architectural Layer:** Layer 3 (Domain Logic)  
+**Use Cases:** UC-038 (View control framework compliance)  
+**Relationships:** Asset (coverage gaps reference assets by assetRef)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| entityType | `'coverage'` | Discriminator |
+| coverageType | `CoverageType` | scanner, edr, siem, identity_provider, cloud_posture, vulnerability_scanner, network_monitor |
+| domain | `CoverageDomain` | endpoint, network, cloud, identity, application |
+| totalAssets | `number` | Total assets in scope |
+| coveredAssets | `number` | Assets with active coverage |
+| coveragePercent | `number` | Coverage percentage (0-100) |
+| gaps | `CoverageGapEntry[]` | Identified coverage gaps (assetRef, reason, staleDays?) |
+| lastAssessedAt | `string` | ISO timestamp of last assessment |
+| trend | `CoverageTrend` | improving, stable, degrading |
+
+---
+
+### 86. Customer
+
+**Source:** Master Technical Specification §Commercial Control Plane  
+**Contract:** `packages/contracts/src/entities/customer.ts`  
+**Interface:** `Customer`  
+**Status:** AVAILABLE  
+**Owning Domain:** D-34 Commercial Control (DOMAIN_REGISTER.md)  
+**Architectural Layer:** Layer 3 (Domain Logic) — Control Plane boundary  
+**Use Cases:** UC-019 (View control plane overview)  
+**Relationships:** Tenant Config (customer owns one or more tenants), Entitlement Manifest (customer holds entitlements), Licence (customer holds licences)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| entityType | `'customer'` | Discriminator |
+| name | `string` | Customer organisation name |
+| status | `CustomerStatus` | active, suspended, churned, onboarding |
+| tier | `CustomerTier` | enterprise, professional, starter, trial |
+| primaryContact | `string` | Primary contact reference |
+| tenantCount | `number` | Number of tenants under this customer |
+| contractStartDate | `string` | ISO date contract begins |
+| contractEndDate | `string` | ISO date contract ends |
+| region | `string` | Geographic region |
+| industry | `string` | Industry vertical |
+
+---
+
+### 87. Deployment
+
+**Source:** Master Technical Specification §Commercial Control Plane  
+**Contract:** `packages/contracts/src/entities/deployment.ts`  
+**Interface:** `Deployment`  
+**Status:** AVAILABLE  
+**Owning Domain:** D-34 Commercial Control (DOMAIN_REGISTER.md)  
+**Architectural Layer:** Layer 3 (Domain Logic) — Control Plane boundary  
+**Use Cases:** UC-019 (View control plane overview)  
+**Relationships:** Customer (deployments scoped to tenant), Tenant Config (deployment targets a tenant environment)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| entityType | `'deployment'` | Discriminator |
+| tenantId | `string` | Target tenant identifier |
+| environment | `DeploymentEnvironment` | production, staging, canary |
+| version | `string` | Release version identifier |
+| previousVersion | `string` | Prior version (for rollback) |
+| status | `DeploymentStatus` | deployed, rolling_out, scheduled, rolled_back, failed |
+| deployedAt | `string` | ISO timestamp of deployment |
+| deployedBy | `string` | Operator who deployed |
+| releaseNotes | `string` | Release notes content |
+| healthCheck | `'passing' \| 'degraded' \| 'failing' \| 'pending'` | Post-deploy health status |
+
+---

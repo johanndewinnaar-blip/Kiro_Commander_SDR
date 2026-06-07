@@ -269,7 +269,7 @@ Links:
 - Fixtures: 81 (packages/contracts/src/fixtures/*.ts, excl index.ts)
 - Use cases: 229 (UC-001–UC-212 + UC-PULSE-001–009 + UC-REPORT-001–003 + UC-PLAT-001–005)
 - Domains: 46
-- DATA_DICTIONARY entries: 77
+- DATA_DICTIONARY entries: 80
 - AICAP markers: 77 (across 55 pages)
 - Conformance assertions: 51
 - Pre-commit checks: 10
