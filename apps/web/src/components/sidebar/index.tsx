@@ -54,7 +54,7 @@ const SIDEBAR_STYLES = `
     padding: 0 1.25rem;
     height: 40px;
     font-size: 0.8125rem;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--tblr-nav-link-color) !important;
     background: transparent !important;
     border: none;
@@ -66,6 +66,7 @@ const SIDEBAR_STYLES = `
     text-decoration: none;
     overflow: hidden;
     position: relative;
+    transition: background 120ms ease, color 120ms ease;
   }
 
   .navbar-vertical.commander-nav .nav-link:hover {
@@ -109,11 +110,12 @@ const SIDEBAR_STYLES = `
   .navbar-vertical.commander-nav .nav-item-nested .nav-link {
     height: 34px;
     font-size: 0.75rem;
-    font-weight: 500;
+    font-weight: 400;
     padding: 0 1.25rem 0 3.5rem;
     color: var(--tblr-secondary-color) !important;
     background: transparent !important;
     position: relative;
+    transition: background 120ms ease, color 120ms ease;
   }
 
   /* Tree rail — stronger, wider vertical line */
@@ -175,7 +177,7 @@ const SIDEBAR_STYLES = `
     white-space: nowrap;
   }
 
-  /* ── Build status badge — compact, before chevron, no overlap ── */
+  /* ── Build status badge — compact, before chevron, optimized positioning ── */
   .navbar-vertical.commander-nav .nav-badge {
     flex-shrink: 0;
     font-size: 0.5rem;
@@ -184,21 +186,24 @@ const SIDEBAR_STYLES = `
     text-transform: uppercase;
     color: var(--tblr-secondary-color);
     border: 1px solid var(--tblr-border-color);
-    padding: 0 3px;
+    padding: 0 4px;
     line-height: 1.5;
     background: transparent;
     border-radius: 0;
-    margin-right: 0.25rem;
+    margin-right: 0.375rem;
+    margin-left: auto;
   }
 
-  /* ── Chevron — far right, small, subtle ── */
+  /* ── Chevron — optimized alignment and smooth transitions ── */
   .navbar-vertical.commander-nav .nav-link-toggle {
     flex-shrink: 0;
     display: flex;
     align-items: center;
-    margin-left: auto;
-    opacity: 0.30;
-    transition: transform 200ms ease, opacity 200ms ease;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    opacity: 0.4;
+    transition: transform 180ms ease-out, opacity 150ms ease;
   }
 
   .navbar-vertical.commander-nav .nav-link-toggle svg {
@@ -208,7 +213,7 @@ const SIDEBAR_STYLES = `
 
   .navbar-vertical.commander-nav .nav-link:hover .nav-link-toggle,
   .navbar-vertical.commander-nav .nav-link.active .nav-link-toggle {
-    opacity: 0.60;
+    opacity: 0.7;
   }
 
   /* ── Footer border ── */
@@ -273,7 +278,7 @@ const SIDEBAR_STYLES = `
     height: 20px !important;
   }
 
-  /* ── Collapsed icon rail ── */
+  /* ── Collapsed icon rail — enhanced hover states ── */
   .navbar-vertical.commander-nav .nav-icon-rail {
     width: 100%;
     height: 40px;
@@ -284,16 +289,26 @@ const SIDEBAR_STYLES = `
     cursor: pointer;
     position: relative;
     transition: background 150ms ease, color 150ms ease;
+    border-radius: 0;
   }
 
   .navbar-vertical.commander-nav .nav-icon-rail:hover {
     color: var(--tblr-light);
-    background: rgba(255,255,255,0.07);
+    background: rgba(255,255,255,0.06);
+  }
+
+  .navbar-vertical.commander-nav .nav-icon-rail:active {
+    background: rgba(255,255,255,0.08);
   }
 
   .navbar-vertical.commander-nav .nav-icon-rail svg {
     width: 16px !important;
     height: 16px !important;
+    transition: transform 120ms ease;
+  }
+
+  .navbar-vertical.commander-nav .nav-icon-rail:hover svg {
+    transform: scale(1.05);
   }
 
   /* ── CSS tooltip on collapsed rail items ── */
@@ -320,7 +335,7 @@ const SIDEBAR_STYLES = `
     opacity: 1;
   }
 
-  /* ── Collapsed footer button ── */
+  /* ── Collapsed footer button — enhanced interactions ── */
   .navbar-vertical.commander-nav .nav-link-collapse {
     width: 100%;
     height: 40px;
@@ -331,17 +346,28 @@ const SIDEBAR_STYLES = `
     border: none;
     cursor: pointer;
     color: var(--tblr-secondary-color);
-    transition: color 150ms ease, background 150ms ease;
+    transition: color 150ms ease, background 150ms ease, transform 120ms ease;
+    border-radius: 0;
   }
 
   .navbar-vertical.commander-nav .nav-link-collapse:hover {
     color: var(--tblr-nav-link-color);
-    background: rgba(255,255,255,0.06);
+    background: rgba(255,255,255,0.05);
+    transform: translateY(-1px);
+  }
+
+  .navbar-vertical.commander-nav .nav-link-collapse:active {
+    transform: translateY(0);
   }
 
   .navbar-vertical.commander-nav .nav-link-collapse svg {
     width: 14px !important;
     height: 14px !important;
+    transition: transform 150ms ease;
+  }
+
+  .navbar-vertical.commander-nav .nav-link-collapse:hover svg {
+    transform: scale(1.1);
   }
 `;
 
