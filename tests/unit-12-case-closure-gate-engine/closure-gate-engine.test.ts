@@ -157,7 +157,7 @@ describe('evaluateGate — each gate evaluates correctly', () => {
       it('returns failed when input condition is false', () => {
         const input = makeAllPassingInput();
         const field = gateToInputField[gate];
-        (input as Record<string, boolean>)[field] = false;
+        (input as unknown as Record<string, boolean>)[field] = false;
         const result = evaluateGate(gate, input, BASE_TIME);
         expect(result.status).toBe('failed');
         expect(result.gate).toBe(gate);

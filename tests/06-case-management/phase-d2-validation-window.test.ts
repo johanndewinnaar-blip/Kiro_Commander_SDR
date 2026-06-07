@@ -160,7 +160,7 @@ describe('evaluateValidationWindow — strategy consumption proof', () => {
       tenant: { tenantId: 'test-tenant', tenantName: 'Test Tenant' },
       createdAt: '2026-01-01T00:00:00.000Z',
       updatedAt: '2026-01-01T00:00:00.000Z',
-      source: { connectorId: 'test-conn', importRunId: 'test-run', rawPayloadRef: 'test-ref', sourceSystem: 'test', sourceTimestamp: '2026-01-01T00:00:00.000Z' },
+      source: { connectorId: 'test-conn', importRunId: 'test-run', sourceSystem: 'test', sourceTimestamp: '2026-01-01T00:00:00.000Z' },
       surfaceType: 'validation-window',
       policyVersion: '2.0.0',
       status: 'active',

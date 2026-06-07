@@ -156,7 +156,7 @@ describe('evaluateTrigger — each trigger evaluates correctly', () => {
       it('returns fired=true when input condition is true', () => {
         const input = makeNoFiringInput();
         const field = triggerToInputField[trigger];
-        (input as Record<string, boolean>)[field] = true;
+        (input as unknown as Record<string, boolean>)[field] = true;
         const result = evaluateTrigger(trigger, input, BASE_TIME);
         expect(result.fired).toBe(true);
         expect(result.trigger).toBe(trigger);

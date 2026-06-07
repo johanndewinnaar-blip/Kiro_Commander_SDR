@@ -225,7 +225,7 @@ export type {
   PostureSignals,
   EntityReference,
   PostureClassificationResult,
-  TransitionResult,
+  PostureTransitionResult,
   AccountabilityReportEntry,
   AccountabilityReport,
 } from './posture-accountability-engine';

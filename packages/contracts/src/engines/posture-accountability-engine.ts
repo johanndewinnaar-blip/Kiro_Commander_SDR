@@ -47,13 +47,16 @@ export interface PostureClassificationResult {
   confidence: number; // 0-100
 }
 
-export interface TransitionResult {
+export interface PostureTransitionResult {
   shouldTransition: boolean;
   from: PostureAccountabilityClassification;
   to: PostureAccountabilityClassification;
   reason: string;
   triggeringEvidence: string[];
 }
+
+/** @deprecated Use PostureTransitionResult — kept for downstream compat */
+export type TransitionResult = PostureTransitionResult;
 
 export interface AccountabilityReportEntry {
   entityRef: string;
@@ -159,7 +162,7 @@ export function classifyPostureState(
 export function evaluateTransition(
   currentClassification: PostureAccountabilityClassification,
   signals: PostureSignals,
-): TransitionResult {
+): PostureTransitionResult {
   const newClassification = classifyPostureState(
     { entityId: 'eval', entityType: 'asset' },
     signals,
