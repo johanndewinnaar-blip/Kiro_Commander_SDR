@@ -299,6 +299,21 @@
 **Debt Type:** Verification-gap violations are classified as Quick Debt (the fix is adding the verification line with evidence — a documentation operation, not a code change).
 **Enforcement:** Wired into `.kiro/testing/core-testing-pipeline.md` (Stage 2 conformance checks) and auto-run via the `Post-Task Review` hook (postTaskExecution).
 
+### ARCH-011: Governance Knowledge Source Staleness
+
+**Assertion:** `GOVERNANCE_KNOWLEDGE_SOURCE.md` Section 7 (Build Queue & Status) counts must not drift >10% from actual file counts on disk.
+
+**Check:** On every `run core testing all` invocation:
+1. Count `page.tsx` files in `apps/web/src/app/` → compare to Section 7 "Pages" number
+2. Count `.ts` files in `packages/contracts/src/entities/` → compare to "Entities" number
+3. Count `.ts` files in `packages/contracts/src/engines/` → compare to "Engines" number
+4. Count `.ts` files in `packages/contracts/src/fixtures/` → compare to "Fixtures" number
+5. If any count drifts >10% from stated number → FLAG "GOVERNANCE_KNOWLEDGE_SOURCE.md Section 7 is stale — update counts"
+
+**Source:** `docs/knowledge/GOVERNANCE_KNOWLEDGE_SOURCE.md` §7; `.kiro/steering/traceability-chain.md` §Chain Maintenance Rules
+**Debt Type:** Quick Debt (fix is updating 4-5 numbers in the document)
+**Enforcement:** Wired into `core-testing-pipeline.md` (Stage 2 conformance checks). Runs only on full sweep (`run core testing all`), not on per-unit checks.
+
 ---
 
 ## Decision Record Assertions
