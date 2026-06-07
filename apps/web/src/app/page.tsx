@@ -290,6 +290,8 @@ export default function CommandCentrePage() {
                           />
                           <span style={{ fontSize: primitiveTypeScale.body }}>{c.name}</span>
                         </td>
+                        <td>{c.classes.map((cls) => <span key={cls} className="badge bg-blue-lt me-1" style={{ fontSize: primitiveTypeScale.micro }}>{cls}</span>)}</td>
+                        <td className="text-muted" style={{ fontSize: primitiveTypeScale.caption }}>{c.tier}</td>
                         <td className="text-end text-muted" style={{ fontSize: primitiveTypeScale.caption }}>{c.state}</td>
                       </tr>
                     ))}

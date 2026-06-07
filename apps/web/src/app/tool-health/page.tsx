@@ -31,11 +31,14 @@ export default function ToolHealthPage() {
         <div className="card-body p-0">
           <div className="table-responsive">
             <table className="table table-vcenter card-table">
-              <thead><tr><th>Connector</th><th>State</th><th>Last Run</th><th>Status</th></tr></thead>
+              <thead><tr><th>Connector</th><th>Classes</th><th>Source Type</th><th>Tier</th><th>State</th><th>Last Run</th><th>Status</th></tr></thead>
               <tbody>
                 {connectors.map((c) => (
                   <tr key={c.id}>
                     <td style={{ fontWeight: 600, fontSize: primitiveTypeScale.body }}>{c.name}</td>
+                    <td>{c.classes.map((cls) => <span key={cls} className="badge bg-blue-lt me-1">{cls}</span>)}</td>
+                    <td className="text-muted" style={{ fontSize: primitiveTypeScale.caption }}>{c.sourceType}</td>
+                    <td><span className="badge bg-secondary">{c.tier}</span></td>
                     <td><span className={`badge ${c.state === 'active' ? 'bg-green-lt' : c.state === 'error' ? 'bg-red-lt' : 'bg-secondary'}`}>{c.state}</span></td>
                     <td className="text-muted" style={{ fontSize: primitiveTypeScale.caption }}>{c.lastRunAt ? new Date(c.lastRunAt).toLocaleString() : 'Never'}</td>
                     <td><span className={`badge ${c.lastRunStatus === 'success' ? 'bg-green-lt' : c.lastRunStatus === 'failed' ? 'bg-red-lt' : 'bg-secondary'}`}>{c.lastRunStatus}</span></td>

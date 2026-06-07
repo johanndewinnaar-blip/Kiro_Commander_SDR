@@ -73,11 +73,11 @@ export default function GovernanceDecisionsPage() {
               </div>
               {explanation.factors.length > 0 && (
                 <div style={{ marginTop: primitiveSpacing[2], borderTop: `1px solid ${tokens.border.subtle}`, paddingTop: primitiveSpacing[2] }}>
-                  <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Factors</span>
+                  <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Factors & Inputs</span>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: primitiveSpacing[2], marginTop: primitiveSpacing[1] }}>
                     {explanation.factors.map((f) => (
                       <div key={f.name} style={{ fontSize: primitiveTypeScale.micro, fontFamily: primitiveFonts.mono, color: tokens.text.secondary }}>
-                        {f.name}={f.value} ({f.contribution})
+                        {f.name}={f.value} <span style={{ color: tokens.text.muted }}>({f.contribution})</span>
                       </div>
                     ))}
                   </div>

@@ -29,6 +29,7 @@ export default function ControlPlaneEntitlementsPage() {
           <thead>
             <tr style={{ borderBottom: `1px solid ${colors.controlPlane.line}` }}>
               <th style={{ padding: '10px 12px', textAlign: 'left', color: colors.controlPlane.muted, textTransform: 'uppercase', fontSize: typography.fontSize.xs, letterSpacing: typography.letterSpacing.eyebrow }}>Tenant</th>
+              <th style={{ padding: '10px 12px', textAlign: 'left', color: colors.controlPlane.muted, textTransform: 'uppercase', fontSize: typography.fontSize.xs, letterSpacing: typography.letterSpacing.eyebrow }}>Manifest ID</th>
               <th style={{ padding: '10px 12px', textAlign: 'left', color: colors.controlPlane.muted, textTransform: 'uppercase', fontSize: typography.fontSize.xs, letterSpacing: typography.letterSpacing.eyebrow }}>Status</th>
               <th style={{ padding: '10px 12px', textAlign: 'left', color: colors.controlPlane.muted, textTransform: 'uppercase', fontSize: typography.fontSize.xs, letterSpacing: typography.letterSpacing.eyebrow }}>Tier</th>
               <th style={{ padding: '10px 12px', textAlign: 'center', color: colors.controlPlane.muted, textTransform: 'uppercase', fontSize: typography.fontSize.xs, letterSpacing: typography.letterSpacing.eyebrow }}>Connectors</th>
@@ -43,6 +44,7 @@ export default function ControlPlaneEntitlementsPage() {
             {seedEntitlements.map((manifest) => (
               <tr key={manifest.id} style={{ borderBottom: `1px solid ${colors.controlPlane.line}` }}>
                 <td style={{ padding: '10px 12px', color: colors.controlPlane.text, fontWeight: 600 }}>{manifest.tenantId}</td>
+                <td style={{ padding: '10px 12px', color: colors.controlPlane.muted, fontSize: typography.fontSize.xs, fontFamily: 'monospace' }}>{manifest.manifestId}</td>
                 <td style={{ padding: '10px 12px' }}>
                   <span style={{
                     padding: '2px 8px',

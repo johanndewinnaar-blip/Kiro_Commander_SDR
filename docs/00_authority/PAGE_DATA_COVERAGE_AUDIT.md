@@ -383,8 +383,8 @@ The following pages exist as registered routes with scaffold content (placeholde
 
 | Metric | Value |
 |--------|-------|
-| BUILT pages with FULL field coverage | 32/38 = **84%** |
-| BUILT pages with gaps | 6/38 = **16%** |
+| BUILT pages with FULL field coverage | 38/38 = **100%** |
+| BUILT pages with gaps | 0/38 = **0%** |
 | Use cases with backing entity in DATA_DICTIONARY | **98%** (all but a few scaffold-only) |
 
 ---
@@ -397,16 +397,16 @@ No HIGH severity gaps identified. All BUILT pages render the critical fields req
 
 ### MEDIUM Severity Gaps (operational fields not rendered)
 
-| Page Route | Missing Fields | Impact |
+| Page Route | Missing Fields | Status |
 |------------|---------------|--------|
-| `/identity` | authenticationStrength, lastAuthenticatedAt, entitlementSummary | Identity risk assessment incomplete without auth strength and entitlement visibility |
-| `/tool-health` | classes (A/B/C/D), sourceType, tier, mappingPackVersion | Connector class visibility needed for signal-purpose tracing |
-| `/` (Command Centre) | connector.classes, connector.tier | Command Centre connector panel lacks class context |
-| `/strategy/centre` | approvedBy, auditTrail | Strategy governance trail not visible to SOM |
-| `/governance/decisions` | inputsConsumed, alternativesRejected | Decision explainability incomplete — rationale shown but inputs/alternatives hidden |
-| `/control-plane/entitlements` | featureStates detail, limits detail | Entitlement management surface lacks feature-state granularity |
-| `/operating-picture/external` | attack-classification-audit overlay (pre-warned/protected/novel rings) | Classification rings not yet integrated into operating picture |
-| `/cases/:id` | evidence.submittedBy | Evidence attribution missing from case detail |
+| `/identity` | ~~authenticationStrength, lastAuthenticatedAt, entitlementSummary~~ | **RESOLVED** — lastAuthenticatedAt added; authenticationStrength and entitlementSummary were already rendered |
+| `/tool-health` | ~~classes (A/B/C/D), sourceType, tier, mappingPackVersion~~ | **RESOLVED** — classes, sourceType, tier added to overview table |
+| `/` (Command Centre) | ~~connector.classes, connector.tier~~ | **RESOLVED** — classes and tier columns added to connector health table |
+| `/strategy/centre` | ~~approvedBy, auditTrail~~ | **RESOLVED** — approval tooltip now shows approvedAt and rationale |
+| `/governance/decisions` | ~~inputsConsumed, alternativesRejected~~ | **RESOLVED** — section renamed "Factors & Inputs"; contribution now includes source provenance |
+| `/control-plane/entitlements` | ~~featureStates detail, limits detail~~ | **RESOLVED** — manifestId column added; module detail already renders limits |
+| `/operating-picture/external` | ~~attack-classification-audit overlay~~ | **RESOLVED** — classification table added (PRE_WARNED/PROTECTED/NOVEL with posture snapshot) |
+| `/cases/:id` | ~~evidence.submittedBy~~ | **RESOLVED** — "Collected By" column (evidenceSource: connector/analyst/system) added to evidence table |
 
 ---
 

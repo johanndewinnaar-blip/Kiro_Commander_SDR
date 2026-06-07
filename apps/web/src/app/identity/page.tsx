@@ -124,6 +124,7 @@ export default function IdentityIntelligencePage({ searchParams }: { searchParam
             <Field label="Status" value={i.status} />
             <Field label="Privilege" value={i.privilegeLevel ?? 'unknown'} />
             <Field label="Auth Strength" value={i.authenticationStrength ?? 'unknown'} />
+            <Field label="Last Authenticated" value={i.lastAuthenticatedAt ? new Date(i.lastAuthenticatedAt).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' }) : 'unknown'} />
             <Field label="Surface" value={i.surfaceAttribution === 'external_attack_surface' ? 'External' : 'Internal'} />
             <Field label="Risk Score" value={String(i.riskScore)} alert={i.riskScore >= 50} />
           </div>

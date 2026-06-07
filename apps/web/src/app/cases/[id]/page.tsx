@@ -434,12 +434,13 @@ function EvidenceTab({ caseRecord, riskObjects, evidence, tokens }: {
       <Panel tokens={tokens} title="Evidence Pack" subtitle={`${evidence.length} artefact(s) — freshness indicates collection recency`}>
         {evidence.length === 0 ? <Empty tokens={tokens} text="No evidence artefacts bound to this case." /> : (
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: primitiveTypeScale.caption }}>
-            <thead><tr>{['Type', 'Source', 'Confidence', 'Collected', 'Freshness'].map((h) => <Th key={h} tokens={tokens}>{h}</Th>)}</tr></thead>
+            <thead><tr>{['Type', 'Source', 'Collected By', 'Confidence', 'Collected', 'Freshness'].map((h) => <Th key={h} tokens={tokens}>{h}</Th>)}</tr></thead>
             <tbody>
               {evidence.map((e) => (
                 <tr key={e.id} style={{ borderBottom: `1px solid ${tokens.border.subtle}` }}>
                   <Td tokens={tokens}>{titleCase(e.evidenceType)}</Td>
                   <Td tokens={tokens}><span style={{ fontFamily: primitiveFonts.mono }}>{e.source.sourceSystem}</span></Td>
+                  <Td tokens={tokens}><span className="badge bg-secondary">{e.evidenceSource}</span></Td>
                   <Td tokens={tokens}>{e.confidence}%</Td>
                   <Td tokens={tokens}>{new Date(e.collectedAt).toLocaleString('en-GB', { dateStyle: 'short', timeStyle: 'short' })}</Td>
                   <Td tokens={tokens}><Badge tone={freshTone[e.freshnessStatus] ?? 'muted'} tokens={tokens} label={titleCase(e.freshnessStatus)} /></Td>

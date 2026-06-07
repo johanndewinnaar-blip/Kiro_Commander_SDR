@@ -7,6 +7,7 @@ import { seedIdentities } from '../../../../../../packages/contracts/src/fixture
 import { seedCases } from '../../../../../../packages/contracts/src/fixtures/seed-cases';
 import { seedRiskObjects } from '../../../../../../packages/contracts/src/fixtures/seed-risk-objects';
 import { seedConnectors } from '../../../../../../packages/contracts/src/fixtures/seed-connectors';
+import { seedAttackClassificationAudits } from '../../../../../../packages/contracts/src/fixtures/seed-attack-classification-audits';
 import { primitiveTypeScale, primitiveSignal } from '../../../../../../packages/ui/src/tokens/primitives';
 import { STREAM_LABELS, CLASS_TO_STREAM } from '../../../../../../packages/contracts/src/engines/intelligence-layer';
 
@@ -235,6 +236,51 @@ export default function ExternalOperatingPicturePage() {
                     ))}
                     {externalRiskObjects.length === 0 && (
                       <tr><td colSpan={2} className="text-muted text-center" style={{ fontSize: primitiveTypeScale.caption }}>No external risk objects</td></tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Attack Classification Overlay (Spec #71) ── */}
+      <div className="row row-deck row-cards mb-3">
+        <div className="col-12">
+          <div className="card">
+            <div className="card-header">
+              <h3 className="card-title">Attack Classification (Pre-Warned / Protected / Novel)</h3>
+            </div>
+            <div className="card-body p-0">
+              <div className="table-responsive">
+                <table className="table table-vcenter card-table">
+                  <thead>
+                    <tr>
+                      <th>Entity</th>
+                      <th>Type</th>
+                      <th>Classification</th>
+                      <th>Priority Impact</th>
+                      <th>Posture</th>
+                      <th>Classified</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {seedAttackClassificationAudits.map((a) => {
+                      const classColor = a.classification === 'PRE_WARNED' ? primitiveSignal.warning : a.classification === 'PROTECTED' ? primitiveSignal.info : primitiveSignal.neutral;
+                      return (
+                        <tr key={a.id}>
+                          <td style={{ fontSize: primitiveTypeScale.body }}>{a.entityRef}</td>
+                          <td className="text-muted" style={{ fontSize: primitiveTypeScale.caption }}>{a.entityType_target}</td>
+                          <td><span className="badge" style={{ background: classColor, color: '#fff' }}>{a.classification}</span></td>
+                          <td style={{ fontSize: primitiveTypeScale.caption, color: a.priorityImpact > 0 ? primitiveSignal.critical : primitiveSignal.success }}>{a.priorityImpact > 0 ? '+' : ''}{a.priorityImpact}</td>
+                          <td className="text-muted" style={{ fontSize: primitiveTypeScale.caption }}>drift:{a.postureSnapshot.driftState} cov:{a.postureSnapshot.coveragePercent}%</td>
+                          <td className="text-muted" style={{ fontSize: primitiveTypeScale.caption }}>{new Date(a.classifiedAt).toLocaleDateString()}</td>
+                        </tr>
+                      );
+                    })}
+                    {seedAttackClassificationAudits.length === 0 && (
+                      <tr><td colSpan={6} className="text-muted text-center" style={{ fontSize: primitiveTypeScale.caption }}>No classifications recorded</td></tr>
                     )}
                   </tbody>
                 </table>

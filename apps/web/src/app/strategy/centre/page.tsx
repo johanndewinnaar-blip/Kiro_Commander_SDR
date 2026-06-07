@@ -123,7 +123,7 @@ export default function StrategyCentrePage() {
                       <td>{policy ? new Date(policy.updatedAt).toLocaleDateString() : '—'}</td>
                       <td>
                         {policy?.approval ? (
-                          <span className="badge bg-green-lt">{policy.approval.approvedBy}</span>
+                          <span className="badge bg-green-lt" title={`${policy.approval.approvedAt ? new Date(policy.approval.approvedAt).toLocaleDateString() : ''} — ${policy.approval.rationale ?? ''}`}>{policy.approval.approvedBy}</span>
                         ) : (
                           <span className="text-secondary">—</span>
                         )}
