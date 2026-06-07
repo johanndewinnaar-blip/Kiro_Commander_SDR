@@ -5,7 +5,9 @@ fileMatchPattern: "apps/web/**,packages/ui/**"
 
 # Design System Contract — Commander SDR
 
-**Authority:** This is the complete build rulebook for all Commander SDR pages. Every rule documented here with exact Tabler classes and examples. This contract is binding for all future page work.
+**Authority:** This is the BINDING BUILD RULEBOOK for all Commander SDR pages. Where it conflicts with ui-design-system.md, page-layout-standard.md, or DS-1.0 (docs/06_ui_build_reference/DESIGN_SYSTEM.md), THIS file governs.
+
+**Precedence:** design-system-contract.md > page-layout-standard.md > ui-design-system.md > DS-1.0
 
 **Scope:** Universal design rules that apply to every page in all three application boundaries (Operational App, Tenant Admin, Commercial Control Plane).
 
