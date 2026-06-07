@@ -139,6 +139,34 @@ Example: "feat(vulnerability): KEV sub-page — UC-033"
 | 8 | PAGE_SCHEDULE.md | What surfaces expose it — pages mapped to use cases | docs/00_authority/ |
 | 9 | AICAP_REGISTER.md | AI enhancement markers — Phase 2+ | docs/00_authority/ (USE_CASE_REGISTER §AICAP) |
 
+## Chain Maintenance Rules (prevent staleness)
+
+These rules ensure governance documents stay synchronized with code. Failure to update in the same commit = governance debt (tracked in ARCHITECTURAL_DEBT_REGISTER.md).
+
+### Same-commit enforcement
+
+| Document | Trigger | Rule |
+|----------|---------|------|
+| SYSTEM_KNOWLEDGE_GRAPH.md | New entity introduces a new domain or cross-domain relationship | MUST be updated in the SAME commit |
+| DOMAIN_REGISTER.md | New domain added to SYSTEM_KNOWLEDGE_GRAPH | MUST be updated in the SAME commit |
+| RELATIONSHIP_MAP.md | New entity creates a cross-entity relationship not already documented | MUST be updated in the SAME commit |
+| PAGE_SCHEDULE.md | New page.tsx created | MUST be updated in the SAME commit |
+| AICAP_REGISTER.md | New page.tsx includes an AI-PLACEMENT marker | MUST be updated in the SAME commit |
+
+### Pre-code gates (unchanged — restated for completeness)
+
+| Document | Trigger | Rule |
+|----------|---------|------|
+| DATA_DICTIONARY.md | Before entity code is written | MUST be updated BEFORE entity code (hard gate) |
+| USE_CASE_REGISTER.md | Before entity/page code is written | MUST be updated BEFORE code |
+
+### Governance debt on violation
+
+If a commit lands without the required same-commit update:
+1. The omission is logged as governance debt in ARCHITECTURAL_DEBT_REGISTER.md
+2. The next commit to the same file MUST include the missing update
+3. The debt is not retroactively blocking — it does not require a revert
+
 ## Validation (pre-commit enforcement)
 
 On every commit that touches:
