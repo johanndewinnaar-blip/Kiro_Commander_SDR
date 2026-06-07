@@ -16,6 +16,8 @@
 
 import { useState, useEffect, Component, type ReactNode, type ErrorInfo } from 'react';
 import { usePathname } from 'next/navigation';
+import * as Collapsible from '@radix-ui/react-collapsible';
+import * as ScrollArea from '@radix-ui/react-scroll-area';
 import { getIcon } from '../../../../../packages/ui/src/icons';
 import { componentTokens } from '../../../../../packages/ui/src/tokens/components';
 import { useSidebarCollapsed } from '@/context/sidebar-context';
@@ -34,35 +36,25 @@ const DEFAULT_EXPANDED_GROUP = 'case-management';
 // ---------------------------------------------------------------------------
 
 const SIDEBAR_STYLES = `
-  /* ── Reset Tabler's navbar-vertical border-radius (square top-left corner) ── */
+  /* ── Reset Tabler's navbar-vertical border-radius ── */
   .navbar-vertical.commander-nav {
     border-radius: 0 !important;
   }
 
-  /* ── Scrollbar — visible at rest, brighter on hover ── */
-  .navbar-vertical .navbar-nav {
-    scrollbar-width: thin;
-    scrollbar-color: var(--tblr-border-color) transparent;
-    overflow-x: hidden;
-  }
-  .navbar-vertical .navbar-nav::-webkit-scrollbar { width: 4px; }
-  .navbar-vertical .navbar-nav::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); }
-  .navbar-vertical .navbar-nav::-webkit-scrollbar-thumb {
-    background: var(--tblr-border-color);
-  }
-  .navbar-vertical .navbar-nav::-webkit-scrollbar-thumb:hover {
-    background: var(--tblr-border-color-active);
+  /* ── Radix ScrollArea overrides — no horizontal overflow ── */
+  .navbar-vertical.commander-nav [data-radix-scroll-area-viewport] {
+    overflow-x: hidden !important;
   }
 
-  /* ── Nav link base ── */
+  /* ── Parent nav link — 40px row, icon 16px, label left, chevron far right ── */
   .navbar-vertical.commander-nav .nav-link {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0 0.75rem;
+    padding: 0 1rem;
     height: 40px;
-    font-size: 0.875rem;
-    font-weight: 500;
+    font-size: 0.8125rem;
+    font-weight: 600;
     color: var(--tblr-nav-link-color) !important;
     background: transparent !important;
     border: none;
@@ -72,41 +64,88 @@ const SIDEBAR_STYLES = `
     width: 100%;
     text-align: left;
     text-decoration: none;
+    overflow: hidden;
+    position: relative;
   }
 
   .navbar-vertical.commander-nav .nav-link:hover {
     color: var(--tblr-light) !important;
-    background: rgba(255,255,255,0.07) !important;
-  }
-
-  .navbar-vertical.commander-nav .nav-link.active {
-    color: var(--tblr-light) !important;
-    background: rgba(255,255,255,0.10) !important;
-  }
-
-  /* ── Sub-item nav links ── */
-  .navbar-vertical.commander-nav .nav-item-nested .nav-link {
-    height: 34px;
-    font-size: 0.8125rem;
-    font-weight: 400;
-    padding-left: 2.5rem;
-    text-align: left;
-    color: var(--tblr-secondary-color) !important;
-  }
-
-  .navbar-vertical.commander-nav .nav-item-nested .nav-link:hover {
-    color: var(--tblr-nav-link-color) !important;
     background: rgba(255,255,255,0.05) !important;
   }
 
-  .navbar-vertical.commander-nav .nav-item-nested .nav-link.active {
+  /* Active parent — blue accent treatment */
+  .navbar-vertical.commander-nav .nav-link.active {
     color: var(--tblr-light) !important;
-    background: rgba(255,255,255,0.08) !important;
-    border-left: 2px solid var(--tblr-border-color-active);
-    padding-left: calc(2.5rem - 2px);
+    background: rgba(74,144,217,0.08) !important;
   }
 
-  /* ── Nav link icon — 14px to match text ── */
+  .navbar-vertical.commander-nav .nav-link.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: #4a90d9;
+  }
+
+  /* Parent with active child — subtle active state */
+  .navbar-vertical.commander-nav .nav-link.parent-active {
+    color: var(--tblr-light) !important;
+    background: rgba(74,144,217,0.04) !important;
+  }
+
+  .navbar-vertical.commander-nav .nav-link.parent-active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: rgba(74,144,217,0.6);
+  }
+
+  /* ── Child (nested) nav links — 34px, stronger indentation, improved tree rail ── */
+  .navbar-vertical.commander-nav .nav-item-nested .nav-link {
+    height: 34px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0 1rem 0 3.25rem;
+    color: var(--tblr-secondary-color) !important;
+    background: transparent !important;
+    position: relative;
+  }
+
+  /* Tree rail — stronger, wider vertical line */
+  .navbar-vertical.commander-nav .nav-item-nested .nav-link::before {
+    content: '';
+    position: absolute;
+    left: 1.625rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: rgba(255,255,255,0.16);
+    opacity: 1;
+  }
+
+  .navbar-vertical.commander-nav .nav-item-nested .nav-link:hover {
+    color: var(--tblr-light) !important;
+    background: rgba(255,255,255,0.03) !important;
+  }
+
+  /* Active child — strong blue accent, immediately obvious */
+  .navbar-vertical.commander-nav .nav-item-nested .nav-link.active {
+    color: var(--tblr-light) !important;
+    background: rgba(74,144,217,0.06) !important;
+  }
+
+  .navbar-vertical.commander-nav .nav-item-nested .nav-link.active::before {
+    width: 2px;
+    background: #4a90d9;
+    opacity: 1;
+  }
+
+  /* ── Nav link icon — 16px ── */
   .navbar-vertical.commander-nav .nav-link-icon {
     flex-shrink: 0;
     display: flex;
@@ -114,12 +153,12 @@ const SIDEBAR_STYLES = `
     justify-content: center;
     width: 1rem;
     height: 1rem;
-    opacity: 0.80;
+    opacity: 0.70;
   }
 
   .navbar-vertical.commander-nav .nav-link-icon svg {
-    width: 14px !important;
-    height: 14px !important;
+    width: 16px !important;
+    height: 16px !important;
   }
 
   .navbar-vertical.commander-nav .nav-link:hover .nav-link-icon,
@@ -127,46 +166,49 @@ const SIDEBAR_STYLES = `
     opacity: 1;
   }
 
-  /* ── Nav link title ── */
+  /* ── Nav link title — truncates cleanly ── */
   .navbar-vertical.commander-nav .nav-link-title {
     flex: 1;
+    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  /* ── Build status badge ── */
-  .navbar-vertical.commander-nav .badge {
+  /* ── Build status badge — compact, before chevron, no overlap ── */
+  .navbar-vertical.commander-nav .nav-badge {
     flex-shrink: 0;
-    font-size: 0.5625rem;
+    font-size: 0.5rem;
     font-weight: 600;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
     color: var(--tblr-secondary-color);
     border: 1px solid var(--tblr-border-color);
-    padding: 1px 4px;
-    line-height: 1.4;
+    padding: 0 3px;
+    line-height: 1.5;
     background: transparent;
     border-radius: 0;
+    margin-right: 0.25rem;
   }
 
-  /* ── Chevron — small, subtle, right-aligned ── */
+  /* ── Chevron — far right, small, subtle ── */
   .navbar-vertical.commander-nav .nav-link-toggle {
     flex-shrink: 0;
     display: flex;
     align-items: center;
+    margin-left: auto;
     opacity: 0.30;
     transition: transform 200ms ease, opacity 200ms ease;
   }
 
   .navbar-vertical.commander-nav .nav-link-toggle svg {
-    width: 12px !important;
-    height: 12px !important;
+    width: 10px !important;
+    height: 10px !important;
   }
 
   .navbar-vertical.commander-nav .nav-link:hover .nav-link-toggle,
   .navbar-vertical.commander-nav .nav-link.active .nav-link-toggle {
-    opacity: 0.55;
+    opacity: 0.60;
   }
 
   /* ── Footer border ── */
@@ -350,77 +392,97 @@ function BrandBlock({ collapsed }: { collapsed: boolean }) {
 }
 
 // ---------------------------------------------------------------------------
-// NavGroupRow — Issues 2, 4, 5, 6
+// NavGroupRow — Radix Collapsible for accessible expand/collapse
+// shadcn/Radix: Tabler lacks accessible collapsible tree with keyboard nav
 // ---------------------------------------------------------------------------
 
 interface NavGroupRowProps {
   group: (typeof OPERATIONAL_NAV_GROUPS)[number];
   isExpanded: boolean;
   isActive: boolean;
+  hasActiveChild: boolean;
   activeItemPath: string | null;
   onToggle: () => void;
   pathname: string;
 }
 
-function NavGroupRow({ group, isExpanded, isActive, activeItemPath, onToggle }: NavGroupRowProps) {
+function NavGroupRow({ group, isExpanded, isActive, hasActiveChild, activeItemPath, onToggle }: NavGroupRowProps) {
+  // Determine the appropriate CSS class for the parent
+  let navLinkClass = 'nav-link';
+  if (isActive && !hasActiveChild) {
+    // Parent is directly active (no specific child active)
+    navLinkClass += ' active';
+  } else if (hasActiveChild) {
+    // Parent has an active child - use subtle parent-active state
+    navLinkClass += ' parent-active';
+  }
+
   return (
     <li className="nav-item">
-      {/* Group header */}
-      <button
-        type="button"
-        className={`nav-link${isActive ? ' active' : ''}`}
-        onClick={onToggle}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onToggle(); }
-        }}
-        aria-expanded={isExpanded}
-      >
-        {/* Icon */}
-        <span className="nav-link-icon">
-          {getIcon(group.id, { size: 'nav', 'aria-hidden': true })}
-        </span>
+      <Collapsible.Root open={isExpanded} onOpenChange={() => onToggle()}>
+        {/* Group header — trigger */}
+        <Collapsible.Trigger asChild>
+          <button
+            type="button"
+            className={navLinkClass}
+            aria-expanded={isExpanded}
+          >
+            {/* Icon */}
+            <span className="nav-link-icon">
+              {getIcon(group.id, { size: 'nav', 'aria-hidden': true })}
+            </span>
 
-        {/* Label */}
-        <span className="nav-link-title">{group.label}</span>
+            {/* Label */}
+            <span className="nav-link-title">{group.label}</span>
 
-        {/* Build status badge */}
-        {group.badge && (
-          <span className="badge">{group.badge}</span>
-        )}
+            {/* Build status badge — compact, before chevron */}
+            {group.badge && (
+              <span className="nav-badge">{group.badge}</span>
+            )}
 
-        {/* Chevron */}
-        <span
-          className="nav-link-toggle"
-          style={{ transform: isExpanded ? 'rotate(90deg)' : 'rotate(0deg)' }}
-        >
-          {getIcon('collapse-footer', { size: 'nav', 'aria-hidden': true })}
-        </span>
-      </button>
+            {/* Chevron — far right */}
+            <span
+              className="nav-link-toggle"
+              style={{ transform: isExpanded ? 'rotate(90deg)' : 'rotate(0deg)' }}
+            >
+              {getIcon('collapse-footer', { size: 'nav', 'aria-hidden': true })}
+            </span>
+          </button>
+        </Collapsible.Trigger>
 
-      {/* Sub-items */}
-      {isExpanded && (
-        <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
-          {group.subItems.map((item) => {
-            const itemActive = activeItemPath === item.path;
-            return (
-              <li key={item.path} className="nav-item nav-item-nested">
-                <a
-                  href={item.path}
-                  className={`nav-link${itemActive ? ' active' : ''}`}
-                >
-                  {item.label}
-                </a>
-              </li>
-            );
-          })}
-        </ul>
-      )}
+        {/* Sub-items — collapsible content */}
+        <Collapsible.Content>
+          <ul style={{ 
+            listStyle: 'none', 
+            margin: '0.25rem 0 0 0', 
+            padding: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.125rem',
+          }}>
+            {group.subItems.map((item) => {
+              const itemActive = activeItemPath === item.path;
+              return (
+                <li key={item.path} className="nav-item nav-item-nested">
+                  <a
+                    href={item.path}
+                    className={`nav-link${itemActive ? ' active' : ''}`}
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </Collapsible.Content>
+      </Collapsible.Root>
     </li>
   );
 }
 
 // ---------------------------------------------------------------------------
-// ScrollableMenu — Issues 2 & 4: correct padding, fills available space
+// ScrollableMenu — Radix ScrollArea for accessible vertical scrolling
+// shadcn/Radix: Tabler lacks accessible scroll area with custom scrollbar
 // ---------------------------------------------------------------------------
 
 function ScrollableMenu({ collapsed }: { collapsed: boolean }) {
@@ -459,83 +521,142 @@ function ScrollableMenu({ collapsed }: { collapsed: boolean }) {
   }
 
   function getActiveItemPath(): string | null {
+    // Find the most specific match for current path
+    let bestMatch = null;
+    let bestMatchLength = 0;
+    
     for (const group of OPERATIONAL_NAV_GROUPS) {
       for (const item of group.subItems) {
+        // Exact match takes priority
         if (safePath === item.path) return item.path;
+        
+        // For sub-paths, find the longest matching prefix
+        if (safePath.startsWith(item.path + '/')) {
+          if (item.path.length > bestMatchLength) {
+            bestMatch = item.path;
+            bestMatchLength = item.path.length;
+          }
+        }
       }
     }
-    return null;
+    return bestMatch;
   }
 
   function isGroupActive(group: (typeof OPERATIONAL_NAV_GROUPS)[number]): boolean {
-    return group.subItems.some((item) => safePath.startsWith(item.path) || safePath === item.path);
+    // Group is active if current path matches any child item exactly or starts with child path
+    return group.subItems.some((item) => {
+      return safePath === item.path || safePath.startsWith(item.path + '/');
+    });
+  }
+
+  function hasActiveChild(group: (typeof OPERATIONAL_NAV_GROUPS)[number]): boolean {
+    // Check if any child item is specifically active
+    return group.subItems.some((item) => activeItemPath === item.path);
   }
 
   const activeItemPath = getActiveItemPath();
 
-  // Collapsed — icon rail only (Issues 1, 3, 4, 6)
+  // Collapsed — icon rail only
   if (collapsed) {
     return (
-      <div
-        className="navbar-nav"
-        style={{
-          flex: 1,
-          overflowY: 'auto',
-          overflowX: 'hidden',
-          display: 'flex',
-          flexDirection: 'column',
-          paddingTop: '0.25rem',
-          paddingBottom: '0.25rem',
-        }}
-      >
-        {OPERATIONAL_NAV_GROUPS.map((group) => (
-          // Issue 3: full-width row, icon centred, hover covers full width
-          // Issue 4: no badges, no chevrons — icon only
-          // Issue 6: data-tooltip drives CSS ::after tooltip
-          <div
-            key={group.id}
-            className="nav-icon-rail"
-            data-tooltip={group.label}
-            role="button"
-            tabIndex={0}
-            aria-label={group.label}
-            onClick={() => toggleGroup(group.id)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleGroup(group.id); }
+      <ScrollArea.Root style={{ flex: 1, overflow: 'hidden' }}>
+        <ScrollArea.Viewport
+          className="navbar-nav"
+          style={{
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            paddingTop: '0.25rem',
+            paddingBottom: '0.25rem',
+          }}
+        >
+          {OPERATIONAL_NAV_GROUPS.map((group) => (
+            <div
+              key={group.id}
+              className="nav-icon-rail"
+              data-tooltip={group.label}
+              role="button"
+              tabIndex={0}
+              aria-label={group.label}
+              onClick={() => toggleGroup(group.id)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleGroup(group.id); }
+              }}
+            >
+              {getIcon(group.id, { size: 'nav', 'aria-hidden': true })}
+            </div>
+          ))}
+        </ScrollArea.Viewport>
+        <ScrollArea.Scrollbar
+          orientation="vertical"
+          style={{
+            width: 4,
+            padding: 0,
+            background: 'rgba(255,255,255,0.04)',
+          }}
+        >
+          <ScrollArea.Thumb
+            style={{
+              background: 'var(--tblr-border-color)',
+              borderRadius: 0,
             }}
-          >
-            {getIcon(group.id, { size: 'nav', 'aria-hidden': true })}
-          </div>
-        ))}
-      </div>
+          />
+        </ScrollArea.Scrollbar>
+      </ScrollArea.Root>
     );
   }
 
-  // Expanded — full nav list
+  // Expanded — full nav list with Radix ScrollArea
   return (
-    <ul
-      className="navbar-nav"
-      style={{
-        flex: 1,
-        overflowY: 'auto',
-        overflowX: 'hidden',
-        listStyle: 'none',
-        margin: 0,
-        padding: '0.25rem 0',
-      }}
-    >
-      {OPERATIONAL_NAV_GROUPS.map((group) => (
-        <NavGroupRow
-          key={group.id}
-          group={group}
-          isExpanded={expansionState[group.id] ?? false}
-          isActive={isGroupActive(group)}
-          activeItemPath={activeItemPath}
-          onToggle={() => toggleGroup(group.id)}
-          pathname={safePath}
+    <ScrollArea.Root style={{ flex: 1, overflow: 'hidden' }}>
+      <ScrollArea.Viewport
+        style={{
+          width: '100%',
+          height: '100%',
+        }}
+      >
+        <ul
+          className="navbar-nav"
+          style={{
+            listStyle: 'none',
+            margin: 0,
+            padding: '0.5rem 0',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.5rem',
+          }}
+        >
+          {OPERATIONAL_NAV_GROUPS.map((group) => (
+            <NavGroupRow
+              key={group.id}
+              group={group}
+              isExpanded={expansionState[group.id] ?? false}
+              isActive={isGroupActive(group)}
+              hasActiveChild={hasActiveChild(group)}
+              activeItemPath={activeItemPath}
+              onToggle={() => toggleGroup(group.id)}
+              pathname={safePath}
+            />
+          ))}
+        </ul>
+      </ScrollArea.Viewport>
+      <ScrollArea.Scrollbar
+        orientation="vertical"
+        style={{
+          width: 4,
+          padding: 0,
+          background: 'rgba(255,255,255,0.04)',
+        }}
+      >
+        <ScrollArea.Thumb
+          style={{
+            background: 'var(--tblr-border-color)',
+            borderRadius: 0,
+          }}
         />
-      ))}
-    </ul>
+      </ScrollArea.Scrollbar>
+    </ScrollArea.Root>
   );
 }
 
