@@ -721,7 +721,7 @@ These are code-conformance debt items (contract field removed, test fixtures not
 
 **Purpose:** Complete surfacing of the data layer built to date. Existing work is explicitly accounted for, not silently assumed complete.
 
-### Entities Catalogued: 48 (+15 intelligence entities, +2 value objects, +7 communications entities, +1 overlay entity, +2 Commander AI entities, +1 posture entity, +3 drift-rule-engine entities)
+### Entities Catalogued: 48 (+15 intelligence entities, +2 value objects, +7 communications entities, +1 overlay entity, +2 Commander AI entities, +1 posture entity, +3 drift-rule-engine entities, +5 governance-security-search entities, +2 mission entities, +5 drift-rule-governance entities)
 
 1. Asset ✅
 2. Case ✅
@@ -772,12 +772,27 @@ These are code-conformance debt items (contract field removed, test fixtures not
 47. Finding ⚠️ (Drift & Rule Engine — contract + fixture, DB schema absent)
 48. Risk Score ⚠️ (Drift & Rule Engine — contract + fixture, DB schema absent)
 49. Blast Radius ⚠️ (Drift & Rule Engine — contract + fixture, DB schema absent)
+50. Auth Session ⚠️ (Security — contract + fixture, DB schema absent)
+51. Break-Glass Request ⚠️ (Security — contract + fixture, DB schema absent)
+52. RBAC Policy ⚠️ (Security — contract + fixture, DB schema absent)
+53. Search Index Config ⚠️ (Universal Search — contract + fixture, DB schema absent)
+54. Entitlement Manifest ⚠️ (Control Plane — contract + fixture, DB schema absent)
+55. Mission ⚠️ (Mission Impact — contract + fixture, DB schema absent)
+56. Mission Binding ⚠️ (Mission Impact — contract + fixture, DB schema absent)
+57. Finding ⚠️ (Drift & Rule Engine — contract + fixture, DB schema absent)
+58. Risk Score ⚠️ (Drift & Rule Engine — contract + fixture, DB schema absent)
+59. Blast Radius ⚠️ (Drift & Rule Engine — contract + fixture, DB schema absent)
+60. Decision Record ⚠️ (Drift & Rule Engine — contract + fixture, DB schema absent)
+61. Simulation Result ⚠️ (Drift & Rule Engine — contract + fixture, DB schema absent)
+62. Inverse Discovery Event ⚠️ (Inverse Discovery — contract + fixture, DB schema absent)
+63. Attack Classification Audit ⚠️ (Pre-Warned Classification — contract + fixture, DB schema absent)
+64. Verdict Pattern Case ⚠️ (Identity Intelligence — contract + fixture, DB schema absent)
 
 **Composed-object modules (catalogued under their consuming entity, no own table):**
 - `coim.ts` — COIM-A source-classification composed objects (FindingClass, SourceSeverity, SourceConfidence, SourceProduct, AttackMapping, ObservableRef, SourceClassification + `validateSourceClassification`). Catalogued under Risk Object (§4). Also consumed by Verdict entity (§12) for `SourceProduct` type. Satisfies the completeness gate for `packages/contracts/src/entities/coim.ts`.
 - `intelligence-common.ts` — Platform Intelligence shared type constants and value objects. Defines 16 array-form type constants (PlatformIntelligenceSourceType, PlatformRecordType, IocCategory [26 values], IocRelationshipState, TlpMarking, CveState, SourceFreshnessState, TenantSubscriptionState, EvaluationType, TenantExposureState, IocMatchType, IocCaseLinkType, ThreatHuntStatus, PushActionType, PushIntentStatus, AllowBlockListType) and 2 shared value objects (SourceAttributionEntry, RelationshipStateTransition). Consumed by: indicator-of-compromise.ts, ioc-case-link.ts, ioc-relationship.ts, platform-intelligence-record.ts, platform-intelligence-source.ts, push-action-intent.ts, tenant-intelligence-evaluation.ts, tenant-intelligence-subscription.ts, tenant-ioc-allowblock-entry.ts, tenant-ioc-match.ts, threat-hunt-record.ts, vulnerability-intelligence-record.ts. Referenced by fixtures: seed-iocs.ts, seed-platform-intelligence-sources.ts. Reuses existing COIM SourceSeverity (1–5) and SourceConfidence from coim.ts. Source: Spec #59 Intelligence Layer Architecture; Spec #61 Universal Security Signal Connector Contract (baseline v2.6.2). Coverage: provisional (source specs partially read per COVERAGE.md). No DB schema counterpart (type constants only — no own table). No fixture of its own (consumed by entity-level fixtures). No resolver. Satisfies the completeness gate for `packages/contracts/src/entities/intelligence-common.ts`.
 
-### Fixtures Found: 39
+### Fixtures Found: 40
 
 1. `seed-assets.ts` ✅
 2. `seed-cases.ts` ✅
@@ -818,6 +833,7 @@ These are code-conformance debt items (contract field removed, test fixtures not
 37. `seed-findings.ts` ✅ (Drift & Rule Engine — 5 findings spanning lifecycle states)
 38. `seed-risk-scores.ts` ✅ (Drift & Rule Engine — 4 risk score computations)
 39. `seed-blast-radius.ts` ✅ (Drift & Rule Engine — 3 blast radius computations)
+40. `seed-decision-records.ts` ✅ (Drift & Rule Engine — 5 decision records: rule_hit, engine_output, ai_recommendation, suppression, escalation)
 
 ### Resolvers Found: 16
 
@@ -861,7 +877,7 @@ These are code-conformance debt items (contract field removed, test fixtures not
 - ControlEvaluation ✅ (CFM)
 - ControlMapping ✅ (CFM)
 
-**Divergences (15):**
+**Divergences (16):**
 - Strategy Policy ⚠️ — Contract `StrategySurfaceType` has 17 values (CMEP-1.0 extension); DB `strategySurfaceTypeEnum` has 13. Migration required to add: `sla-modifier`, `correlation-policy`, `effectiveness-targets`, `ssvc-decision-tree`.
 - Case Communication Thread ⚠️ — Contract + fixture exist; DB schema ABSENT. ARCH-DEBT-052 proposed.
 - War Room ⚠️ — Contract + fixture exist; DB schema ABSENT. ARCH-DEBT-053 proposed.
@@ -877,6 +893,7 @@ These are code-conformance debt items (contract field removed, test fixtures not
 - Finding ⚠️ — Contract + fixture exist; DB schema ABSENT. ARCH-DEBT-063 proposed.
 - Risk Score ⚠️ — Contract + fixture exist; DB schema ABSENT. ARCH-DEBT-064 proposed.
 - Blast Radius ⚠️ — Contract + fixture exist; DB schema ABSENT. ARCH-DEBT-065 proposed.
+- Decision Record ⚠️ — Contract + fixture (5 records) exist; DB schema ABSENT. ARCH-DEBT-066 proposed.
 
 **Proposed Architectural Debt Entries:**
 - ARCH-DEBT-NEW: Strategy Policy DB enum out of sync with contract (17 vs 13 surface types). Blocker: DB migration required before CMEP-1.0 surface policies can be persisted. Additionally, `seed-strategies.ts` lacks fixture entries for the 4 new surface types.
@@ -892,6 +909,7 @@ These are code-conformance debt items (contract field removed, test fixtures not
 - ARCH-DEBT-063: Finding DB schema absent — contract + fixture (5 records) exist. Blocker: DB migration required before drift findings can be persisted. Entity: `finding.ts`, domain D-04.
 - ARCH-DEBT-064: Risk Score DB schema absent — contract + fixture (4 records) exist. Blocker: DB migration required before computed risk scores can be persisted. Entity: `risk-scoring-engine.ts`, domain D-04.
 - ARCH-DEBT-065: Blast Radius DB schema absent — contract + fixture (3 records) exist. Blocker: DB migration required before blast-radius computations can be persisted. Entity: `blast-radius-engine.ts`, domain D-04.
+- ARCH-DEBT-066: Decision Record DB schema absent — contract + fixture (5 records) exist. Blocker: DB migration required before decision records (explainability artefacts) can be persisted. Entity: `decision-record.ts`, domain D-04. Use Cases: UC-175, UC-178.
 
 **Resolved Architectural Debt:**
 - ARCH-DEBT-030: Risk Object DB schema missing (contract + fixture exist) — ✅ RESOLVED (Unit 1)
@@ -2406,6 +2424,169 @@ Five entities forming the compliance/control-framework mapping layer:
 | `phase` | enum | seeded | AVAILABLE | — | surface/triage/routing/customer_investigation/outcome/closure |
 | `evidenceGrade` | enum | seeded | AVAILABLE | — | intelligence/investigation (boundary enforcement) |
 | `outcomeCategory` | enum/null | seeded | AVAILABLE | — | no_issue/issue_addressed/ongoing_concern/privileged_outcome |
+
+**DB Schema Reconciliation:** ⚠️ **DIVERGENT — Contract + fixture exist, DB schema ABSENT.**
+
+---
+
+### 65. Governed Compose
+
+**Source:** Spec #25 Case Communication, Spec #26 Broadcast Channel  
+**Coverage:** Full  
+**Contract:** `packages/contracts/src/entities/governed-compose.ts`  
+**DB Schema:** ❌ NOT FOUND  
+**Fixture:** `packages/contracts/src/fixtures/seed-governed-compose.ts` ✅  
+**Status:** AVAILABLE (fixture exists)  
+**Domain:** D-31 (Communication & Broadcast)  
+**Use Cases:** Spec 25 Req 3/5, UC-202
+
+| Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
+|-------|------|----------------------|--------------|---------------------|-------|
+| `id` | string | seeded | AVAILABLE | — | CommonFields |
+| `entityType` | `'governed-compose'` | seeded | AVAILABLE | — | Discriminator |
+| `tenant` | TenantContext | seeded | AVAILABLE | — | Tenant scope |
+| `caseRef` | string | seeded | AVAILABLE | — | Bound case reference |
+| `draftSubject` | string | seeded | AVAILABLE | — | Outbound draft subject line |
+| `draftBody` | string | seeded | AVAILABLE | — | Draft body content |
+| `recipients` | string[] | seeded | AVAILABLE | — | Recipient addresses |
+| `channel` | enum | seeded | AVAILABLE | — | email/teams |
+| `approvalStatus` | enum | seeded | AVAILABLE | — | pending/approved/rejected/expired |
+| `approverRef` | string | seeded | AVAILABLE | — | Approver user reference |
+| `approvedAt` | string/null | seeded | AVAILABLE | — | Approval timestamp |
+| `expiresAt` | string | seeded | AVAILABLE | — | Approval expiry |
+| `playbookRef` | string/null | seeded | AVAILABLE | — | Communication playbook reference |
+| `source` | SourceMetadata | seeded | AVAILABLE | — | CommonFields |
+| `createdAt` | string | seeded | AVAILABLE | — | CommonFields |
+| `updatedAt` | string | seeded | AVAILABLE | — | CommonFields |
+
+**DB Schema Reconciliation:** ⚠️ **DIVERGENT — Contract + fixture exist, DB schema ABSENT.**
+
+---
+
+### 66. Notification
+
+**Source:** Spec #26 Case Communication and Broadcast Channel  
+**Coverage:** Full  
+**Contract:** `packages/contracts/src/entities/notification.ts`  
+**DB Schema:** ❌ NOT FOUND  
+**Fixture:** `packages/contracts/src/fixtures/seed-notifications.ts` ✅  
+**Status:** AVAILABLE (fixture exists)  
+**Domain:** D-31 (Communication & Broadcast)  
+**Use Cases:** Spec 26, UC-203
+
+| Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
+|-------|------|----------------------|--------------|---------------------|-------|
+| `id` | string | seeded | AVAILABLE | — | CommonFields |
+| `entityType` | `'notification'` | seeded | AVAILABLE | — | Discriminator |
+| `tenant` | TenantContext | seeded | AVAILABLE | — | Tenant scope |
+| `recipientUserId` | string | seeded | AVAILABLE | — | Target user |
+| `notificationType` | enum | seeded | AVAILABLE | — | sla_warning/case_update/escalation/assignment/approval_required/system_alert |
+| `severity` | enum | seeded | AVAILABLE | — | critical/warning/info |
+| `title` | string | seeded | AVAILABLE | — | Notification title |
+| `message` | string | seeded | AVAILABLE | — | Notification body |
+| `entityRef` | string | seeded | AVAILABLE | — | Related entity ID |
+| `entityType` | string | seeded | AVAILABLE | — | Related entity type (case/war-room/etc) |
+| `read` | boolean | seeded | AVAILABLE | — | Read state |
+| `readAt` | string/null | seeded | AVAILABLE | — | When read |
+| `actionUrl` | string/null | seeded | AVAILABLE | — | Deep link URL |
+| `source` | SourceMetadata | seeded | AVAILABLE | — | CommonFields |
+| `createdAt` | string | seeded | AVAILABLE | — | CommonFields |
+| `updatedAt` | string | seeded | AVAILABLE | — | CommonFields |
+
+**DB Schema Reconciliation:** ⚠️ **DIVERGENT — Contract + fixture exist, DB schema ABSENT.**
+
+---
+
+### 67. Case Follow
+
+**Source:** — (Analyst convenience feature)  
+**Coverage:** Full  
+**Contract:** `packages/contracts/src/entities/case-follow.ts`  
+**DB Schema:** ❌ NOT FOUND  
+**Fixture:** `packages/contracts/src/fixtures/seed-case-follows.ts` ✅  
+**Status:** AVAILABLE (fixture exists)  
+**Domain:** D-18 (Case Lifecycle)  
+**Use Cases:** UC-204
+
+| Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
+|-------|------|----------------------|--------------|---------------------|-------|
+| `id` | string | seeded | AVAILABLE | — | CommonFields |
+| `entityType` | `'case-follow'` | seeded | AVAILABLE | — | Discriminator |
+| `tenant` | TenantContext | seeded | AVAILABLE | — | Tenant scope |
+| `userId` | string | seeded | AVAILABLE | — | Subscribing user |
+| `caseRef` | string | seeded | AVAILABLE | — | Followed case |
+| `followedAt` | string | seeded | AVAILABLE | — | Subscription start |
+| `unfollowedAt` | string/null | seeded | AVAILABLE | — | Subscription end |
+| `notifyOn` | string[] | seeded | AVAILABLE | — | Event types: status_change/sla_breach/escalation/new_evidence |
+| `source` | SourceMetadata | seeded | AVAILABLE | — | CommonFields |
+| `createdAt` | string | seeded | AVAILABLE | — | CommonFields |
+| `updatedAt` | string | seeded | AVAILABLE | — | CommonFields |
+
+**DB Schema Reconciliation:** ⚠️ **DIVERGENT — Contract + fixture exist, DB schema ABSENT.**
+
+---
+
+### 68. Cloud Security Posture
+
+**Source:** Spec #22 Architecture Intelligence  
+**Coverage:** Full  
+**Contract:** `packages/contracts/src/entities/cloud-security-posture.ts`  
+**DB Schema:** ❌ NOT FOUND  
+**Fixture:** `packages/contracts/src/fixtures/seed-cloud-security-posture.ts` ✅  
+**Status:** AVAILABLE (fixture exists)  
+**Domain:** D-09 (Architecture Intelligence)  
+**Use Cases:** Spec 22, UC-205
+
+| Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
+|-------|------|----------------------|--------------|---------------------|-------|
+| `id` | string | seeded | AVAILABLE | — | CommonFields |
+| `entityType` | `'cloud-security-posture'` | seeded | AVAILABLE | — | Discriminator |
+| `tenant` | TenantContext | seeded | AVAILABLE | — | Tenant scope |
+| `cloudProvider` | enum | seeded | AVAILABLE | — | aws/azure/gcp |
+| `accountId` | string | seeded | AVAILABLE | — | Cloud account identifier |
+| `region` | string | seeded | AVAILABLE | — | Cloud region |
+| `complianceScore` | number (0-100) | seeded | AVAILABLE | — | Overall compliance percentage |
+| `driftCount` | number | seeded | AVAILABLE | — | Active drift findings |
+| `criticalFindings` | number | seeded | AVAILABLE | — | Critical-severity findings |
+| `lastScanAt` | string | seeded | AVAILABLE | — | Last posture scan |
+| `frameworks` | string[] | seeded | AVAILABLE | — | Applicable frameworks (CIS, SOC2, etc) |
+| `driftDetails` | DriftDetail[] | seeded | AVAILABLE | — | Specific drift items |
+| `source` | SourceMetadata | seeded | AVAILABLE | — | CommonFields |
+| `createdAt` | string | seeded | AVAILABLE | — | CommonFields |
+| `updatedAt` | string | seeded | AVAILABLE | — | CommonFields |
+
+**DB Schema Reconciliation:** ⚠️ **DIVERGENT — Contract + fixture exist, DB schema ABSENT.**
+
+---
+
+### 69. Case Transition Audit
+
+**Source:** Spec #06 Domain Requirements Req 6  
+**Coverage:** Full  
+**Contract:** `packages/contracts/src/entities/case-transition-audit.ts`  
+**DB Schema:** ❌ NOT FOUND  
+**Fixture:** `packages/contracts/src/fixtures/seed-case-transition-audits.ts` ✅  
+**Status:** AVAILABLE (fixture exists)  
+**Domain:** D-40 (Audit & Evidence)  
+**Use Cases:** Spec 06 Req 6, UC-206
+
+| Field | Type | Source Classification | Availability | Blocker (if FUTURE) | Notes |
+|-------|------|----------------------|--------------|---------------------|-------|
+| `id` | string | seeded | AVAILABLE | — | CommonFields |
+| `entityType` | `'case-transition-audit'` | seeded | AVAILABLE | — | Discriminator |
+| `tenant` | TenantContext | seeded | AVAILABLE | — | Tenant scope |
+| `caseRef` | string | seeded | AVAILABLE | — | Case being transitioned |
+| `fromState` | CaseStatus | seeded | AVAILABLE | — | Source lifecycle state |
+| `toState` | CaseStatus | seeded | AVAILABLE | — | Target lifecycle state |
+| `actor` | AuditActor | seeded | AVAILABLE | — | Who/what triggered transition |
+| `reason` | string | seeded | AVAILABLE | — | Machine-readable rationale |
+| `triggeredBy` | enum | seeded | AVAILABLE | — | engine/rule/strategy/escalation |
+| `gatesPassed` | string[] | seeded | AVAILABLE | — | Gates verified before transition |
+| `transitionedAt` | string | seeded | AVAILABLE | — | Transition timestamp |
+| `immutable` | true | seeded | AVAILABLE | — | Immutable audit record |
+| `source` | SourceMetadata | seeded | AVAILABLE | — | CommonFields |
+| `createdAt` | string | seeded | AVAILABLE | — | CommonFields |
+| `updatedAt` | string | seeded | AVAILABLE | — | CommonFields |
 
 **DB Schema Reconciliation:** ⚠️ **DIVERGENT — Contract + fixture exist, DB schema ABSENT.**
 

@@ -87,3 +87,21 @@ export { seedAttackClassificationAudits } from './seed-attack-classification-aud
 
 // ─── Verdict Pattern Fixtures (Spec 41) ──────────────────────────────────────
 export { seedVerdictPatterns } from './seed-verdict-patterns';
+
+// ─── Governed Compose Fixtures (Spec 25 — Outbound Draft & Approval) ─────────
+export { seedGovernedCompose } from './seed-governed-compose';
+
+// ─── Notification Fixtures (Spec 26) ─────────────────────────────────────────
+export { seedNotifications } from './seed-notifications';
+
+// ─── Case Follow Fixtures ────────────────────────────────────────────────────
+export { seedCaseFollows } from './seed-case-follows';
+
+// ─── Cloud Security Posture Fixtures (Spec 22) ───────────────────────────────
+export { seedCloudSecurityPosture } from './seed-cloud-security-posture';
+
+// ─── Case Transition Audit Fixtures (Spec 06 Req 6) ──────────────────────────
+export { seedCaseTransitionAudits } from './seed-case-transition-audits';
+
+// ─── Email Case Communication Fixtures (Spec 25) ─────────────────────────────
+export { seedEmailCommunications } from './seed-email-communications';

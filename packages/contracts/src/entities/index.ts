@@ -547,3 +547,27 @@ export { ATTACK_CLASSIFICATIONS, validateAttackClassificationAudit } from './att
 // ─── Verdict Pattern Case (Spec 41) ─────────────────────────────────────────
 export type { VerdictPatternCase, PatternType, VerdictPatternPhase, OutcomeCategory, EvidenceGrade, VerdictPatternCaseValidation } from './verdict-pattern-case';
 export { PATTERN_TYPES, VERDICT_PATTERN_PHASES, OUTCOME_CATEGORIES, EVIDENCE_GRADES, validateVerdictPatternCase } from './verdict-pattern-case';
+
+// ─── Governed Compose (Spec 25 — Outbound Draft & Approval) ──────────────────
+export type { GovernedCompose, ComposeChannel, ApprovalStatus, GovernedComposeValidation } from './governed-compose';
+export { COMPOSE_CHANNELS, APPROVAL_STATUSES, validateGovernedCompose } from './governed-compose';
+
+// ─── Notification (Spec 26 — Analyst Notifications) ──────────────────────────
+export type { Notification, NotificationType, NotificationSeverity, NotificationValidation } from './notification';
+export { NOTIFICATION_TYPES, NOTIFICATION_SEVERITIES, validateNotification } from './notification';
+
+// ─── Case Follow (Analyst Subscription) ──────────────────────────────────────
+export type { CaseFollow, FollowEventType, CaseFollowValidation } from './case-follow';
+export { FOLLOW_EVENT_TYPES, validateCaseFollow } from './case-follow';
+
+// ─── Cloud Security Posture (Spec 22 — Architecture Intelligence) ────────────
+export type { CloudSecurityPosture, CloudProvider, DriftSeverity, DriftDetail, CloudSecurityPostureValidation } from './cloud-security-posture';
+export { CLOUD_PROVIDERS, DRIFT_SEVERITIES, validateCloudSecurityPosture } from './cloud-security-posture';
+
+// ─── Case Transition Audit (Spec 06 Req 6 — Structured Lifecycle Audit) ──────
+export type { CaseTransitionAudit, TransitionTrigger, CaseTransitionAuditValidation } from './case-transition-audit';
+export { TRANSITION_TRIGGERS, validateCaseTransitionAudit } from './case-transition-audit';
+
+// ─── Email Case Communication (Spec 25 — Email Thread) ──────────────────────
+export type { EmailCaseCommunication, CommunicationDirection, CommunicationStatus, EmailCaseCommunicationValidation } from './email-case-communication';
+export { COMMUNICATION_DIRECTIONS, COMMUNICATION_STATUSES, validateEmailCaseCommunication } from './email-case-communication';

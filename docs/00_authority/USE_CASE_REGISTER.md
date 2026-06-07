@@ -255,3 +255,10 @@
 | UC-197 | Enforce jurisdictional controls | System, Admin | tenant-admin | /settings/jurisdiction | verdict-pattern-case.ts (jurisdictionRef) | SYSTEM | — | Spec 41 | NOT BUILT (field exists; jurisdiction entity deferred) |
 | UC-198 | Audit access-of-access (who viewed internal risk data) | System | platform | /platform/audit | audit-event.ts | SYSTEM | — | Spec 41 | NOT BUILT (audit entity exists; access-of-access logging deferred) |
 | UC-199 | Enforce surface-not-investigate boundary | System | — | — | verdict-pattern-case.ts (evidenceGrade field) | SYSTEM | — | Spec 41 | BUILT (entity field enforces boundary) |
+| UC-200 | View war room membership, decisions and communication cadence | All authenticated | operational | /war-room/p0 | war-room.ts, seed-war-rooms | SYSTEM | — | Spec 24 | BUILT |
+| UC-201 | View case email communication thread | All authenticated | operational | /cases/:id | email-case-communication.ts, seed-email-communications | SYSTEM | — | Spec 25 | BUILT |
+| UC-202 | Compose governed outbound draft with approval chain | All authenticated | operational | /cases/:id | governed-compose.ts, seed-governed-compose | SYSTEM | — | Spec 25 | BUILT |
+| UC-203 | View analyst notifications (case events, SLA warnings) | All authenticated | operational | /cases/my | notification.ts, seed-notifications | SYSTEM | — | Spec 26 | BUILT |
+| UC-204 | Follow/subscribe to case updates | All authenticated | operational | /cases/my | case-follow.ts, seed-case-follows | SYSTEM | — | — | BUILT |
+| UC-205 | View cloud security posture with drift detection | SOM, CISO | operational | /som/cloud-security | cloud-security-posture.ts, seed-cloud-security-posture | SYSTEM | — | Spec 22 | BUILT |
+| UC-206 | View structured case lifecycle transition audit trail | All authenticated | operational | /cases/:id | case-transition-audit.ts, seed-case-transition-audits | SYSTEM | — | Spec 06 | BUILT |
