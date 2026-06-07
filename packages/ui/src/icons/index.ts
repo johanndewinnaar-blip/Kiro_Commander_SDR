@@ -34,6 +34,7 @@ import {
   Sun,
   Users,
   UsersRound,
+  Waypoints,
 } from 'lucide-react';
 
 // ---------------------------------------------------------------------------
@@ -81,6 +82,7 @@ export const ICON_MAP = {
   'tenant-admin': Building,
   'governance': Scale,
   'reporting': FileText,
+  'som': Waypoints,
   // ── Header utility icons (Task 4.3) ────────────────────────────────────
   'search': Search,
   'theme-light': Sun,

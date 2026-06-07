@@ -43,6 +43,8 @@ page content share one left edge at every viewport width.
 
 4. **Cards have square corners, Tabler text colours, no stray gold.** Carries the existing global overrides in `globals.css`. Gold is permitted only on the COMMANDER brand wordmark.
 
+5. **Tabler-first layout rule.** PageContainer, shell, grid and all page-level layout uses Tabler. shadcn/Radix components (dialog, popover, command palette, etc.) render as overlays or inline interactive primitives — they do NOT replace or wrap page layout. Tailwind does NOT govern page layout. See `design-system-contract.md §0` for the full stack hierarchy.
+
 ## Documented exceptions (do NOT use PageContainer)
 
 These are recorded in DECISIONS.md (DEC-pagecontainer-exceptions). Any NEW exception requires its own decision record before it ships.

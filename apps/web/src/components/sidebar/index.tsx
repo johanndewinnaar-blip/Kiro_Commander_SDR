@@ -34,10 +34,16 @@ const DEFAULT_EXPANDED_GROUP = 'case-management';
 // ---------------------------------------------------------------------------
 
 const SIDEBAR_STYLES = `
+  /* ── Reset Tabler's navbar-vertical border-radius (square top-left corner) ── */
+  .navbar-vertical.commander-nav {
+    border-radius: 0 !important;
+  }
+
   /* ── Scrollbar — visible at rest, brighter on hover ── */
   .navbar-vertical .navbar-nav {
     scrollbar-width: thin;
     scrollbar-color: var(--tblr-border-color) transparent;
+    overflow-x: hidden;
   }
   .navbar-vertical .navbar-nav::-webkit-scrollbar { width: 4px; }
   .navbar-vertical .navbar-nav::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); }
@@ -83,7 +89,8 @@ const SIDEBAR_STYLES = `
     height: 34px;
     font-size: 0.8125rem;
     font-weight: 400;
-    padding-left: 2.75rem;
+    padding-left: 2.5rem;
+    text-align: left;
     color: var(--tblr-secondary-color) !important;
   }
 
@@ -96,7 +103,7 @@ const SIDEBAR_STYLES = `
     color: var(--tblr-light) !important;
     background: rgba(255,255,255,0.08) !important;
     border-left: 2px solid var(--tblr-border-color-active);
-    padding-left: calc(2.75rem - 2px);
+    padding-left: calc(2.5rem - 2px);
   }
 
   /* ── Nav link icon — 14px to match text ── */
@@ -474,6 +481,7 @@ function ScrollableMenu({ collapsed }: { collapsed: boolean }) {
         style={{
           flex: 1,
           overflowY: 'auto',
+          overflowX: 'hidden',
           display: 'flex',
           flexDirection: 'column',
           paddingTop: '0.25rem',
@@ -510,6 +518,7 @@ function ScrollableMenu({ collapsed }: { collapsed: boolean }) {
       style={{
         flex: 1,
         overflowY: 'auto',
+        overflowX: 'hidden',
         listStyle: 'none',
         margin: 0,
         padding: '0.25rem 0',
@@ -611,10 +620,12 @@ export function Sidebar() {
           background: 'var(--tblr-bg-surface-dark)',
           display: 'flex',
           flexDirection: 'column',
-          overflow: 'hidden',
+          overflowX: 'hidden',
+          overflowY: 'hidden',
           transition: 'width 180ms ease-out',
           zIndex: 100,
           borderRight: '1px solid rgba(255,255,255,0.08)',
+          borderRadius: 0,
         }}
       >
         <BrandBlock collapsed={collapsed} />

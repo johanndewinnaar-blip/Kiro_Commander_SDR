@@ -13,6 +13,87 @@ fileMatchPattern: "apps/web/**,packages/ui/**"
 
 ---
 
+## 0. UI Stack Hierarchy — Tabler-First Mixed Stack
+
+### Stack Rule
+
+Tabler is the PRIMARY design and page system. shadcn/ui is NOT a replacement design system.
+shadcn/Radix is permitted ONLY as a fallback by exception where Tabler lacks a suitable
+accessible or interactive component.
+
+### Tabler-First Components (must use Tabler)
+
+The following remain Tabler-first. Do NOT replace with shadcn equivalents:
+
+- Shell (sidebar, top bar, brand lockup)
+- Layout (page-wrapper, container-xl, responsive grid)
+- PageContainer
+- Cards (card, card-header, card-body, card-actions)
+- Tables (table, table-vcenter, card-table)
+- Badges (badge bg-*)
+- Buttons (btn, btn-primary, btn-ghost-secondary, btn-danger)
+- Forms (form-control, form-label, form-select)
+- Grid (row, row-deck, row-cards, col-*)
+
+### shadcn/Radix Fallback — Permitted Components
+
+shadcn/Radix is allowed ONLY for these interactive primitives where Tabler is insufficient:
+
+- Complex collapsible menu tree (Radix Collapsible / Accordion)
+- Command palette (cmdk)
+- Dialog (Radix Dialog)
+- Popover (Radix Popover)
+- Tooltip (Radix Tooltip)
+- Tabs (Radix Tabs)
+- Scroll area (Radix ScrollArea)
+- Dropdown menu (Radix DropdownMenu)
+- Other interactive primitives where Tabler demonstrably lacks the component
+
+### Before Using shadcn — Decision Gate
+
+Before reaching for a shadcn component:
+
+1. Check if Tabler has a suitable component for the use case
+2. If Tabler is suitable → use Tabler
+3. If shadcn is used → wrap in Commander tokens (primitives → semantic → component)
+4. Document why Tabler was insufficient in a code comment at point of use:
+   ```tsx
+   {/* shadcn/Radix: Tabler lacks accessible collapsible tree with keyboard nav */}
+   ```
+
+### Tailwind Rule
+
+Tailwind CSS exists to support shadcn component styling ONLY. It must NOT:
+
+- Take over page layout (layout is Tabler grid + PageContainer)
+- Introduce a global reset that changes Tabler defaults
+- Apply hardcoded colour, font, or spacing values where Commander tokens exist
+- Be used for general page styling — use Tabler utility classes instead
+
+### Chart Rule
+
+Permitted chart libraries:
+
+- **ApexCharts / react-apexcharts** — standard charts (area, bar, donut, radar, heatmap)
+- **Recharts** — Sankey diagrams, composable/custom chart layouts
+- **Inline SVG** — small sparklines, micro-indicators
+
+All chart colours MUST come from Commander `--data-*` semantic tokens. No literal hex values.
+
+### Forbidden
+
+The following actions are FORBIDDEN and constitute a governance violation:
+
+- Replacing PageContainer with a shadcn layout
+- Replacing Tabler shell foundation (sidebar, top bar, grid) with shadcn/Tailwind equivalents
+- Global CSS resets that override Tabler baseline
+- Per-component `font-family` overrides
+- Uncontrolled custom CSS blocks (scoped or global) that bypass the token system
+- Hardcoded chart colour palettes (must use `--data-*` tokens)
+- Using Tailwind utility classes for page-level layout, spacing, or typography
+
+---
+
 ## 1. Text Hierarchy
 
 ### Page Title

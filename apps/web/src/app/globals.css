@@ -55,3 +55,11 @@
   letter-spacing: 0.08em;
   color: var(--tblr-muted);
 }
+
+/* ── ISSUE 7: Sidebar — no border-radius, no horizontal overflow ─────────── */
+/* Ensures Tabler's navbar-vertical does not introduce rounded corners or
+   horizontal scrollbars that regress the Commander shell. */
+.navbar-vertical {
+  border-radius: 0 !important;
+  overflow-x: hidden !important;
+}
