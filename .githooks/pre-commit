@@ -185,6 +185,32 @@ while IFS= read -r file; do
 done <<< "$staged_files"
 
 # ----------------------------------------------------------------
+# CHECK 4 — UC-XXX traceability reference in commit message for
+#            new entity/engine/page files.
+#
+# Per traceability-chain.md Rule 5: commits adding new pages,
+# entities, or engines MUST include a UC-XXX reference.
+# This is a WARNING (not a FAIL) to avoid blocking established
+# workflow while governance adoption ramps up.
+# ----------------------------------------------------------------
+
+# Detect new (Added) entity, engine, or page files in the staged set.
+new_artefacts=$(git diff --cached --name-only --diff-filter=A | grep -E '(packages/contracts/src/entities/.*\.ts$|packages/contracts/src/engines/.*\.ts$|apps/web/src/app/.*/page\.tsx$)' || true)
+
+if [[ -n "$new_artefacts" ]]; then
+    commit_msg_file="$PWD/.git/COMMIT_EDITMSG"
+    if [[ -f "$commit_msg_file" ]]; then
+        commit_msg=$(cat "$commit_msg_file")
+    else
+        commit_msg=$(git log -1 --format=%B 2>/dev/null || echo "")
+    fi
+    if ! printf '%s' "$commit_msg" | grep -qE 'UC-[0-9]+'; then
+        note "TRACEABILITY" "commit message" \
+            "New entity/engine/page staged but commit message has no UC-XXX reference. Per traceability-chain.md Rule 5, add a UC reference."
+    fi
+fi
+
+# ----------------------------------------------------------------
 # Governance runner (ARCH-008 integrity backstop).
 # ----------------------------------------------------------------
 
