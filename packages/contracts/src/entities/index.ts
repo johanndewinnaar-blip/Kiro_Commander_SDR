@@ -527,3 +527,23 @@ export {
   BLAST_AFFECTED_ENTITY_TYPES,
   validateBlastRadius,
 } from './blast-radius-engine';
+
+// ─── Decision Record (Spec 36 — Governance) ──────────────────────────────────
+export type { DecisionRecord, DecisionType, DecisionFactor, DecisionRecordValidation } from './decision-record';
+export { DECISION_TYPES, validateDecisionRecord } from './decision-record';
+
+// ─── Simulation Result (Spec 36 — Governance) ────────────────────────────────
+export type { SimulationResult as RuleSimulationResult, SimulationConflict, SimulationStatus, SimulationScope, SimulationResultValidation } from './simulation-result';
+export { SIMULATION_STATUSES, SIMULATION_SCOPES, validateSimulationResult } from './simulation-result';
+
+// ─── Inverse Discovery Event (Spec 40) ──────────────────────────────────────
+export type { InverseDiscoveryEvent, LookupEntityType, LookupResult, RootCause, InverseDiscoveryEventValidation } from './inverse-discovery-event';
+export { LOOKUP_ENTITY_TYPES, LOOKUP_RESULTS, ROOT_CAUSES, validateInverseDiscoveryEvent } from './inverse-discovery-event';
+
+// ─── Attack Classification Audit (Spec 39) ──────────────────────────────────
+export type { AttackClassificationAudit, AttackClassification, PostureSnapshot, AttackClassificationAuditValidation } from './attack-classification-audit';
+export { ATTACK_CLASSIFICATIONS, validateAttackClassificationAudit } from './attack-classification-audit';
+
+// ─── Verdict Pattern Case (Spec 41) ─────────────────────────────────────────
+export type { VerdictPatternCase, PatternType, VerdictPatternPhase, OutcomeCategory, EvidenceGrade, VerdictPatternCaseValidation } from './verdict-pattern-case';
+export { PATTERN_TYPES, VERDICT_PATTERN_PHASES, OUTCOME_CATEGORIES, EVIDENCE_GRADES, validateVerdictPatternCase } from './verdict-pattern-case';

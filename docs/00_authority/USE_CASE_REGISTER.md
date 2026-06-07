@@ -229,3 +229,29 @@
 | UC-172 | View rule health telemetry | SOM | platform | /platform/rules | risk-scoring-engine.ts, seed-risk-scores, platform-management.ts | SYSTEM | — | Spec 34 | PARTIAL (risk-scoring entity + fixtures exist; dedicated telemetry view deferred) |
 | UC-173 | Manage finding lifecycle | Analyst | platform | /platform/rules | finding.ts, seed-findings, suppression-engine.ts | SYSTEM | — | Spec 34 | NOT BUILT (finding entity + lifecycle + suppression exist; finding-management UI deferred) |
 | UC-174 | Promote/rollback rule versions | SOM | platform | /platform/rules | platform-management.ts (RuleDefinition version fields) | SYSTEM | — | Spec 34 | NOT BUILT (entity version lifecycle fields exist; promote/rollback UI deferred) |
+
+| UC-175 | Explain any system decision with full rationale | Analyst, SOM | platform | /governance/decisions | decision-record.ts, decision-explainability-engine.ts, seed-decision-records | SYSTEM | — | Spec 36 | BUILT |
+| UC-176 | Simulate rule change blast radius | SOM | platform | /platform/rules/simulation | simulation-result.ts, seed-simulation-results | SYSTEM | — | Spec 36 | BUILT (entity + fixture; page pre-exists from Spec 34) |
+| UC-177 | Manage detection model lifecycle (author→test→promote→tune→retire) | SOM, Security Architect | platform | /platform/models/lifecycle | platform-management.ts (ModelDefinition), seed-platform | SYSTEM | — | Spec 36 | BUILT |
+| UC-178 | View decision audit trail per case | Analyst | platform | /cases/:id | decision-record.ts, decision-explainability-engine.ts | SYSTEM | — | Spec 36 | NOT BUILT (engine exists; case-detail integration deferred) |
+| UC-179 | Version/rollback rule with approval | SOM | platform | /platform/rules | platform-management.ts (RuleDefinition version fields) | SYSTEM | — | Spec 36 | NOT BUILT (entity fields exist; approval workflow UI deferred) |
+| UC-180 | Author detection model with schema validation | Security Architect | platform | /platform/models/lifecycle | platform-management.ts (ModelDefinition) | SYSTEM | — | Spec 36 | NOT BUILT (entity exists; authoring form deferred) |
+| UC-181 | Detect normalisation lookup failure | System | — | — | inverse-discovery-engine.ts, inverse-discovery-event.ts | SYSTEM | — | Spec 40 | BUILT (engine) |
+| UC-182 | Attempt secondary resolution (fuzzy match, identifier translation) | System | — | — | secondary-resolution-engine.ts | SYSTEM | — | Spec 40 | BUILT (engine) |
+| UC-183 | Generate coverage blindspot case from unresolved lookup | System | operational | /coverage/blindspots | inverse-discovery-engine.ts, inverse-discovery-event.ts, seed-inverse-discovery | SYSTEM | — | Spec 40 | BUILT |
+| UC-184 | Classify root cause of lookup failure | System | — | — | inverse-discovery-engine.ts | SYSTEM | — | Spec 40 | BUILT (engine) |
+| UC-185 | Trigger entity onboarding workflow | System, Analyst | operational | /coverage/blindspots | inverse-discovery-engine.ts | SYSTEM | — | Spec 40 | BUILT (engine; UI trigger deferred) |
+| UC-186 | Classify entity posture as PRE_WARNED/PROTECTED/NOVEL | System | — | — | temporal-posture-lookup-engine.ts, attack-classification-audit.ts | SYSTEM | — | Spec 39 | BUILT (engine) |
+| UC-187 | Lookup historical posture at case-open time | System | — | — | temporal-posture-lookup-engine.ts | SYSTEM | — | Spec 39 | BUILT (engine) |
+| UC-188 | Record immutable classification audit | System | platform | /platform/audit | attack-classification-audit.ts, seed-attack-classification-audits | SYSTEM | — | Spec 39 | BUILT (entity + fixture) |
+| UC-189 | Feed classification to priority engine | System | — | — | posture-accountability-engine.ts (feedToPriorityEngine) | SYSTEM | — | Spec 39 | BUILT (engine) |
+| UC-190 | Pause classification on inverse discovery failure | System | — | — | posture-accountability-engine.ts (integrateInverseDiscovery), temporal-posture-lookup-engine.ts (pauseOnInverseFailure) | SYSTEM | — | Spec 39 | BUILT (engine) |
+| UC-191 | Render operating picture classification rings | Analyst, CISO | operational | /operating-picture/external | attack-classification-audit.ts | SYSTEM | — | Spec 39 | NOT BUILT (entity exists; ring visualisation deferred to op-picture refresh) |
+| UC-192 | Surface verdict pattern (NOT investigate) | System | operational | /identity/internal-risk | verdict-pattern-case.ts, seed-verdict-patterns | SYSTEM | — | Spec 41 | BUILT (entity + fixture) |
+| UC-193 | Triage verdict pattern (significance, suppression) | System | — | — | verdict-pattern-case.ts | SYSTEM | — | Spec 41 | NOT BUILT (entity phase field supports; triage engine deferred) |
+| UC-194 | Route verdict pattern to customer investigation | System | — | — | verdict-pattern-case.ts | SYSTEM | — | Spec 41 | NOT BUILT (entity phase field supports; routing engine deferred) |
+| UC-195 | Hand off investigation to customer | System | operational | /identity/internal-risk | verdict-pattern-case.ts | SYSTEM | — | Spec 41 | NOT BUILT (entity fields support; handoff UI deferred) |
+| UC-196 | Record investigation outcome | Customer | operational | /identity/internal-risk | verdict-pattern-case.ts | SYSTEM | — | Spec 41 | NOT BUILT (entity fields support; outcome UI deferred) |
+| UC-197 | Enforce jurisdictional controls | System, Admin | tenant-admin | /settings/jurisdiction | verdict-pattern-case.ts (jurisdictionRef) | SYSTEM | — | Spec 41 | NOT BUILT (field exists; jurisdiction entity deferred) |
+| UC-198 | Audit access-of-access (who viewed internal risk data) | System | platform | /platform/audit | audit-event.ts | SYSTEM | — | Spec 41 | NOT BUILT (audit entity exists; access-of-access logging deferred) |
+| UC-199 | Enforce surface-not-investigate boundary | System | — | — | verdict-pattern-case.ts (evidenceGrade field) | SYSTEM | — | Spec 41 | BUILT (entity field enforces boundary) |

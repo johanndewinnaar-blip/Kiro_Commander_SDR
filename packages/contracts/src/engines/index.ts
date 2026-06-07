@@ -329,3 +329,70 @@ export {
   deduplicateFinding,
   suppressByRule,
 } from './suppression-engine';
+
+// Spec 36: Decision Explainability Engine
+export type {
+  RuleHit,
+  EngineOutput,
+  HumanReadableExplanation,
+  DecisionExplanation,
+} from './decision-explainability-engine';
+export {
+  explainDecision,
+  traceRuleHits,
+  traceEngineOutputs,
+  renderRationale,
+} from './decision-explainability-engine';
+
+// Spec 40: Inverse Discovery Engine
+export type {
+  SignalInput,
+  ExistingEntity,
+  LookupResultOutput,
+  CaseRef,
+  OnboardingRef,
+} from './inverse-discovery-engine';
+export {
+  detectLookupFailure,
+  classifyRootCause,
+  generateBlindspotCase,
+  triggerOnboarding,
+} from './inverse-discovery-engine';
+
+// Spec 40: Secondary Resolution Engine
+export type {
+  MatchResult,
+  TranslationResult,
+  ChangeCheckResult,
+  IdentifierMapping,
+  RecentChange,
+} from './secondary-resolution-engine';
+export {
+  attemptFuzzyMatch,
+  translateIdentifier,
+  checkRecentChanges,
+} from './secondary-resolution-engine';
+
+// Spec 39: Temporal Posture Lookup Engine
+export type {
+  PostureRecord,
+  PauseResult,
+} from './temporal-posture-lookup-engine';
+export {
+  lookupPostureAtTime,
+  evaluatePreWarned,
+  evaluateProtected,
+  evaluateNovel,
+  classifyFromSnapshot,
+  pauseOnInverseFailure,
+} from './temporal-posture-lookup-engine';
+
+// Spec 39: Posture Accountability augmentation (feedToPriorityEngine, integrateInverseDiscovery)
+export type {
+  PriorityAdjustment,
+  ClassificationUpdate,
+} from './posture-accountability-engine';
+export {
+  feedToPriorityEngine,
+  integrateInverseDiscovery,
+} from './posture-accountability-engine';

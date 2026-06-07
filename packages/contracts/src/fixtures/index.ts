@@ -74,3 +74,16 @@ export { seedMissionBindings } from './seed-mission-bindings';
 export { seedFindings } from './seed-findings';
 export { seedRiskScores } from './seed-risk-scores';
 export { seedBlastRadius } from './seed-blast-radius';
+
+// ─── Decision Record Fixtures (Spec 36) ──────────────────────────────────────
+export { seedDecisionRecords } from './seed-decision-records';
+export { seedSimulationResults } from './seed-simulation-results';
+
+// ─── Inverse Discovery Fixtures (Spec 40) ────────────────────────────────────
+export { seedInverseDiscovery } from './seed-inverse-discovery';
+
+// ─── Attack Classification Audit Fixtures (Spec 39) ──────────────────────────
+export { seedAttackClassificationAudits } from './seed-attack-classification-audits';
+
+// ─── Verdict Pattern Fixtures (Spec 41) ──────────────────────────────────────
+export { seedVerdictPatterns } from './seed-verdict-patterns';
