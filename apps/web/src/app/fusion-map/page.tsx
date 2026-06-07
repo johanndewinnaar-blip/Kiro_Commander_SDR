@@ -6,7 +6,7 @@ import { seedTopology } from '../../../../../packages/contracts/src/fixtures/see
 import { componentTokens } from '../../../../../packages/ui/src/tokens/components';
 import { primitiveTypeScale, primitiveSpacing, primitiveFontWeight, primitiveFonts, primitiveLetterSpacing, primitiveSignal } from '../../../../../packages/ui/src/tokens/primitives';
 import { ReactFlow, Background, Controls, Node, Edge, Position } from '@xyflow/react';
-import { Tooltip, ResponsiveContainer } from 'recharts';
+import { Sankey, ResponsiveContainer, Tooltip } from 'recharts';
 import { useMemo, useState } from 'react';
 
 import '@xyflow/react/dist/style.css';
@@ -79,83 +79,55 @@ export default function FusionMapPage() {
     }));
   }, [edges, tokens]);
 
-  // Transform data for Sankey chart - proper flow visualization
+  // Simple Sankey data transformation
   const sankeyData = useMemo(() => {
-    // Create a proper Sankey flow: entity domains -> relationship types -> target domains
-    const flowNodes: Array<{ name: string }> = [];
-    const flowLinks: Array<{ source: number; target: number; value: number }> = [];
-    const nodeIndexMap = new Map<string, number>();
-    let nodeIndex = 0;
+    // Create simplified domain flow for Sankey
+    const nodes: Array<{ name: string }> = [];
+    const links: Array<{ source: number; target: number; value: number }> = [];
+    
+    // Get unique domains
+    const domains = new Set<string>();
+    edges.forEach(edge => {
+      const sourceNode = nodeMap.get(edge.sourceNodeId);
+      const targetNode = nodeMap.get(edge.targetNodeId);
+      if (sourceNode) domains.add(sourceNode.domain);
+      if (targetNode) domains.add(targetNode.domain);
+    });
 
-    // Collect unique domains and relationship types
-    const sourceDomains = new Set<string>();
-    const targetDomains = new Set<string>();
-    const relationshipTypes = new Set<string>();
+    // Add domains as nodes
+    const domainArray = Array.from(domains);
+    domainArray.forEach(domain => {
+      nodes.push({ name: domain });
+    });
 
+    // Create domain-to-domain flows
+    const domainFlows = new Map<string, number>();
     edges.forEach(edge => {
       const sourceNode = nodeMap.get(edge.sourceNodeId);
       const targetNode = nodeMap.get(edge.targetNodeId);
       if (sourceNode && targetNode) {
-        sourceDomains.add(sourceNode.domain);
-        targetDomains.add(targetNode.domain);
-        relationshipTypes.add(edge.relationshipType);
+        const flowKey = `${sourceNode.domain}→${targetNode.domain}`;
+        const currentFlow = domainFlows.get(flowKey) || 0;
+        domainFlows.set(flowKey, currentFlow + edge.weight);
       }
     });
 
-    // Add source domain nodes
-    sourceDomains.forEach(domain => {
-      flowNodes.push({ name: domain });
-      nodeIndexMap.set(`source_${domain}`, nodeIndex++);
-    });
-
-    // Add relationship type nodes
-    relationshipTypes.forEach(relType => {
-      const displayName = relType.replace(/_/g, ' ');
-      flowNodes.push({ name: displayName });
-      nodeIndexMap.set(`rel_${relType}`, nodeIndex++);
-    });
-
-    // Add target domain nodes (only if different from source)
-    targetDomains.forEach(domain => {
-      if (!sourceDomains.has(domain)) {
-        flowNodes.push({ name: `${domain} (target)` });
-        nodeIndexMap.set(`target_${domain}`, nodeIndex++);
+    // Convert flows to links
+    domainFlows.forEach((totalWeight, flowKey) => {
+      const [sourceDomain, targetDomain] = flowKey.split('→');
+      const sourceIndex = domainArray.indexOf(sourceDomain);
+      const targetIndex = domainArray.indexOf(targetDomain);
+      
+      if (sourceIndex !== -1 && targetIndex !== -1 && sourceIndex !== targetIndex) {
+        links.push({
+          source: sourceIndex,
+          target: targetIndex,
+          value: Math.round(totalWeight * 100)
+        });
       }
     });
 
-    // Create flows: source domain -> relationship -> target domain
-    edges.forEach(edge => {
-      const sourceNode = nodeMap.get(edge.sourceNodeId);
-      const targetNode = nodeMap.get(edge.targetNodeId);
-      if (sourceNode && targetNode) {
-        const sourceDomainIdx = nodeIndexMap.get(`source_${sourceNode.domain}`);
-        const relTypeIdx = nodeIndexMap.get(`rel_${edge.relationshipType}`);
-        const targetDomainIdx = sourceDomains.has(targetNode.domain) 
-          ? nodeIndexMap.get(`source_${targetNode.domain}`)
-          : nodeIndexMap.get(`target_${targetNode.domain}`);
-
-        if (sourceDomainIdx !== undefined && relTypeIdx !== undefined) {
-          // Domain to relationship
-          flowLinks.push({
-            source: sourceDomainIdx,
-            target: relTypeIdx,
-            value: Math.round(edge.weight * 50)
-          });
-
-          // Relationship to target domain
-          if (targetDomainIdx !== undefined && sourceDomainIdx !== targetDomainIdx) {
-            flowLinks.push({
-              source: relTypeIdx,
-              target: targetDomainIdx,
-              value: Math.round(edge.weight * 50)
-            });
-          }
-        }
-      }
-    });
-
-    console.log('Sankey data:', { nodes: flowNodes, links: flowLinks }); // Debug log
-    return { nodes: flowNodes, links: flowLinks };
+    return { nodes, links };
   }, [edges, nodeMap]);
 
   // Selected node blast radius
@@ -229,23 +201,70 @@ export default function FusionMapPage() {
         </div>
       </div>
 
-      {/* Relationship Flow Card - Reliable Table Format */}
+      {/* Domain Relationship Flow - Sankey + Summary */}
       <div style={{ background: tokens.surface.elevated, border: `1px solid ${tokens.border.default}`, padding: componentTokens.cardPadding, marginBottom: componentTokens.gridGap }}>
         <h3 style={{ fontSize: primitiveTypeScale.h4, fontWeight: primitiveFontWeight.semibold, color: tokens.text.primary, margin: `0 0 ${componentTokens.cardHeaderMargin}` }}>Domain Relationship Flow</h3>
-        <div style={{ height: '300px', overflow: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: primitiveTypeScale.caption }}>
+        
+        {/* Sankey Chart */}
+        <div style={{ height: '200px', marginBottom: componentTokens.gridGap }}>
+          {sankeyData.nodes.length > 0 && sankeyData.links.length > 0 ? (
+            <ResponsiveContainer width="100%" height="100%">
+              <Sankey
+                data={sankeyData}
+                nodeWidth={10}
+                nodePadding={15}
+                iterations={4}
+                margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
+              >
+                <Tooltip 
+                  content={({ active, payload }) => {
+                    if (active && payload && payload[0]) {
+                      const data = payload[0].payload as any;
+                      return (
+                        <div style={{
+                          background: tokens.surface.elevated,
+                          border: `1px solid ${tokens.border.default}`,
+                          padding: primitiveSpacing[2],
+                          fontSize: primitiveTypeScale.micro,
+                          color: tokens.text.primary,
+                          borderRadius: '4px'
+                        }}>
+                          <div>Domain Flow: {data.value}</div>
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+                />
+              </Sankey>
+            </ResponsiveContainer>
+          ) : (
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              height: '100%',
+              color: tokens.text.muted,
+              fontSize: primitiveTypeScale.caption
+            }}>
+              No domain flow data
+            </div>
+          )}
+        </div>
+
+        {/* Flow Summary Table */}
+        <div style={{ maxHeight: '200px', overflow: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: primitiveTypeScale.micro }}>
             <thead>
-              <tr>
-                {['Source Domain', 'Relationship', 'Target Domain', 'Weight'].map((h) => (
+              <tr style={{ background: tokens.surface.base }}>
+                {['Source', 'Relationship', 'Target', 'Weight'].map((h) => (
                   <th key={h} style={{ 
                     textAlign: 'left', 
-                    padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, 
-                    borderBottom: `2px solid ${tokens.border.default}`, 
+                    padding: `${primitiveSpacing[1]} ${primitiveSpacing[2]}`, 
+                    borderBottom: `1px solid ${tokens.border.default}`, 
                     color: tokens.text.muted, 
                     fontWeight: primitiveFontWeight.semibold, 
-                    textTransform: 'uppercase', 
-                    letterSpacing: primitiveLetterSpacing.eyebrow, 
-                    fontSize: primitiveTypeScale.micro 
+                    fontSize: primitiveTypeScale.micro
                   }}>
                     {h}
                   </th>
@@ -253,45 +272,38 @@ export default function FusionMapPage() {
               </tr>
             </thead>
             <tbody>
-              {edges.map((edge) => {
+              {edges.slice(0, 6).map((edge) => {
                 const sourceNode = nodeMap.get(edge.sourceNodeId);
                 const targetNode = nodeMap.get(edge.targetNodeId);
                 return (
                   <tr key={edge.edgeId} style={{ borderBottom: `1px solid ${tokens.border.subtle}` }}>
                     <td style={{ 
-                      padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, 
-                      color: tokens.text.primary,
-                      fontWeight: primitiveFontWeight.semibold
+                      padding: `${primitiveSpacing[1]} ${primitiveSpacing[2]}`, 
+                      color: tokens.text.secondary,
+                      fontSize: primitiveTypeScale.micro
                     }}>
-                      {sourceNode?.domain || 'Unknown'}
+                      {sourceNode?.domain || '?'}
                     </td>
                     <td style={{ 
-                      padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, 
-                      color: tokens.text.secondary 
+                      padding: `${primitiveSpacing[1]} ${primitiveSpacing[2]}`, 
+                      color: tokens.text.muted,
+                      fontSize: primitiveTypeScale.micro
                     }}>
                       {edge.relationshipType.replace(/_/g, ' ')}
                     </td>
                     <td style={{ 
-                      padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, 
-                      color: tokens.text.primary,
-                      fontWeight: primitiveFontWeight.semibold
+                      padding: `${primitiveSpacing[1]} ${primitiveSpacing[2]}`, 
+                      color: tokens.text.secondary,
+                      fontSize: primitiveTypeScale.micro
                     }}>
-                      {targetNode?.domain || 'Unknown'}
+                      {targetNode?.domain || '?'}
                     </td>
                     <td style={{ 
-                      padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, 
+                      padding: `${primitiveSpacing[1]} ${primitiveSpacing[2]}`, 
                       fontFamily: primitiveFonts.mono,
                       color: tokens.text.secondary,
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: primitiveSpacing[2]
+                      fontSize: primitiveTypeScale.micro
                     }}>
-                      <div style={{
-                        width: `${Math.max(20, edge.weight * 60)}px`,
-                        height: '8px',
-                        backgroundColor: primitiveSignal.info,
-                        borderRadius: '4px'
-                      }} />
                       {edge.weight.toFixed(2)}
                     </td>
                   </tr>
@@ -299,6 +311,16 @@ export default function FusionMapPage() {
               })}
             </tbody>
           </table>
+          {edges.length > 6 && (
+            <div style={{ 
+              padding: primitiveSpacing[2], 
+              textAlign: 'center', 
+              color: tokens.text.muted, 
+              fontSize: primitiveTypeScale.micro 
+            }}>
+              +{edges.length - 6} more relationships
+            </div>
+          )}
         </div>
       </div>
 
