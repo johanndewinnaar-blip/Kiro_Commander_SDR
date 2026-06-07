@@ -51,7 +51,7 @@ const SIDEBAR_STYLES = `
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0 1rem;
+    padding: 0 1.25rem;
     height: 40px;
     font-size: 0.8125rem;
     font-weight: 600;
@@ -110,7 +110,7 @@ const SIDEBAR_STYLES = `
     height: 34px;
     font-size: 0.75rem;
     font-weight: 500;
-    padding: 0 1rem 0 3.25rem;
+    padding: 0 1.25rem 0 3.5rem;
     color: var(--tblr-secondary-color) !important;
     background: transparent !important;
     position: relative;
@@ -120,7 +120,7 @@ const SIDEBAR_STYLES = `
   .navbar-vertical.commander-nav .nav-item-nested .nav-link::before {
     content: '';
     position: absolute;
-    left: 1.625rem;
+    left: 1.75rem;
     top: 0;
     bottom: 0;
     width: 2px;
@@ -219,7 +219,7 @@ const SIDEBAR_STYLES = `
   /* ── Brand block (expanded) ── */
   .navbar-vertical.commander-nav .navbar-brand {
     flex-shrink: 0;
-    padding: 1.125rem 0.875rem 1rem;
+    padding: 1.25rem 1.25rem 1.125rem;
     border-bottom: 1px solid var(--tblr-border-color);
     min-height: 72px;
     display: flex;
@@ -300,7 +300,7 @@ const SIDEBAR_STYLES = `
   .navbar-vertical.commander-nav .nav-icon-rail::after {
     content: attr(data-tooltip);
     position: absolute;
-    left: calc(100% + 8px);
+    left: calc(100% + 12px);
     top: 50%;
     transform: translateY(-50%);
     background: var(--tblr-bg-surface-dark);
@@ -308,7 +308,7 @@ const SIDEBAR_STYLES = `
     font-size: 0.75rem;
     font-weight: 500;
     white-space: nowrap;
-    padding: 4px 8px;
+    padding: 6px 10px;
     border: 1px solid var(--tblr-border-color);
     pointer-events: none;
     opacity: 0;
@@ -454,7 +454,7 @@ function NavGroupRow({ group, isExpanded, isActive, hasActiveChild, activeItemPa
         <Collapsible.Content>
           <ul style={{ 
             listStyle: 'none', 
-            margin: '0.25rem 0 0 0', 
+            margin: '0.375rem 0 0 0', 
             padding: 0,
             display: 'flex',
             flexDirection: 'column',
@@ -567,8 +567,9 @@ function ScrollableMenu({ collapsed }: { collapsed: boolean }) {
             height: '100%',
             display: 'flex',
             flexDirection: 'column',
-            paddingTop: '0.25rem',
-            paddingBottom: '0.25rem',
+            paddingTop: '0.75rem',
+            paddingBottom: '0.75rem',
+            gap: '0.25rem',
           }}
         >
           {OPERATIONAL_NAV_GROUPS.map((group) => (
@@ -621,10 +622,10 @@ function ScrollableMenu({ collapsed }: { collapsed: boolean }) {
           style={{
             listStyle: 'none',
             margin: 0,
-            padding: '0.5rem 0',
+            padding: '0.75rem 0',
             display: 'flex',
             flexDirection: 'column',
-            gap: '0.5rem',
+            gap: '0.75rem',
           }}
         >
           {OPERATIONAL_NAV_GROUPS.map((group) => (
