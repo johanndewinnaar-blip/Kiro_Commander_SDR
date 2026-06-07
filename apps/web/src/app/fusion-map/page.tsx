@@ -79,63 +79,82 @@ export default function FusionMapPage() {
     }));
   }, [edges, tokens]);
 
-  // Transform data for Sankey chart - simplified to prevent stack overflow
+  // Transform data for Sankey chart - proper flow visualization
   const sankeyData = useMemo(() => {
-    // Group relationships by type for clearer flow visualization
-    const relationshipGroups = new Map<string, { source: string; target: string; weight: number }[]>();
-    
+    // Create a proper Sankey flow: entity domains -> relationship types -> target domains
+    const flowNodes: Array<{ name: string }> = [];
+    const flowLinks: Array<{ source: number; target: number; value: number }> = [];
+    const nodeIndexMap = new Map<string, number>();
+    let nodeIndex = 0;
+
+    // Collect unique domains and relationship types
+    const sourceDomains = new Set<string>();
+    const targetDomains = new Set<string>();
+    const relationshipTypes = new Set<string>();
+
     edges.forEach(edge => {
       const sourceNode = nodeMap.get(edge.sourceNodeId);
       const targetNode = nodeMap.get(edge.targetNodeId);
       if (sourceNode && targetNode) {
-        const relType = edge.relationshipType.replace(/_/g, ' ');
-        if (!relationshipGroups.has(relType)) {
-          relationshipGroups.set(relType, []);
-        }
-        relationshipGroups.get(relType)?.push({
-          source: sourceNode.entityType,
-          target: targetNode.entityType,
-          weight: edge.weight
-        });
+        sourceDomains.add(sourceNode.domain);
+        targetDomains.add(targetNode.domain);
+        relationshipTypes.add(edge.relationshipType);
       }
     });
 
-    // Create simplified flow: entity types -> relationship types -> entity types
-    const flowNodes: Array<{ name: string }> = [];
-    const flowLinks: Array<{ source: number; target: number; value: number }> = [];
-    const nodeIndexMap = new Map<string, number>();
-    
-    let nodeIndex = 0;
-    
-    // Add source entity types
-    const sourceTypes = new Set(Array.from(relationshipGroups.values()).flat().map(r => r.source));
-    sourceTypes.forEach(type => {
-      flowNodes.push({ name: `${type} (source)` });
-      nodeIndexMap.set(`source_${type}`, nodeIndex++);
-    });
-    
-    // Add target entity types
-    const targetTypes = new Set(Array.from(relationshipGroups.values()).flat().map(r => r.target));
-    targetTypes.forEach(type => {
-      flowNodes.push({ name: `${type} (target)` });
-      nodeIndexMap.set(`target_${type}`, nodeIndex++);
-    });
-    
-    // Create links between source and target types
-    relationshipGroups.forEach((relationships, relType) => {
-      relationships.forEach(rel => {
-        const sourceIdx = nodeIndexMap.get(`source_${rel.source}`);
-        const targetIdx = nodeIndexMap.get(`target_${rel.target}`);
-        if (sourceIdx !== undefined && targetIdx !== undefined) {
-          flowLinks.push({
-            source: sourceIdx,
-            target: targetIdx,
-            value: Math.round(rel.weight * 100)
-          });
-        }
-      });
+    // Add source domain nodes
+    sourceDomains.forEach(domain => {
+      flowNodes.push({ name: domain });
+      nodeIndexMap.set(`source_${domain}`, nodeIndex++);
     });
 
+    // Add relationship type nodes
+    relationshipTypes.forEach(relType => {
+      const displayName = relType.replace(/_/g, ' ');
+      flowNodes.push({ name: displayName });
+      nodeIndexMap.set(`rel_${relType}`, nodeIndex++);
+    });
+
+    // Add target domain nodes (only if different from source)
+    targetDomains.forEach(domain => {
+      if (!sourceDomains.has(domain)) {
+        flowNodes.push({ name: `${domain} (target)` });
+        nodeIndexMap.set(`target_${domain}`, nodeIndex++);
+      }
+    });
+
+    // Create flows: source domain -> relationship -> target domain
+    edges.forEach(edge => {
+      const sourceNode = nodeMap.get(edge.sourceNodeId);
+      const targetNode = nodeMap.get(edge.targetNodeId);
+      if (sourceNode && targetNode) {
+        const sourceDomainIdx = nodeIndexMap.get(`source_${sourceNode.domain}`);
+        const relTypeIdx = nodeIndexMap.get(`rel_${edge.relationshipType}`);
+        const targetDomainIdx = sourceDomains.has(targetNode.domain) 
+          ? nodeIndexMap.get(`source_${targetNode.domain}`)
+          : nodeIndexMap.get(`target_${targetNode.domain}`);
+
+        if (sourceDomainIdx !== undefined && relTypeIdx !== undefined) {
+          // Domain to relationship
+          flowLinks.push({
+            source: sourceDomainIdx,
+            target: relTypeIdx,
+            value: Math.round(edge.weight * 50)
+          });
+
+          // Relationship to target domain
+          if (targetDomainIdx !== undefined && sourceDomainIdx !== targetDomainIdx) {
+            flowLinks.push({
+              source: relTypeIdx,
+              target: targetDomainIdx,
+              value: Math.round(edge.weight * 50)
+            });
+          }
+        }
+      }
+    });
+
+    console.log('Sankey data:', { nodes: flowNodes, links: flowLinks }); // Debug log
     return { nodes: flowNodes, links: flowLinks };
   }, [edges, nodeMap]);
 
@@ -212,7 +231,7 @@ export default function FusionMapPage() {
 
       {/* Sankey Chart Card - Simplified to prevent stack overflow */}
       <div style={{ background: tokens.surface.elevated, border: `1px solid ${tokens.border.default}`, padding: componentTokens.cardPadding, marginBottom: componentTokens.gridGap }}>
-        <h3 style={{ fontSize: primitiveTypeScale.h4, fontWeight: primitiveFontWeight.semibold, color: tokens.text.primary, margin: `0 0 ${componentTokens.cardHeaderMargin}` }}>Entity Type Flow</h3>
+        <h3 style={{ fontSize: primitiveTypeScale.h4, fontWeight: primitiveFontWeight.semibold, color: tokens.text.primary, margin: `0 0 ${componentTokens.cardHeaderMargin}` }}>Domain Relationship Flow</h3>
         <div style={{ height: '300px' }}>
           {sankeyData.nodes.length > 0 && sankeyData.links.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
@@ -235,8 +254,8 @@ export default function FusionMapPage() {
                           fontSize: primitiveTypeScale.micro,
                           color: tokens.text.primary
                         }}>
-                          <div>Entity Flow</div>
-                          <div>Weight: {data.value}%</div>
+                          <div>Domain Flow</div>
+                          <div>Strength: {data.value}</div>
                         </div>
                       );
                     }
