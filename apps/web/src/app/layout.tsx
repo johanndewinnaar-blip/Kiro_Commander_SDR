@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import { Suspense } from 'react';
 // Tabler CSS — loaded first so Commander token overrides take precedence
 import '@tabler/core/dist/css/tabler.min.css';
 // Commander global overrides — loaded after Tabler, takes precedence
@@ -44,9 +45,11 @@ export default function RootLayout({
           <ModeProvider>
             {/* ThemeRoot syncs data-bs-theme on <html> with Standard/Mission mode */}
             <ThemeRoot />
-            <Shell>
-              {children}
-            </Shell>
+            <Suspense>
+              <Shell>
+                {children}
+              </Shell>
+            </Suspense>
           </ModeProvider>
         </SidebarProvider>
       </body>

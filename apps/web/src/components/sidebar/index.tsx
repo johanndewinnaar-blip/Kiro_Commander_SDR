@@ -416,6 +416,7 @@ function NavGroupRow({ group, isExpanded, isActive, activeItemPath, onToggle }: 
 
 function ScrollableMenu({ collapsed }: { collapsed: boolean }) {
   const pathname = usePathname();
+  const safePath = pathname ?? '/';
 
   const [expansionState, setExpansionState] = useState<Record<string, boolean>>(() => {
     const state: Record<string, boolean> = {};
@@ -451,14 +452,14 @@ function ScrollableMenu({ collapsed }: { collapsed: boolean }) {
   function getActiveItemPath(): string | null {
     for (const group of OPERATIONAL_NAV_GROUPS) {
       for (const item of group.subItems) {
-        if (pathname === item.path) return item.path;
+        if (safePath === item.path) return item.path;
       }
     }
     return null;
   }
 
   function isGroupActive(group: (typeof OPERATIONAL_NAV_GROUPS)[number]): boolean {
-    return group.subItems.some((item) => pathname.startsWith(item.path) || pathname === item.path);
+    return group.subItems.some((item) => safePath.startsWith(item.path) || safePath === item.path);
   }
 
   const activeItemPath = getActiveItemPath();
@@ -520,7 +521,7 @@ function ScrollableMenu({ collapsed }: { collapsed: boolean }) {
           isActive={isGroupActive(group)}
           activeItemPath={activeItemPath}
           onToggle={() => toggleGroup(group.id)}
-          pathname={pathname}
+          pathname={safePath}
         />
       ))}
     </ul>

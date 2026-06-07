@@ -1,0 +1,10 @@
+﻿../../apps/web/src/app/layout.tsx(4,8): error TS2882: Cannot find module or type declarations for side-effect import of '@tabler/core/dist/css/tabler.min.css'.
+../../apps/web/src/app/layout.tsx(6,8): error TS2882: Cannot find module or type declarations for side-effect import of './globals.css'.
+src/index.ts(11,1): error TS2308: Module './entities/index' has already exported a member named 'TransitionResult'. Consider explicitly re-exporting to resolve the ambiguity.
+../../tests/06-case-management/phase-d2-validation-window.test.ts(163,68): error TS2353: Object literal may only specify known properties, and 'rawPayloadRef' does not exist in type 'SourceMetadata'.
+../../tests/06-case-management/phase-d3-closure-reopening.test.ts(181,68): error TS2353: Object literal may only specify known properties, and 'rawPayloadRef' does not exist in type 'SourceMetadata'.
+../../tests/06-case-management/phase-d3-closure-reopening.test.ts(377,68): error TS2353: Object literal may only specify known properties, and 'rawPayloadRef' does not exist in type 'SourceMetadata'.
+../../tests/unit-12-case-closure-gate-engine/closure-gate-engine.test.ts(160,10): error TS2352: Conversion of type 'GateInput' to type 'Record<string, boolean>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Index signature for type 'string' is missing in type 'GateInput'.
+../../tests/unit-13-case-reopening-trigger-engine/reopening-trigger-engine.test.ts(159,10): error TS2352: Conversion of type 'ReopeningTriggerInput' to type 'Record<string, boolean>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Index signature for type 'string' is missing in type 'ReopeningTriggerInput'.

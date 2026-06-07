@@ -406,3 +406,10 @@ They are correctly classified as ARCH-DEBT (structural gaps — mis-sourced cita
 
 **Status:** Approved. Effective immediately.
 **Date:** 2026-06-06
+
+
+## Build document retirement
+
+| Decision ID | Date | Decision | Rationale | Impact |
+|---|---|---|---|---|
+| DEC-retire-root-build-docs | 2026-06-07 | BUILD_SEQUENCE.md and BUILD_VERSION_ROADMAP.md retired to docs/00_authority/_superseded/. REBASELINED_BUILD_SEQUENCE.md is the sole build authority. | Per artifact-lifecycle.md retirement procedure. Both documents were superseded by the rebaselined build sequence derived from the verified knowledge graph (DEC-build-plan-replacement). Root-level presence caused confusion about which document was authoritative. | Sole build planning authority is now docs/knowledge/REBASELINED_BUILD_SEQUENCE.md. Retired documents preserved for lineage per Commander Assertion 7. |

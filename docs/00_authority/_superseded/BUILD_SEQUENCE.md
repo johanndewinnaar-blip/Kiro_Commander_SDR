@@ -1,3 +1,8 @@
+# SUPERSEDED
+
+Superseded by `docs/knowledge/REBASELINED_BUILD_SEQUENCE.md`. Retained for lineage per Commander Assertion 7.
+
+---
 
 # Build Sequence — Commander SDR Kiro Programme v1.3.1
 
