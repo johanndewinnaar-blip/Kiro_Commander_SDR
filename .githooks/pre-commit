@@ -211,6 +211,61 @@ if [[ -n "$new_artefacts" ]]; then
 fi
 
 # ----------------------------------------------------------------
+# CHECK 5 — DATA_DICTIONARY co-staging on new entity files.
+# ----------------------------------------------------------------
+
+new_entities=$(git diff --cached --name-only --diff-filter=A | grep -E '^packages/contracts/src/entities/.*\.ts$' || true)
+
+if [[ -n "$new_entities" ]]; then
+    if ! echo "$staged_files" | grep -q 'docs/knowledge/DATA_DICTIONARY.md'; then
+        while IFS= read -r f; do
+            [[ -z "$f" ]] && continue
+            note "DATA-DICT" "$f" \
+                "New entity staged without DATA_DICTIONARY.md update. Per traceability chain hard gate, register entity in DATA_DICTIONARY before or with code."
+        done <<< "$new_entities"
+    fi
+fi
+
+# ----------------------------------------------------------------
+# CHECK 6 — RELATIONSHIP_MAP co-staging on new multi-entity pages.
+# ----------------------------------------------------------------
+# If a new page file is staged that imports from 2+ different entity/fixture paths,
+# check that RELATIONSHIP_MAP.md is also staged (or already documents the relationship).
+# WARNING only — flags cross-entity pages without documented relationships.
+
+new_pages=$(git diff --cached --name-only --diff-filter=A | grep -E '^apps/web/src/app/.*page\.tsx$' || true)
+
+if [[ -n "$new_pages" ]]; then
+    while IFS= read -r page; do
+        [[ -z "$page" ]] && continue
+        blob=$(git show ":$page" 2>/dev/null) || continue
+        import_count=$(printf '%s' "$blob" | grep -cE 'from.*/fixtures/seed-|from.*/entities/' || true)
+        if (( import_count > 1 )); then
+            if ! echo "$staged_files" | grep -q 'docs/knowledge/RELATIONSHIP_MAP.md'; then
+                note "RELATIONSHIP" "$page" \
+                    "Multi-entity page staged without RELATIONSHIP_MAP.md update. Per traceability chain, cross-entity relationships must be documented."
+            fi
+        fi
+    done <<< "$new_pages"
+fi
+
+# ----------------------------------------------------------------
+# CHECK 7 — PAGE_SCHEDULE co-staging on new page files.
+# ----------------------------------------------------------------
+
+new_pages_all=$(git diff --cached --name-only --diff-filter=A | grep -E '^apps/web/src/app/.*page\.tsx$' || true)
+
+if [[ -n "$new_pages_all" ]]; then
+    if ! echo "$staged_files" | grep -q 'docs/00_authority/PAGE_SCHEDULE.md'; then
+        while IFS= read -r f; do
+            [[ -z "$f" ]] && continue
+            note "PAGE-SCHED" "$f" \
+                "New page staged without PAGE_SCHEDULE.md update. Per traceability chain, register route in PAGE_SCHEDULE with UC reference."
+        done <<< "$new_pages_all"
+    fi
+fi
+
+# ----------------------------------------------------------------
 # Governance runner (ARCH-008 integrity backstop).
 # ----------------------------------------------------------------
 
