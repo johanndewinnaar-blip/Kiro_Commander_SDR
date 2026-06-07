@@ -5,7 +5,6 @@ import { PageContainer } from '@/components/page-container';
 import { seedTopology } from '../../../../../packages/contracts/src/fixtures/seed-topology';
 import { componentTokens } from '../../../../../packages/ui/src/tokens/components';
 import { primitiveTypeScale, primitiveSpacing, primitiveFontWeight, primitiveFonts, primitiveLetterSpacing, primitiveSignal } from '../../../../../packages/ui/src/tokens/primitives';
-import { Sankey, ResponsiveContainer, Tooltip } from 'recharts';
 import { ReactFlow, Background, Controls, Node, Edge, Position } from '@xyflow/react';
 import { useMemo, useState } from 'react';
 
@@ -192,19 +191,82 @@ export default function FusionMapPage() {
       <div style={{ background: tokens.surface.elevated, border: `1px solid ${tokens.border.default}`, padding: componentTokens.cardPadding, marginBottom: componentTokens.gridGap }}>
         <h3 style={{ fontSize: primitiveTypeScale.h4, fontWeight: primitiveFontWeight.semibold, color: tokens.text.primary, margin: `0 0 ${componentTokens.cardHeaderMargin}` }}>Domain Relationship Flow</h3>
         
-        {/* Recharts Sankey - Fixed Data Format */}
-        <div style={{ height: '200px', marginBottom: componentTokens.gridGap }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <Sankey
-              data={sankeyData}
-              nodeWidth={15}
-              nodePadding={10}
-              margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
-            >
-              <Tooltip />
-            </Sankey>
-          </ResponsiveContainer>
+      {/* Domain Flow Summary - Table Format */}
+      <div style={{ background: tokens.surface.elevated, border: `1px solid ${tokens.border.default}`, padding: componentTokens.cardPadding, marginBottom: componentTokens.gridGap }}>
+        <h3 style={{ fontSize: primitiveTypeScale.h4, fontWeight: primitiveFontWeight.semibold, color: tokens.text.primary, margin: `0 0 ${componentTokens.cardHeaderMargin}` }}>Domain Relationship Flow</h3>
+        <div style={{ height: '200px', overflow: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: primitiveTypeScale.caption }}>
+            <thead>
+              <tr style={{ background: tokens.surface.base }}>
+                {['Source', 'Target', 'Relationship', 'Weight'].map((h) => (
+                  <th key={h} style={{ 
+                    textAlign: 'left', 
+                    padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, 
+                    borderBottom: `2px solid ${tokens.border.default}`, 
+                    color: tokens.text.muted, 
+                    fontWeight: primitiveFontWeight.semibold, 
+                    textTransform: 'uppercase', 
+                    letterSpacing: primitiveLetterSpacing.eyebrow, 
+                    fontSize: primitiveTypeScale.micro 
+                  }}>
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {edges.map((edge) => {
+                const sourceNode = nodeMap.get(edge.sourceNodeId);
+                const targetNode = nodeMap.get(edge.targetNodeId);
+                return (
+                  <tr key={edge.edgeId} style={{ borderBottom: `1px solid ${tokens.border.subtle}` }}>
+                    <td style={{ 
+                      padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, 
+                      color: tokens.text.primary,
+                      fontWeight: primitiveFontWeight.semibold,
+                      fontSize: primitiveTypeScale.caption
+                    }}>
+                      {sourceNode?.label || 'Unknown'}
+                    </td>
+                    <td style={{ 
+                      padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, 
+                      color: tokens.text.primary,
+                      fontWeight: primitiveFontWeight.semibold,
+                      fontSize: primitiveTypeScale.caption
+                    }}>
+                      {targetNode?.label || 'Unknown'}
+                    </td>
+                    <td style={{ 
+                      padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, 
+                      color: tokens.text.secondary,
+                      fontSize: primitiveTypeScale.caption
+                    }}>
+                      {edge.relationshipType.replace(/_/g, ' ')}
+                    </td>
+                    <td style={{ 
+                      padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, 
+                      fontFamily: primitiveFonts.mono,
+                      color: tokens.text.secondary,
+                      fontSize: primitiveTypeScale.caption,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: primitiveSpacing[2]
+                    }}>
+                      <div style={{
+                        width: `${Math.max(20, edge.weight * 60)}px`,
+                        height: '8px',
+                        backgroundColor: primitiveSignal.info,
+                        borderRadius: '4px'
+                      }} />
+                      {edge.weight.toFixed(2)}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
+      </div>
 
         {/* Flow Summary Table */}
         <div style={{ maxHeight: '200px', overflow: 'auto' }}>
