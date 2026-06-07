@@ -257,3 +257,79 @@ export function generateAccountabilityReport(
     })),
   };
 }
+
+
+// ─── Spec 39 augmentation: priority integration + inverse discovery ──────────
+
+import type { InverseDiscoveryEvent } from '../entities/inverse-discovery-event';
+
+export interface PriorityAdjustment {
+  classification: PostureAccountabilityClassification;
+  adjustment: number;
+  reason: string;
+}
+
+export interface ClassificationUpdate {
+  entityRef: string;
+  previousClassification: PostureAccountabilityClassification | null;
+  newClassification: PostureAccountabilityClassification;
+  reason: string;
+  inversePaused: boolean;
+}
+
+/**
+ * Feed a posture classification to the priority engine: returns the numeric
+ * adjustment that should be applied to a case's priority score.
+ *
+ * Use Case: UC-189 — Feed classification to priority engine
+ */
+export function feedToPriorityEngine(classification: PostureAccountabilityClassification): PriorityAdjustment {
+  const adjustments: Record<PostureAccountabilityClassification, number> = {
+    PRE_WARNED: 25,
+    PROTECTED: -10,
+    NOVEL: 40,
+  };
+  const reasons: Record<PostureAccountabilityClassification, string> = {
+    PRE_WARNED: 'Entity has known weaknesses — priority elevated.',
+    PROTECTED: 'Entity is well-protected — priority reduced.',
+    NOVEL: 'Entity is novel (unknown estate) — priority elevated significantly.',
+  };
+  return {
+    classification,
+    adjustment: adjustments[classification],
+    reason: reasons[classification],
+  };
+}
+
+/**
+ * Integrate an inverse discovery event into the classification model. If the
+ * event is unresolved, the classification is paused. If resolved, it is updated.
+ *
+ * Use Case: UC-190 — Pause classification on inverse discovery failure
+ */
+export function integrateInverseDiscovery(
+  entityRef: string,
+  currentClassification: PostureAccountabilityClassification | null,
+  inverseEvent: InverseDiscoveryEvent,
+): ClassificationUpdate {
+  const isUnresolved = inverseEvent.lookupResult === 'unresolved' && !inverseEvent.resolvedAt;
+
+  if (isUnresolved) {
+    return {
+      entityRef,
+      previousClassification: currentClassification,
+      newClassification: currentClassification ?? 'NOVEL',
+      reason: `Inverse discovery event ${inverseEvent.eventId}: lookup unresolved (${inverseEvent.rootCause ?? 'unknown'}). Classification paused.`,
+      inversePaused: true,
+    };
+  }
+
+  // If resolved via secondary, entity is known — classify as PRE_WARNED (known but unclear state)
+  return {
+    entityRef,
+    previousClassification: currentClassification,
+    newClassification: 'PRE_WARNED',
+    reason: `Inverse discovery event ${inverseEvent.eventId}: resolved. Entity confirmed in estate — classified PRE_WARNED pending full posture scan.`,
+    inversePaused: false,
+  };
+}
