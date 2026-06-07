@@ -12,9 +12,9 @@
 
 | Status | Count |
 |--------|-------|
-| Open | 4 |
+| Open | 0 |
 | Scheduled | 4 |
-| Resolved | 0 |
+| Resolved | 4 |
 | **Total** | **8** |
 
 ---
@@ -77,7 +77,8 @@
 **Description:** Five entities created during placeholder debt resolution (`governed-compose.ts`, `notification.ts`, `case-follow.ts`, `cloud-security-posture.ts`, `case-transition-audit.ts`) are not documented in SYSTEM_KNOWLEDGE_GRAPH.md §19. They serve existing domains (Case Management, Communication, SOM/Cloud Security) but lack knowledge graph entries.  
 **Scope of Fix:** Add a §19.11 "Placeholder Debt Resolution Entities" subsection documenting all 5 entities with their architectural layers, governing specs, and domain register mappings.  
 **Scheduled Resolution:** Next governance documentation pass  
-**Status:** Open  
+**Status:** Resolved  
+**Resolved:** 2026-06-07  
 **Date Logged:** 2026-06-07  
 **Last Checked:** 2026-06-07  
 
@@ -89,7 +90,8 @@
 **Description:** Five entities (`governed-compose.ts`, `notification.ts`, `case-follow.ts`, `cloud-security-posture.ts`, `case-transition-audit.ts`) have cross-entity relationships (e.g., governed-compose → case/email-communication, notification → case/user, case-follow → case/user, case-transition-audit → case/sub-action) that are not documented in RELATIONSHIP_MAP.md.  
 **Scope of Fix:** Add relationship entries for each of the 5 entities documenting their inbound/outbound entity relationships and which pages surface them.  
 **Scheduled Resolution:** Next governance documentation pass  
-**Status:** Open  
+**Status:** Resolved  
+**Resolved:** 2026-06-07  
 **Date Logged:** 2026-06-07  
 **Last Checked:** 2026-06-07  
 
@@ -101,7 +103,8 @@
 **Description:** Pages that render the 5 new debt-resolution entities (cases/[id], cases/my, som/cloud-security) were updated without corresponding AICAP_REGISTER.md entries for any AI-PLACEMENT markers in those sections.  
 **Scope of Fix:** Audit the 3 pages for AI-PLACEMENT markers referencing the 5 new entities. Add AICAP entries for any found, or confirm none exist (in which case this debt can be closed as N/A).  
 **Scheduled Resolution:** Next governance documentation pass  
-**Status:** Open  
+**Status:** Resolved  
+**Resolved:** 2026-06-07  
 **Date Logged:** 2026-06-07  
 **Last Checked:** 2026-06-07  
 
@@ -113,7 +116,8 @@
 **Description:** Section 7 states Entities: 82+, Fixtures: 77+. Actual counts are Entities: 87, Fixtures: 82. While within 10% tolerance (6% and 6.5% respectively) and the "+" suffix makes them technically not wrong, the stated floor values should be updated to reflect current state for accuracy.  
 **Scope of Fix:** Update GOVERNANCE_KNOWLEDGE_SOURCE.md §7.1 counts to: Pages: 110+, Entities: 87+, Engines: 38+, Fixtures: 82+.  
 **Scheduled Resolution:** Next governance documentation pass  
-**Status:** Open  
+**Status:** Resolved  
+**Resolved:** 2026-06-07  
 **Date Logged:** 2026-06-07  
 **Last Checked:** 2026-06-07  
 

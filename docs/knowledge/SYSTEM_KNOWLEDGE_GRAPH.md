@@ -1011,6 +1011,18 @@ The following domains were introduced or materially extended by the Kiro spec bu
 | **Purpose** | Platform authentication (SSO/OIDC), server-side session management, tenant isolation, RBAC policy enforcement at route and action level, break-glass emergency access with full audit trail. Enforces the three-application boundary security model. |
 | **Domain Register** | D-46 |
 
+### 19.11 Placeholder Debt Resolution Entities
+
+These entities were introduced during the placeholder debt resolution pass to unblock NotImplemented page surfaces. They serve existing registered domains — no new domains were created.
+
+| Entity | Architectural Layer | Domain | Governing Spec | Purpose |
+|--------|-------------------|--------|---------------|---------|
+| `governed-compose.ts` | 5 (Case — communication/approval workflow) | D-31 Communication & Broadcast | Spec #25 Req 3/5 | Outbound draft with approval workflow for case communication. Holds draft content, approval state, and governs the compose → review → send lifecycle. |
+| `notification.ts` | 5 (Case — analyst alerting) | D-31 Communication & Broadcast | Spec #26 | System notifications for case state changes, SLA warnings, and assignment events. Routes to analyst notification feed. |
+| `case-follow.ts` | 5 (Case — subscription model) | D-18 Case Lifecycle | Spec #08 | Case follow/subscription allowing analysts to watch cases they don't own. Tracks follower identity and notification preferences. |
+| `cloud-security-posture.ts` | 3 (Engine — multi-cloud drift assessment) | D-09 Architecture Intelligence | Spec #22 | Multi-cloud security posture assessment per provider (AWS/Azure/GCP). Tracks compliance score, drift findings, and framework adherence per cloud account. |
+| `case-transition-audit.ts` | Cross-cutting (Audit & Evidence) | D-40 Audit & Evidence | Spec #06 Req 6 | Structured case lifecycle transition records with actor, from/to state, timestamp, and evidence reference. Provides the structured audit trail for the closed-loop lifecycle. |
+
 ---
 
 ## 20. Explicit GAPs Recorded This Build

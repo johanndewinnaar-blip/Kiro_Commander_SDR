@@ -229,6 +229,11 @@ This table records the explicit cross-domain edges (subject → object → kind 
 | D-37 RBAC | → | every visibility decision | Backend / API enforcement is mandatory and authoritative | Spec #50 §Backend Enforcement Rule; Spec #56 §8 |
 | D-38 Configuration Governance | → | every configurable parameter | Versioned, audited, baseline-profile governed | Spec #55 base §Binding Doctrine; Spec #55 v2.6 §V2.6-12 |
 | D-40 Audit | ← | every domain | Every privileged action emits an audit event; "audit-first operation" is a non-negotiable doctrine | Spec #29 v2.0 patch §2 No.10 |
+| D-31 Communication (governed-compose) | → | D-18 Case Lifecycle | Produces governed outbound drafts bound to cases | Spec #25 Req 3/5 |
+| D-31 Communication (notification) | → | D-18 Case Lifecycle | Notifies on case state transitions, SLA, assignments | Spec #26 |
+| D-18 Case Lifecycle (case-follow) | → | D-31 Communication | Subscription triggers notification on case events | Spec #08 |
+| D-09 Architecture Intelligence (cloud-security-posture) | → | D-26 OODA Observe | Cloud posture feeds Observe phase health metrics | Spec #22 |
+| D-40 Audit (case-transition-audit) | ← | D-18 Case Lifecycle | Every lifecycle transition emits structured audit record | Spec #06 Req 6 |
 
 ---
 

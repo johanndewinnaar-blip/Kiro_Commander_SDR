@@ -13,7 +13,7 @@ The precedence model determines what wins when documents conflict:
 2. AGENTS.md (root) — programme-level directives
 3. docs/00_authority/AUTHORITY_MODEL.md — 8-tier precedence stack
 4. .kiro/steering/ files (16 files, inclusion: always) — persistent workspace guidance
-5. .kiro/specs/ — translation layer (NOT authority for knowledge/build work per SOURCING_RULE.md)
+5. Kiro specs (translation layer — NOT authority for knowledge/build work per SOURCING_RULE.md)
 6. Build packs (docs/04_build_packs/) — per-domain execution slices (historical, mostly superseded)
 
 Links:
@@ -99,8 +99,8 @@ Links:
 Spec requirement → UC registered → DATA_DICTIONARY entry → Entity .ts → Fixture seed-*.ts → Engine .ts → Page page.tsx
 
 Current counts:
-- Entities: 82+ (packages/contracts/src/entities/)
-- Fixtures: 77+ (packages/contracts/src/fixtures/)
+- Entities: 87+ (packages/contracts/src/entities/)
+- Fixtures: 82+ (packages/contracts/src/fixtures/)
 - Engines: 38+ (packages/contracts/src/engines/)
 - Pages: 110+ (apps/web/src/app/**/page.tsx)
 
@@ -261,9 +261,9 @@ Links:
 
 ### 7.1 Current State
 - Pages: 110+
-- Entities: 82+
+- Entities: 87+
 - Engines: 38+
-- Fixtures: 77+
+- Fixtures: 82+
 - Use cases: 212 (UC-001 to UC-212)
 - Domains: 46
 - TSC errors: 0
@@ -374,9 +374,9 @@ Key files: SYSTEM_KNOWLEDGE_GRAPH.md, DOMAIN_REGISTER.md, RELATIONSHIP_MAP.md, D
 ### Code Locations
 | Location | Contents | Count |
 |---|---|---|
-| packages/contracts/src/entities/ | Canonical entity interfaces | 82+ |
+| packages/contracts/src/entities/ | Canonical entity interfaces | 87+ |
 | packages/contracts/src/engines/ | Processing logic | 38+ |
-| packages/contracts/src/fixtures/ | Seed data | 77+ |
+| packages/contracts/src/fixtures/ | Seed data | 82+ |
 | apps/web/src/app/ | Page components | 110+ |
 | apps/api/ | Backend API (scaffold only) | 0 |
 
