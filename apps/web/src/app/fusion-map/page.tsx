@@ -6,7 +6,7 @@ import { seedTopology } from '../../../../../packages/contracts/src/fixtures/see
 import { componentTokens } from '../../../../../packages/ui/src/tokens/components';
 import { primitiveTypeScale, primitiveSpacing, primitiveFontWeight, primitiveFonts, primitiveLetterSpacing, primitiveSignal } from '../../../../../packages/ui/src/tokens/primitives';
 import { ReactFlow, Background, Controls, Node, Edge, Position } from '@xyflow/react';
-import { Sankey, ResponsiveContainer, Tooltip } from 'recharts';
+import { Tooltip, ResponsiveContainer } from 'recharts';
 import { useMemo, useState } from 'react';
 
 import '@xyflow/react/dist/style.css';
@@ -229,53 +229,76 @@ export default function FusionMapPage() {
         </div>
       </div>
 
-      {/* Sankey Chart Card - Simplified to prevent stack overflow */}
+      {/* Relationship Flow Card - Reliable Table Format */}
       <div style={{ background: tokens.surface.elevated, border: `1px solid ${tokens.border.default}`, padding: componentTokens.cardPadding, marginBottom: componentTokens.gridGap }}>
         <h3 style={{ fontSize: primitiveTypeScale.h4, fontWeight: primitiveFontWeight.semibold, color: tokens.text.primary, margin: `0 0 ${componentTokens.cardHeaderMargin}` }}>Domain Relationship Flow</h3>
-        <div style={{ height: '300px' }}>
-          {sankeyData.nodes.length > 0 && sankeyData.links.length > 0 ? (
-            <ResponsiveContainer width="100%" height="100%">
-              <Sankey
-                data={sankeyData}
-                nodeWidth={15}
-                nodePadding={25}
-                iterations={6}
-                margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
-              >
-                <Tooltip 
-                  content={({ active, payload }) => {
-                    if (active && payload && payload[0]) {
-                      const data = payload[0].payload as any;
-                      return (
-                        <div style={{
-                          background: tokens.surface.elevated,
-                          border: `1px solid ${tokens.border.default}`,
-                          padding: primitiveSpacing[2],
-                          fontSize: primitiveTypeScale.micro,
-                          color: tokens.text.primary
-                        }}>
-                          <div>Domain Flow</div>
-                          <div>Strength: {data.value}</div>
-                        </div>
-                      );
-                    }
-                    return null;
-                  }}
-                />
-              </Sankey>
-            </ResponsiveContainer>
-          ) : (
-            <div style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              height: '100%',
-              color: tokens.text.muted,
-              fontSize: primitiveTypeScale.caption
-            }}>
-              No flow data available
-            </div>
-          )}
+        <div style={{ height: '300px', overflow: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: primitiveTypeScale.caption }}>
+            <thead>
+              <tr>
+                {['Source Domain', 'Relationship', 'Target Domain', 'Weight'].map((h) => (
+                  <th key={h} style={{ 
+                    textAlign: 'left', 
+                    padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, 
+                    borderBottom: `2px solid ${tokens.border.default}`, 
+                    color: tokens.text.muted, 
+                    fontWeight: primitiveFontWeight.semibold, 
+                    textTransform: 'uppercase', 
+                    letterSpacing: primitiveLetterSpacing.eyebrow, 
+                    fontSize: primitiveTypeScale.micro 
+                  }}>
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {edges.map((edge) => {
+                const sourceNode = nodeMap.get(edge.sourceNodeId);
+                const targetNode = nodeMap.get(edge.targetNodeId);
+                return (
+                  <tr key={edge.edgeId} style={{ borderBottom: `1px solid ${tokens.border.subtle}` }}>
+                    <td style={{ 
+                      padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, 
+                      color: tokens.text.primary,
+                      fontWeight: primitiveFontWeight.semibold
+                    }}>
+                      {sourceNode?.domain || 'Unknown'}
+                    </td>
+                    <td style={{ 
+                      padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, 
+                      color: tokens.text.secondary 
+                    }}>
+                      {edge.relationshipType.replace(/_/g, ' ')}
+                    </td>
+                    <td style={{ 
+                      padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, 
+                      color: tokens.text.primary,
+                      fontWeight: primitiveFontWeight.semibold
+                    }}>
+                      {targetNode?.domain || 'Unknown'}
+                    </td>
+                    <td style={{ 
+                      padding: `${primitiveSpacing[2]} ${primitiveSpacing[3]}`, 
+                      fontFamily: primitiveFonts.mono,
+                      color: tokens.text.secondary,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: primitiveSpacing[2]
+                    }}>
+                      <div style={{
+                        width: `${Math.max(20, edge.weight * 60)}px`,
+                        height: '8px',
+                        backgroundColor: primitiveSignal.info,
+                        borderRadius: '4px'
+                      }} />
+                      {edge.weight.toFixed(2)}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       </div>
 
