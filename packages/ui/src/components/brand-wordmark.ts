@@ -2,7 +2,7 @@
  * BrandWordmark — Commander SDR
  *
  * v1.3.2 Requirement 10: SEIERTECH (cream #f4f1eb) | gold pipe (#ffd21f) |
- * COMMANDER (gold) | SDR (white), all in Bebas Neue.
+ * COMMANDER (gold) | SDR (white), all in Inter.
  *
  * Source: shell reference v11
  */

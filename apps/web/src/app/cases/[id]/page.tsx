@@ -11,7 +11,7 @@ import { seedEvidence } from '../../../../../../packages/contracts/src/fixtures/
 import { seedStrategies } from '../../../../../../packages/contracts/src/fixtures/seed-strategies';
 import { componentTokens } from '../../../../../../packages/ui/src/tokens/components';
 import {
-  primitiveBrand, primitiveFonts, primitiveTypeScale, primitiveLetterSpacing,
+  primitiveFonts, primitiveTypeScale, primitiveLetterSpacing,
   primitiveSignal, primitiveSpacing, primitiveFontWeight, primitivePriority,
 } from '../../../../../../packages/ui/src/tokens/primitives';
 import { resolveAllStrategies } from '../../../../../../packages/contracts/src/resolvers/case-strategy-resolver';
@@ -265,17 +265,17 @@ function LifecycleTab({ caseRecord, cur, tokens, mode }: { caseRecord: Case; cur
           {LIFECYCLE_SPINE.map((state, i) => {
             const done = i < curIdx;
             const current = i === curIdx;
-            const border = current ? primitiveBrand.gold : done ? primitiveSignal.success : tokens.border.subtle;
-            const color = current ? primitiveBrand.gold : done ? tokens.text.secondary : tokens.text.muted;
+            const border = current ? primitiveSignal.info : done ? primitiveSignal.success : tokens.border.subtle;
+            const color = current ? primitiveSignal.info : done ? tokens.text.secondary : tokens.text.muted;
             return (
               <div key={state} style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[2] }}>
                 <div style={{
                   minWidth: 132, padding: `${primitiveSpacing[2]} ${primitiveSpacing[2]}`,
                   border: `2px solid ${border}`, background: tokens.surface.primary,
-                  boxShadow: current && mode === 'mission' ? '0 0 8px rgba(255,210,31,0.35)' : 'none',
+                  boxShadow: current && mode === 'mission' ? '0 0 8px rgba(59,130,246,0.35)' : 'none',
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[1] }}>
-                    <span style={{ fontSize: primitiveTypeScale.micro, color: done ? primitiveSignal.success : current ? primitiveBrand.gold : tokens.border.default }}>{done ? '✓' : current ? '◆' : '○'}</span>
+                    <span style={{ fontSize: primitiveTypeScale.micro, color: done ? primitiveSignal.success : current ? primitiveSignal.info : tokens.border.default }}>{done ? '✓' : current ? '◆' : '○'}</span>
                     <span style={{ fontSize: primitiveTypeScale.micro, fontWeight: current ? primitiveFontWeight.bold : primitiveFontWeight.normal, color, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>{STATE_LABEL[state]}</span>
                   </div>
                   {(done || current) && (
@@ -736,7 +736,7 @@ function Td({ tokens, children }: { tokens: Tokens; children: React.ReactNode })
 
 function SurfacePill({ surface, tokens }: { surface: string; tokens: Tokens }) {
   const external = surface === 'external_attack_surface';
-  return <span style={{ fontSize: primitiveTypeScale.micro, padding: '1px 6px', border: `1px solid ${external ? primitiveBrand.gold : tokens.border.default}`, color: external ? primitiveBrand.gold : tokens.text.muted }}>{external ? 'External' : 'Internal'}</span>;
+  return <span style={{ fontSize: primitiveTypeScale.micro, padding: '1px 6px', border: `1px solid ${external ? primitiveSignal.info : tokens.border.default}`, color: external ? primitiveSignal.info : tokens.text.muted }}>{external ? 'External' : 'Internal'}</span>;
 }
 
 function Empty({ tokens, text }: { tokens: Tokens; text: string }) {

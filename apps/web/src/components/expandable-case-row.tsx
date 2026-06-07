@@ -3,7 +3,7 @@
 import type { Case } from '../../../../packages/contracts/src/entities/case';
 import type { WorkspaceMode } from '../../../../packages/ui/src/tokens/semantic';
 import { componentTokens } from '../../../../packages/ui/src/tokens/components';
-import { primitiveBrand, primitiveFonts, primitiveTypeScale, primitiveLetterSpacing, primitiveSignal, primitiveSpacing, primitiveRadii, primitiveMotion } from '../../../../packages/ui/src/tokens/primitives';
+import { primitiveFonts, primitiveTypeScale, primitiveLetterSpacing, primitiveSignal, primitiveSpacing, primitiveRadii, primitiveMotion } from '../../../../packages/ui/src/tokens/primitives';
 import { primitivePriority } from '../../../../packages/ui/src/tokens/primitives';
 import { resolveAllStrategies } from '../../../../packages/contracts/src/resolvers/case-strategy-resolver';
 import { seedStrategies } from '../../../../packages/contracts/src/fixtures/seed-strategies';
@@ -116,8 +116,8 @@ export function ExpandableCaseRow({ case: caseRecord, expanded, onToggle, tokens
         <span style={{
           fontSize: primitiveTypeScale.micro,
           padding: '2px 6px',
-          border: caseRecord.surfaceAttribution === 'external_attack_surface' ? `1px solid ${primitiveBrand.gold}` : `1px solid ${tokens.border.default}`,
-          color: caseRecord.surfaceAttribution === 'external_attack_surface' ? primitiveBrand.gold : tokens.text.muted,
+          border: caseRecord.surfaceAttribution === 'external_attack_surface' ? `1px solid ${primitiveSignal.info}` : `1px solid ${tokens.border.default}`,
+          color: caseRecord.surfaceAttribution === 'external_attack_surface' ? primitiveSignal.info : tokens.text.muted,
           whiteSpace: 'nowrap',
         }}>
           {caseRecord.surfaceAttribution === 'external_attack_surface' ? 'External' : 'Internal'}

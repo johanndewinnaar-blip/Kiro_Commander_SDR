@@ -10,7 +10,7 @@ import { CONTROL_PLANE_NAV_ITEMS, CONTROL_PLANE_TOP_NAV } from '@/registry/nav-g
  *
  * Visual language:
  * - Black/dark chrome (#050505 top bar, #080808 sidebar, #0d0d0d content)
- * - Gold underline on top bar bottom
+ * - Navy underline on top bar bottom
  * - INTERNAL environment badge
  * - "PROD ACTIONS REQUIRE APPROVAL" header tile
  * - Flat sidebar (single-level per v3 reference)
@@ -38,8 +38,8 @@ export default function ControlPlaneLayout({ children }: { children: React.React
                 height: chrome.groupHeaderHeight,
                 display: 'flex',
                 alignItems: 'center',
-                border: i === 0 ? `1px solid ${colors.gold.activeBorder}` : '1px solid transparent',
-                background: i === 0 ? colors.gold.activeBackground : 'transparent',
+                border: i === 0 ? `1px solid rgba(6,25,54,.45)` : '1px solid transparent',
+                background: i === 0 ? 'rgba(6,25,54,.08)' : 'transparent',
                 padding: '0 10px',
                 fontWeight: 700,
                 fontSize: '12px',
@@ -49,7 +49,7 @@ export default function ControlPlaneLayout({ children }: { children: React.React
             >
               {item.label}
               {'badge' in item && item.badge && (
-                <small style={{ marginLeft: '8px', color: colors.gold.primary, border: `1px solid ${colors.gold.badge}`, fontSize: '8px', padding: '2px 4px' }}>
+                <small style={{ marginLeft: '8px', color: colors.controlPlane.text, border: `1px solid ${colors.controlPlane.line}`, fontSize: '8px', padding: '2px 4px' }}>
                   {item.badge}
                 </small>
               )}
@@ -60,7 +60,7 @@ export default function ControlPlaneLayout({ children }: { children: React.React
 
       {/* Main area */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', marginLeft: '330px' }}>
-        {/* Top bar — v3 reference: #050505 with gold border */}
+        {/* Top bar — v3 reference: #050505 with navy border */}
         <header
           style={{
             position: 'fixed',
@@ -70,15 +70,15 @@ export default function ControlPlaneLayout({ children }: { children: React.React
             right: 0,
             height: chrome.topBarHeight,
             background: colors.controlPlane.topBar,
-            borderBottom: `1px solid ${colors.gold.primary}`,
+            borderBottom: `1px solid ${colors.navy.primary}`,
             display: 'flex',
             alignItems: 'center',
           }}
         >
           {/* Brand — COMMANDER COMMERCIAL CONTROL */}
           <div style={{ width: '330px', height: '100%', display: 'flex', alignItems: 'center', padding: '0 18px', borderRight: `1px solid ${colors.controlPlane.line}`, gap: '10px' }}>
-            <span style={{ fontFamily: typography.fontFamily.body, letterSpacing: typography.letterSpacing.displayWide, fontSize: '22px', fontWeight: 700, color: colors.gold.primary }}>COMMANDER</span>
-            <span style={{ fontFamily: typography.fontFamily.body, letterSpacing: typography.letterSpacing.displayWide, fontSize: '22px', fontWeight: 700, color: '#fff' }}>COMMERCIAL CONTROL</span>
+            <span style={{ letterSpacing: typography.letterSpacing.displayWide, fontSize: '22px', fontWeight: 700, color: colors.brand.commander }}>COMMANDER</span>
+            <span style={{ letterSpacing: typography.letterSpacing.displayWide, fontSize: '22px', fontWeight: 700, color: '#fff' }}>COMMERCIAL CONTROL</span>
           </div>
           {/* Top nav tabs */}
           <nav style={{ display: 'flex', height: '100%' }}>
@@ -91,7 +91,7 @@ export default function ControlPlaneLayout({ children }: { children: React.React
                   alignItems: 'center',
                   padding: '0 16px',
                   color: i === 0 ? '#fff' : '#bdbdbd',
-                  borderBottom: i === 0 ? `3px solid ${colors.gold.primary}` : '3px solid transparent',
+                  borderBottom: i === 0 ? `3px solid ${colors.controlPlane.text}` : '3px solid transparent',
                   fontWeight: 600,
                   fontSize: '14px',
                   textDecoration: 'none',

@@ -8,7 +8,7 @@ import { seedCases } from '../../../../../packages/contracts/src/fixtures/seed-c
 import { seedEvents } from '../../../../../packages/contracts/src/fixtures/seed-events';
 import { componentTokens } from '../../../../../packages/ui/src/tokens/components';
 import {
-  primitiveBrand, primitiveFonts, primitiveTypeScale, primitiveLetterSpacing,
+  primitiveFonts, primitiveTypeScale, primitiveLetterSpacing,
   primitiveSignal, primitiveSpacing, primitiveFontWeight, primitivePriority, primitiveHud, primitiveGlow,
 } from '../../../../../packages/ui/src/tokens/primitives';
 import { PageContainer } from '@/components/page-container';
@@ -161,7 +161,7 @@ export default function CaseHandlingPage() {
 
         {/* SECTION 1: KPI strip */}
         <section style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: primitiveSpacing[2], marginBottom: componentTokens.gridGap }}>
-          <Kpi label="New" value={String(newCount)} accent={newCount ? primitiveBrand.gold : undefined} hint="act next" />
+          <Kpi label="New" value={String(newCount)} accent={newCount ? primitiveSignal.warning : undefined} hint="act next" />
           <Kpi label="Open" value={String(openCases.length)} />
           <Kpi label="P0" value={String(p0)} accent={p0 ? primitiveSignal.critical : undefined} />
           <Kpi label="P1" value={String(p1)} accent={p1 ? primitiveSignal.warning : undefined} />
@@ -183,12 +183,12 @@ export default function CaseHandlingPage() {
                 <div key={stage.label} style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[1] }}>
                   <div style={{
                     minWidth: 96, padding: `${primitiveSpacing[2]} ${primitiveSpacing[2]}`, textAlign: 'center',
-                    border: `2px solid ${active ? primitiveBrand.gold : isNewStage && count ? primitiveBrand.gold : HUD.lineSubtle}`,
+                    border: `2px solid ${active ? primitiveSignal.info : isNewStage && count ? primitiveSignal.warning : HUD.lineSubtle}`,
                     background: HUD.panel,
-                    boxShadow: (active || (isNewStage && count)) ? `0 0 ${primitiveGlow.radius} rgba(255,210,31,${primitiveGlow.intensity})` : 'none',
+                    boxShadow: (active || (isNewStage && count)) ? `0 0 ${primitiveGlow.radius} rgba(59,130,246,${primitiveGlow.intensity})` : 'none',
                   }}>
                     <div style={{ fontSize: primitiveTypeScale.h3, fontWeight: primitiveFontWeight.bold, fontFamily: primitiveFonts.mono, color: count ? HUD.text : HUD.textMuted }}>{count}</div>
-                    <div style={{ fontSize: primitiveTypeScale.micro, color: active || (isNewStage && count) ? primitiveBrand.gold : HUD.textMuted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow, whiteSpace: 'nowrap' }}>{stage.label}</div>
+                    <div style={{ fontSize: primitiveTypeScale.micro, color: active || (isNewStage && count) ? primitiveSignal.info : HUD.textMuted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow, whiteSpace: 'nowrap' }}>{stage.label}</div>
                   </div>
                   {i < PIPELINE.length - 1 && <span style={{ color: HUD.lineSubtle }}>→</span>}
                 </div>
@@ -255,9 +255,9 @@ function BoardView({ lanes, visibleLanes, now }: { lanes: Record<FlowLane, Case[
         const leads = lane.id === 'new';
         return (
           <div key={lane.id} style={{ display: 'flex', flexDirection: 'column', gap: primitiveSpacing[2], minWidth: 210 }}>
-            <div style={{ background: HUD.panel, padding: `${primitiveSpacing[1]} ${primitiveSpacing[2]}`, borderBottom: `2px solid ${leads ? primitiveBrand.gold : HUD.line}` }}>
+            <div style={{ background: HUD.panel, padding: `${primitiveSpacing[1]} ${primitiveSpacing[2]}`, borderBottom: `2px solid ${leads ? primitiveSignal.warning : HUD.line}` }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: primitiveTypeScale.micro, fontWeight: primitiveFontWeight.bold, color: leads ? primitiveBrand.gold : HUD.text, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>{lane.label}</span>
+                <span style={{ fontSize: primitiveTypeScale.micro, fontWeight: primitiveFontWeight.bold, color: leads ? primitiveSignal.warning : HUD.text, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>{lane.label}</span>
                 <span style={{ fontFamily: primitiveFonts.mono, fontSize: primitiveTypeScale.micro, color: HUD.textMuted }}>{cards.length}</span>
               </div>
             </div>
@@ -300,7 +300,7 @@ function TableView({ cases, now, router }: { cases: Case[]; now: number; router:
                 <td style={tdHud}>{c.owner}</td>
                 <td style={tdHud}><span style={{ padding: `2px ${primitiveSpacing[2]}`, background: toneColor, color: '#fff', fontSize: primitiveTypeScale.micro, whiteSpace: 'nowrap' }}>{sla.label}</span></td>
                 <td style={{ ...tdHud, fontFamily: primitiveFonts.mono, whiteSpace: 'nowrap' }}>{ageLabel(c, now)}</td>
-                <td style={tdHud}><span style={{ fontSize: primitiveTypeScale.micro, padding: '1px 6px', border: `1px solid ${c.surfaceAttribution === 'external_attack_surface' ? primitiveBrand.gold : HUD.lineSubtle}`, color: c.surfaceAttribution === 'external_attack_surface' ? primitiveBrand.gold : HUD.textMuted }}>{c.surfaceAttribution === 'external_attack_surface' ? 'EXT' : 'INT'}</span></td>
+                <td style={tdHud}><span style={{ fontSize: primitiveTypeScale.micro, padding: '1px 6px', border: `1px solid ${c.surfaceAttribution === 'external_attack_surface' ? primitiveSignal.info : HUD.lineSubtle}`, color: c.surfaceAttribution === 'external_attack_surface' ? primitiveSignal.info : HUD.textMuted }}>{c.surfaceAttribution === 'external_attack_surface' ? 'EXT' : 'INT'}</span></td>
               </tr>
             );
           })}
@@ -338,7 +338,7 @@ function Gauge({ label, value, max, invert }: { label: string; value: number; ma
     stroke: { lineCap: 'round' as const },
   };
   return (
-    <div style={{ background: HUD.elevated, border: `1px solid ${HUD.line}`, padding: componentTokens.cardPadding, display: 'flex', flexDirection: 'column', alignItems: 'center', boxShadow: `0 0 ${primitiveGlow.radius} rgba(255,210,31,0.12)` }}>
+    <div style={{ background: HUD.elevated, border: `1px solid ${HUD.line}`, padding: componentTokens.cardPadding, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <span style={{ alignSelf: 'flex-start', fontSize: primitiveTypeScale.micro, color: HUD.textMuted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>{label}</span>
       <div style={{ width: 150, height: 120 }}>
         <Chart type="radialBar" height={150} options={opts} series={[pct]} />
@@ -365,7 +365,7 @@ function Toggle({ value, onChange }: { value: View; onChange: (v: View) => void 
         const active = v === value;
         return (
           <button key={v} onClick={() => onChange(v)}
-            style={{ padding: `${primitiveSpacing[1]} ${primitiveSpacing[3]}`, fontSize: primitiveTypeScale.micro, fontWeight: primitiveFontWeight.medium, border: 'none', cursor: 'pointer', background: active ? primitiveBrand.gold : 'transparent', color: active ? primitiveHud.bg0 : HUD.textSecondary, borderLeft: i === 0 ? 'none' : `1px solid ${HUD.lineSubtle}`, textTransform: 'capitalize' }}>{v}</button>
+            style={{ padding: `${primitiveSpacing[1]} ${primitiveSpacing[3]}`, fontSize: primitiveTypeScale.micro, fontWeight: primitiveFontWeight.medium, border: 'none', cursor: 'pointer', background: active ? primitiveSignal.info : 'transparent', color: active ? primitiveHud.bg0 : HUD.textSecondary, borderLeft: i === 0 ? 'none' : `1px solid ${HUD.lineSubtle}`, textTransform: 'capitalize' }}>{v}</button>
         );
       })}
     </div>

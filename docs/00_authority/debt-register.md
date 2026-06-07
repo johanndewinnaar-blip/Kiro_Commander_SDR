@@ -13,8 +13,8 @@
 | Status | Count |
 |--------|-------|
 | Open | 0 |
-| Scheduled | 4 |
-| Resolved | 4 |
+| Scheduled | 2 |
+| Resolved | 6 |
 | **Total** | **8** |
 
 ---
@@ -29,21 +29,23 @@
 **Description:** Bebas Neue display font override instead of inherited Inter. Control Plane v3 shell uses old font system.  
 **Scope of Fix:** Control Plane shell Tabler conversion — convert layout.tsx to Tabler, remove Bebas Neue font import and override, inherit Inter globally from root layout. Part of larger v3 shell migration.  
 **Scheduled Resolution:** Control Plane Tabler conversion spec (deferred until Operational App baseline complete)  
-**Status:** Scheduled  
+**Status:** Resolved  
+**Resolved:** 2026-06-08  
 **Date Logged:** 2026-05-30  
-**Last Checked:** 2026-05-30  
+**Last Checked:** 2026-06-08  
 
 ### DEBT-002: Gold Usage Outside Logo
 
-**File:** Multiple files (war-room/p0/page.tsx, cases/[id]/page.tsx, operational-sidebar.tsx, operational-top-bar.tsx, expandable-case-row.tsx)  
+**File:** Multiple files (war-room/p0/page.tsx, cases/[id]/page.tsx, cases/page.tsx, control-plane/layout.tsx, tenant-admin/layout.tsx, operational-sidebar.tsx, operational-top-bar.tsx, case-card.tsx, expandable-case-row.tsx)  
 **Violated Assertion:** DSC-005 (Gold Restriction)  
 **Debt Type:** Structural  
 **Description:** Gold color (primitiveBrand.gold, #ffd21f) used for surface attribution badges, lifecycle indicators, navigation elements, and UI chrome outside of COMMANDER logo wordmark.  
-**Scope of Fix:** Design system token migration — replace gold usage with appropriate semantic tokens for data visualization (--data-* tokens for charts/status), neutral tokens for chrome, and preserve gold only in COMMANDER logo. Requires design review of surface attribution visual treatment.  
+**Scope of Fix:** Replaced all decorative gold usages with appropriate semantic tokens (primitiveSignal.info for surface badges, primitiveSignal.warning for "new" indicators, standardTokens.chrome.navTextActive for navigation, primitiveBrand.navy for control-plane chrome). Gold now only appears in COMMANDER logo wordmark (operational-top-bar.tsx, sidebar/index.tsx brand lockup).  
 **Scheduled Resolution:** Design System Token Migration spec (Spec 02 follow-up)  
-**Status:** Scheduled  
+**Status:** Resolved  
+**Resolved:** 2026-06-08  
 **Date Logged:** 2026-05-30  
-**Last Checked:** 2026-05-30  
+**Last Checked:** 2026-06-08  
 
 ### DEBT-003: Hardcoded Color Values
 
@@ -207,5 +209,5 @@ Manual entry addition is not permitted. All debt must be detected and classified
 
 ---
 
-**Last Updated:** 2026-06-07  
+**Last Updated:** 2026-06-08  
 **Next Pipeline Run:** TBD

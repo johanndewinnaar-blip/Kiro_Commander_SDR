@@ -73,7 +73,7 @@ export default function TenantAdminLayout({ children }: { children: React.ReactN
             display: 'flex',
             alignItems: 'center',
             color: '#fff',
-            borderBottom: `1px solid ${colors.gold.subtle}`,
+            borderBottom: `1px solid ${colors.navy.primary}`,
           }}
         >
           <div style={{ width: chrome.sidebarWidth, height: '100%', display: 'flex', alignItems: 'center', padding: '0 18px', borderRight: `1px solid ${colors.chrome.lineDark}`, gap: '10px', background: `linear-gradient(155deg, ${colors.navy.variant}, ${colors.navy.primary})` }}>
@@ -81,7 +81,7 @@ export default function TenantAdminLayout({ children }: { children: React.ReactN
             <span style={{ height: '23px', width: '1px', background: colors.brand.pipe }} />
             <span style={{ fontFamily: typography.fontFamily.body, fontSize: typography.fontSize.brandLg, letterSpacing: typography.letterSpacing.display, fontWeight: 700, color: colors.brand.commander }}>COMMANDER</span>
             <span style={{ fontFamily: typography.fontFamily.body, fontSize: typography.fontSize.brandLg, letterSpacing: typography.letterSpacing.display, fontWeight: 700, color: colors.brand.sdr }}>SDR</span>
-            <span style={{ fontSize: primitiveTypeScale.micro, color: colors.gold.primary, marginLeft: '4px' }}>· TENANT ADMIN</span>
+            <span style={{ fontSize: primitiveTypeScale.micro, color: colors.controlPlane.muted, marginLeft: '4px' }}>· TENANT ADMIN</span>
           </div>
           <div style={{ marginLeft: 'auto', padding: '0 16px', fontSize: typography.fontSize.base, color: '#8ca6c2' }}>
             Tenant Administration

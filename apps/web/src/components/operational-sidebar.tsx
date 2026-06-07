@@ -13,7 +13,7 @@ import { OPERATIONAL_NAV_GROUPS } from '@/registry/nav-groups';
  * DS-1.0 §7: 248px expanded / 68px icon rail. Collapsible via hamburger.
  * - Item height 36px, padding 8px 12px, icon 20px
  * - Active item: gold-tinted background + gold left border
- * - Custom gold scrollbar (6px, rgba(255,210,31,0.55) thumb)
+ * - Custom scrollbar (6px, subtle thumb)
  * - Hierarchical groups, expand/collapse persisted per user
  * - Icons required (Lucide). Labels in expanded; tooltips in rail (200ms delay)
  * - Chrome is navy gradient both modes
@@ -82,7 +82,7 @@ export function OperationalSidebar() {
           width: '100%',
           border: 'none',
           background: 'transparent',
-          color: primitiveBrand.gold,
+          color: standardTokens.chrome.navTextActive,
           cursor: 'pointer',
           display: 'flex',
           alignItems: 'center',
@@ -95,7 +95,7 @@ export function OperationalSidebar() {
         ☰
       </button>
 
-      {/* Home link — visible in collapsed rail as gold home icon */}
+      {/* Home link — visible in collapsed rail */}
       {collapsed && (
         <a
           href="/"
@@ -106,7 +106,7 @@ export function OperationalSidebar() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: primitiveBrand.gold,
+            color: standardTokens.chrome.navTextActive,
             textDecoration: 'none',
             fontSize: primitiveTypeScale.large,
           }}
@@ -150,14 +150,14 @@ export function OperationalSidebar() {
                   <>
                     <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis' }}>{group.label}</span>
                     {group.badge && (
-                      <span style={{ fontSize: primitiveTypeScale.micro, letterSpacing: primitiveLetterSpacing.eyebrow, border: '1px solid rgba(255,210,31,0.4)', color: primitiveBrand.gold, padding: '2px 4px' }}>{group.badge}</span>
+                      <span style={{ fontSize: primitiveTypeScale.micro, letterSpacing: primitiveLetterSpacing.eyebrow, border: '1px solid rgba(255,255,255,0.24)', color: standardTokens.chrome.navTextActive, padding: '2px 4px' }}>{group.badge}</span>
                     )}
-                    <span style={{ color: primitiveBrand.gold, transition: `transform ${primitiveMotion.standard} ${primitiveMotion.easeDefault}`, transform: isExpanded ? 'rotate(0deg)' : 'rotate(-90deg)', display: 'inline-block' }}>⌄</span>
+                    <span style={{ color: standardTokens.chrome.navTextActive, transition: `transform ${primitiveMotion.standard} ${primitiveMotion.easeDefault}`, transform: isExpanded ? 'rotate(0deg)' : 'rotate(-90deg)', display: 'inline-block' }}>⌄</span>
                   </>
                 )}
               </button>
               {!collapsed && isExpanded && (
-                <div style={{ marginLeft: '12px', padding: '4px 0 4px 12px', borderLeft: '1px solid rgba(255,210,31,0.16)' }}>
+                <div style={{ marginLeft: '12px', padding: '4px 0 4px 12px', borderLeft: '1px solid rgba(255,255,255,0.14)' }}>
                   {group.subItems.map((item) => (
                     <a
                       key={item.path}

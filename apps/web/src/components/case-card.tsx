@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useMode } from '@/context/mode-context';
 import {
-  primitiveBrand, primitiveFonts, primitiveTypeScale, primitiveLetterSpacing,
+  primitiveFonts, primitiveTypeScale, primitiveLetterSpacing,
   primitiveSpacing, primitiveFontWeight, primitivePriority, primitiveHud,
 } from '../../../../packages/ui/src/tokens/primitives';
 import type { Case } from '../../../../packages/contracts/src/entities/case';
@@ -107,7 +107,7 @@ export function CaseCard({ caseRecord, now, hud }: { caseRecord: Case; now: numb
       {/* Row 5: derived momentum + real surface + real age */}
       <div style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[2], flexWrap: 'wrap', paddingTop: primitiveSpacing[1], borderTop: `1px solid ${tokens.border.subtle}` }}>
         <span title={`Momentum (derived): ${MOMENTUM_GLYPH[mom].label}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 2, fontSize: primitiveTypeScale.micro, color: momColor }}>{MOMENTUM_GLYPH[mom].glyph} {MOMENTUM_GLYPH[mom].label} <span style={{ color: tokens.text.muted }}>ⓓ</span></span>
-        <span title="Attack surface" style={{ fontSize: primitiveTypeScale.micro, color: c.surfaceAttribution === 'external_attack_surface' ? primitiveBrand.gold : tokens.text.muted, marginLeft: 'auto' }}>{c.surfaceAttribution === 'external_attack_surface' ? 'EXT' : 'INT'}</span>
+        <span title="Attack surface" style={{ fontSize: primitiveTypeScale.micro, color: c.surfaceAttribution === 'external_attack_surface' ? tokens.status.info : tokens.text.muted, marginLeft: 'auto' }}>{c.surfaceAttribution === 'external_attack_surface' ? 'EXT' : 'INT'}</span>
         <span style={{ fontFamily: primitiveFonts.mono, fontSize: primitiveTypeScale.micro, color: tokens.text.muted }}>{ageLabel(c, now)}</span>
       </div>
 

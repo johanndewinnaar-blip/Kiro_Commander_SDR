@@ -5,7 +5,7 @@ import { seedCases } from '../../../../../../packages/contracts/src/fixtures/see
 import { seedActions, seedSubActions } from '../../../../../../packages/contracts/src/fixtures/seed-actions';
 import { componentTokens } from '../../../../../../packages/ui/src/tokens/components';
 import {
-  primitiveBrand, primitiveFonts, primitiveTypeScale, primitiveLetterSpacing,
+  primitiveFonts, primitiveTypeScale, primitiveLetterSpacing,
   primitiveSignal, primitiveSpacing, primitiveGlow, primitiveHud, primitiveFontWeight, primitivePriority,
 } from '../../../../../../packages/ui/src/tokens/primitives';
 import { resolveAllStrategies } from '../../../../../../packages/contracts/src/resolvers/case-strategy-resolver';
@@ -81,7 +81,7 @@ export default function P0WarRoomPage() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[2] }}>
                     <span style={{ color: primitiveSignal.critical, fontWeight: primitiveFontWeight.bold }}>{primitivePriority.p0.shape} {primitivePriority.p0.label}</span>
                     <span style={{ color: HUD.textSecondary, fontSize: primitiveTypeScale.caption, fontFamily: primitiveFonts.mono }}>{c.caseRef}</span>
-                    <span style={{ fontSize: primitiveTypeScale.micro, padding: '1px 6px', border: `1px solid ${primitiveBrand.gold}`, color: primitiveBrand.gold }}>{c.surfaceAttribution === 'external_attack_surface' ? 'External' : 'Internal'}</span>
+                    <span style={{ fontSize: primitiveTypeScale.micro, padding: '1px 6px', border: `1px solid ${primitiveSignal.info}`, color: primitiveSignal.info }}>{c.surfaceAttribution === 'external_attack_surface' ? 'External' : 'Internal'}</span>
                   </div>
                   <h2 style={{ margin: `${primitiveSpacing[2]} 0 0`, fontSize: primitiveTypeScale.h3, fontWeight: primitiveFontWeight.bold, color: HUD.text }}>{c.title}</h2>
                 </div>

@@ -1,8 +1,8 @@
 /**
  * UserAvatar — Commander SDR
  *
- * v1.3.2 Requirement 18: 34px avatar tile with gold-bordered initials in
- * Bebas Neue, alongside user's name (12px bold) and role (10px muted).
+ * v1.3.2 Requirement 18: 34px avatar tile with initials in
+ * Inter, alongside user's name (12px bold) and role (10px muted).
  *
  * Source: shell reference v11
  */

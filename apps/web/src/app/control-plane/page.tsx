@@ -13,7 +13,7 @@ import { seedDeployments } from '../../../../../packages/contracts/src/fixtures/
  * Boundary: control-plane (internal Seiertech application)
  *
  * NOTE: This page renders inside control-plane/layout.tsx, which provides the
- * Control Plane's own dark/gold chrome AND its page-header.
+ * Control Plane's own dark chrome AND its page-header.
  */
 export default function ControlPlaneOverviewPage() {
   const totalCustomers = seedCustomers.length;
