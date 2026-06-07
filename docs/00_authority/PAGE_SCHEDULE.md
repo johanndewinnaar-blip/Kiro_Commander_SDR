@@ -115,6 +115,7 @@
 | Coverage Overview | /coverage | SCAFFOLD | — | UC-073 |
 | Scanner Coverage | /coverage/scanners | SCAFFOLD | — | UC-074 |
 | Telemetry Coverage | /coverage/telemetry | SCAFFOLD | — | UC-075 |
+| Coverage Blindspots | /coverage/blindspots | BUILT | Spec 40 | UC-183 |
 
 ---
 
@@ -169,6 +170,7 @@
 | Rule Validation | /platform/rules/validation | BUILT | Spec 34 | UC-168 |
 | Rule Simulation | /platform/rules/simulation | BUILT | Spec 34 | UC-171 |
 | Model Management | /platform/models | BUILT | Tier 3 batch | UC-PLAT-002 |
+| Model Lifecycle | /platform/models/lifecycle | BUILT | Spec 36 | UC-177 |
 | Commander AI | /commander-ai | BUILT | Unit 40 | UC-046–053 (AICAP) |
 | Automation | /platform/automation | BUILT | Tier 3 batch | UC-PLAT-003 |
 | Feature Availability | /platform/features | BUILT | Tier 3 batch | UC-PLAT-004 |
@@ -198,6 +200,7 @@
 | Compliance | /governance | BUILT | Unit 35 | UC-086 |
 | Policies & Standards | /governance/policies | SCAFFOLD | Unit 35 | UC-087 |
 | Exceptions | /governance/exceptions | SCAFFOLD | Unit 35 | UC-088 |
+| Decision Records | /governance/decisions | BUILT | Spec 36 | UC-175 |
 
 ---
 
@@ -354,6 +357,7 @@ These are registered in nav-groups.ts sidebar but have no page.tsx on disk:
 | Coverage | Coverage Overview | /coverage |
 | Coverage | Scanner Coverage | /coverage/scanners |
 | Coverage | Telemetry Coverage | /coverage/telemetry |
+| Coverage | Coverage Blindspots | /coverage/blindspots |
 | Tool Health | Tool Health | /tool-health |
 | Tool Health | Connectors | /tool-health/connectors |
 | Tool Health | Source Freshness | /tool-health/freshness |
@@ -373,6 +377,7 @@ These are registered in nav-groups.ts sidebar but have no page.tsx on disk:
 | Platform | Rule Validation | /platform/rules/validation |
 | Platform | Rule Simulation | /platform/rules/simulation |
 | Platform | Model Management | /platform/models |
+| Platform | Model Lifecycle | /platform/models/lifecycle |
 | Platform | Commander AI | /commander-ai |
 | Platform | Automation | /platform/automation |
 | Platform | Feature Availability | /platform/features |
@@ -380,6 +385,7 @@ These are registered in nav-groups.ts sidebar but have no page.tsx on disk:
 | Governance | Compliance | /governance |
 | Governance | Policies & Standards | /governance/policies |
 | Governance | Exceptions | /governance/exceptions |
+| Governance | Decision Records | /governance/decisions |
 | Reporting | Reports | /reporting |
 | Reporting | Exports | /reporting/exports |
 | Reporting | CISO Pack | /reporting/ciso-pack |
