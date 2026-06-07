@@ -2200,8 +2200,8 @@ Five entities forming the compliance/control-framework mapping layer:
 
 ### 57. Finding
 
-**Source:** Kiro Spec `.kiro/specs/34-drift-and-rule-engine/` (Drift and Rule Engine); baseline lineage: Spec #34 Mission Control / System Pulse (partial overlap — rule evaluation model)  
-**Coverage:** provisional (baseline Spec #34 partially read per COVERAGE.md; Kiro spec requirements fully read)  
+**Source:** Spec #34 Mission Control / System Pulse (rule evaluation model — Drift and Rule Engine)  
+**Coverage:** provisional (baseline Spec #34 partially read per COVERAGE.md)  
 **Contract:** `packages/contracts/src/entities/finding.ts`  
 **DB Schema:** ❌ NOT FOUND  
 **Fixture:** `packages/contracts/src/fixtures/seed-findings.ts` ✅ (5 records)  
@@ -2589,5 +2589,160 @@ Five entities forming the compliance/control-framework mapping layer:
 | `updatedAt` | string | seeded | AVAILABLE | — | CommonFields |
 
 **DB Schema Reconciliation:** ⚠️ **DIVERGENT — Contract + fixture exist, DB schema ABSENT.**
+
+---
+
+### 70. Architecture Component
+
+**Source:** Master Technical Specification §Architecture Management, Spec #57 Security Command and Control Doctrine  
+**Contract:** `packages/contracts/src/entities/architecture-component.ts`  
+**Interface:** `ArchitectureComponent`  
+**Key Fields:** name, componentType, environment, owner, status, baselineVersion, currentVersion, driftState, lastScannedAt, dependencies, criticality, tags  
+**Status:** AVAILABLE
+
+---
+
+### 71. Architecture Intelligence Engine
+
+**Source:** Spec #59 Intelligence Layer Architecture §Posture Stream, Master Technical Specification §Architecture Intelligence  
+**Contract:** `packages/contracts/src/entities/architecture-intelligence-engine.ts`  
+**Interface:** `ArchitectureIntelligence`  
+**Key Fields:** engineId, componentRef, analysisType, severity, confidence, detectedAt, description, affectedComponents, recommendedAction, resolvedAt, status  
+**Status:** AVAILABLE
+
+---
+
+### 72. CISO Summary
+
+**Source:** Master Technical Specification §Executive Surface, Spec #57 Security Command and Control Doctrine  
+**Contract:** `packages/contracts/src/entities/ciso-summary.ts`  
+**Interface:** `CisoSummary`  
+**Key Fields:** generatedAt, posture (PostureScore), riskSummary (RiskSummary), exposureSummary (ExposureSummary), debtSummary (DebtSummary), controlSummary (ControlSummary), caseSummary (CaseSummary), strategicBlockers, trend  
+**Status:** AVAILABLE
+
+---
+
+### 73. Direction Board
+
+**Source:** Spec #58 Security OODA Loop §Decide Phase, Master Technical Specification §Direction Boards  
+**Contract:** `packages/contracts/src/entities/direction-board.ts`  
+**Interface:** `DirectionBoard`  
+**Key Fields:** boardId, title, category, status, priority, owner, dueDate, description, impactAssessment, linkedCaseRefs, linkedRiskObjectRefs, resolution  
+**Status:** AVAILABLE
+
+---
+
+### 74. Drift Detection Engine
+
+**Source:** Spec #58 Security OODA Loop, Master Technical Specification §Drift Detection  
+**Contract:** `packages/contracts/src/entities/drift-detection-engine.ts`  
+**Interface:** `DriftDetection`  
+**Key Fields:** engineId, name, driftType, sourceConnectorRef, baselineRef, currentState, driftSeverity, detectedAt, resolvedAt, status, affectedEntityType, affectedEntityRef, remediationSuggestion  
+**Status:** AVAILABLE
+
+---
+
+### 75. Email Case Communication
+
+**Source:** Master Technical Specification §Case Communication, Spec #57 Security Command and Control Doctrine  
+**Contract:** `packages/contracts/src/entities/email-case-communication.ts`  
+**Interface:** `EmailCaseCommunication`  
+**Key Fields:** communicationId, caseRef, direction, senderAddress, recipientAddresses, subject, bodyPreview, receivedAt, processedAt, bindingConfidence, status, threadId, attachmentCount  
+**Status:** AVAILABLE
+
+---
+
+### 76. Exposure Engine
+
+**Source:** Spec #60 Internal and External Attack Surface Framework, Master Technical Specification §Exposure Management  
+**Contract:** `packages/contracts/src/entities/exposure-engine.ts`  
+**Interface:** `ExposureComputation`  
+**Key Fields:** engineId, surfaceType, exposureVector, assetRefs, identityRefs, blastZoneId, exposureScore, attackPathCount, coverageGapCount, computedAt, trend, mitigationRefs  
+**Status:** AVAILABLE
+
+---
+
+### 77. Identity Intelligence Engine
+
+**Source:** Spec #59 Intelligence Layer Architecture §Internal Behavioural Stream, Master Technical Specification §Identity Intelligence  
+**Contract:** `packages/contracts/src/entities/identity-intelligence-engine.ts`  
+**Interface:** `IdentityIntelligence`  
+**Key Fields:** engineId, identityRef, signalType, riskScore, confidence, detectedAt, context, baselineBehaviour, observedBehaviour, recommendedAction  
+**Status:** AVAILABLE
+
+---
+
+### 78. Platform Management
+
+**Source:** Spec #10 Detection Model Library, Spec #51 Rule Model and Decision Governance Surface, Master Technical Specification §Engine Layer  
+**Contract:** `packages/contracts/src/entities/platform-management.ts`  
+**Interfaces:** `RuleDefinition`, `ModelDefinition`, `AutomationRule`, `FeatureRegistryEntry`  
+**Key Fields (RuleDefinition):** name, ruleType, status, version, domain, severity, origin, lastTriggeredAt, triggerCount, description  
+**Key Fields (ModelDefinition):** name, modelType, status, version, domain, accuracy, falsePositiveRate, lastEvaluatedAt  
+**Key Fields (AutomationRule):** name, trigger, status, action, executionCount, lastExecutedAt, requiresApproval  
+**Key Fields (FeatureRegistryEntry):** featureKey, displayName, state, module, controlScope  
+**Status:** AVAILABLE
+
+---
+
+### 79. Push Governance
+
+**Source:** Master Technical Specification §Push Governance, Build Pack Discipline §Push governance dry-run  
+**Contract:** `packages/contracts/src/entities/push-governance.ts`  
+**Interface:** `PushGovernanceRun`  
+**Key Fields:** runId, ruleRef, targetScope, simulatedAt, impactedEntities, wouldBlock, wouldAllow, wouldEscalate, conflicts, status, approvedForLive  
+**Status:** AVAILABLE
+
+---
+
+### 80. Security Tool Intelligence
+
+**Source:** Spec #61 Universal Security Signal Connector Contract, Master Technical Specification §Tool Effectiveness  
+**Contract:** `packages/contracts/src/entities/security-tool-intelligence.ts`  
+**Interface:** `SecurityToolIntelligence`  
+**Key Fields:** engineId, connectorRef, toolCategory, effectivenessScore, coverageContribution, detectionCapabilities, knownBlindSpots, lastAssessedAt, trend, recommendedActions  
+**Status:** AVAILABLE
+
+---
+
+### 81. Support Operation
+
+**Source:** Master Technical Specification §Commercial Control Plane  
+**Contract:** `packages/contracts/src/entities/support-operation.ts`  
+**Interface:** `SupportOperation`  
+**Key Fields:** customerId, tenantId, title, description, category, priority, status, assignedTo, openedAt, resolvedAt, resolutionNotes  
+**Status:** AVAILABLE
+
+---
+
+### 82. Tenant Config
+
+**Source:** Master Technical Specification §Commercial Control Plane  
+**Contract:** `packages/contracts/src/entities/tenant-config.ts`  
+**Interface:** `TenantConfig`  
+**Key Fields:** tenantDisplayName, customerId, status, deploymentRegion, maxUsers, currentUsers, maxAssets, currentAssets, featuresEnabled, provisionedAt, lastActivityAt  
+**Status:** AVAILABLE
+
+---
+
+### 83. Topology
+
+**Source:** Master Technical Specification §Fusion Map, Spec #60 Internal and External Attack Surface Framework  
+**Contract:** `packages/contracts/src/entities/topology.ts`  
+**Interfaces:** `TopologySnapshot`, `TopologyNode`, `TopologyEdge`, `BlastRadiusResult`  
+**Key Fields (TopologySnapshot):** nodes, edges, blastRadiusResults, computedAt  
+**Key Fields (TopologyNode):** nodeId, entityType, entityRef, label, domain, criticality  
+**Key Fields (TopologyEdge):** edgeId, sourceNodeId, targetNodeId, relationshipType, weight, bidirectional  
+**Status:** AVAILABLE
+
+---
+
+### 84. Vulnerability Engine
+
+**Source:** Spec #60 Internal and External Attack Surface Framework, Master Technical Specification §Vulnerability Management  
+**Contract:** `packages/contracts/src/entities/vulnerability-engine.ts`  
+**Interface:** `VulnerabilityCorrelation`  
+**Key Fields:** engineId, cveRef, assetRef, exploitabilityScore, estateExposure, remediationPriority, patchAvailable, compensatingControlRef, assessedAt, status, contextFactors  
+**Status:** AVAILABLE
 
 ---
