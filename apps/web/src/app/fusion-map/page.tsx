@@ -6,7 +6,7 @@ import { seedTopology } from '../../../../../packages/contracts/src/fixtures/see
 import { componentTokens } from '../../../../../packages/ui/src/tokens/components';
 import { primitiveTypeScale, primitiveSpacing, primitiveFontWeight, primitiveFonts, primitiveLetterSpacing, primitiveSignal } from '../../../../../packages/ui/src/tokens/primitives';
 import { ReactFlow, Background, Controls, Node, Edge, Position } from '@xyflow/react';
-import { Sankey, ResponsiveContainer, Tooltip } from 'recharts';
+import { primitiveTypeScale, primitiveSpacing, primitiveFontWeight, primitiveFonts, primitiveLetterSpacing, primitiveSignal } from '../../../../../packages/ui/src/tokens/primitives';
 import { useMemo, useState } from 'react';
 
 import '@xyflow/react/dist/style.css';
@@ -205,51 +205,96 @@ export default function FusionMapPage() {
       <div style={{ background: tokens.surface.elevated, border: `1px solid ${tokens.border.default}`, padding: componentTokens.cardPadding, marginBottom: componentTokens.gridGap }}>
         <h3 style={{ fontSize: primitiveTypeScale.h4, fontWeight: primitiveFontWeight.semibold, color: tokens.text.primary, margin: `0 0 ${componentTokens.cardHeaderMargin}` }}>Domain Relationship Flow</h3>
         
-        {/* Sankey Chart */}
+        {/* Custom SVG Sankey Chart */}
         <div style={{ height: '200px', marginBottom: componentTokens.gridGap }}>
-          {sankeyData.nodes.length > 0 && sankeyData.links.length > 0 ? (
-            <ResponsiveContainer width="100%" height="100%">
-              <Sankey
-                data={sankeyData}
-                nodeWidth={10}
-                nodePadding={15}
-                iterations={4}
-                margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
-              >
-                <Tooltip 
-                  content={({ active, payload }) => {
-                    if (active && payload && payload[0]) {
-                      const data = payload[0].payload as any;
-                      return (
-                        <div style={{
-                          background: tokens.surface.elevated,
-                          border: `1px solid ${tokens.border.default}`,
-                          padding: primitiveSpacing[2],
-                          fontSize: primitiveTypeScale.micro,
-                          color: tokens.text.primary,
-                          borderRadius: '4px'
-                        }}>
-                          <div>Domain Flow: {data.value}</div>
-                        </div>
-                      );
-                    }
-                    return null;
-                  }}
-                />
-              </Sankey>
-            </ResponsiveContainer>
-          ) : (
-            <div style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              height: '100%',
-              color: tokens.text.muted,
-              fontSize: primitiveTypeScale.caption
-            }}>
-              No domain flow data
-            </div>
-          )}
+          <svg width="100%" height="100%" viewBox="0 0 800 200" style={{ border: `1px solid ${tokens.border.subtle}` }}>
+            {/* Create manual domain flows */}
+            {(() => {
+              const domains = ['identity', 'network', 'endpoint', 'vulnerability'];
+              const nodeWidth = 60;
+              const nodeHeight = 20;
+              const spacing = 180;
+              
+              // Calculate flows from actual data
+              const flows = [];
+              edges.forEach(edge => {
+                const sourceNode = nodeMap.get(edge.sourceNodeId);
+                const targetNode = nodeMap.get(edge.targetNodeId);
+                if (sourceNode && targetNode && sourceNode.domain !== targetNode.domain) {
+                  flows.push({
+                    source: sourceNode.domain,
+                    target: targetNode.domain,
+                    weight: edge.weight,
+                    relationship: edge.relationshipType
+                  });
+                }
+              });
+
+              return (
+                <>
+                  {/* Draw domain nodes */}
+                  {domains.map((domain, i) => (
+                    <g key={domain}>
+                      <rect
+                        x={50 + i * spacing}
+                        y={90}
+                        width={nodeWidth}
+                        height={nodeHeight}
+                        fill={tokens.surface.base}
+                        stroke={tokens.border.default}
+                        strokeWidth="1"
+                      />
+                      <text
+                        x={50 + i * spacing + nodeWidth/2}
+                        y={105}
+                        textAnchor="middle"
+                        fill={tokens.text.primary}
+                        fontSize="12"
+                        fontWeight="500"
+                      >
+                        {domain}
+                      </text>
+                    </g>
+                  ))}
+                  
+                  {/* Draw flow curves */}
+                  {flows.map((flow, i) => {
+                    const sourceIndex = domains.indexOf(flow.source);
+                    const targetIndex = domains.indexOf(flow.target);
+                    if (sourceIndex === -1 || targetIndex === -1) return null;
+                    
+                    const x1 = 50 + sourceIndex * spacing + nodeWidth;
+                    const y1 = 100;
+                    const x2 = 50 + targetIndex * spacing;
+                    const y2 = 100;
+                    const midX = (x1 + x2) / 2;
+                    const curveY = 100 + (i % 2 === 0 ? -30 : 30);
+                    
+                    return (
+                      <g key={i}>
+                        <path
+                          d={`M ${x1} ${y1} Q ${midX} ${curveY} ${x2} ${y2}`}
+                          stroke={primitiveSignal.info}
+                          strokeWidth={Math.max(2, flow.weight * 8)}
+                          fill="none"
+                          opacity="0.7"
+                        />
+                        <text
+                          x={midX}
+                          y={curveY + (i % 2 === 0 ? -5 : 15)}
+                          textAnchor="middle"
+                          fill={tokens.text.muted}
+                          fontSize="10"
+                        >
+                          {flow.relationship.replace(/_/g, ' ')}
+                        </text>
+                      </g>
+                    );
+                  })}
+                </>
+              );
+            })()}
+          </svg>
         </div>
 
         {/* Flow Summary Table */}
