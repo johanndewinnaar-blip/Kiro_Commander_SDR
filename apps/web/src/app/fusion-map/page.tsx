@@ -79,45 +79,64 @@ export default function FusionMapPage() {
     }));
   }, [edges, tokens]);
 
-  // Transform data for Sankey chart
+  // Transform data for Sankey chart - simplified to prevent stack overflow
   const sankeyData = useMemo(() => {
-    const sankeyNodes: Array<{ name: string }> = [];
-    const sankeyLinks: Array<{ source: number; target: number; value: number; relationshipType: string }> = [];
-    const nodeIndexMap = new Map<string, number>();
-
-    // Build unique node list for Sankey
-    const uniqueNodeLabels = new Set<string>();
-    edges.forEach(edge => {
-      const sourceNode = nodeMap.get(edge.sourceNodeId);
-      const targetNode = nodeMap.get(edge.targetNodeId);
-      if (sourceNode) uniqueNodeLabels.add(sourceNode.label);
-      if (targetNode) uniqueNodeLabels.add(targetNode.label);
-    });
-
-    Array.from(uniqueNodeLabels).forEach((label, index) => {
-      sankeyNodes.push({ name: label });
-      nodeIndexMap.set(label, index);
-    });
-
-    // Build Sankey links
+    // Group relationships by type for clearer flow visualization
+    const relationshipGroups = new Map<string, { source: string; target: string; weight: number }[]>();
+    
     edges.forEach(edge => {
       const sourceNode = nodeMap.get(edge.sourceNodeId);
       const targetNode = nodeMap.get(edge.targetNodeId);
       if (sourceNode && targetNode) {
-        const sourceIndex = nodeIndexMap.get(sourceNode.label);
-        const targetIndex = nodeIndexMap.get(targetNode.label);
-        if (sourceIndex !== undefined && targetIndex !== undefined) {
-          sankeyLinks.push({
-            source: sourceIndex,
-            target: targetIndex,
-            value: Math.round(edge.weight * 100),
-            relationshipType: edge.relationshipType
-          });
+        const relType = edge.relationshipType.replace(/_/g, ' ');
+        if (!relationshipGroups.has(relType)) {
+          relationshipGroups.set(relType, []);
         }
+        relationshipGroups.get(relType)?.push({
+          source: sourceNode.entityType,
+          target: targetNode.entityType,
+          weight: edge.weight
+        });
       }
     });
 
-    return { nodes: sankeyNodes, links: sankeyLinks };
+    // Create simplified flow: entity types -> relationship types -> entity types
+    const flowNodes: Array<{ name: string }> = [];
+    const flowLinks: Array<{ source: number; target: number; value: number }> = [];
+    const nodeIndexMap = new Map<string, number>();
+    
+    let nodeIndex = 0;
+    
+    // Add source entity types
+    const sourceTypes = new Set(Array.from(relationshipGroups.values()).flat().map(r => r.source));
+    sourceTypes.forEach(type => {
+      flowNodes.push({ name: `${type} (source)` });
+      nodeIndexMap.set(`source_${type}`, nodeIndex++);
+    });
+    
+    // Add target entity types
+    const targetTypes = new Set(Array.from(relationshipGroups.values()).flat().map(r => r.target));
+    targetTypes.forEach(type => {
+      flowNodes.push({ name: `${type} (target)` });
+      nodeIndexMap.set(`target_${type}`, nodeIndex++);
+    });
+    
+    // Create links between source and target types
+    relationshipGroups.forEach((relationships, relType) => {
+      relationships.forEach(rel => {
+        const sourceIdx = nodeIndexMap.get(`source_${rel.source}`);
+        const targetIdx = nodeIndexMap.get(`target_${rel.target}`);
+        if (sourceIdx !== undefined && targetIdx !== undefined) {
+          flowLinks.push({
+            source: sourceIdx,
+            target: targetIdx,
+            value: Math.round(rel.weight * 100)
+          });
+        }
+      });
+    });
+
+    return { nodes: flowNodes, links: flowLinks };
   }, [edges, nodeMap]);
 
   // Selected node blast radius
@@ -191,39 +210,53 @@ export default function FusionMapPage() {
         </div>
       </div>
 
-      {/* Sankey Chart Card */}
+      {/* Sankey Chart Card - Simplified to prevent stack overflow */}
       <div style={{ background: tokens.surface.elevated, border: `1px solid ${tokens.border.default}`, padding: componentTokens.cardPadding, marginBottom: componentTokens.gridGap }}>
-        <h3 style={{ fontSize: primitiveTypeScale.h4, fontWeight: primitiveFontWeight.semibold, color: tokens.text.primary, margin: `0 0 ${componentTokens.cardHeaderMargin}` }}>Relationship Flow</h3>
+        <h3 style={{ fontSize: primitiveTypeScale.h4, fontWeight: primitiveFontWeight.semibold, color: tokens.text.primary, margin: `0 0 ${componentTokens.cardHeaderMargin}` }}>Entity Type Flow</h3>
         <div style={{ height: '300px' }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <Sankey
-              data={sankeyData}
-              nodeWidth={10}
-              nodePadding={20}
-              iterations={32}
-            >
-              <Tooltip 
-                content={({ active, payload }) => {
-                  if (active && payload && payload[0]) {
-                    const data = payload[0].payload as any;
-                    return (
-                      <div style={{
-                        background: tokens.surface.elevated,
-                        border: `1px solid ${tokens.border.default}`,
-                        padding: primitiveSpacing[2],
-                        fontSize: primitiveTypeScale.micro,
-                        color: tokens.text.primary
-                      }}>
-                        <div>{data.relationshipType?.replace(/_/g, ' ') || 'Relationship'}</div>
-                        <div>Weight: {data.value}%</div>
-                      </div>
-                    );
-                  }
-                  return null;
-                }}
-              />
-            </Sankey>
-          </ResponsiveContainer>
+          {sankeyData.nodes.length > 0 && sankeyData.links.length > 0 ? (
+            <ResponsiveContainer width="100%" height="100%">
+              <Sankey
+                data={sankeyData}
+                nodeWidth={15}
+                nodePadding={25}
+                iterations={6}
+                margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+              >
+                <Tooltip 
+                  content={({ active, payload }) => {
+                    if (active && payload && payload[0]) {
+                      const data = payload[0].payload as any;
+                      return (
+                        <div style={{
+                          background: tokens.surface.elevated,
+                          border: `1px solid ${tokens.border.default}`,
+                          padding: primitiveSpacing[2],
+                          fontSize: primitiveTypeScale.micro,
+                          color: tokens.text.primary
+                        }}>
+                          <div>Entity Flow</div>
+                          <div>Weight: {data.value}%</div>
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+                />
+              </Sankey>
+            </ResponsiveContainer>
+          ) : (
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              height: '100%',
+              color: tokens.text.muted,
+              fontSize: primitiveTypeScale.caption
+            }}>
+              No flow data available
+            </div>
+          )}
         </div>
       </div>
 
