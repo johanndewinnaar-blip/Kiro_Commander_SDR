@@ -10,9 +10,11 @@ inclusion: always
 
 ## The Chain (mandatory linkage)
 
-Knowledge Graph Domain → Use Case → Entity → Engine (if applicable) → Page
+Baseline Source Specs → SYSTEM_KNOWLEDGE_GRAPH.md → DOMAIN_REGISTER.md → USE_CASE_REGISTER.md → DATA_DICTIONARY.md → Entity code → Engine code → Page code → PAGE_SCHEDULE.md
 
 Every new artefact must link BACK through this chain to a knowledge graph domain.
+
+**DATA_DICTIONARY.md is a HARD GATE between use case registration and entity creation.** No entity code file may be created without a complete DATA_DICTIONARY entry first.
 
 ## Rules
 
@@ -22,15 +24,24 @@ Before building any new page:
 - A use case MUST exist in USE_CASE_REGISTER.md that the page serves
 - That use case MUST map to a knowledge graph domain in SYSTEM_KNOWLEDGE_GRAPH.md
 - The backing entity MUST be listed in DATA_DICTIONARY.md
+- **The DATA_DICTIONARY entry for the backing entity must list ALL fields the page will render** — if fields are missing from the dictionary, add them FIRST
 - PAGE_SCHEDULE.md MUST be updated with the route + use case reference
 
-### Rule 2 — New Entity
+### Rule 2 — New Entity (DATA_DICTIONARY HARD GATE)
 
-Before creating any new entity:
+Before creating any entity code file:
 - It MUST serve at least one registered use case (UC-XXX)
 - It MUST map to a knowledge graph domain
 - If the domain does not exist in SYSTEM_KNOWLEDGE_GRAPH.md, add it FIRST
+- **HARD GATE: The entity MUST first be registered in DATA_DICTIONARY.md with ALL of the following before any code file is created:**
+  - Status (AVAILABLE / FUTURE / PROPOSED)
+  - All fields (name, type, source classification, availability, blocker)
+  - Owning domain (D-XXX reference from DOMAIN_REGISTER.md)
+  - Owning use case(s) (UC-XXX references)
+  - Relationships to other entities (consumed-by, produces-for, linked-to)
+  - Architectural layer (per SYSTEM_KNOWLEDGE_GRAPH.md §2)
 - DATA_DICTIONARY.md MUST be updated on creation
+- **Violation of this gate results in commit rejection**
 
 ### Rule 3 — New Use Case
 

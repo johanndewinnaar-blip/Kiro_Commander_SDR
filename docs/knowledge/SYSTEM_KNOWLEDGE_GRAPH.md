@@ -906,6 +906,113 @@ Source: Spec #41 `41_Commander_SDR_Military_Intelligence_UI_Doctrine_Spec.md` §
 
 ---
 
+## 19. Domains Introduced by Specs 34–43 Build
+
+The following domains were introduced or materially extended by the Kiro spec build cycle (Specs 34–43). Each domain lists its architectural layer per §2, governing baseline spec(s), and the entity files that constitute its data model.
+
+### 19.1 Decision Governance
+
+| Attribute | Value |
+|---|---|
+| **Architectural Layers** | 3 (Engine) / 6 (OODA — decision audit surfaces) |
+| **Baseline Spec(s)** | Spec #51 (Rule, Model and Decision Governance Surface); Spec #08 §13 (audit requirements) |
+| **Entities** | `decision-record.ts`, `simulation-result.ts` |
+| **Purpose** | Records every material system decision (routing, priority, closure, rule activation) with full explainability rationale, confidence, inputs consumed, and alternative paths rejected. Simulation results record blast-radius projections for proposed rule/strategy changes before activation. |
+| **Domain Register** | D-41 |
+
+### 19.2 Inverse Discovery
+
+| Attribute | Value |
+|---|---|
+| **Architectural Layer** | 2 (Normalisation — entity resolution failure detection) |
+| **Baseline Spec(s)** | Spec #72 (Inverse Discovery Loop) |
+| **Entities** | `inverse-discovery-event.ts` |
+| **Purpose** | Captures every normalisation lookup failure — when external signal references an entity Commander does not know. Triggers secondary resolution, root-cause classification (Discovery Gap / Staleness / Shadow IT / Naming Mismatch), and coverage blindspot case generation. |
+| **Domain Register** | D-14 (existing; extended with code entities) |
+
+### 19.3 Posture Accountability
+
+| Attribute | Value |
+|---|---|
+| **Architectural Layer** | 3 (Engine — classification and priority feed) |
+| **Baseline Spec(s)** | Spec #71 (Pre-Warned / Protected / Novel Classification) |
+| **Entities** | `attack-classification-audit.ts` |
+| **Purpose** | Records the immutable classification audit for every external attack against Commander's prior knowledge of affected entities. Pre-warned / Protected / Novel / Defence-Worked status with confidence, posture state at case-open time, and reclassification chain. Used in board reporting, regulatory evidence, and insurance claims. |
+| **Domain Register** | D-42 |
+
+### 19.4 Internal Risk
+
+| Attribute | Value |
+|---|---|
+| **Architectural Layer** | 5 (Case — sub-lifecycle for internal actor investigation) |
+| **Baseline Spec(s)** | Spec #75 (Internal Risk Investigation Sub-Lifecycle); Spec #62 (Verdict Semantics) |
+| **Entities** | `verdict-pattern-case.ts`, `internal-risk-jurisdiction.ts` (PLANNED), `internal-risk-outcome.ts` (PLANNED) |
+| **Purpose** | Surfaces verdict patterns that warrant investigation (NOT determination of intent). Enforces the surface-not-investigate boundary — Commander detects patterns and hands off to the customer's Internal Risk function. Jurisdictional controls, access-of-access audit, and outcome recording without Commander ever determining guilt or intent. |
+| **Domain Register** | D-33 (existing; extended with code entities) |
+
+### 19.5 Universal Search
+
+| Attribute | Value |
+|---|---|
+| **Architectural Layer** | Cross-cutting (queries all governed entities across all layers) |
+| **Baseline Spec(s)** | Spec #42 (Universal Search); MTS v7.0 §18 (search architecture) |
+| **Entities** | `search-index-config.ts` |
+| **Purpose** | Cross-entity search capability spanning cases, assets, identities, risk objects, connectors, rules, strategies, and all governed entities. Index configuration governs which entities are searchable, field weighting, and sensitive-query audit logging. |
+| **Domain Register** | D-43 |
+
+### 19.6 Rule Execution
+
+| Attribute | Value |
+|---|---|
+| **Architectural Layer** | 3 (Engine — drift detection, rule validation, suppression) |
+| **Baseline Spec(s)** | Spec #07 (Drift & Rule Engine); Spec #51 (Rule, Model and Decision Governance Surface) |
+| **Entities** | `finding.ts` |
+| **Engines** | `rule-validation-engine.ts`, `rule-execution-engine.ts`, `suppression-engine.ts` |
+| **Purpose** | Executes the ~240 drift detection models against tenant context, producing findings. Rule validation ensures YAML rule correctness before activation. Suppression engine deduplicates and suppresses known-acceptable findings per policy. Finding lifecycle tracks discovery → triage → case-binding → resolution. |
+| **Domain Register** | D-04 (existing; extended with code entities and engines) |
+
+### 19.7 Risk Scoring
+
+| Attribute | Value |
+|---|---|
+| **Architectural Layer** | 3 (Engine — risk computation and blast-radius projection) |
+| **Baseline Spec(s)** | Spec #08 §3 (CRS computation); Spec #28 (Priority Framework); MTS v7.0 §6 |
+| **Entities** | `risk-scoring-engine.ts`, `blast-radius-engine.ts` |
+| **Purpose** | Computes risk scores across entities (CRS at case level, entity-level risk aggregation). Blast-radius engine projects impact zones for proposed changes, active threats, and rule simulations. Both feed the priority engine and fusion map overlays. |
+| **Domain Register** | D-44 |
+
+### 19.8 Entitlement Management
+
+| Attribute | Value |
+|---|---|
+| **Architectural Layer** | 7 (Surface — Control Plane) / Cross-cutting (enforcement at all layers) |
+| **Baseline Spec(s)** | SDR Commercial Control Plane Specification v1.1 §§7–19; Spec #50 (RBAC/Entitlement/Feature Flags) |
+| **Entities** | `entitlement-manifest.ts` |
+| **Purpose** | Manages signed entitlement manifests that declare per-tenant feature state, commercial status, deployment model, plan, limits, ring assignment, and licence scope. The manifest is the contract between the Control Plane and SDR instances — enforcement is at the platform service layer, not UI-only. |
+| **Domain Register** | D-45 |
+
+### 19.9 Mission Binding
+
+| Attribute | Value |
+|---|---|
+| **Architectural Layer** | 5 (Case — mission-impact computation and entity-to-mission linkage) |
+| **Baseline Spec(s)** | Spec #34 (Mission Control); Spec #52 (Mission Objective Binding Model) |
+| **Entities** | `mission-binding.ts` |
+| **Purpose** | Binds entities (assets, identities, services, applications) to declared mission objectives through manual, tag-based, or dependency-graph binding rules. Mission impact is computed from bound risk objects and propagated to case priority, fusion map mission overlay, and executive reporting. |
+| **Domain Register** | D-25 (existing; extended with code entities) |
+
+### 19.10 Platform Security
+
+| Attribute | Value |
+|---|---|
+| **Architectural Layer** | Cross-cutting (authentication, authorisation, session management across all applications) |
+| **Baseline Spec(s)** | Spec #50 (RBAC/Entitlement); Spec #19 (RBAC baseline); MTS v7.0 §17 (security architecture) |
+| **Entities** | `auth-session.ts`, `break-glass-request.ts`, `rbac-policy.ts` |
+| **Purpose** | Platform authentication (SSO/OIDC), server-side session management, tenant isolation, RBAC policy enforcement at route and action level, break-glass emergency access with full audit trail. Enforces the three-application boundary security model. |
+| **Domain Register** | D-46 |
+
+---
+
 ## 20. Explicit GAPs Recorded This Build
 
 Per `SOURCING_RULE.md` discipline, gaps are recorded explicitly rather than guessed.
