@@ -297,8 +297,8 @@ export default function ExternalOperatingPicturePage() {
             <div className="card-header"><h3 className="card-title">Drill Paths</h3></div>
             <div className="card-body d-flex flex-wrap gap-3">
               <a href="/cases" className="btn">Cases</a>
-              <a href="/assets" className="btn">Assets<span className="badge bg-secondary ms-2">SCAFFOLD</span></a>
-              <a href="/identity" className="btn">Identities<span className="badge bg-secondary ms-2">SCAFFOLD</span></a>
+              <a href="/assets" className="btn">Assets</a>
+              <a href="/identity" className="btn">Identities</a>
               <a href="/operating-picture/internal" className="btn">Internal Operating Picture</a>
             </div>
           </div>

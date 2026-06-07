@@ -16,9 +16,11 @@ import {
   primitiveBrand, primitiveFonts, primitiveTypeScale, primitiveLetterSpacing,
   primitiveSignal, primitiveSpacing, primitiveFontWeight, primitivePriority, primitiveData,
 } from '../../../../../../packages/ui/src/tokens/primitives';
+import { seedNotifications } from '../../../../../../packages/contracts/src/fixtures/seed-notifications';
+import { seedCaseFollows } from '../../../../../../packages/contracts/src/fixtures/seed-case-follows';
+import { seedDecisionRecords } from '../../../../../../packages/contracts/src/fixtures/seed-decision-records';
 import { PageContainer } from '@/components/page-container';
 import { CaseCard } from '@/components/case-card';
-import { NotImplemented } from '@/components/not-implemented';
 import type { Case } from '../../../../../../packages/contracts/src/entities/case';
 import type { ApexOptions } from 'apexcharts';
 import { slaState, riskScore, isClosed, PRIORITIES } from '../case-metrics';
@@ -233,11 +235,43 @@ export default function MyCasesPage() {
         </aside>
       </div>
 
-      {/* Honest footer: not-yet-built capabilities */}
+      {/* Real data: Approvals, Notifications, Followed Cases (UC-202, UC-203, UC-204) */}
       <section style={{ marginTop: componentTokens.gridGap, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: primitiveSpacing[2] }}>
-        <NotImplemented title="Approvals & Decisions" requires="approval/decision entity + fixture" />
-        <NotImplemented title="Notifications" requires="notification entity + fixture" />
-        <NotImplemented title="Followed Cases" requires="case-follow/subscription entity + fixture" />
+        {/* Approvals & Decisions */}
+        <div style={{ background: tokens.surface.elevated, border: `1px solid ${tokens.border.subtle}`, padding: componentTokens.cardPadding }}>
+          <span style={{ display: 'block', fontSize: primitiveTypeScale.micro, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow, marginBottom: primitiveSpacing[2] }}>Approvals & Decisions</span>
+          {seedDecisionRecords.slice(0, 3).map((d) => (
+            <div key={d.id} style={{ padding: `${primitiveSpacing[1]} 0`, borderBottom: `1px solid ${tokens.border.subtle}` }}>
+              <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.primary }}>{d.rationale.slice(0, 60)}…</span>
+              <span style={{ display: 'block', fontSize: primitiveTypeScale.micro, color: tokens.text.muted, fontFamily: primitiveFonts.mono }}>{d.decisionType} · {new Date(d.decidedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Notifications */}
+        <div style={{ background: tokens.surface.elevated, border: `1px solid ${tokens.border.subtle}`, padding: componentTokens.cardPadding }}>
+          <span style={{ display: 'block', fontSize: primitiveTypeScale.micro, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow, marginBottom: primitiveSpacing[2] }}>Notifications ({seedNotifications.filter((n) => !n.read).length} unread)</span>
+          {seedNotifications.slice(0, 4).map((n) => (
+            <div key={n.id} style={{ padding: `${primitiveSpacing[1]} 0`, borderBottom: `1px solid ${tokens.border.subtle}`, opacity: n.read ? 0.6 : 1 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: primitiveSpacing[1] }}>
+                <span style={{ width: 6, height: 6, borderRadius: '50%', background: n.severity === 'critical' ? tokens.status.critical : n.severity === 'warning' ? tokens.status.warning : tokens.status.info, display: 'inline-block' }} />
+                <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.primary, fontWeight: n.read ? primitiveFontWeight.normal : primitiveFontWeight.medium }}>{n.title}</span>
+              </div>
+              <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted }}>{n.message.slice(0, 70)}…</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Followed Cases */}
+        <div style={{ background: tokens.surface.elevated, border: `1px solid ${tokens.border.subtle}`, padding: componentTokens.cardPadding }}>
+          <span style={{ display: 'block', fontSize: primitiveTypeScale.micro, color: tokens.text.muted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow, marginBottom: primitiveSpacing[2] }}>Followed Cases ({seedCaseFollows.filter((f) => !f.unfollowedAt).length} active)</span>
+          {seedCaseFollows.filter((f) => !f.unfollowedAt).map((f) => (
+            <div key={f.id} style={{ padding: `${primitiveSpacing[1]} 0`, borderBottom: `1px solid ${tokens.border.subtle}`, cursor: 'pointer' }} onClick={() => router.push(`/cases/${f.caseRef}`)}>
+              <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.primary, fontFamily: primitiveFonts.mono }}>{f.caseRef}</span>
+              <span style={{ display: 'block', fontSize: primitiveTypeScale.micro, color: tokens.text.muted }}>Notify: {f.notifyOn.join(', ')}</span>
+            </div>
+          ))}
+        </div>
       </section>
     </PageContainer>
   );

@@ -214,7 +214,7 @@ export default function AssetIntelligencePage({ searchParams }: { searchParams: 
               ))}
             </div>
           )}
-          <div className="mt-3"><a href="/vulnerabilities" className="btn btn-sm">Vulnerability management<span className="badge bg-secondary ms-2">SCAFFOLD</span></a></div>
+          <div className="mt-3"><a href="/vulnerabilities" className="btn btn-sm">Vulnerability management</a></div>
         </div>
       </div>
 
@@ -246,8 +246,8 @@ export default function AssetIntelligencePage({ searchParams }: { searchParams: 
         <div className="card-header"><h3 className="card-title">Drill Paths</h3></div>
         <div className="card-body d-flex flex-wrap gap-3">
           <a href="/cases" className="btn">Cases</a>
-          <a href="/identity" className="btn">Identities<span className="badge bg-secondary ms-2">SCAFFOLD</span></a>
-          <a href="/vulnerabilities" className="btn">Vulnerabilities<span className="badge bg-secondary ms-2">SCAFFOLD</span></a>
+          <a href="/identity" className="btn">Identities</a>
+          <a href="/vulnerabilities" className="btn">Vulnerabilities</a>
           <a href="/architecture" className="btn">Configuration Drift<span className="badge bg-secondary ms-2">SCAFFOLD</span></a>
         </div>
       </div>

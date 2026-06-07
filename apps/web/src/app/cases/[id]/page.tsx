@@ -20,7 +20,10 @@ import { LEGACY_STATUS_MAP } from '../../../../../../packages/contracts/src/enti
 import type { Case, CaseStatus, CaseStatusExtended, LegacyCaseStatus } from '../../../../../../packages/contracts/src/entities/case';
 import type { SubAction, D3FENDTacticType, OutcomeClassification, Action as ActionRec } from '../../../../../../packages/contracts/src/entities/action';
 import { seedEvents } from '../../../../../../packages/contracts/src/fixtures/seed-events';
-import { NotImplemented } from '@/components/not-implemented';
+import { seedEmailCommunications } from '../../../../../../packages/contracts/src/fixtures/seed-email-communications';
+import { seedGovernedCompose } from '../../../../../../packages/contracts/src/fixtures/seed-governed-compose';
+import { seedCaseTransitionAudits } from '../../../../../../packages/contracts/src/fixtures/seed-case-transition-audits';
+import { seedTeamsDecisionEvents } from '../../../../../../packages/contracts/src/fixtures/seed-teams-decision-events';
 
 /**
  * Case Detail — Commander SDR (DS-1.0, Spec 06)
@@ -459,16 +462,79 @@ function EvidenceTab({ caseRecord, riskObjects, evidence, tokens }: {
 // ─── TAB 4: Communication — placeholder (no email/Teams entity exists yet) ──
 
 function CommsTab({ caseRecord, tokens }: { caseRecord: Case; tokens: Tokens }) {
-  // The case communication lifecycle (Spec 25) has no entity or fixture yet:
-  // no CaseEmailThread, no Teams record, no message store. Rather than fabricate
-  // a thread, show honest placeholders. Real per-case activity lives in the
-  // Audit tab (seed-events). caseRecord referenced to keep signature stable.
-  void caseRecord;
+  const emails = seedEmailCommunications.filter((e) => e.caseRef === caseRecord.id);
+  const drafts = seedGovernedCompose.filter((d) => d.caseRef === caseRecord.id);
+  const teamsDecs = seedTeamsDecisionEvents.filter((t) => t.caseId === caseRecord.id);
+
   return (
     <section style={{ display: 'flex', flexDirection: 'column', gap: componentTokens.gridGap }}>
-      <NotImplemented title="Email Communication Thread" requires="CaseEmailThread / case-message entity + seed fixture (Spec 25)" />
-      <NotImplemented title="Teams / Command Bridge Integration" requires="Teams decision-event entity + seed fixture (Spec 25 / 26)" />
-      <NotImplemented title="Outbound Draft & Approval Chain" requires="governed-compose + approval entity (Spec 25 Req 3/5)" />
+      {/* Email Communication Thread (UC-201) */}
+      <Panel tokens={tokens} title="Email Communication Thread" subtitle={`${emails.length} email(s) bound to this case`}>
+        {emails.length === 0 ? (
+          <Empty tokens={tokens} text="No email communications bound to this case in seed data." />
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: primitiveSpacing[2] }}>
+            {emails.map((e) => (
+              <div key={e.id} style={{ border: `1px solid ${tokens.border.subtle}`, padding: primitiveSpacing[3], background: tokens.surface.primary }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: primitiveSpacing[2] }}>
+                  <span style={{ fontSize: primitiveTypeScale.caption, fontWeight: primitiveFontWeight.medium, color: tokens.text.primary }}>{e.subject}</span>
+                  <Badge tone={e.status === 'bound' ? 'success' : e.status === 'pending_binding' ? 'warning' : 'muted'} tokens={tokens} label={titleCase(e.status)} />
+                </div>
+                <div style={{ display: 'flex', gap: primitiveSpacing[4], flexWrap: 'wrap', marginTop: primitiveSpacing[2] }}>
+                  <Mini tokens={tokens} label="Direction" value={titleCase(e.direction)} />
+                  <Mini tokens={tokens} label="From" value={e.senderAddress} />
+                  <Mini tokens={tokens} label="Confidence" value={`${Math.round(e.bindingConfidence * 100)}%`} />
+                  <Mini tokens={tokens} label="Received" value={new Date(e.receivedAt).toLocaleString('en-GB', { dateStyle: 'short', timeStyle: 'short' })} />
+                </div>
+                <p style={{ margin: `${primitiveSpacing[2]} 0 0`, fontSize: primitiveTypeScale.micro, color: tokens.text.muted, lineHeight: 1.4 }}>{e.bodyPreview}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </Panel>
+
+      {/* Teams / Command Bridge Integration (UC-201) */}
+      <Panel tokens={tokens} title="Teams / Command Bridge" subtitle={`${teamsDecs.length} decision event(s)`}>
+        {teamsDecs.length === 0 ? (
+          <Empty tokens={tokens} text="No Teams decision events bound to this case." />
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: primitiveSpacing[2] }}>
+            {teamsDecs.map((t) => (
+              <div key={t.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: primitiveSpacing[2], border: `1px solid ${tokens.border.subtle}`, background: tokens.surface.primary }}>
+                <div>
+                  <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.primary }}>{titleCase(t.requestType)}</span>
+                  <span style={{ display: 'block', fontSize: primitiveTypeScale.micro, color: tokens.text.muted }}>{t.requestType} · {t.respondedBy ?? 'pending'}</span>
+                </div>
+                <Badge tone={t.decision === 'approved' || t.decision === 'confirmed' ? 'success' : t.decision === 'denied' ? 'critical' : 'warning'} tokens={tokens} label={t.decision ? titleCase(t.decision) : 'Pending'} />
+              </div>
+            ))}
+          </div>
+        )}
+      </Panel>
+
+      {/* Outbound Draft & Approval Chain (UC-202) */}
+      <Panel tokens={tokens} title="Outbound Draft & Approval Chain" subtitle={`${drafts.length} governed draft(s)`}>
+        {drafts.length === 0 ? (
+          <Empty tokens={tokens} text="No governed outbound drafts for this case." />
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: primitiveSpacing[2] }}>
+            {drafts.map((d) => (
+              <div key={d.id} style={{ border: `1px solid ${tokens.border.subtle}`, padding: primitiveSpacing[3], background: tokens.surface.primary }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: primitiveSpacing[2] }}>
+                  <span style={{ fontSize: primitiveTypeScale.caption, fontWeight: primitiveFontWeight.medium, color: tokens.text.primary }}>{d.draftSubject}</span>
+                  <Badge tone={d.approvalStatus === 'approved' ? 'success' : d.approvalStatus === 'rejected' ? 'critical' : 'warning'} tokens={tokens} label={titleCase(d.approvalStatus)} />
+                </div>
+                <div style={{ display: 'flex', gap: primitiveSpacing[4], flexWrap: 'wrap', marginTop: primitiveSpacing[2] }}>
+                  <Mini tokens={tokens} label="Channel" value={titleCase(d.channel)} />
+                  <Mini tokens={tokens} label="Approver" value={d.approverRef} />
+                  <Mini tokens={tokens} label="Recipients" value={d.recipients.join(', ')} />
+                  <Mini tokens={tokens} label="Expires" value={new Date(d.expiresAt).toLocaleString('en-GB', { dateStyle: 'short', timeStyle: 'short' })} />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </Panel>
     </section>
   );
 }
@@ -595,7 +661,25 @@ function AuditTab({ caseRecord, tokens }: { caseRecord: Case; tokens: Tokens }) 
         )}
         <p style={{ margin: `${primitiveSpacing[3]} 0 0`, fontFamily: primitiveFonts.mono, fontSize: primitiveTypeScale.micro, color: tokens.text.muted }}>Audit ref: {caseRecord.auditTrailRef}</p>
       </Panel>
-      <NotImplemented title="Structured Lifecycle Audit Trail" requires="case-transition audit event store (Spec 06 Domain Req 6) — only activity events exist today" />
+      {/* Structured Lifecycle Audit Trail (UC-206) */}
+      <Panel tokens={tokens} title="Structured Lifecycle Audit Trail" subtitle={`${seedCaseTransitionAudits.filter((t) => t.caseRef === caseRecord.id).length} structured transition(s) for this case`}>
+        {(() => {
+          const transitions = seedCaseTransitionAudits.filter((t) => t.caseRef === caseRecord.id);
+          if (transitions.length === 0) return <Empty tokens={tokens} text="No structured transition audits for this case in seed data." />;
+          return (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: primitiveSpacing[2] }}>
+              {transitions.map((t) => (
+                <div key={t.id} style={{ display: 'flex', gap: primitiveSpacing[3], padding: primitiveSpacing[2], border: `1px solid ${tokens.border.subtle}`, background: tokens.surface.primary, alignItems: 'center' }}>
+                  <span style={{ fontFamily: primitiveFonts.mono, fontSize: primitiveTypeScale.micro, color: tokens.text.muted, minWidth: 130, whiteSpace: 'nowrap' }}>{new Date(t.transitionedAt).toLocaleString('en-GB', { dateStyle: 'short', timeStyle: 'short' })}</span>
+                  <span style={{ fontSize: primitiveTypeScale.caption, color: tokens.text.secondary }}>{titleCase(t.fromState)} → {titleCase(t.toState)}</span>
+                  <span style={{ fontSize: primitiveTypeScale.micro, padding: '1px 6px', border: `1px solid ${tokens.border.default}`, color: tokens.text.muted }}>{t.triggeredBy}</span>
+                  <span style={{ fontSize: primitiveTypeScale.micro, color: tokens.text.muted, flex: 1 }}>{t.reason}</span>
+                </div>
+              ))}
+            </div>
+          );
+        })()}
+      </Panel>
     </section>
   );
 }

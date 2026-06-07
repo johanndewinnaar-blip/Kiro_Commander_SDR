@@ -10,17 +10,16 @@ import {
 } from '../../../../../../packages/ui/src/tokens/primitives';
 import { resolveAllStrategies } from '../../../../../../packages/contracts/src/resolvers/case-strategy-resolver';
 import { seedStrategies } from '../../../../../../packages/contracts/src/fixtures/seed-strategies';
-import { NotImplemented } from '@/components/not-implemented';
+import { seedWarRooms } from '../../../../../../packages/contracts/src/fixtures/seed-war-rooms';
+import { seedTeamsDecisionEvents } from '../../../../../../packages/contracts/src/fixtures/seed-teams-decision-events';
 
 /**
  * P0 Zero-Day War Room — Commander SDR (DS-1.0, Spec 06 / Spec 24)
  *
  * Emergency Command surface — legitimately forces Mission/HUD chrome (DS-1.0
  * §9.3). Renders ONLY real data: P0 cases from seedCases, their resolved
- * strategies, and the real Action/Sub-Action board (seed-actions).
- *
- * Membership, decision log and AI orientation have NO backing entity/fixture
- * (no WarRoom entity), so they are honest placeholders — not fabricated.
+ * strategies, the real Action/Sub-Action board (seed-actions), and War Room
+ * membership/communication data (seed-war-rooms).
  */
 
 const MS_PER_HOUR = 3_600_000;
@@ -144,16 +143,76 @@ export default function P0WarRoomPage() {
           )}
         </Panel>
 
-        {/* Placeholders — no WarRoom entity exists */}
-        <div style={{ marginBottom: componentTokens.gridGap }}>
-          <NotImplemented title="War Room Membership" requires="WarRoom membership entity + seed fixture (Spec 24 — no contract yet)" hud={HUD} />
-        </div>
-        <div style={{ marginBottom: componentTokens.gridGap }}>
-          <NotImplemented title="Decision Log" requires="war-room decision-event entity + seed fixture (Spec 24 — no contract yet)" hud={HUD} />
-        </div>
-        <div>
-          <NotImplemented title="Communication Cadence & Bridge Posts" requires="war-room communication entity + seed fixture (Spec 24/25 — no contract yet)" hud={HUD} />
-        </div>
+        {/* War Room Membership — REAL data from seed-war-rooms.ts (UC-200) */}
+        {seedWarRooms.filter((wr) => wr.status === 'activated').map((wr) => (
+          <Panel key={wr.id} title={`War Room Membership — ${wr.warRoomRef}`} subtitle={`${wr.membership.length} members · Status: ${wr.status}`}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: primitiveTypeScale.caption }}>
+              <thead><tr>{['User', 'Role', 'Joined', 'Acknowledged'].map((h) => (
+                <th key={h} style={{ textAlign: 'left', padding: `${primitiveSpacing[1]} ${primitiveSpacing[2]}`, borderBottom: `1px solid ${HUD.line}`, color: HUD.textMuted, fontSize: primitiveTypeScale.micro, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>{h}</th>
+              ))}</tr></thead>
+              <tbody>
+                {wr.membership.map((m) => (
+                  <tr key={m.userId} style={{ borderBottom: `1px solid ${HUD.lineSubtle}` }}>
+                    <td style={{ padding: primitiveSpacing[2], color: HUD.text }}>{m.userId}</td>
+                    <td style={{ padding: primitiveSpacing[2] }}><span style={{ fontSize: primitiveTypeScale.micro, padding: '1px 6px', background: m.role === 'senior_owner' ? primitiveSignal.critical : primitiveSignal.info, color: '#fff', textTransform: 'uppercase' }}>{m.role}</span></td>
+                    <td style={{ padding: primitiveSpacing[2], fontFamily: primitiveFonts.mono, color: HUD.textMuted, fontSize: primitiveTypeScale.micro }}>{new Date(m.joinedAt).toLocaleString('en-GB', { dateStyle: 'short', timeStyle: 'short' })}</td>
+                    <td style={{ padding: primitiveSpacing[2], fontFamily: primitiveFonts.mono, color: HUD.textMuted, fontSize: primitiveTypeScale.micro }}>{m.acknowledgedAt ? new Date(m.acknowledgedAt).toLocaleString('en-GB', { dateStyle: 'short', timeStyle: 'short' }) : '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </Panel>
+        ))}
+
+        {/* Decision Log — REAL data from seed-teams-decision-events.ts (UC-200) */}
+        <Panel title="Decision Log" subtitle="Teams decision events bound to War Room cases">
+          {seedTeamsDecisionEvents.length === 0 ? (
+            <p style={{ margin: 0, color: HUD.textMuted, fontSize: primitiveTypeScale.caption }}>No decision events recorded.</p>
+          ) : (
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: primitiveTypeScale.caption }}>
+              <thead><tr>{['Case', 'Type', 'Decision', 'Responded By', 'Time'].map((h) => (
+                <th key={h} style={{ textAlign: 'left', padding: `${primitiveSpacing[1]} ${primitiveSpacing[2]}`, borderBottom: `1px solid ${HUD.line}`, color: HUD.textMuted, fontSize: primitiveTypeScale.micro, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>{h}</th>
+              ))}</tr></thead>
+              <tbody>
+                {seedTeamsDecisionEvents.slice(0, 5).map((d) => (
+                  <tr key={d.id} style={{ borderBottom: `1px solid ${HUD.lineSubtle}` }}>
+                    <td style={{ padding: primitiveSpacing[2], color: HUD.text, fontFamily: primitiveFonts.mono }}>{d.caseId}</td>
+                    <td style={{ padding: primitiveSpacing[2] }}><span style={{ fontSize: primitiveTypeScale.micro, padding: '1px 6px', border: `1px solid ${HUD.line}`, color: HUD.textSecondary }}>{d.requestType}</span></td>
+                    <td style={{ padding: primitiveSpacing[2] }}><span style={{ fontSize: primitiveTypeScale.micro, padding: '1px 6px', background: d.decision === 'approved' || d.decision === 'confirmed' ? primitiveSignal.success : d.decision === 'denied' ? primitiveSignal.critical : primitiveSignal.warning, color: '#fff', textTransform: 'uppercase' }}>{d.decision ?? 'pending'}</span></td>
+                    <td style={{ padding: primitiveSpacing[2], color: HUD.textSecondary }}>{d.respondedBy ?? '—'}</td>
+                    <td style={{ padding: primitiveSpacing[2], fontFamily: primitiveFonts.mono, color: HUD.textMuted, fontSize: primitiveTypeScale.micro }}>{d.respondedAt ? new Date(d.respondedAt).toLocaleString('en-GB', { dateStyle: 'short', timeStyle: 'short' }) : '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </Panel>
+
+        {/* Communication Cadence — REAL data from seed-war-rooms.ts (UC-200) */}
+        {seedWarRooms.filter((wr) => wr.status === 'activated').map((wr) => (
+          <Panel key={`comm-${wr.id}`} title="Communication Cadence & Bridge Posts" subtitle={`Subscribers: ${wr.subscribers.length} · Cadence profile active`}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: primitiveSpacing[3], marginBottom: primitiveSpacing[3] }}>
+              <div><span style={{ display: 'block', fontSize: primitiveTypeScale.micro, color: HUD.textMuted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Activated</span><span style={{ fontSize: primitiveTypeScale.caption, fontFamily: primitiveFonts.mono, color: HUD.text }}>{wr.communicationCadence.activatedCadenceMinutes}min</span></div>
+              <div><span style={{ display: 'block', fontSize: primitiveTypeScale.micro, color: HUD.textMuted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Monitoring</span><span style={{ fontSize: primitiveTypeScale.caption, fontFamily: primitiveFonts.mono, color: HUD.text }}>{wr.communicationCadence.monitoringCadenceMinutes}min</span></div>
+              <div><span style={{ display: 'block', fontSize: primitiveTypeScale.micro, color: HUD.textMuted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Winding Down</span><span style={{ fontSize: primitiveTypeScale.caption, fontFamily: primitiveFonts.mono, color: HUD.text }}>{wr.communicationCadence.windingDownCadenceMinutes}min</span></div>
+              <div><span style={{ display: 'block', fontSize: primitiveTypeScale.micro, color: HUD.textMuted, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>Exec Update</span><span style={{ fontSize: primitiveTypeScale.caption, fontFamily: primitiveFonts.mono, color: HUD.text }}>{wr.communicationCadence.execUpdateCadenceMinutes}min</span></div>
+            </div>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: primitiveTypeScale.caption }}>
+              <thead><tr>{['Subscriber', 'Channels', 'Cadence'].map((h) => (
+                <th key={h} style={{ textAlign: 'left', padding: `${primitiveSpacing[1]} ${primitiveSpacing[2]}`, borderBottom: `1px solid ${HUD.line}`, color: HUD.textMuted, fontSize: primitiveTypeScale.micro, textTransform: 'uppercase', letterSpacing: primitiveLetterSpacing.eyebrow }}>{h}</th>
+              ))}</tr></thead>
+              <tbody>
+                {wr.subscribers.map((s) => (
+                  <tr key={s.userId} style={{ borderBottom: `1px solid ${HUD.lineSubtle}` }}>
+                    <td style={{ padding: primitiveSpacing[2], color: HUD.text }}>{s.userId}</td>
+                    <td style={{ padding: primitiveSpacing[2], color: HUD.textSecondary }}>{s.channels.join(', ')}</td>
+                    <td style={{ padding: primitiveSpacing[2] }}><span style={{ fontSize: primitiveTypeScale.micro, padding: '1px 6px', border: `1px solid ${HUD.line}`, color: HUD.textSecondary }}>{s.cadence}</span></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </Panel>
+        ))}
       </div>
     </div>
   );

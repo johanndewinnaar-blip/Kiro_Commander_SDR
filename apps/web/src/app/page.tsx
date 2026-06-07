@@ -320,11 +320,9 @@ export default function CommandCentrePage() {
             <div className="card-body d-flex flex-wrap gap-3">
               <a href="/operating-picture/external" className="btn">
                 External Operating Picture
-                <span className="badge bg-secondary ms-2">SCAFFOLD</span>
               </a>
               <a href="/operating-picture/internal" className="btn">
                 Internal Operating Picture
-                <span className="badge bg-secondary ms-2">SCAFFOLD</span>
               </a>
             </div>
           </div>
