@@ -314,6 +314,21 @@
 **Debt Type:** Quick Debt (fix is updating 4-5 numbers in the document)
 **Enforcement:** Wired into `core-testing-pipeline.md` (Stage 2 conformance checks). Runs only on full sweep (`run core testing all`), not on per-unit checks.
 
+### ARCH-012: Post-Build Impact Assessment
+
+**Assertion:** After every commit modifying entity/engine/page files, downstream chain docs must remain accurate. Zero tolerance for staleness.
+
+**Check:** On every `test my last build` and `run core testing`:
+1. Modified entity → DATA_DICTIONARY field count still matches? SYSTEM_KNOWLEDGE_GRAPH domain still accurate? RELATIONSHIP_MAP entries still valid?
+2. Modified/added page → PAGE_SCHEDULE entry current? AICAP_REGISTER entry present (if AI-PLACEMENT exists)?
+3. Modified layout/shell → nav group count matches test assertions? Route structure matches PAGE_SCHEDULE?
+4. ANY mismatch → auto-register as DEBT-XXX (type: IMPACT) in debt-register.md
+
+**Source:** `.kiro/steering/traceability-chain.md` §Chain Maintenance Rules; §Post-Build Impact Rule
+**Debt Type:** IMPACT (auto-registered, does NOT block commit)
+**Tolerance:** ZERO. Any downstream staleness = registered immediately.
+**Enforcement:** Wired into `core-testing-pipeline.md` (Stage 2 conformance checks). Runs on `test my last build` and `run core testing all`.
+
 ---
 
 ## Decision Record Assertions

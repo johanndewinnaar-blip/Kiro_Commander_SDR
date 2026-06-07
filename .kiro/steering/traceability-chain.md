@@ -167,6 +167,14 @@ If a commit lands without the required same-commit update:
 2. The next commit to the same file MUST include the missing update
 3. The debt is not retroactively blocking — it does not require a revert
 
+### Post-Build Impact Rule
+
+After every commit touching entities, engines, or pages:
+- ARCH-012 checks downstream chain staleness
+- Any finding is AUTO-REGISTERED in debt-register.md as IMPACT debt
+- debt-register.md is the SINGLE BACKLOG — no other tracking location
+- Supersedes: TRACEABILITY_DEBT.md (resolved), PLACEHOLDER_DEBT_REGISTER.md (resolved), CHAIN_COMPLIANCE_AUDIT.md (resolved) as active trackers. Those files are HISTORICAL — retained for lineage only.
+
 ## Validation (pre-commit enforcement)
 
 On every commit that touches:

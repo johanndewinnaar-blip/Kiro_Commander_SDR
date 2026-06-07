@@ -1,7 +1,7 @@
 # Commander SDR — Governance Knowledge Source
 
 **Purpose:** Single-document reference for how the entire build governance system operates. Self-auditing, linked to source files, and actionable. Living document.
-**Last updated:** 2026-06-07
+**Last updated:** 2026-06-08
 
 ---
 
@@ -99,9 +99,9 @@ Links:
 Spec requirement → UC registered → DATA_DICTIONARY entry → Entity .ts → Fixture seed-*.ts → Engine .ts → Page page.tsx
 
 Current counts:
-- Entities: 87+ (packages/contracts/src/entities/)
-- Fixtures: 82+ (packages/contracts/src/fixtures/)
-- Engines: 38+ (packages/contracts/src/engines/)
+- Entities: 87 (packages/contracts/src/entities/)
+- Fixtures: 82 (packages/contracts/src/fixtures/)
+- Engines: 38 (packages/contracts/src/engines/)
 - Pages: 110+ (apps/web/src/app/**/page.tsx)
 
 ### 3.2 Page Data Rendering
@@ -142,7 +142,7 @@ Links:
 - DOC-001–008: Commander doctrine (closed-loop, P0, three-app boundary, four-stream)
 - SEC-001–006: Secure coding (no secrets, input validation, auth, parameterised queries)
 - RBAC-001–004: Tenant isolation and RBAC (backend enforcement, audit-first)
-- ARCH-001–009: Architecture (local-first, no vendor APIs, data dictionary, readiness machine)
+- ARCH-001–012: Architecture (local-first, no vendor APIs, data dictionary, readiness machine, post-build impact)
 - DEC-001–002: Decision records (PageContainer exceptions, Command Centre scope)
 
 Link: .kiro/testing/conformance-registry.md
@@ -194,7 +194,7 @@ Registers:
 | Hook 03 — Docs Change Control | Authority doc edits | On file edit |
 | Hook 04 — Doctrinal Assertions | 11 doctrine checks | Post every task |
 | Hook 05 — Performance Compliance | No Red regressions | Post every task |
-| Governance runner | ARCH-005 through ARCH-009 | Pipeline + pre-commit |
+| Governance runner | ARCH-005 through ARCH-009, ARCH-011, ARCH-012 | Pipeline + pre-commit |
 
 Links:
 - .githooks/pre-commit
@@ -231,46 +231,53 @@ Links:
 
 ## SECTION 6 — DEBT ACCRUAL & RESOLUTION
 
-### 6.1 Debt Types
+### 6.1 Single Backlog Model
+**docs/00_authority/debt-register.md** is the SINGLE source of truth for ALL work owed. There is NO other active backlog.
+
 | Type | How created | How resolved |
 |---|---|---|
-| Conformance (quick) | Pipeline finds violation | Auto-fix (4 attempts) or manual |
-| Conformance (structural) | Pipeline finds violation in unmigrated unit | Dedicated work package |
-| Architectural (build-blocking) | Missing entity, structural gap | Create entity/resolve gap → unit flips READY |
-| Traceability | Artefact built without chain linkage | Register UC, add references |
-| Placeholder | Page "Not Yet Implemented" | Create entity + render |
-| Governance | Chain maintenance violated | Update skipped doc |
+| CONFORMANCE | Pipeline finds DSC/TOK/PERF/SEC/RBAC violation | Auto-fix (4 attempts) or register |
+| STRUCTURAL | Large unmigrated unit detected | Dedicated work package |
+| GOVERNANCE | Chain maintenance violated, doc stale | Quick fix (doc update) or governance pass |
+| BUILD | Phase 2/3 unit parked | Remains Deferred until trigger met |
+| IMPACT | ARCH-012 detects downstream staleness | Update stale doc in same or next commit |
 
-### 6.2 Debt Registers
+### 6.2 Debt Registers (Active vs Historical)
 | Register | Location | Status |
 |---|---|---|
-| Conformance debt | docs/00_authority/debt-register.md | Active |
-| Architectural debt | docs/knowledge/ARCHITECTURAL_DEBT_REGISTER.md | Active |
-| Traceability debt | docs/00_authority/TRACEABILITY_DEBT.md | ALL RESOLVED |
-| Placeholder debt | docs/00_authority/PLACEHOLDER_DEBT_REGISTER.md | ALL RESOLVED |
-| Chain compliance | docs/00_authority/CHAIN_COMPLIANCE_AUDIT.md | 3 resolved, 5 Phase 2 deferred |
+| **Single Backlog** | docs/00_authority/debt-register.md | **ACTIVE — sole tracker** |
+| Architectural debt | docs/knowledge/ARCHITECTURAL_DEBT_REGISTER.md | Active (build-blocking structural) |
+| Traceability debt | docs/00_authority/TRACEABILITY_DEBT.md | HISTORICAL (all resolved) |
+| Placeholder debt | docs/00_authority/PLACEHOLDER_DEBT_REGISTER.md | HISTORICAL (all resolved) |
+| Chain compliance | docs/00_authority/CHAIN_COMPLIANCE_AUDIT.md | HISTORICAL (resolved + Phase 2 deferred) |
 
 ### 6.3 Debt Automation
 - Debt closure loop runs on every pipeline invocation
+- ARCH-012 auto-registers IMPACT debt on downstream staleness
 - Auto-resolves items when violations clear
 - Resolved items stay in register (audit trail preserved)
+- Deferred items only activate when owner approves trigger condition
 
 ---
 
 ## SECTION 7 — BUILD QUEUE & STATUS
 
 ### 7.1 Current State
-- Pages: 110+
-- Entities: 87+
-- Engines: 38+
-- Fixtures: 82+
+- Pages: 110+ (apps/web/src/app/**/page.tsx)
+- Entities: 87 (packages/contracts/src/entities/ — includes index.ts)
+- Engines: 38 (packages/contracts/src/engines/ — includes index.ts)
+- Fixtures: 82 (packages/contracts/src/fixtures/ — includes index.ts)
 - Use cases: 212 (UC-001 to UC-212)
 - Domains: 46
 - TSC errors: 0
 - All 10 specs (34-43): RESOLVED
 - All placeholder debt: RESOLVED
 - All traceability debt: RESOLVED
-- Full chain enforced with maintenance rules
+- All conformance debt (DEBT-001–004): RESOLVED
+- All governance debt (DEBT-005–008): RESOLVED
+- 5 BUILD items DEFERRED (Phase 2/3)
+- Full chain enforced with maintenance rules + ARCH-012 post-build impact
+- SINGLE BACKLOG: docs/00_authority/debt-register.md
 
 ### 7.2 PARKED Units (Phase 2/3)
 | Unit | Reason |
@@ -286,41 +293,43 @@ Links:
 ## SECTION 8 — RECOMMENDATIONS
 
 ### 8.1 Effectiveness
-| # | Recommendation | Priority |
-|---|---|---|
-| 1 | Convert CHECK 4+5 warnings to FAIL after conformance sweep confirms clean state | HIGH |
-| 2 | Add CHECK 6 — RELATIONSHIP_MAP co-staging for multi-entity pages | HIGH |
-| 3 | Add CHECK 7 — PAGE_SCHEDULE co-staging for new pages | HIGH |
-| 4 | Run full conformance sweep (`run core testing all`) to establish baseline | HIGH |
+| # | Recommendation | Priority | Status |
+|---|---|---|---|
+| 1 | Convert CHECK 4+5 warnings to FAIL after conformance sweep confirms clean state | HIGH | Pending (awaits full sweep) |
+| 2 | Add CHECK 6 — RELATIONSHIP_MAP co-staging for multi-entity pages | HIGH | Pending |
+| 3 | Add CHECK 7 — PAGE_SCHEDULE co-staging for new pages | HIGH | Pending |
+| 4 | Run full conformance sweep (`run core testing all`) to establish baseline | HIGH | Pending |
+| 5 | Add ARCH-012 — Post-build impact assessment | HIGH | **IMPLEMENTED** |
 
 ### 8.2 Efficiency
-| # | Recommendation | Priority |
-|---|---|---|
-| 1 | Consolidate 3 authority-precedence statements into one | LOW |
-| 2 | Retire superseded root-level build docs (BUILD_SEQUENCE.md, BUILD_VERSION_ROADMAP.md) — superseded by REBASELINED_BUILD_SEQUENCE | MEDIUM |
-| 3 | Consolidate overlapping UI governance (DS-1.0 vs design-system-contract vs ui-design-system) | MEDIUM |
+| # | Recommendation | Priority | Status |
+|---|---|---|---|
+| 1 | Consolidate 3 authority-precedence statements into one | LOW | Pending |
+| 2 | Retire superseded root-level build docs (BUILD_SEQUENCE.md, BUILD_VERSION_ROADMAP.md) | MEDIUM | Pending |
+| 3 | Consolidate overlapping UI governance (DS-1.0 vs design-system-contract vs ui-design-system) | MEDIUM | Pending |
+| 4 | Consolidate debt registers into SINGLE BACKLOG | HIGH | **IMPLEMENTED** |
 
 ### 8.3 Completeness
-| # | Recommendation | Priority |
-|---|---|---|
-| 1 | Within-layer precedence rule (when two steering files conflict) | LOW |
-| 2 | Artifact lifecycle policy (retirement procedure for superseded docs) | LOW |
-| 3 | Programme-wide sourcing rule (extend SOURCING_RULE beyond knowledge workspace) | MEDIUM |
+| # | Recommendation | Priority | Status |
+|---|---|---|---|
+| 1 | Within-layer precedence rule (when two steering files conflict) | LOW | **IMPLEMENTED** (in authority-and-precedence.md) |
+| 2 | Artifact lifecycle policy (retirement procedure for superseded docs) | LOW | **IMPLEMENTED** (artifact-lifecycle.md) |
+| 3 | Programme-wide sourcing rule (extend SOURCING_RULE beyond knowledge workspace) | MEDIUM | Pending |
 
 ### 8.4 Accuracy & Validity
-| # | Recommendation | Priority |
-|---|---|---|
-| 1 | Full conformance sweep validates all assertions against all pages | HIGH |
-| 2 | RELATIONSHIP_MAP completeness check (are all entity cross-refs documented?) | MEDIUM |
-| 3 | DATA_DICTIONARY field-count validation vs actual TypeScript interfaces | MEDIUM |
+| # | Recommendation | Priority | Status |
+|---|---|---|---|
+| 1 | Full conformance sweep validates all assertions against all pages | HIGH | Pending |
+| 2 | RELATIONSHIP_MAP completeness check (are all entity cross-refs documented?) | MEDIUM | Pending |
+| 3 | DATA_DICTIONARY field-count validation vs actual TypeScript interfaces | MEDIUM | Pending |
 
 ### 8.5 Automation
-| # | Recommendation | Priority |
-|---|---|---|
-| 1 | Convert warnings to FAIL after clean conformance sweep | HIGH |
-| 2 | Add SYSTEM_KNOWLEDGE_GRAPH co-staging check for new entity domains | MEDIUM |
-| 3 | Automated DATA_DICTIONARY field-count validation | MEDIUM |
-| 4 | CI/CD integration (run conformance on PR) — Phase 2 | LOW |
+| # | Recommendation | Priority | Status |
+|---|---|---|---|
+| 1 | Convert warnings to FAIL after clean conformance sweep | HIGH | Pending |
+| 2 | Add SYSTEM_KNOWLEDGE_GRAPH co-staging check for new entity domains | MEDIUM | Pending |
+| 3 | Automated DATA_DICTIONARY field-count validation | MEDIUM | Pending |
+| 4 | CI/CD integration (run conformance on PR) — Phase 2 | LOW | Deferred (Phase 2) |
 
 ---
 
@@ -374,9 +383,9 @@ Key files: SYSTEM_KNOWLEDGE_GRAPH.md, DOMAIN_REGISTER.md, RELATIONSHIP_MAP.md, D
 ### Code Locations
 | Location | Contents | Count |
 |---|---|---|
-| packages/contracts/src/entities/ | Canonical entity interfaces | 87+ |
-| packages/contracts/src/engines/ | Processing logic | 38+ |
-| packages/contracts/src/fixtures/ | Seed data | 82+ |
+| packages/contracts/src/entities/ | Canonical entity interfaces | 87 |
+| packages/contracts/src/engines/ | Processing logic | 38 |
+| packages/contracts/src/fixtures/ | Seed data | 82 |
 | apps/web/src/app/ | Page components | 110+ |
 | apps/api/ | Backend API (scaffold only) | 0 |
 
