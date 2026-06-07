@@ -187,6 +187,7 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
             <Field tokens={tokens} label="Updated" value={new Date(caseRecord.updatedAt).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' })} />
             <Field tokens={tokens} label="Source" value={caseRecord.source.sourceSystem} mono />
             <Field tokens={tokens} label="Audit Ref" value={caseRecord.auditTrailRef} mono />
+            <a href={`/operating-picture/${caseRecord.surfaceAttribution === 'external_attack_surface' ? 'external' : 'internal'}`} className="btn btn-sm" style={{ marginTop: primitiveSpacing[2] }}>Show in Operating Picture</a>
           </RailPanel>
 
           {/* Impact (COIM-G where present) */}

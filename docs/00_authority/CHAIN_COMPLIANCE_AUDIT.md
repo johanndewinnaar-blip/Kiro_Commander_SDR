@@ -16,6 +16,23 @@
 
 ---
 
+## Resolution Status (2026-06-07)
+
+| Item | Category | Action Taken | Status |
+|------|----------|-------------|--------|
+| SCAFFOLD badges on /operating-picture/external | Quick Win #1 | Badges removed from drill links | ✅ RESOLVED |
+| "Show in Operating Picture" on /cases/:id | Quick Win #2 | Drill link added to case detail right rail | ✅ RESOLVED |
+| Intelligence Surface → case drill | Quick Win #3 | Already correct (links to /cases/:id) — acceptable alternative | ✅ RESOLVED |
+| 6 implied use cases | Section C | All registered as UC-207 through UC-212 | ✅ REGISTERED |
+| Fusion Map page build | Phase 2 | Documented as UC-209, UC-211 | DEFERRED |
+| Direction Board page build | Phase 2 | Documented as UC-212 | DEFERRED |
+| OODA Phase Dashboards | Phase 2 | Documented as UC-210 | DEFERRED |
+| Strategy → Fusion Map refresh | Phase 2 | Blocked by Fusion Map build | DEFERRED |
+| Case detail → Fusion Map | Phase 2 | Blocked by Fusion Map build | DEFERRED |
+| 5 ARCH-DEBT retroactive flags | Section B | Pre-existing governance-sequence debt; not code-quality | ACKNOWLEDGED |
+
+---
+
 ## Section A — Relationship Rendering Debt
 
 Cross-entity relationships documented in RELATIONSHIP_MAP.md §8 (Surface drill paths) that are not yet rendered on the expected pages.

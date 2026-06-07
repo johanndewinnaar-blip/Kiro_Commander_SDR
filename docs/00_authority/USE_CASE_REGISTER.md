@@ -262,3 +262,9 @@
 | UC-204 | Follow/subscribe to case updates | All authenticated | operational | /cases/my | case-follow.ts, seed-case-follows | SYSTEM | — | — | BUILT |
 | UC-205 | View cloud security posture with drift detection | SOM, CISO | operational | /som/cloud-security | cloud-security-posture.ts, seed-cloud-security-posture | SYSTEM | — | Spec 22 | BUILT |
 | UC-206 | View structured case lifecycle transition audit trail | All authenticated | operational | /cases/:id | case-transition-audit.ts, seed-case-transition-audits | SYSTEM | — | Spec 06 | BUILT |
+| UC-207 | Navigate from Operating Picture to Intelligence Surface | All authenticated | operational | /operating-picture/* | case.ts, asset.ts, identity.ts | SYSTEM | — | — | BUILT (drill link exists) |
+| UC-208 | Navigate from case detail to Operating Picture | All authenticated | operational | /cases/:id | case.ts (surfaceAttribution) | SYSTEM | — | — | BUILT |
+| UC-209 | Navigate from Fusion Map to case detail | All authenticated | operational | /fusion-map | risk-object.ts, case.ts | SYSTEM | — | — | NOT BUILT (Fusion Map Phase 2) |
+| UC-210 | Drill from OODA Command Tempo to phase dashboard | CISO, SOM | operational | / | ooda-layer engine | SYSTEM | — | — | NOT BUILT (Phase 2) |
+| UC-211 | Navigate from Intelligence Surface to Fusion Map | All authenticated | operational | /identity, /assets | case.ts, risk-object.ts | SYSTEM | — | — | NOT BUILT (Fusion Map Phase 2) |
+| UC-212 | View Direction Board integration in Operating Picture | All authenticated | operational | /operating-picture/* | direction-board.ts | SYSTEM | — | — | NOT BUILT (Direction Board Phase 2) |
