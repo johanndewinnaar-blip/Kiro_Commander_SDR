@@ -71,3 +71,15 @@ export {
   pushActionTypeEnum,
   pushIntentStatusEnum,
 } from './tenant-intelligence';
+
+// ─── Journey Intelligence (JI-1.0 — Domain D-47) ────────────────────────────
+export {
+  journeySchema,
+  journeyOodaStageEnum,
+  journeyDeliveryModeEnum,
+  journeyStatusEnum,
+  journeyOutcomeEnum,
+  journeyAnchorTypeEnum,
+  lifecycleCheckpointEnum,
+  journeys,
+} from './journeys';

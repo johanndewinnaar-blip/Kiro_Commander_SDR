@@ -573,6 +573,10 @@ export type { EmailCaseCommunication, CommunicationDirection, CommunicationStatu
 export { COMMUNICATION_DIRECTIONS, COMMUNICATION_STATUSES, validateEmailCaseCommunication } from './email-case-communication';
 
 
+// ─── Journey Intelligence (JI-1.0 — Domain D-47) ────────────────────────────
+export type { Journey, JourneyValidation } from './journey';
+export { deriveJourneyId, validateJourney } from './journey';
+
 // ─── Journey Intelligence Enumerations (JI-1.0 — Domain D-47) ────────────────
 export type {
   OodaStage,
