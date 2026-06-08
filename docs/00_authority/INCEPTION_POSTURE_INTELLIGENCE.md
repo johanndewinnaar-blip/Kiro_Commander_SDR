@@ -451,7 +451,76 @@ All changes are additive:
 
 ---
 
-## 17. Authority and Lineage
+## 17. Onboarding Mode
+
+### The Problem
+
+At initial tenant ingestion (2,000–100,000 assets), most existing assets will FAIL inception evaluation. Generating thousands of cases simultaneously is noise, not signal. It skews analytics, overwhelms teams, and provides no actionable prioritisation.
+
+### Onboarding Flow
+
+| Phase | What Happens | Cases Generated? |
+|---|---|---|
+| Discovery | Assets ingested, classified, relationships mapped | NO |
+| Baseline Establishment | Each asset evaluated against Secure Design Profile. PostureOrigin SET silently. | NO |
+| Posture Snapshot | Aggregate posture captured as onboarding baseline: "At onboarding: X% secure by design, Y% not secure by design" | NO — snapshot stored |
+| Operational Activation | Tenant transitions to live mode. New discoveries FROM THIS POINT generate cases. | YES — new assets only |
+
+### Rules
+
+- PostureOrigin is SET during onboarding (classification IS recorded) but cases are NOT generated
+- An Onboarding Posture Report is produced — a single governance artefact summarising inception posture at onboarding
+- CISO/SOM uses the report to create missions and strategies (not thousands of individual cases)
+- Case generation activates by SCOPE — tenant controls which estate nodes/tiers go live
+- Phased activation: "Activate perimeter first (34 assets), then cloud control (12 assets), then build/deploy (56 assets)"
+- Never: "Activate all 100,000 at once"
+
+### Phased Activation Strategy
+
+Activation scope is a **strategy policy configuration** on the secure-design-profile surface:
+
+```
+activationScope:
+  estateNodes: [node-001, node-002]     — which estate nodes are in live case-generation mode
+  architecturalTiers: [perimeter, cloud_control]  — which tiers are active
+  activatedAt: string                    — when this scope went live
+  status: onboarding | phased | fully_active
+```
+
+### Data Tagging (Analytics Skew Prevention)
+
+- Assets discovered during onboarding window carry: discoveryContext: 'onboarding'
+- Journey Intelligence read models FILTER by discovery context
+- Operational analytics exclude onboarding-window assets until steady-state (configurable threshold, default: 30 days post-activation)
+- Onboarding Posture Report is a SEPARATE analytical output, not mixed into operational dashboards
+
+### Transition to Operational Mode
+
+- Transition is EXPLICIT — not automatic
+- Requires owner/SOM decision: "This scope is ready for live case generation"
+- Transition is audited (audit event: INCEPTION_SCOPE_ACTIVATED)
+- Once activated, cannot be reverted to onboarding mode (cases already generated cannot be un-generated)
+
+### Two-Track Remediation Post-Activation
+
+Once a scope is activated:
+
+**Track 1 — Immediate (Automated):**
+- Individual not-secure-by-design cases generate for new asset discoveries
+- Commander pushes auto-fixes (install EDR, apply encryption, enforce policy)
+- Asset gets fixed NOW
+
+**Track 2 — Systemic (Management Activity):**
+- Pattern detection surfaces: "18 cases share one root cause — broken build pipeline"
+- CISO/SOM creates mission to fix the SOURCE process
+- Shared action persists across cases until root cause resolved
+- Prevents future inception failures from the same source
+
+Both tracks run simultaneously. Track 1 stops the bleeding. Track 2 stops the cause.
+
+---
+
+## 18. Authority and Lineage
 
 This document is the deep authority for Inception Posture Intelligence. It is referenced by:
 
