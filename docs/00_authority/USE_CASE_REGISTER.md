@@ -276,3 +276,16 @@
 | UC-218 | Score automation opportunity per journey type | SOM | operational | — | automation-opportunity formula, strategy policy fixture | SYSTEM | — | Unit 51 | NOT BUILT (formula built, policy seeded) |
 | UC-219 | Measure automation friction (drag, failure, rescue rate) | SOM | operational | — | automation-friction formula, automation_friction_metrics read model | SYSTEM | — | Unit 51 | NOT BUILT (formula built, read model built) |
 | UC-220 | Track automation maturity (delivery mode progression) | SOM, CISO | operational | — | automation-maturity formula, delivery_mode_distribution read model | SYSTEM | — | Unit 51 | NOT BUILT (formula built, read model built) |
+
+
+| UC-221 | View estate topology (organisational hierarchy with compliance scope inheritance) | SOM, CISO | operational | /assets/estate | estate-node.ts, seed-estate | SYSTEM | — | Unit 52 | NOT BUILT (entity built, page pending) |
+| UC-222 | Manage compliance scope inheritance through estate nodes | SOM | operational | /assets/estate | estate-node.ts, compliance-scope-binding.ts | SYSTEM | — | Unit 52 | NOT BUILT (entity built, page pending) |
+| UC-223 | View asset dependency relationships (typed bindings, staleness) | SOM, Analyst | operational | /assets/:id, /fusion-map | asset-relationship.ts, seed-estate | SYSTEM | — | Unit 52 | NOT BUILT (entity built, page pending) |
+| UC-224 | Compute blast radius through dependency graph traversal | SOM, CISO | operational | /fusion-map/blast-radius | asset-relationship.ts (graph traversal) | SYSTEM | — | Unit 52 | NOT BUILT (entity built, traversal engine Phase 2) |
+| UC-225 | Detect coverage gaps through explicit tool-to-asset bindings | SOM | operational | /coverage | asset-coverage-binding.ts, seed-estate | SYSTEM | — | Unit 52 | NOT BUILT (entity built, page pending) |
+| UC-226 | Scope assets to compliance frameworks with inheritance and justification | SOM | operational | /controls/frameworks | compliance-scope-binding.ts, seed-estate | SYSTEM | — | Unit 52 | NOT BUILT (entity built, page pending) |
+| UC-227 | Define Secure Design Profiles (inception posture expectations per type/tier) | SOM | operational | /settings/secure-design | secure-design-profile.ts | SYSTEM | — | Unit 53 | NOT BUILT (entity built, page pending) |
+| UC-228 | Evaluate asset inception posture at discovery (Secure by Design classification) | System | — | — | inception-posture-evaluator.ts, asset.postureOrigin | SYSTEM | — | Unit 53 | NOT BUILT (engine built, integration pending) |
+| UC-229 | Create not-secure-by-design cases for inception failures (routing to build team) | System | — | — | inception-posture-evaluator.ts, case.ts (type #13), finding.rootCauseClass | SYSTEM | — | Unit 53 | NOT BUILT (engine built, case creation pipeline pending) |
+| UC-230 | Detect systemic inception failure patterns (shared root cause across cases) | SOM, CISO | operational | /cases/analytics | finding.rootCauseClass, pattern detection (analytics read model) | SYSTEM | — | Unit 53 | NOT BUILT (rootCauseClass built, pattern detection Phase 2) |
+| UC-231 | Manage onboarding activation scope (phased case generation per estate node/tier) | SOM | operational | /settings/onboarding | asset.discoveryContext, activation scope strategy policy | SYSTEM | — | Unit 53 | NOT BUILT (fields built, activation config pending) |

@@ -2978,3 +2978,63 @@ Five entities forming the compliance/control-framework mapping layer:
 | inheritedFrom | `string \| null` | Estate node inheritance source |
 
 ---
+
+
+
+### 94. Secure Design Profile
+
+**Source:** INCEPTION_POSTURE_INTELLIGENCE.md (IPI-1.0) §5  
+**Contract:** `packages/contracts/src/entities/secure-design-profile.ts`  
+**Interface:** `SecureDesignProfile`  
+**Status:** LIVE  
+**Owning Domain:** D-49 Inception Posture Intelligence (DOMAIN_REGISTER.md)  
+**Architectural Layer:** Cross-cutting (Posture)  
+**Use Cases:** UC-227 (Define profiles), UC-228 (Evaluate inception posture)  
+**Relationships:** Asset (evaluated against profile at discovery), StrategyPolicy (hosted as strategy policy with governance lifecycle), ArchitecturalTier (scoped by tier), ComplianceScopeBinding (additional requirements per scope)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| entityType | `'secure-design-profile'` | Discriminator |
+| profileId | `string` | Profile identifier |
+| name | `string` | Display name |
+| assetType | `string` | Asset type this applies to (or '*' for tier-wide) |
+| architecturalTier | `string` | Tier this applies to (or '*' for all) |
+| complianceScopes | `string[]` | Additional requirements for these scopes |
+| requiredControls | `string[]` | Control IDs required at inception |
+| requiredCoverage | `string[]` | Coverage types required at inception |
+| requiredFields | `string[]` | Asset fields that must be populated |
+| requiredRelationships | `string[]` | Relationship types that must exist |
+| requiredBaselineProfile | `string \| null` | Baseline config that must pass (null if control-based only) |
+| version | `string` | Profile version |
+| status | `SecureDesignProfileStatus` | active, draft, retired |
+
+---
+
+### 95. Asset Entity — IPI Extension Fields
+
+**Source:** INCEPTION_POSTURE_INTELLIGENCE.md (IPI-1.0) §4  
+**Contract:** `packages/contracts/src/entities/asset.ts` (extended)  
+**Status:** LIVE  
+**Owning Domain:** D-49 Inception Posture Intelligence  
+**Use Cases:** UC-228 (Inception evaluation), UC-231 (Onboarding activation)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| postureOrigin | `PostureOrigin \| undefined` | secure_by_design, not_secure_by_design, unknown, accepted_not_secure_by_design. Immutable once set (ARCH-IPI-002). |
+| discoveryContext | `DiscoveryContext \| undefined` | onboarding, operational. Used for analytics filtering. |
+
+---
+
+### 96. Finding Entity — IPI Extension Fields
+
+**Source:** INCEPTION_POSTURE_INTELLIGENCE.md (IPI-1.0) §4  
+**Contract:** `packages/contracts/src/entities/finding.ts` (extended)  
+**Status:** LIVE  
+**Owning Domain:** D-49 Inception Posture Intelligence  
+**Use Cases:** UC-229 (Inception failure cases), UC-230 (Systemic pattern detection)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| rootCauseClass | `RootCauseClass \| undefined` | not_secure_by_design, security_drift, misconfiguration, coverage_gap, control_failure, process_failure, technical_debt, third_party_dependency, accepted_risk, unknown. Enables routing differentiation and AI explanation. |
+
+---

@@ -493,6 +493,42 @@ The translation layer itself (`.kiro/specs/`) is not in scope for this map — p
 
 ---
 
+## 10a. Asset Architecture Intelligence Relationships (D-48 — AAI-1.0)
+
+Cross-entity relationships introduced by the Asset Architecture Intelligence capability.
+
+| Source Entity | Target Entity | Relationship | Direction | Description |
+|---|---|---|---|---|
+| Asset | EstateNode | belongs_to | Asset → EstateNode | Every asset carries estateNodeId — organisational placement |
+| EstateNode | EstateNode | parent_child | Child → Parent | Hierarchical nesting (enterprise → BU → environment) |
+| EstateNode | Asset | compliance_inheritance | Parent → Children (all assets) | Compliance scopes inherit DOWNWARD through hierarchy |
+| Asset | Asset (via AssetRelationship) | depends_on / hosts / routes_through / authenticates_via / stores_data_for / deployed_by / covered_by / in_scope_for / owned_by / accessed_by_vendor / secures / contains | Bidirectional (source → target) | 12 typed relationship bindings with staleness tracking |
+| Asset | Connector (via AssetCoverageBinding) | coverage_binding | Asset ← Connector | Explicit tool coverage: which connector covers which asset, with gap/stale detection |
+| Asset | ControlFramework (via ComplianceScopeBinding) | scope_binding | Asset → Framework | Compliance framework scope with inheritance from estate nodes |
+| Mission | Asset / EstateNode / ArchitecturalTier | direct_binding | Mission → Architecture | Missions bind directly to architectural scope (AAI-1.0 §7) |
+| AssetRelationship | BlastRadius | graph_traversal | Relationship chain → Blast | Blast radius computed by traversing dependency relationships |
+| Journey | Asset (via anchor) | journey_context | Journey → Asset | Journey Intelligence measures work ABOUT architectural components |
+
+---
+
+## 10b. Inception Posture Intelligence Relationships (D-49 — IPI-1.0)
+
+Cross-entity relationships introduced by the Inception Posture Intelligence capability.
+
+| Source Entity | Target Entity | Relationship | Direction | Description |
+|---|---|---|---|---|
+| Asset | SecureDesignProfile | evaluated_against | Asset → Profile | At discovery, asset evaluated against applicable profile |
+| SecureDesignProfile | ArchitecturalTier + AssetType | scoped_to | Profile → Type/Tier | Profile applies to specific type + tier + compliance scope combinations |
+| Asset.postureOrigin | Finding | inception_failure | Asset (not_secure_by_design) → Finding | Failed inception creates Finding with rootCauseClass: not_secure_by_design |
+| Finding (rootCauseClass) | Case (type: not-secure-by-design) | creates | Finding → Case | Inception failure finding creates case type #13 |
+| Finding (rootCauseClass) | RiskObject (type: inception_posture_failure) | creates | Finding → RiskObject | Inception failure creates distinct risk object type |
+| Case (not-secure-by-design) | Action (shared) | systemic_remediation | Multiple Cases → Single Action | Multiple inception failures share one remediation action (fix the pipeline) |
+| SecureDesignProfile | StrategyPolicy | hosted_as | Profile = Policy | Profiles are strategy policies (governance lifecycle: approval, versioning, audit) |
+| Asset.discoveryContext | JourneyIntelligence read models | analytics_filter | Context → Filter | Onboarding-window assets filtered from operational analytics |
+| Drift Engine | IPI Evaluator | complementary | Drift ≠ IPI | Drift requires prior secure state. IPI evaluates initial state. Never confused. |
+
+---
+
 ## 11. GAPs carried forward
 
 These knowledge-graph GAPs (per `SYSTEM_KNOWLEDGE_GRAPH.md` §20) materially affect relationship-mapping completeness. They are repeated here so this artefact does not silently absorb them.

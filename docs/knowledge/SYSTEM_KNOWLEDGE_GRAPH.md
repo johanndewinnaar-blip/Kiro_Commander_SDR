@@ -1032,6 +1032,33 @@ Journey Intelligence is Commander's capability for understanding how security wo
 | `journey.ts` | Cross-cutting (Analytics) | D-47 Journey Intelligence | JOURNEY_INTELLIGENCE.md (JI-1.0) §5.2 | Journey entity carrying workflow state from first signal to validated outcome. Tracks OODA phase progression, delivery mode evolution, and outcome attribution. UC-213–UC-215, UC-219–UC-220. |
 | `journey-template.ts` | Cross-cutting (Analytics) | D-47 Journey Intelligence | JOURNEY_INTELLIGENCE.md (JI-1.0) §5.3 | Journey template defining expected workflow patterns for 33 journey types. Provides tempo baselines, checkpoint sequences, and quality expectations. UC-216–UC-218. |
 
+**D-48 Asset Architecture Intelligence (Cross-cutting Estate)**
+
+Asset Architecture Intelligence is Commander's capability for giving a security architect a complete, structured, queryable, risk-overlaid view of their entire technology estate — organised architecturally, scoped by organisational structure, and connected through real dependency relationships. It provides estate topology, 52-type asset taxonomy with 12 architectural tiers, and 12 typed relationship bindings.
+
+| Entity | Layer | Domain | Source | Description |
+|---|---|---|---|---|
+| `estate-node.ts` | Cross-cutting (Estate) | D-48 Asset Architecture Intelligence | ASSET_ARCHITECTURE_INTELLIGENCE.md (AAI-1.0) §4 | Organisational hierarchy node (enterprise, business_unit, environment, region, acquisition, shared_service). Assets belong to estate nodes. Compliance scopes inherit downward. UC-221, UC-222. |
+| `asset-relationship.ts` | Cross-cutting (Estate) | D-48 Asset Architecture Intelligence | ASSET_ARCHITECTURE_INTELLIGENCE.md (AAI-1.0) §6 | Typed binding between two assets (12 relationship types: depends_on, hosts, routes_through, etc.). Carries confirmation source and staleness tracking. UC-223, UC-224. |
+| `asset-coverage-binding.ts` | Cross-cutting (Estate) | D-48 Asset Architecture Intelligence | ASSET_ARCHITECTURE_INTELLIGENCE.md (AAI-1.0) §6 | Explicit security tool coverage binding for an asset. Status: covered, gap, stale. UC-225. |
+| `compliance-scope-binding.ts` | Cross-cutting (Estate) | D-48 Asset Architecture Intelligence | ASSET_ARCHITECTURE_INTELLIGENCE.md (AAI-1.0) §6 | Compliance framework scope binding with inheritance from estate nodes. UC-226. |
+| `asset-architecture-enums.ts` | Cross-cutting (Estate) | D-48 Asset Architecture Intelligence | ASSET_ARCHITECTURE_INTELLIGENCE.md (AAI-1.0) §4–§6 | Enumerations: ArchitecturalTier (12), LifecycleModel (3), ServiceClassification (14), RelationshipType (12), AssetClassificationExpanded (52), EstateNodeType (6), EstateNodeStatus (4). |
+| `asset.ts` (extended) | 4 (Canonical Data) | D-48 Asset Architecture Intelligence | ASSET_ARCHITECTURE_INTELLIGENCE.md (AAI-1.0) §9 | Asset entity extended with 4 nullable fields: architecturalTier, assetLifecycleModel, serviceClassification, estateNodeId. Classification expanded 9→52. |
+
+**D-49 Inception Posture Intelligence (Cross-cutting Posture)**
+
+Inception Posture Intelligence is Commander's capability for determining whether an architectural component entered the managed estate in the expected secure posture. It distinguishes three distinct failure modes: Secure by Design, Not Secure by Design, and Security Drift — each with different root causes, owners, and remediation paths.
+
+| Entity | Layer | Domain | Source | Description |
+|---|---|---|---|---|
+| `inception-posture-enums.ts` | Cross-cutting (Posture) | D-49 Inception Posture Intelligence | INCEPTION_POSTURE_INTELLIGENCE.md (IPI-1.0) §4 | Enumerations: PostureOrigin (4), RootCauseClass (10), SecureDesignProfileStatus (3), ActivationScopeStatus (3), DiscoveryContext (2). |
+| `secure-design-profile.ts` | Cross-cutting (Posture) | D-49 Inception Posture Intelligence | INCEPTION_POSTURE_INTELLIGENCE.md (IPI-1.0) §5 | Defines what "Secure by Design" means for a given asset type + tier + compliance scope. Hosted as strategy policies. UC-227, UC-228. |
+| `inception-posture-evaluator.ts` | 3 (Engine) | D-49 Inception Posture Intelligence | INCEPTION_POSTURE_INTELLIGENCE.md (IPI-1.0) §6 | Pure-function engine that evaluates an asset against its Secure Design Profile at discovery time. UC-229. |
+| `asset.ts` (extended) | 4 (Canonical Data) | D-49 Inception Posture Intelligence | INCEPTION_POSTURE_INTELLIGENCE.md (IPI-1.0) §4 | Asset entity extended with postureOrigin (immutable once set), discoveryContext. |
+| `finding.ts` (extended) | 4 (Canonical Data) | D-49 Inception Posture Intelligence | INCEPTION_POSTURE_INTELLIGENCE.md (IPI-1.0) §4 | Finding entity extended with rootCauseClass for routing and AI explanation. |
+| `case.ts` (extended) | 4 (Canonical Data) | D-49 Inception Posture Intelligence | INCEPTION_POSTURE_INTELLIGENCE.md (IPI-1.0) §4, §7 | Case type #13 added: not-secure-by-design. Routes to build/platform team. |
+| `risk-object.ts` (extended) | 4 (Canonical Data) | D-49 Inception Posture Intelligence | INCEPTION_POSTURE_INTELLIGENCE.md (IPI-1.0) §4 | RiskObject type extended: inception_posture_failure. |
+
 ---
 
 ## 20. Explicit GAPs Recorded This Build

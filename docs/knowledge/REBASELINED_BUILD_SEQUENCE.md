@@ -2695,11 +2695,54 @@ Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's o
 
 ---
 
+### Unit 53: Inception Posture Intelligence Foundation
+
+**Status:** DONE
+
+**Blocked by:** Unit 52 (AAI-1.0 provides architectural context consumed by IPI)
+
+**Purpose:** Establish Inception Posture Intelligence capability domain (IPI-1.0) as companion to AAI-1.0. Distinguishes Secure by Design vs Not Secure by Design vs Security Drift as three distinct failure modes. Introduces PostureOrigin classification, RootCauseClass for findings, SecureDesignProfile entity, Inception Posture Evaluator engine, case type #13, and onboarding mode.
+
+**Baseline spec:** INCEPTION_POSTURE_INTELLIGENCE.md (IPI-1.0) — new authority document
+
+**Architectural layer:** Cross-cutting + Posture
+
+**Dependencies:** Unit 52 (AAI-1.0 — architectural tier, coverage bindings, relationships)
+
+**Required entities:**
+- SecureDesignProfile ✅
+- Inception Posture Evaluator (engine) ✅
+
+**Deliverables:**
+1. IPI-1.0 authority document ✅
+2. Domain D-49 registered ✅
+3. Enumerations: PostureOrigin (4), RootCauseClass (10), SecureDesignProfileStatus (3), ActivationScopeStatus (3), DiscoveryContext (2) ✅
+4. SecureDesignProfile entity + validator ✅
+5. Inception Posture Evaluator engine (pure function: findApplicableProfile + evaluateInceptionPosture) ✅
+6. Asset entity extended: postureOrigin (immutable), discoveryContext ✅
+7. Finding entity extended: rootCauseClass ✅
+8. RiskObject type expanded: + inception_posture_failure ✅
+9. CaseType expanded: + not-secure-by-design (13 canonical types) ✅
+10. Migration 0019_inception_posture_extension.sql ✅
+11. Governance chain complete (DATA_DICTIONARY, DOMAIN_REGISTER, USE_CASE_REGISTER, SYSTEM_KNOWLEDGE_GRAPH, RELATIONSHIP_MAP, DECISIONS, BUILD_SEQUENCE) ✅
+
+**Completion gate:**
+- ✅ IPI-1.0 authority established
+- ✅ DEC-inception-posture-intelligence-foundation registered
+- ✅ Domain D-49 added to knowledge graph
+- ✅ Use cases UC-227 to UC-231 registered
+- ✅ DATA_DICTIONARY entries #94–#96 registered
+- ✅ All governance chain completed
+
+**Source tag:** Foundational
+
+---
+
 ## Summary
 
-**Total build units:** 53 (Unit 0 foundation-correction + Units 1–49, 51–52, with Unit 16 split into 16a + 16b per `DEC-command-centre-split-16a-16b`)
+**Total build units:** 54 (Unit 0 foundation-correction + Units 1–49, 51–53, with Unit 16 split into 16a + 16b per `DEC-command-centre-split-16a-16b`)
 
-**Readiness state (computed 2026-06-08):** READY = 0. DONE = 25 (foundational completion + Unit 51 + Unit 52). BLOCKED = 28 (Team 2 units gated by ARCH-006). See the Live Status Snapshot for the full per-unit table.
+**Readiness state (computed 2026-06-08):** READY = 0. DONE = 26 (foundational completion + Unit 51 + Unit 52 + Unit 53). BLOCKED = 28 (Team 2 units gated by ARCH-006). See the Live Status Snapshot for the full per-unit table.
 
 **Foundation correction (Team 1):** Unit 0 (closed ARCH-DEBT-033, `common.ts` contract-vs-source drift) — DONE.
 
