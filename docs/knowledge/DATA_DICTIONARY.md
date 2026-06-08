@@ -2823,3 +2823,65 @@ Five entities forming the compliance/control-framework mapping layer:
 | healthCheck | `'passing' \| 'degraded' \| 'failing' \| 'pending'` | Post-deploy health status |
 
 ---
+
+### 88. Journey
+
+**Source:** JOURNEY_INTELLIGENCE.md (JI-1.0) §5.2  
+**Contract:** `packages/contracts/src/entities/journey.ts` (planned)  
+**Interface:** `Journey`  
+**Status:** PLANNED (governance registered, implementation pending)  
+**Owning Domain:** D-47 Journey Intelligence (DOMAIN_REGISTER.md)  
+**Architectural Layer:** Cross-cutting + Analytics  
+**Use Cases:** UC-213 (Journey workflow measurement), UC-214 (Journey tempo analysis), UC-215 (Journey leakage detection), UC-219 (Automation friction), UC-220 (Automation maturity)  
+**Relationships:** JourneyTemplate (journey follows template patterns), AuditEvent (journey events extend audit events), Case (case-anchored journeys), Mission (mission-anchored journeys)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| entityType | `'journey'` | Discriminator |
+| journeyId | `string` | Deterministic journey ID (e.g., journey-case-{caseId}) |
+| templateRef | `string \| null` | Reference to applicable JourneyTemplate |
+| anchorType | `JourneyAnchorType` | case, finding, ioc_match, mission, strategy_policy, inbound_signal, push_action, war_room, exposure_programme |
+| anchorId | `string` | ID of the anchored entity |
+| parentJourneyId | `string \| null` | Parent journey reference for hierarchy |
+| currentPhase | `OodaStage` | observe, orient, decide, act |
+| currentCheckpoint | `LifecycleCheckpoint` | Current position in ~35 checkpoint enum |
+| status | `JourneyStatus` | active, completed, stalled, abandoned, reworking |
+| outcome | `JourneyOutcome` | successful, partially_successful, failed, accepted_risk, cancelled, abandoned, merged, superseded, pending |
+| startedAt | `string` | ISO 8601 timestamp |
+| completedAt | `string \| null` | ISO 8601 timestamp when terminal |
+| deliveryMode | `DeliveryMode` | manual, system_driven, ai_enhanced, human_confirmed_automation, autonomous |
+| reworkCount | `number` | Number of rework cycles |
+| childCount | `number` | Count of child journeys |
+
+---
+
+### 89. Journey Template
+
+**Source:** JOURNEY_INTELLIGENCE.md (JI-1.0) §5.3  
+**Contract:** `packages/contracts/src/entities/journey-template.ts` (planned)  
+**Interface:** `JourneyTemplate`  
+**Status:** PLANNED (governance registered, implementation pending)  
+**Owning Domain:** D-47 Journey Intelligence (DOMAIN_REGISTER.md)  
+**Architectural Layer:** Cross-cutting + Analytics  
+**Use Cases:** UC-216 (Journey template definition), UC-217 (Journey quality measurement), UC-218 (Automation opportunity scoring)  
+**Relationships:** Journey (templates provide expected patterns), StrategyPolicy (formula hosting via strategy surface)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| entityType | `'journey_template'` | Discriminator |
+| templateId | `string` | Template identifier (e.g., JT-CASE-001) |
+| name | `string` | Template display name |
+| anchorType | `JourneyAnchorType` | Primary anchor type this template applies to |
+| parentAnchorType | `JourneyAnchorType \| null` | Parent anchor type if hierarchical |
+| applicability | `TemplateApplicability` | Conditions where template applies (caseTypes, domains, etc.) |
+| expectedCheckpoints | `LifecycleCheckpoint[]` | Expected checkpoint sequence |
+| expectedPhases | `OodaStage[]` | Expected OODA phase progression |
+| expectedDeliveryModes | `DeliveryMode[]` | Delivery modes applicable to this template |
+| expectedOutcomeDistribution | `Record<JourneyOutcome, number>` | Expected outcome percentages |
+| tempoThresholds | `Record<OodaStage, number>` | Max hours per OODA phase |
+| leakageThresholdHours | `number` | Hours before considered leaked |
+| formulaRefs | `string[]` | References to applicable formula policies |
+| version | `string` | Template version |
+| status | `'active' \| 'draft' \| 'retired'` | Template lifecycle status |
+
+---

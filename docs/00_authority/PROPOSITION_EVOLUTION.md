@@ -40,6 +40,14 @@
 
 ---
 
+### EVO-011 — Journey Intelligence capability domain added
+
+- **Baseline position:** No explicit Journey Intelligence capability in baseline specifications. Measurement and analytics capabilities scattered across individual specs without unified framework.
+- **Evolution:** Journey Intelligence Authority Document (JI-1.0) establishes Journey Intelligence as peer capability to Spec #58 (Security OODA Loop), providing workflow intelligence, command intelligence, lifecycle measurement, attribution infrastructure, formula-driven analytics, and AI reasoning substrate. Adds 33 journey templates, 10 formula families, 4 tagger engines, 7 read models.
+- **Rationale:** Provides structured measurement of security workflow tempo, leakage, quality, and automation maturity. Essential for Commander's security operating model optimization and AI grounding.
+- **Decision record:** DEC-journey-intelligence-foundation (DECISIONS.md)
+- **Status:** PLANNED (governance registered, spec created, implementation pending)
+
 ### EVO-004 — War Room Communication Excellence overlay added
 
 - **Baseline position:** No explicit "War Room" concept in baseline specs. P0 zero-day handling is addressed in priority framework (Spec #28) and case management (Spec #08).

@@ -57,7 +57,7 @@ Domain ordering follows the layer flow: foundation → connector → normalisati
 | D-39 | UI Doctrine & Shell Discipline | Spec #41 (+ v2.6 addendum); Spec #56 (Shell Reference vs Build Authority); Spec #46 (Glossary) | Surface (cross-cutting) |
 | D-40 | Audit & Evidence | Cross-cutting — every domain emits audit events; Spec #29 v2.0 patch §2 No.10 (audit-first); Spec #71 §3.4 (classification audit record) | Cross-cutting |
 
-40 domains identified. The list is comprehensive at this projection level; cross-references between them are recorded in `RELATIONSHIP_MAP.md` (separate run).
+47 domains identified. The list is comprehensive at this projection level; cross-references between them are recorded in `RELATIONSHIP_MAP.md` (separate run).
 
 ---
 
@@ -71,6 +71,7 @@ Domain ordering follows the layer flow: foundation → connector → normalisati
 | D-44 | Risk Scoring | Spec #08 §3 (CRS); Spec #28 (Priority Framework); MTS v7.0 §6 | Engine |
 | D-45 | Entitlement Management | SDR Control Plane Specification v1.1; Spec #50 | Surface (Control Plane) + Cross-cutting |
 | D-46 | Platform Security | Spec #50 (RBAC/Entitlement); Spec #19; MTS v7.0 §17 | Cross-cutting |
+| D-47 | Journey Intelligence | JOURNEY_INTELLIGENCE.md (JI-1.0) | Cross-cutting + Analytics |
 
 Existing domains extended with new code entities (no new domain number required):
 - **D-04** (Drift & Rule Engine) — extended with `finding.ts`, `rule-validation-engine.ts`, `rule-execution-engine.ts`, `suppression-engine.ts`
@@ -78,6 +79,6 @@ Existing domains extended with new code entities (no new domain number required)
 - **D-25** (Mission Control & Mission Objective Binding) — extended with `mission-binding.ts`
 - **D-33** (Internal Risk Investigation Sub-Lifecycle) — extended with `verdict-pattern-case.ts`
 
-**Total domains: 46** (40 original + 6 new).
+**Total domains: 47** (40 original + 7 new).
 
 ---

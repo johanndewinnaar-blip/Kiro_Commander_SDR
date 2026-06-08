@@ -2610,11 +2610,56 @@ Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's o
 
 ---
 
+### Unit 51: Journey Intelligence Foundation
+
+**Status:** READY
+
+**Blocked by:** — (no dependencies; foundational governance unit)
+
+**Purpose:** Establish Journey Intelligence capability domain as peer to Spec #58 (Security OODA Loop) with authority document JI-1.0. Provides workflow intelligence, command intelligence, lifecycle measurement, attribution infrastructure, formula-driven analytics, and AI reasoning substrate. Creates governance framework for measuring security work tempo, leakage, quality, and automation maturity.
+
+**Baseline spec:** JOURNEY_INTELLIGENCE.md (JI-1.0) — new authority document
+
+**Architectural layer:** Cross-cutting + Analytics
+
+**Dependencies:** None (governance-only foundation unit)
+
+**Required entities:**
+- Journey ❌ (created here)
+- JourneyTemplate ❌ (created here)
+
+**Deliverables:**
+1. Journey Intelligence Authority Document (JI-1.0) registered in DECISIONS.md ✅
+2. Domain D-47 registered in DOMAIN_REGISTER.md and SYSTEM_KNOWLEDGE_GRAPH.md ✅
+3. Journey and JourneyTemplate entities registered in DATA_DICTIONARY.md ✅
+4. Use cases UC-213 to UC-220 registered in USE_CASE_REGISTER.md ✅
+5. Kiro delivery spec created (translation layer) (planned)
+6. Build pack created at docs/04_build_packs/ (planned)
+7. 33 journey templates defined per JI-1.0 §6 (planned)
+8. 10 formula families defined per JI-1.0 §7 (planned)
+9. 4 tagger engines specified per JI-1.0 §9 (planned)
+10. 7 read models defined per JI-1.0 §8 (planned)
+
+**Completion gate:**
+- ✅ JOURNEY_INTELLIGENCE.md (JI-1.0) authority established
+- ✅ DEC-journey-intelligence-foundation registered in DECISIONS.md
+- ✅ EVO-011 registered in PROPOSITION_EVOLUTION.md
+- ✅ Domain D-47 added to knowledge graph
+- ✅ Journey and JourneyTemplate entities in DATA_DICTIONARY.md
+- ⏳ Use cases UC-213 to UC-220 registered (DONE)
+- ⏳ Kiro spec created (pending)
+- ⏳ Build pack created (pending)
+- ⏳ All governance chain completed (pending)
+
+**Source tag:** Foundational
+
+---
+
 ## Summary
 
-**Total build units:** 51 (Unit 0 foundation-correction + Units 1–49, with Unit 16 split into 16a + 16b per `DEC-command-centre-split-16a-16b`)
+**Total build units:** 52 (Unit 0 foundation-correction + Units 1–49, 51, with Unit 16 split into 16a + 16b per `DEC-command-centre-split-16a-16b`)
 
-**Readiness state (computed 2026-05-31):** READY = 3 (Units 1, 2, 4). DONE = 1 (Unit 0). BLOCKED = 46. See the Live Status Snapshot near the top for the full per-unit table.
+**Readiness state (computed 2026-06-03):** READY = 1 (Unit 51). DONE = 23 (foundational completion). BLOCKED = 28 (Team 2 units gated by ARCH-006). See the Live Status Snapshot for the full per-unit table.
 
 **Foundation correction (Team 1):** Unit 0 (closed ARCH-DEBT-033, `common.ts` contract-vs-source drift) — DONE.
 

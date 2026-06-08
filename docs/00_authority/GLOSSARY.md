@@ -178,3 +178,63 @@ See: Master Proposition §12.8; Feature Registry feat.search.universal
 Internal Commander/Seiertech control application for customer, tenant, licence, entitlement, deployment, support access and baseline profile operations.
 
 See: Spec #38; Master Technical Specification §8.3
+
+## Journey Intelligence
+
+Commander's capability for understanding how security work travels through the organisation from first signal to validated outcome. It is the measurement, attribution, optimisation and AI-grounding spine for Commander's security operating model. A peer capability to the Security OODA Loop (Spec #58) — OODA provides the vocabulary, Journey Intelligence provides the measurement. It is NOT a dashboard, reporting module, analyst productivity tool, click tracking, user surveillance, HR performance scoring, duplicate SIEM, or telemetry warehouse.
+
+See: JOURNEY_INTELLIGENCE.md (JI-1.0).
+
+## Journey
+
+A complete lifecycle from first signal to validated outcome, anchor-agnostic. Bound to a primary entity (the journey anchor) such as a case, finding, mission, strategy, signal, push action, war room, IOC match, or exposure programme.
+
+See: JOURNEY_INTELLIGENCE.md (JI-1.0) §4, §5.2.
+
+## Journey Anchor
+
+The primary entity a journey is bound to. Anchor types: case, finding, ioc_match, mission, strategy_policy, inbound_signal, push_action, war_room, exposure_programme.
+
+See: JOURNEY_INTELLIGENCE.md (JI-1.0) §4.
+
+## Delivery Mode
+
+The execution mode of a journey or phase, progressing along the taxonomy: Manual → System Driven → AI Enhanced → Human Confirmed Automation → Autonomous.
+
+See: JOURNEY_INTELLIGENCE.md (JI-1.0) §4, §11.
+
+## Lifecycle Checkpoint
+
+A meaningful state transition within a journey, drawn from a bounded enum (~35 values, capped at 50) grouped by OODA stage (Observe/Orient/Decide/Act).
+
+See: JOURNEY_INTELLIGENCE.md (JI-1.0) §4, §5.1.
+
+## Journey Template
+
+The expected shape of a journey type — descriptive, not prescriptive. Deviation is detected and flagged, not prevented. ~33 templates across signal intake, enrichment, case lifecycle, action/execution, strategic/operational, and control/posture journeys.
+
+See: JOURNEY_INTELLIGENCE.md (JI-1.0) §5.3, §6.
+
+## Journey Leakage
+
+Work that enters the lifecycle but never reaches a valid terminal outcome. Detected when a journey stalls past its template threshold.
+
+See: JOURNEY_INTELLIGENCE.md (JI-1.0) §4, §7.9.
+
+## Journey Tempo
+
+Duration across a journey or per-OODA-phase, measured against template tempo thresholds.
+
+See: JOURNEY_INTELLIGENCE.md (JI-1.0) §4, §7.4.
+
+## Automation Friction
+
+The resistance between decision and successful execution — derived from temporal gaps between audit events (drag, failure rate, rescue rate, retries, recovery).
+
+See: JOURNEY_INTELLIGENCE.md (JI-1.0) §4, §7.6, §11.
+
+## Autonomous Maturity
+
+Delivery-mode progression over time per workflow type, tracking movement toward autonomous operation. AI must never recommend reducing human oversight based solely on maturity metrics.
+
+See: JOURNEY_INTELLIGENCE.md (JI-1.0) §4, §7.7, §10.

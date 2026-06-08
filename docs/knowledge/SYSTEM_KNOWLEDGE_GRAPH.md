@@ -1023,6 +1023,15 @@ These entities were introduced during the placeholder debt resolution pass to un
 | `cloud-security-posture.ts` | 3 (Engine — multi-cloud drift assessment) | D-09 Architecture Intelligence | Spec #22 | Multi-cloud security posture assessment per provider (AWS/Azure/GCP). Tracks compliance score, drift findings, and framework adherence per cloud account. |
 | `case-transition-audit.ts` | Cross-cutting (Audit & Evidence) | D-40 Audit & Evidence | Spec #06 Req 6 | Structured case lifecycle transition records with actor, from/to state, timestamp, and evidence reference. Provides the structured audit trail for the closed-loop lifecycle. |
 
+**D-47 Journey Intelligence (Cross-cutting Analytics)**
+
+Journey Intelligence is Commander's capability for understanding how security work travels through the organisation from first signal to validated outcome. It provides workflow intelligence, command intelligence, lifecycle measurement, attribution infrastructure, formula-driven analytics, and AI reasoning substrate.
+
+| Entity | Layer | Domain | Source | Description |
+|---|---|---|---|---|
+| `journey.ts` | Cross-cutting (Analytics) | D-47 Journey Intelligence | JOURNEY_INTELLIGENCE.md (JI-1.0) §5.2 | Journey entity carrying workflow state from first signal to validated outcome. Tracks OODA phase progression, delivery mode evolution, and outcome attribution. UC-213–UC-215, UC-219–UC-220. |
+| `journey-template.ts` | Cross-cutting (Analytics) | D-47 Journey Intelligence | JOURNEY_INTELLIGENCE.md (JI-1.0) §5.3 | Journey template defining expected workflow patterns for 33 journey types. Provides tempo baselines, checkpoint sequences, and quality expectations. UC-216–UC-218. |
+
 ---
 
 ## 20. Explicit GAPs Recorded This Build

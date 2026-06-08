@@ -268,3 +268,11 @@
 | UC-210 | Drill from OODA Command Tempo to phase dashboard | CISO, SOM | operational | / | ooda-layer engine | SYSTEM | — | — | NOT BUILT (Phase 2) |
 | UC-211 | Navigate from Intelligence Surface to Fusion Map | All authenticated | operational | /identity, /assets | case.ts, risk-object.ts | SYSTEM | — | — | NOT BUILT (Fusion Map Phase 2) |
 | UC-212 | View Direction Board integration in Operating Picture | All authenticated | operational | /operating-picture/* | direction-board.ts | SYSTEM | — | — | NOT BUILT (Direction Board Phase 2) |
+| UC-213 | Measure journey workflow lifecycle (signal to validated outcome) | System | — | — | journey.ts (planned), journey-template.ts (planned) | SYSTEM | — | Unit 51 | PROPOSED (entity planned, JI-1.0) |
+| UC-214 | Measure journey tempo per OODA phase | SOM, CISO | operational | — | journey.ts (planned), journey_lifecycle_tempo read model (planned) | SYSTEM | — | Unit 51 | PROPOSED (entity planned, JI-1.0) |
+| UC-215 | Detect journey leakage (stalled past template threshold) | System | — | — | journey.ts (planned), journey-template.ts (planned), journey_leakage_report read model (planned) | SYSTEM | — | Unit 51 | PROPOSED (entity planned, JI-1.0) |
+| UC-216 | Define journey template (expected workflow pattern) | SOM | operational | — | journey-template.ts (planned) | SYSTEM | — | Unit 51 | PROPOSED (entity planned, JI-1.0) |
+| UC-217 | Measure journey quality (formula-driven outcome scoring) | SOM, CISO | operational | — | journey-template.ts (planned), journey_quality_scores read model (planned), strategy.ts (journey-intelligence-formula surface) | SYSTEM | — | Unit 51 | PROPOSED (entity planned, JI-1.0) |
+| UC-218 | Score automation opportunity per journey type | SOM | operational | — | journey-template.ts (planned), strategy.ts (journey-intelligence-formula surface) | SYSTEM | — | Unit 51 | PROPOSED (entity planned, JI-1.0) |
+| UC-219 | Measure automation friction (drag, failure, rescue rate) | SOM | operational | — | journey.ts (planned), automation_friction_metrics read model (planned) | SYSTEM | — | Unit 51 | PROPOSED (entity planned, JI-1.0) |
+| UC-220 | Track automation maturity (delivery mode progression) | SOM, CISO | operational | — | journey.ts (planned), delivery_mode_distribution read model (planned) | SYSTEM | — | Unit 51 | PROPOSED (entity planned, JI-1.0) |
