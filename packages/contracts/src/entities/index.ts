@@ -576,6 +576,8 @@ export { COMMUNICATION_DIRECTIONS, COMMUNICATION_STATUSES, validateEmailCaseComm
 // ─── Journey Intelligence (JI-1.0 — Domain D-47) ────────────────────────────
 export type { Journey, JourneyValidation } from './journey';
 export { deriveJourneyId, validateJourney } from './journey';
+export type { JourneyTemplate, JourneyTemplateStatus, JourneyTemplateApplicability, JourneyTemplateValidation } from './journey-template';
+export { JOURNEY_TEMPLATE_STATUSES, validateJourneyTemplate } from './journey-template';
 
 // ─── Journey Intelligence Enumerations (JI-1.0 — Domain D-47) ────────────────
 export type {

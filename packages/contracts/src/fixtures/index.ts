@@ -51,6 +51,7 @@ export { seedWarRooms } from './seed-war-rooms';
 
 // ─── Journey Intelligence Fixtures (JI-1.0 — Domain D-47) ───────────────────
 export { seedJourneys } from './seed-journeys';
+export { seedJourneyTemplates } from './seed-journey-templates';
 
 // ─── Pulse Fixtures ──────────────────────────────────────────────────────────
 export { seedTeamPulse, seedDomainPulse, seedSystemPulse } from './seed-pulse';

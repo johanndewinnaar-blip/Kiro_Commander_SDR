@@ -83,3 +83,4 @@ export {
   lifecycleCheckpointEnum,
   journeys,
 } from './journeys';
+export { journeyTemplates, journeyTemplateStatusEnum } from './journey-templates';
