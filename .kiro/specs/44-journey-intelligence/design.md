@@ -1040,17 +1040,186 @@ export interface ReadModelRefreshEngine {
 
 ---
 
-*Section 6 to follow in the final commit:*
-- *§6: AI Analyst integration + governance + testing strategy + risks*
+## AI Analyst Integration
+
+**Traces to:** Req 10 AC-1 through AC-4. Journey Intelligence is SYSTEM-delivered (system-first-doctrine.md). AI consumes outputs but never owns measurement or decisions.
+
+### Consumption Levels (JI-1.0 §10)
+
+| Level | Source | AI Can Do | Example |
+|---|---|---|---|
+| Journey State | Journey entity (operational-read) | Describe current state | "This journey is in Act phase, stalled at action_dispatched, rework count 2" |
+| Journey Metrics | Read model outputs (analytics-read) | Summarise and explain metrics | "Automation drag is 4.2 hours, quality score 65, template deviation detected" |
+| Formula Explanations | Formula inputs + weights | Explain why a score is what it is | "Quality score 65 driven by: validation pass rate 70% (weight 0.3), rework count 2 (weight 0.25)" |
+
+### Knowledge Export Eligibility
+
+- `Journey` and `JourneyTemplate` are marked eligible for future knowledge export in `packages/contracts/src/knowledge/knowledge-export-registry.ts`.
+- No per-record export wiring in this phase — type declaration only.
+- Active AI consumption deferred to AI Phase 2.
+
+### AI Guardrails (Non-Negotiable)
+
+| # | Guardrail | Enforcement |
+|---|---|---|
+| 1 | AI must never recommend REDUCING human oversight based solely on automation maturity metrics | Validated in Commander AI grounding tests |
+| 2 | AI must cite traceable journey evidence (journeyId, checkpoint, metric) for all recommendations | Grounding rule in AI execution record |
+| 3 | AI must not reconstruct analyst behaviour from journey data | Query-level prohibition (no per-analyst grouping in read models) |
+| 4 | AI may surface automation promotion OPPORTUNITY but must not execute it | Execution boundary: AI recommends, system/analyst decides |
+| 5 | AI must label uncertainty when journey data is incomplete | Confidence field required in AI output |
+
+---
+
+## Governance Model
+
+### Conformance Assertions (ARCH-JI-001 through ARCH-JI-008)
+
+| Rule ID | Rule | Enforcement Point |
+|---|---|---|
+| ARCH-JI-001 | Every new entity/engine must declare Journey Intelligence adoption path | Feature adoption checklist (future features) |
+| ARCH-JI-002 | Lifecycle checkpoint enum bounded at 50 values maximum | Static assertion in enum definition test |
+| ARCH-JI-003 | No operational-read dependency on read models | Architecture test: no import from analytics schema in operational code |
+| ARCH-JI-004 | Formula changes require strategy policy governance | Enforced by strategy layer lifecycle (approval required) |
+| ARCH-JI-005 | Journey depth v1 limited to 2 (conformance warns at 3+) | Runtime warning in Journey creation logic |
+| ARCH-JI-006 | Journey entity status updates only via Journey Intelligence engines | Encapsulation: no direct field mutation; update only via engine functions |
+| ARCH-JI-007 | Terminal journeys must have outcome set to non-pending value | Validation function assertion |
+| ARCH-JI-008 | Journey outcome is immutable once set to non-pending value | Validation function assertion + update rejection |
+
+### Authority-Level Controls (JI-1.0 §12)
+
+1. Commander measures WORKFLOW intelligence, not HUMAN performance
+2. No individual analyst comparison from journey data
+3. No click/navigation/view tracking
+4. SOC boundary preserved (aggregate metrics only from SOC)
+5. No duplicate SIEM/telemetry warehouse
+6. Aggregation before presentation (dashboards query read models only)
+7. Journey data cannot be exported at individual-analyst granularity
+
+### Traceability Chain Compliance
+
+| Chain Item | Status |
+|---|---|
+| SYSTEM_KNOWLEDGE_GRAPH.md | D-47 registered |
+| DOMAIN_REGISTER.md | D-47 registered |
+| USE_CASE_REGISTER.md | UC-213 through UC-220 registered |
+| ARCHITECTURAL_DEBT_REGISTER.md | No blocking debt for D-47 |
+| DATA_DICTIONARY.md | Journey (#88), JourneyTemplate (#89) registered |
+| REBASELINED_BUILD_SEQUENCE.md | Unit 51 (Status: READY) |
+| DECISIONS.md | DEC-journey-intelligence-foundation registered |
+| PROPOSITION_EVOLUTION.md | EVO-011 registered |
+
+---
 
 ## Correctness Properties
 
-*(To be completed in Section 6)*
+### Property 1: Journey ID Determinism
+
+**Validates: Requirements 2.5**
+
+For any given `(anchorType, anchorId)` pair, the `journeyId` derivation MUST always produce the same result. No randomness, no timestamps, no sequence counters in the ID.
+
+### Property 2: Outcome Immutability
+
+**Validates: Requirements 2.4**
+
+Once a Journey's `outcome` field is set to any value other than `pending`, no subsequent operation may change it. Any attempt to mutate a terminal outcome MUST be rejected.
+
+### Property 3: Tagger Purity
+
+**Validates: Requirements 5.5**
+
+Given the same input (audit event fields), every tagger engine MUST produce the same output. No external state, no side effects, no non-determinism.
+
+### Property 4: Checkpoint Boundedness
+
+**Validates: Requirements 1.7**
+
+The `LifecycleCheckpoint` enumeration MUST contain ≤50 values at all times. Any addition that would exceed 50 MUST be rejected at compile time.
+
+### Property 5: Read Model Isolation
+
+**Validates: Requirements 7.5**
+
+No operational-read code path may import from or depend on analytics-read read-model tables. Read models are consumed only by dashboard/reporting/AI surfaces.
+
+### Property 6: Hierarchy Depth Warning
+
+**Validates: Requirements 2.7**
+
+When a Journey is created with a `parentJourneyId` that itself has a `parentJourneyId` (depth ≥3), the system MUST emit a conformance warning without blocking creation.
+
+---
 
 ## Error Handling
 
-*(To be completed in Section 6)*
+| Scenario | Handling |
+|---|---|
+| Tagger returns null (unmatched action/entity) | Field stays null on audit event — nullable by design. No error. |
+| Journey ID derivation for unknown anchor type | Reject at validation — anchorType must be in JourneyAnchorType enum |
+| Attempt to mutate terminal outcome | Reject with error: "Journey outcome is immutable once terminal (ARCH-JI-008)" |
+| Hierarchy depth ≥3 creation | Allow creation, emit conformance warning, log to audit |
+| Formula evaluation with missing inputs | Return null score with explanation — do not produce a misleading band |
+| Read model refresh failure | Log error, retain previous computation, retry on next cycle |
+| Template not found for journey type | Journey proceeds without template binding (templateRef = null); flag as deviation |
+
+---
 
 ## Testing Strategy
 
-*(To be completed in Section 6)*
+**Traces to:** Req 5 AC-5 (pure functions testable in isolation), Req 12 (governance traceability).
+
+### Unit Tests (pure logic)
+
+| Test Suite | Coverage |
+|---|---|
+| `journey-enums.test.ts` | All 6 enum values, count assertions, ARCH-JI-002 (≤50 checkpoints) |
+| `journey-entity.test.ts` | Validation function: ID derivation, outcome immutability, hierarchy depth warning, status transitions |
+| `journey-template.test.ts` | Validation function: template structure, tempo thresholds, applicability |
+| `ooda-stage-tagger.test.ts` | All ~40 rules + unmatched action → null |
+| `delivery-mode-tagger.test.ts` | All actor-type/approval combinations → correct mode |
+| `lifecycle-checkpoint-resolver.test.ts` | All entity-type/action pairs → correct checkpoint or null |
+| `journey-id-resolver.test.ts` | All 9 anchor types → correct ID pattern; parent derivation |
+| `formula-engine.test.ts` | All 10 families: known inputs → expected score + band; edge cases (zero weights, missing inputs) |
+
+### Fixture Conformance Tests
+
+| Test | Assertion |
+|---|---|
+| `seed-journey-templates.test.ts` | Exactly 33 templates; all templateIds unique; all phases/checkpoints valid enum values |
+| `seed-journey-formulas.test.ts` | Exactly 10 formulas; all families covered; weights sum correctly; thresholds ordered |
+| `seed-journeys.test.ts` | Seed journeys validate against Journey validation function |
+
+### Conformance Tests (ARCH-JI assertions)
+
+| Test | Assertion |
+|---|---|
+| `arch-ji-002.test.ts` | `ALL_LIFECYCLE_CHECKPOINTS.length <= 50` |
+| `arch-ji-003.test.ts` | No imports from `analytics/` schema in operational engine code |
+| `arch-ji-008.test.ts` | Attempt to mutate terminal outcome → rejection |
+
+### Integration Tests (deferred — requires live DB)
+
+- Journey creation → tagger execution → audit event attribution (end-to-end flow)
+- Read model refresh computation from journey + audit data
+- Formula evaluation with real read-model inputs
+
+---
+
+## Risks
+
+| Risk | Mitigation |
+|---|---|
+| Scope collapse into dashboard-only metrics | Authority document (JI-1.0) is binding. Design explicitly excludes UI in this phase. |
+| Tagger rule maintenance burden as actions grow | Rules are declarative data (mapping table), not branching logic. New rules added without code restructure. |
+| Formula weight tuning without data | Default weights from JI-1.0 are starting positions. Tenant override via strategy policy. Calibration deferred to Phase 2+ with real journey data. |
+| Read model staleness | Refresh cadences defined (15min/hourly/daily). Monitoring for refresh failures. |
+| Hierarchy depth creep | ARCH-JI-005 warning + governance gate at depth 3+. Schema supports it but governance prevents accidental complexity. |
+| Cross-workload FK temptation | Explicit "no FK" rules in design. Architecture tests prevent import leaks. |
+| AI misuse of journey data for analyst profiling | Read models enforce no individual-analyst granularity. AI guardrails tested. Authority-level control #1 and #2. |
+| Strategy surface enum migration conflicts | Migration is first foundation step. Coordinated with existing CMEP-1.0 surfaces (4 values already planned but not yet in DB enum). Single migration resolves both. |
+| Performance regression from audit event extension | 5 nullable columns + partial indexes. ~75 bytes per event (JI-1.0 §13). Minimal write overhead. |
+
+---
+
+*Design document complete (6/6 sections delivered).*
+
