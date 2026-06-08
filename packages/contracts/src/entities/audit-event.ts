@@ -7,6 +7,7 @@
  */
 
 import type { CommonFields } from './common';
+import type { OodaStage, DeliveryMode, LifecycleCheckpoint } from './journey-enums';
 
 export interface AuditEvent extends CommonFields {
   entityType: 'audit-event';
@@ -29,6 +30,18 @@ export interface AuditEvent extends CommonFields {
   rationale: string;
   /** Whether this is an immutable audit record */
   immutable: true;
+
+  // ─── Journey Intelligence Extension (JI-1.0 §5.4) ───────────────────────
+  /** OODA stage attribution (computed by tagger engine at write-time) */
+  oodaStage?: OodaStage;
+  /** Delivery mode classification (computed by tagger engine at write-time) */
+  deliveryMode?: DeliveryMode;
+  /** Lifecycle checkpoint (computed by tagger engine at write-time) */
+  lifecycleCheckpoint?: LifecycleCheckpoint;
+  /** Journey ID this event belongs to (deterministic derivation) */
+  journeyId?: string;
+  /** Parent journey ID (for child journey events) */
+  parentJourneyId?: string;
 }
 
 export interface AuditActor {

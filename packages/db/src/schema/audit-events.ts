@@ -40,4 +40,16 @@ export const auditEvents = pgTable('audit_events', {
   sourceSystem: text('source_system').notNull(),
   sourceTimestamp: timestamp('source_timestamp', { withTimezone: true }).notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+
+  // ─── Journey Intelligence Extension (JI-1.0 §5.4) ─────────────────────────
+  /** OODA stage attribution (computed by tagger engine at write-time) */
+  oodaStage: text('ooda_stage'),
+  /** Delivery mode classification (computed by tagger engine at write-time) */
+  deliveryMode: text('delivery_mode'),
+  /** Lifecycle checkpoint (computed by tagger engine at write-time) */
+  lifecycleCheckpoint: text('lifecycle_checkpoint'),
+  /** Journey ID this event belongs to */
+  journeyId: text('journey_id'),
+  /** Parent journey ID (for child journey events) */
+  parentJourneyId: text('parent_journey_id'),
 });

@@ -17,6 +17,12 @@ export interface SeedEvent {
   message: string;
   entityRef: string;
   entityType: 'case' | 'asset' | 'connector' | 'identity' | 'system';
+  // Journey Intelligence Extension (JI-1.0 §5.4) — nullable fields
+  oodaStage?: 'observe' | 'orient' | 'decide' | 'act';
+  deliveryMode?: 'manual' | 'system_driven' | 'ai_enhanced' | 'human_confirmed_automation' | 'autonomous';
+  lifecycleCheckpoint?: string;
+  journeyId?: string;
+  parentJourneyId?: string;
 }
 
 export const seedEvents: SeedEvent[] = [
@@ -27,6 +33,10 @@ export const seedEvents: SeedEvent[] = [
     message: 'P0 case created: Active exploitation of CVE-2026-9999 on PROD-WEB-01',
     entityRef: seedId('case', 1),
     entityType: 'case',
+    oodaStage: 'decide',
+    deliveryMode: 'system_driven',
+    lifecycleCheckpoint: 'case_created',
+    journeyId: 'journey-case-case-0001',
   },
   {
     id: seedId('event', 2),
@@ -35,6 +45,10 @@ export const seedEvents: SeedEvent[] = [
     message: 'War-room activation triggered for CASE-2026-0001',
     entityRef: seedId('case', 1),
     entityType: 'case',
+    oodaStage: 'decide',
+    deliveryMode: 'system_driven',
+    lifecycleCheckpoint: 'escalation_triggered',
+    journeyId: 'journey-case-case-0001',
   },
   {
     id: seedId('event', 3),
@@ -43,6 +57,10 @@ export const seedEvents: SeedEvent[] = [
     message: 'CISO escalation: P0 case assigned to Johann de Winnaar',
     entityRef: seedId('identity', 7),
     entityType: 'identity',
+    oodaStage: 'decide',
+    deliveryMode: 'manual',
+    lifecycleCheckpoint: 'escalation_triggered',
+    journeyId: 'journey-case-case-0001',
   },
   {
     id: seedId('event', 4),
@@ -51,6 +69,9 @@ export const seedEvents: SeedEvent[] = [
     message: 'OODA loop stall detected — 14h without observe cycle completion',
     entityRef: seedId('case', 2),
     entityType: 'case',
+    oodaStage: 'observe',
+    deliveryMode: 'system_driven',
+    journeyId: 'journey-case-case-0002',
   },
   {
     id: seedId('event', 5),
@@ -59,6 +80,9 @@ export const seedEvents: SeedEvent[] = [
     message: 'CrowdStrike connector sync completed — 847 endpoints processed',
     entityRef: seedId('connector', 1),
     entityType: 'connector',
+    oodaStage: 'observe',
+    deliveryMode: 'system_driven',
+    lifecycleCheckpoint: 'connector_pulled',
   },
   {
     id: seedId('event', 6),
@@ -67,6 +91,9 @@ export const seedEvents: SeedEvent[] = [
     message: 'SLA breach on CASE-2026-0003: CVE-2026-1234 unpatched beyond 24h target',
     entityRef: seedId('case', 3),
     entityType: 'case',
+    oodaStage: 'act',
+    deliveryMode: 'system_driven',
+    journeyId: 'journey-case-case-0003',
   },
   {
     id: seedId('event', 7),
@@ -75,6 +102,10 @@ export const seedEvents: SeedEvent[] = [
     message: 'Case CASE-2026-0004 status changed: open → in-progress',
     entityRef: seedId('case', 4),
     entityType: 'case',
+    oodaStage: 'act',
+    deliveryMode: 'system_driven',
+    lifecycleCheckpoint: 'action_started',
+    journeyId: 'journey-case-case-0004',
   },
   {
     id: seedId('event', 8),
@@ -83,6 +114,9 @@ export const seedEvents: SeedEvent[] = [
     message: 'Qualys vulnerability scan completed on PROD-WEB-01 — 3 findings',
     entityRef: seedId('asset', 1),
     entityType: 'asset',
+    oodaStage: 'observe',
+    deliveryMode: 'system_driven',
+    lifecycleCheckpoint: 'signal_received',
   },
   {
     id: seedId('event', 9),
@@ -91,6 +125,9 @@ export const seedEvents: SeedEvent[] = [
     message: 'Identity risk score recalculated for svc-cicd-deployer: 55 → 55',
     entityRef: seedId('identity', 17),
     entityType: 'identity',
+    oodaStage: 'orient',
+    deliveryMode: 'system_driven',
+    lifecycleCheckpoint: 'risk_scored',
   },
   {
     id: seedId('event', 10),
@@ -99,6 +136,10 @@ export const seedEvents: SeedEvent[] = [
     message: 'APT-41 IOC match confirmed on VPN-CONCENTRATOR-01 egress traffic',
     entityRef: seedId('asset', 36),
     entityType: 'asset',
+    oodaStage: 'orient',
+    deliveryMode: 'system_driven',
+    lifecycleCheckpoint: 'correlation_completed',
+    journeyId: 'journey-ioc-ioc-match-0001',
   },
   {
     id: seedId('event', 11),
@@ -107,6 +148,10 @@ export const seedEvents: SeedEvent[] = [
     message: 'Routing engine assigned CASE-2026-0006 to Eve Threat-Intel',
     entityRef: seedId('case', 6),
     entityType: 'case',
+    oodaStage: 'decide',
+    deliveryMode: 'system_driven',
+    lifecycleCheckpoint: 'case_routed',
+    journeyId: 'journey-case-case-0006',
   },
   {
     id: seedId('event', 12),
@@ -115,6 +160,9 @@ export const seedEvents: SeedEvent[] = [
     message: 'Intune connector sync completed — 312 devices processed',
     entityRef: seedId('connector', 2),
     entityType: 'connector',
+    oodaStage: 'observe',
+    deliveryMode: 'system_driven',
+    lifecycleCheckpoint: 'connector_pulled',
   },
   {
     id: seedId('event', 13),
@@ -123,6 +171,10 @@ export const seedEvents: SeedEvent[] = [
     message: 'Case CASE-2026-0007 status changed: in-progress → awaiting-validation',
     entityRef: seedId('case', 7),
     entityType: 'case',
+    oodaStage: 'act',
+    deliveryMode: 'human_confirmed_automation',
+    lifecycleCheckpoint: 'validation_started',
+    journeyId: 'journey-case-case-0007',
   },
   {
     id: seedId('event', 14),
@@ -139,6 +191,10 @@ export const seedEvents: SeedEvent[] = [
     message: 'EDR coverage gap persists on k8s-worker-01 through k8s-worker-04',
     entityRef: seedId('case', 9),
     entityType: 'case',
+    oodaStage: 'observe',
+    deliveryMode: 'system_driven',
+    lifecycleCheckpoint: 'coverage_assessed',
+    journeyId: 'journey-case-case-0009',
   },
   {
     id: seedId('event', 16),
@@ -147,6 +203,9 @@ export const seedEvents: SeedEvent[] = [
     message: 'AWS Config connector sync completed — 156 resources processed',
     entityRef: seedId('connector', 3),
     entityType: 'connector',
+    oodaStage: 'observe',
+    deliveryMode: 'system_driven',
+    lifecycleCheckpoint: 'connector_pulled',
   },
   {
     id: seedId('event', 17),
@@ -155,6 +214,9 @@ export const seedEvents: SeedEvent[] = [
     message: 'Patch management verified on FW-EDGE-01 — firmware current',
     entityRef: seedId('asset', 8),
     entityType: 'asset',
+    oodaStage: 'act',
+    deliveryMode: 'system_driven',
+    lifecycleCheckpoint: 'validation_passed',
   },
   {
     id: seedId('event', 18),
@@ -163,6 +225,10 @@ export const seedEvents: SeedEvent[] = [
     message: 'Case CASE-2026-0010 created: Firewall rule drift on FW-EDGE-01',
     entityRef: seedId('case', 10),
     entityType: 'case',
+    oodaStage: 'decide',
+    deliveryMode: 'system_driven',
+    lifecycleCheckpoint: 'case_created',
+    journeyId: 'journey-case-case-0010',
   },
   {
     id: seedId('event', 19),
@@ -179,6 +245,9 @@ export const seedEvents: SeedEvent[] = [
     message: 'Threat intelligence feed ingestion completed — 2,341 indicators processed',
     entityRef: seedId('connector', 4),
     entityType: 'connector',
+    oodaStage: 'observe',
+    deliveryMode: 'system_driven',
+    lifecycleCheckpoint: 'signal_received',
   },
   {
     id: seedId('event', 21),
@@ -187,6 +256,10 @@ export const seedEvents: SeedEvent[] = [
     message: 'Repeated BLOCK verdicts from WAF on app-payment-gateway logged',
     entityRef: seedId('case', 12),
     entityType: 'case',
+    oodaStage: 'orient',
+    deliveryMode: 'system_driven',
+    lifecycleCheckpoint: 'classification_assigned',
+    journeyId: 'journey-case-case-0012',
   },
   {
     id: seedId('event', 22),
@@ -195,6 +268,10 @@ export const seedEvents: SeedEvent[] = [
     message: 'Case CASE-2026-0022 remediation verified — TLS certificate renewed',
     entityRef: seedId('case', 22),
     entityType: 'case',
+    oodaStage: 'act',
+    deliveryMode: 'human_confirmed_automation',
+    lifecycleCheckpoint: 'validation_passed',
+    journeyId: 'journey-case-case-0022',
   },
   {
     id: seedId('event', 23),
@@ -211,6 +288,10 @@ export const seedEvents: SeedEvent[] = [
     message: 'Shadow IT discovery scan completed — 2 unmanaged instances found',
     entityRef: seedId('case', 13),
     entityType: 'case',
+    oodaStage: 'observe',
+    deliveryMode: 'system_driven',
+    lifecycleCheckpoint: 'signal_enriched',
+    journeyId: 'journey-case-case-0013',
   },
   {
     id: seedId('event', 25),
@@ -219,6 +300,10 @@ export const seedEvents: SeedEvent[] = [
     message: 'Password policy bypass rate at 23% — exceeds 20% threshold',
     entityRef: seedId('case', 14),
     entityType: 'case',
+    oodaStage: 'orient',
+    deliveryMode: 'system_driven',
+    lifecycleCheckpoint: 'drift_detected',
+    journeyId: 'journey-case-case-0014',
   },
   {
     id: seedId('event', 26),
@@ -227,6 +312,9 @@ export const seedEvents: SeedEvent[] = [
     message: 'Entra ID connector sync completed — 847 identities processed',
     entityRef: seedId('connector', 5),
     entityType: 'connector',
+    oodaStage: 'observe',
+    deliveryMode: 'system_driven',
+    lifecycleCheckpoint: 'connector_pulled',
   },
   {
     id: seedId('event', 27),
@@ -243,6 +331,10 @@ export const seedEvents: SeedEvent[] = [
     message: 'Case CASE-2026-0027 closed: Backup coverage restored on LAPTOP-JD-001',
     entityRef: seedId('case', 27),
     entityType: 'case',
+    oodaStage: 'act',
+    deliveryMode: 'system_driven',
+    lifecycleCheckpoint: 'journey_completed',
+    journeyId: 'journey-case-case-0027',
   },
   {
     id: seedId('event', 29),
@@ -251,6 +343,9 @@ export const seedEvents: SeedEvent[] = [
     message: 'ext-contractor-bob access scope violation detected — case created',
     entityRef: seedId('identity', 24),
     entityType: 'identity',
+    oodaStage: 'decide',
+    deliveryMode: 'system_driven',
+    lifecycleCheckpoint: 'case_created',
   },
   {
     id: seedId('event', 30),
@@ -267,6 +362,10 @@ export const seedEvents: SeedEvent[] = [
     message: 'Case CASE-2026-0015 assigned to Bob Vuln-Analyst via routing engine',
     entityRef: seedId('case', 15),
     entityType: 'case',
+    oodaStage: 'decide',
+    deliveryMode: 'system_driven',
+    lifecycleCheckpoint: 'case_routed',
+    journeyId: 'journey-case-case-0015',
   },
   {
     id: seedId('event', 32),
@@ -283,6 +382,9 @@ export const seedEvents: SeedEvent[] = [
     message: 'wl-k8s-payment-processor risk score updated: 70 → 72',
     entityRef: seedId('identity', 22),
     entityType: 'identity',
+    oodaStage: 'orient',
+    deliveryMode: 'system_driven',
+    lifecycleCheckpoint: 'risk_scored',
   },
   {
     id: seedId('event', 34),
@@ -299,6 +401,10 @@ export const seedEvents: SeedEvent[] = [
     message: 'P0 case created: OODA loop stall — 14h without observe cycle',
     entityRef: seedId('case', 2),
     entityType: 'case',
+    oodaStage: 'decide',
+    deliveryMode: 'system_driven',
+    lifecycleCheckpoint: 'case_created',
+    journeyId: 'journey-case-case-0002',
   },
   {
     id: seedId('event', 36),
@@ -307,6 +413,10 @@ export const seedEvents: SeedEvent[] = [
     message: 'Case CASE-2026-0020 status changed: in-progress → awaiting-validation',
     entityRef: seedId('case', 20),
     entityType: 'case',
+    oodaStage: 'act',
+    deliveryMode: 'human_confirmed_automation',
+    lifecycleCheckpoint: 'validation_started',
+    journeyId: 'journey-case-case-0020',
   },
   {
     id: seedId('event', 37),
@@ -323,6 +433,10 @@ export const seedEvents: SeedEvent[] = [
     message: 'Case CASE-2026-0028 closed: Patch compliance policy trending stable',
     entityRef: seedId('case', 28),
     entityType: 'case',
+    oodaStage: 'act',
+    deliveryMode: 'system_driven',
+    lifecycleCheckpoint: 'journey_completed',
+    journeyId: 'journey-case-case-0028',
   },
   {
     id: seedId('event', 39),
@@ -347,6 +461,10 @@ export const seedEvents: SeedEvent[] = [
     message: 'Case CASE-2026-0025 status changed: in-progress → awaiting-closure',
     entityRef: seedId('case', 25),
     entityType: 'case',
+    oodaStage: 'act',
+    deliveryMode: 'system_driven',
+    lifecycleCheckpoint: 'action_executed',
+    journeyId: 'journey-case-case-0025',
   },
   {
     id: seedId('event', 42),
@@ -355,6 +473,10 @@ export const seedEvents: SeedEvent[] = [
     message: 'Validation passed for CASE-2026-0014 — policy bypass rate confirmed',
     entityRef: seedId('case', 14),
     entityType: 'case',
+    oodaStage: 'act',
+    deliveryMode: 'system_driven',
+    lifecycleCheckpoint: 'validation_passed',
+    journeyId: 'journey-case-case-0014',
   },
   {
     id: seedId('event', 43),
@@ -371,6 +493,9 @@ export const seedEvents: SeedEvent[] = [
     message: 'IOT-BADGE-READER-LOBBY discovered — zero coverage tools detected',
     entityRef: seedId('asset', 38),
     entityType: 'asset',
+    oodaStage: 'observe',
+    deliveryMode: 'system_driven',
+    lifecycleCheckpoint: 'signal_received',
   },
   {
     id: seedId('event', 45),
@@ -387,6 +512,9 @@ export const seedEvents: SeedEvent[] = [
     message: 'DNS record drift detected on PROD-DNS-01 — 2 stale CNAME entries',
     entityRef: seedId('asset', 23),
     entityType: 'asset',
+    oodaStage: 'orient',
+    deliveryMode: 'system_driven',
+    lifecycleCheckpoint: 'drift_detected',
   },
   {
     id: seedId('event', 47),
@@ -403,6 +531,10 @@ export const seedEvents: SeedEvent[] = [
     message: 'Case CASE-2026-0029 status changed: open → awaiting-closure',
     entityRef: seedId('case', 29),
     entityType: 'case',
+    oodaStage: 'act',
+    deliveryMode: 'system_driven',
+    lifecycleCheckpoint: 'action_executed',
+    journeyId: 'journey-case-case-0029',
   },
   {
     id: seedId('event', 49),
@@ -411,6 +543,9 @@ export const seedEvents: SeedEvent[] = [
     message: 'Closure gate check for CASE-2026-0027: all gates passed',
     entityRef: seedId('case', 27),
     entityType: 'case',
+    oodaStage: 'act',
+    deliveryMode: 'system_driven',
+    journeyId: 'journey-case-case-0027',
   },
   {
     id: seedId('event', 50),
@@ -419,5 +554,9 @@ export const seedEvents: SeedEvent[] = [
     message: 'S3 bucket policy drift detected on backup storage — public read enabled',
     entityRef: seedId('case', 24),
     entityType: 'case',
+    oodaStage: 'orient',
+    deliveryMode: 'system_driven',
+    lifecycleCheckpoint: 'drift_detected',
+    journeyId: 'journey-case-case-0024',
   },
 ];
