@@ -27,3 +27,61 @@ export { CHECKPOINT_RULES, resolveLifecycleCheckpoint } from './lifecycle-checkp
 // ─── Journey ID Resolver ─────────────────────────────────────────────────────
 export type { JourneyIdResolverInput, JourneyIdResolverResult } from './journey-id-resolver';
 export { ENTITY_TO_ANCHOR_MAP, resolveJourneyId } from './journey-id-resolver';
+
+
+
+// ─── Formula Engines (JI-1.0 §7) ────────────────────────────────────────────
+export type {
+  FormulaFamily,
+  Band,
+  FormulaThresholds,
+  InvertedFormulaThresholds,
+  FormulaInput,
+  FormulaOutput,
+  JourneyQualityInput,
+  JourneyComplexityInput,
+  JourneyEconomicsInput,
+  LifecycleSavingsInput,
+  AutomationOpportunityInput,
+  AutomationFrictionInput,
+  AutomationMaturityInput,
+  JourneyConfidenceInput,
+  LeakageRiskInput,
+  ReworkRiskInput,
+} from './formulas';
+export {
+  FORMULA_FAMILIES,
+  computeWeightedScore,
+  classifyBand,
+  classifyBandInverted,
+  JOURNEY_QUALITY_DEFAULT_WEIGHTS,
+  JOURNEY_QUALITY_DEFAULT_THRESHOLDS,
+  computeJourneyQuality,
+  JOURNEY_COMPLEXITY_DEFAULT_WEIGHTS,
+  JOURNEY_COMPLEXITY_DEFAULT_THRESHOLDS,
+  computeJourneyComplexity,
+  JOURNEY_ECONOMICS_DEFAULT_WEIGHTS,
+  JOURNEY_ECONOMICS_DEFAULT_THRESHOLDS,
+  computeJourneyEconomics,
+  LIFECYCLE_SAVINGS_DEFAULT_WEIGHTS,
+  LIFECYCLE_SAVINGS_DEFAULT_THRESHOLDS,
+  computeLifecycleSavings,
+  AUTOMATION_OPPORTUNITY_DEFAULT_WEIGHTS,
+  AUTOMATION_OPPORTUNITY_DEFAULT_THRESHOLDS,
+  computeAutomationOpportunity,
+  AUTOMATION_FRICTION_DEFAULT_WEIGHTS,
+  AUTOMATION_FRICTION_DEFAULT_THRESHOLDS,
+  computeAutomationFriction,
+  AUTOMATION_MATURITY_DEFAULT_WEIGHTS,
+  AUTOMATION_MATURITY_DEFAULT_THRESHOLDS,
+  computeAutomationMaturity,
+  JOURNEY_CONFIDENCE_DEFAULT_WEIGHTS,
+  JOURNEY_CONFIDENCE_DEFAULT_THRESHOLDS,
+  computeJourneyConfidence,
+  LEAKAGE_RISK_DEFAULT_WEIGHTS,
+  LEAKAGE_RISK_DEFAULT_THRESHOLDS,
+  computeLeakageRisk,
+  REWORK_RISK_DEFAULT_WEIGHTS,
+  REWORK_RISK_DEFAULT_THRESHOLDS,
+  computeReworkRisk,
+} from './formulas';
