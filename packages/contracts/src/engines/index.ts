@@ -419,3 +419,16 @@ export {
   ENTITY_TO_ANCHOR_MAP,
   resolveJourneyId,
 } from './journey-intelligence';
+
+
+
+// ─── Inception Posture Intelligence (IPI-1.0 — Domain D-49) ──────────────────
+export type {
+  InceptionEvaluationInput,
+  InceptionEvaluationResult,
+  InceptionFailedRequirement,
+} from './inception-posture-evaluator';
+export {
+  findApplicableProfile,
+  evaluateInceptionPosture,
+} from './inception-posture-evaluator';

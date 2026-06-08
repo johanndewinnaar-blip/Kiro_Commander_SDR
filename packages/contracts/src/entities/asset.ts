@@ -10,6 +10,7 @@
 import type { CommonFields, SurfaceAttribution } from './common';
 import type { SourceClassification } from './coim';
 import type { ArchitecturalTier, LifecycleModel, ServiceClassification } from './asset-architecture-enums';
+import type { PostureOrigin, DiscoveryContext } from './inception-posture-enums';
 
 export interface Asset extends CommonFields {
   /** Canonical entity type discriminator */
@@ -81,6 +82,12 @@ export interface Asset extends CommonFields {
   serviceClassification?: ServiceClassification;
   /** Estate node ID — which organisational unit this belongs to (AAI-1.0 §4) */
   estateNodeId?: string;
+
+  // ─── IPI-1.0: Inception Posture Intelligence Extension (additive, nullable) ─
+  /** Posture origin classification — set ONCE at inception (IPI-1.0 §4, ARCH-IPI-002) */
+  postureOrigin?: PostureOrigin;
+  /** Discovery context — onboarding vs operational (IPI-1.0 §17) */
+  discoveryContext?: DiscoveryContext;
 }
 
 // ─── COIM-F: Asset Lifecycle State ──────────────────────────────────────────

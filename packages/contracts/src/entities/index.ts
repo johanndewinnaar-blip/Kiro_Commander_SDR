@@ -620,6 +620,27 @@ export { validateAssetCoverageBinding } from './asset-coverage-binding';
 export type { ComplianceScopeBinding, ComplianceScopeBindingValidation } from './compliance-scope-binding';
 export { validateComplianceScopeBinding } from './compliance-scope-binding';
 
+// ─── Inception Posture Intelligence (IPI-1.0 — Domain D-49) ──────────────────
+export type {
+  PostureOrigin,
+  RootCauseClass,
+  SecureDesignProfileStatus,
+  ActivationScopeStatus,
+  DiscoveryContext,
+} from './inception-posture-enums';
+export {
+  POSTURE_ORIGINS,
+  POSTURE_ORIGIN_LABELS,
+  TERMINAL_POSTURE_ORIGINS,
+  ROOT_CAUSE_CLASSES,
+  ROOT_CAUSE_CLASS_LABELS,
+  SECURE_DESIGN_PROFILE_STATUSES,
+  ACTIVATION_SCOPE_STATUSES,
+  DISCOVERY_CONTEXTS,
+} from './inception-posture-enums';
+export type { SecureDesignProfile, SecureDesignProfileValidation } from './secure-design-profile';
+export { validateSecureDesignProfile } from './secure-design-profile';
+
 // ─── Journey Intelligence Enumerations (JI-1.0 — Domain D-47) ────────────────
 export type {
   OodaStage,

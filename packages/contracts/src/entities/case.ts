@@ -105,9 +105,10 @@ export type CaseType =
   | 'verdict-pattern'
   | 'inverse-discovery-coverage-blindspot'
   | 'policy-effectiveness'
-  | 'ooda-tempo-degradation';
+  | 'ooda-tempo-degradation'
+  | 'not-secure-by-design';
 
-/** All twelve case types as a constant array */
+/** All thirteen case types as a constant array */
 export const CASE_TYPES: CaseType[] = [
   'drift',
   'vulnerability',
@@ -121,6 +122,7 @@ export const CASE_TYPES: CaseType[] = [
   'inverse-discovery-coverage-blindspot',
   'policy-effectiveness',
   'ooda-tempo-degradation',
+  'not-secure-by-design',
 ];
 
 /**

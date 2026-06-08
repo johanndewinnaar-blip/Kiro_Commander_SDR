@@ -22,6 +22,7 @@
  */
 
 import type { CommonFields } from './common';
+import type { RootCauseClass } from './inception-posture-enums';
 
 // ─── Finding Status (system-owned lifecycle) ─────────────────────────────────
 
@@ -103,6 +104,10 @@ export interface Finding extends CommonFields {
   resolvedAt?: string;
   /** Reason recorded when the finding was suppressed */
   suppressionReason?: string;
+
+  // ─── IPI-1.0: Inception Posture Intelligence Extension (additive, nullable) ─
+  /** Root cause classification — enables routing and AI explanation (IPI-1.0 §4) */
+  rootCauseClass?: RootCauseClass;
 }
 
 // ─── Validation ──────────────────────────────────────────────────────────────

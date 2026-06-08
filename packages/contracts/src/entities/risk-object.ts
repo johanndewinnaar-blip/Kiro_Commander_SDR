@@ -24,7 +24,8 @@ export type RiskObjectType =
   | 'exposure_drift'
   | 'control_gap'
   | 'identity_risk'
-  | 'policy_gap';
+  | 'policy_gap'
+  | 'inception_posture_failure';
 
 /** All risk object types as a constant array */
 export const RISK_OBJECT_TYPES: RiskObjectType[] = [
@@ -36,6 +37,7 @@ export const RISK_OBJECT_TYPES: RiskObjectType[] = [
   'control_gap',
   'identity_risk',
   'policy_gap',
+  'inception_posture_failure',
 ];
 
 /** Treatment state for risk objects */
