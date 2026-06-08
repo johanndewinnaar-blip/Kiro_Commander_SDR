@@ -31,9 +31,9 @@
 import type { CommonFields } from './common';
 
 /**
- * Nineteen named strategy surface types per Spec #32 + Phase E1 + CMEP-1.0 + Communications Excellence + WRCEP-1.0
+ * Twenty named strategy surface types per Spec #32 + Phase E1 + CMEP-1.0 + Communications Excellence + WRCEP-1.0 + Journey Intelligence (JI-1.0)
  *
- * 19. War Room Cadence Strategy (WRCEP-1.0)
+ * 20. Journey Intelligence Formula (JI-1.0)
  */
 export type StrategySurfaceType =
   | 'sla'
@@ -54,9 +54,10 @@ export type StrategySurfaceType =
   | 'effectiveness-targets'
   | 'ssvc-decision-tree'
   | 'communication-playbook'
-  | 'war-room-cadence';
+  | 'war-room-cadence'
+  | 'journey-intelligence-formula';
 
-/** All nineteen strategy surface types as a constant array */
+/** All twenty strategy surface types as a constant array */
 export const STRATEGY_SURFACE_TYPES: StrategySurfaceType[] = [
   'sla',
   'threshold',
@@ -77,6 +78,7 @@ export const STRATEGY_SURFACE_TYPES: StrategySurfaceType[] = [
   'ssvc-decision-tree',
   'communication-playbook',
   'war-room-cadence',
+  'journey-intelligence-formula',
 ];
 
 /** Strategy surface labels for UI display */
@@ -100,6 +102,7 @@ export const STRATEGY_SURFACE_LABELS: Record<StrategySurfaceType, string> = {
   'ssvc-decision-tree': 'SSVC Decision Tree Strategy',
   'communication-playbook': 'Communication Playbook Strategy',
   'war-room-cadence': 'War Room Cadence Strategy',
+  'journey-intelligence-formula': 'Journey Intelligence Formula',
 };
 
 /** Strategy policy status */

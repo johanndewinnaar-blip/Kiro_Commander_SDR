@@ -571,3 +571,29 @@ export { TRANSITION_TRIGGERS, validateCaseTransitionAudit } from './case-transit
 // ─── Email Case Communication (Spec 25 — Email Thread) ──────────────────────
 export type { EmailCaseCommunication, CommunicationDirection, CommunicationStatus, EmailCaseCommunicationValidation } from './email-case-communication';
 export { COMMUNICATION_DIRECTIONS, COMMUNICATION_STATUSES, validateEmailCaseCommunication } from './email-case-communication';
+
+
+// ─── Journey Intelligence Enumerations (JI-1.0 — Domain D-47) ────────────────
+export type {
+  OodaStage,
+  DeliveryMode,
+  JourneyStatus,
+  JourneyOutcome,
+  JourneyAnchorType,
+  LifecycleCheckpoint,
+} from './journey-enums';
+export {
+  OODA_STAGES,
+  OODA_STAGE_LABELS,
+  DELIVERY_MODES,
+  DELIVERY_MODE_LABELS,
+  JOURNEY_STATUSES,
+  TERMINAL_STATUSES,
+  JOURNEY_OUTCOMES,
+  TERMINAL_OUTCOMES,
+  JOURNEY_ANCHOR_TYPES,
+  LIFECYCLE_CHECKPOINTS,
+  ALL_LIFECYCLE_CHECKPOINTS,
+  LIFECYCLE_CHECKPOINT_COUNT,
+  getStageForCheckpoint,
+} from './journey-enums';

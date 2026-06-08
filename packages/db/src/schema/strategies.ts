@@ -1,10 +1,11 @@
 /**
  * Strategy Policies Table — Commander SDR
  *
- * Strategy policies are versioned configurations for the thirteen named
+ * Strategy policies are versioned configurations for the twenty named
  * strategy surfaces. They are tenant-scoped and follow an approval workflow.
  *
  * Source: Spec #32 Strategy Layer Runtime Surface Specification
+ * Migration: 0012_strategy_surface_expansion.sql (13 → 20 surfaces)
  * Data classification: Configuration
  */
 
@@ -12,7 +13,7 @@ import { pgTable, text, timestamp, jsonb, pgEnum } from 'drizzle-orm/pg-core';
 import { dataClassificationEnum } from './common';
 import { tenants } from './tenants';
 
-/** Strategy surface type enum — 13 canonical surfaces */
+/** Strategy surface type enum — 20 canonical surfaces (migrated from 13 → 20) */
 export const strategySurfaceTypeEnum = pgEnum('strategy_surface_type', [
   'sla',
   'threshold',
@@ -27,6 +28,13 @@ export const strategySurfaceTypeEnum = pgEnum('strategy_surface_type', [
   'closure-gate',
   'reopening-trigger',
   'evidence-sufficiency',
+  'sla-modifier',
+  'correlation-policy',
+  'effectiveness-targets',
+  'ssvc-decision-tree',
+  'communication-playbook',
+  'war-room-cadence',
+  'journey-intelligence-formula',
 ]);
 
 /** Strategy policy status enum — 6 lifecycle states */
