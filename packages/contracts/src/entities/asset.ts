@@ -9,6 +9,7 @@
 
 import type { CommonFields, SurfaceAttribution } from './common';
 import type { SourceClassification } from './coim';
+import type { ArchitecturalTier, LifecycleModel, ServiceClassification } from './asset-architecture-enums';
 
 export interface Asset extends CommonFields {
   /** Canonical entity type discriminator */
@@ -70,6 +71,16 @@ export interface Asset extends CommonFields {
    * Immutable after write; informs but never governs lifecycle/priority.
    */
   sourceClassification?: SourceClassification;
+
+  // ─── AAI-1.0: Asset Architecture Intelligence Extension (additive, nullable) ─
+  /** Architectural tier — where this asset sits in the estate (AAI-1.0 §5) */
+  architecturalTier?: ArchitecturalTier;
+  /** Lifecycle model — how long this asset exists (AAI-1.0 §5) */
+  assetLifecycleModel?: LifecycleModel;
+  /** Service classification for managed-service type only (AAI-1.0 §5) */
+  serviceClassification?: ServiceClassification;
+  /** Estate node ID — which organisational unit this belongs to (AAI-1.0 §4) */
+  estateNodeId?: string;
 }
 
 // ─── COIM-F: Asset Lifecycle State ──────────────────────────────────────────
@@ -151,6 +162,11 @@ export const ASSET_DATA_CLASSIFICATIONS: AssetDataClassification[] = [
 
 // ─── Existing type (unchanged) ───────────────────────────────────────────────
 
+/**
+ * Asset classification — expanded from 9 to 52 values per AAI-1.0 §5.
+ * All original 9 values remain valid (backward-compatible).
+ * Full expanded type available via AssetClassificationExpanded in asset-architecture-enums.ts.
+ */
 export type AssetClassification =
   | 'endpoint'
   | 'server'
@@ -160,4 +176,51 @@ export type AssetClassification =
   | 'application'
   | 'database'
   | 'iot-device'
-  | 'mobile-device';
+  | 'mobile-device'
+  // AAI-1.0 expansion (43 additional types)
+  | 'web-domain'
+  | 'api-endpoint'
+  | 'load-balancer'
+  | 'cdn-edge'
+  | 'vpn-gateway'
+  | 'dns-zone'
+  | 'tls-certificate'
+  | 'cloud-account'
+  | 'managed-service'
+  | 'cloud-storage'
+  | 'cloud-network'
+  | 'serverless-function'
+  | 'container-image'
+  | 'kubernetes-cluster'
+  | 'kubernetes-namespace'
+  | 'microservice'
+  | 'message-queue'
+  | 'data-pipeline'
+  | 'data-warehouse'
+  | 'backup-system'
+  | 'identity-provider'
+  | 'directory-service'
+  | 'federation-trust'
+  | 'pam-vault'
+  | 'certificate-authority'
+  | 'sso-integration'
+  | 'mfa-deployment'
+  | 'kms-hsm'
+  | 'network-segment'
+  | 'code-repository'
+  | 'ci-cd-pipeline'
+  | 'artifact-repository'
+  | 'container-registry'
+  | 'iac-template'
+  | 'package-dependency'
+  | 'ot-device'
+  | 'ot-network'
+  | 'building'
+  | 'data-centre'
+  | 'server-room'
+  | 'physical-access-system'
+  | 'saas-platform'
+  | 'third-party-integration'
+  | 'partner-connection'
+  | 'security-tool'
+  | 'storage-appliance';

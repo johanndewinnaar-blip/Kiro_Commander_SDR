@@ -60,6 +60,15 @@ export const assets = pgTable('assets', {
   firstDiscoveredBy: text('first_discovered_by'),
   /** Optional source classification for discovery signals (JSONB). */
   sourceClassification: jsonb('source_classification'),
+  // ─── AAI-1.0: Asset Architecture Intelligence Extension (additive, nullable) ─
+  /** Architectural tier — where this asset sits (AAI-1.0 §5). */
+  architecturalTier: text('architectural_tier'),
+  /** Lifecycle model — persistent, ephemeral_defined, ephemeral_discovered (AAI-1.0 §5). */
+  assetLifecycleModel: text('asset_lifecycle_model'),
+  /** Service classification for managed-service type only (AAI-1.0 §5). */
+  serviceClassification: text('service_classification'),
+  /** Estate node ID — organisational unit (AAI-1.0 §4). */
+  estateNodeId: text('estate_node_id'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });

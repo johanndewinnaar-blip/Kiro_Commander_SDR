@@ -96,3 +96,19 @@ export {
   journeyReworkAnalysis,
   journeyOutcomeAnalysis,
 } from './analytics/journey-read-models';
+
+// ─── Asset Architecture Intelligence Estate Schema (AAI-1.0 — Domain D-48) ──
+export {
+  estateSchema,
+  estateNodeTypeEnum,
+  estateNodeStatusEnum,
+  relationshipTypeEnum,
+  relationshipStatusEnum,
+  confirmedByEnum,
+  coverageStatusEnum,
+  scopeStatusEnum,
+  estateNodes,
+  assetRelationships,
+  assetCoverageBindings,
+  complianceScopeBindings,
+} from './estate';

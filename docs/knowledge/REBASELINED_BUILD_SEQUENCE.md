@@ -2657,11 +2657,49 @@ Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's o
 
 ---
 
+### Unit 52: Asset Architecture Intelligence Foundation
+
+**Status:** DONE
+
+**Blocked by:** — (no dependencies)
+
+**Purpose:** Establish Asset Architecture Intelligence capability domain (AAI-1.0) as peer to Journey Intelligence and Spec #58. Provides estate topology, 52-type asset taxonomy with 12 architectural tiers, and 12 typed relationship bindings between assets.
+
+**Baseline spec:** ASSET_ARCHITECTURE_INTELLIGENCE.md (AAI-1.0) — new authority document
+
+**Architectural layer:** Cross-cutting + Estate
+
+**Dependencies:** None
+
+**Required entities:**
+- EstateNode ✅
+- AssetRelationship ✅
+- AssetCoverageBinding ✅
+- ComplianceScopeBinding ✅
+
+**Deliverables:**
+1. AAI-1.0 authority document ✅
+2. Domain D-48 registered ✅
+3. Enumerations: ArchitecturalTier (12), LifecycleModel (3), ServiceClassification (14), RelationshipType (12), expanded AssetClassification (52) ✅
+4. EstateNode entity + validator + DB schema ✅
+5. AssetRelationship entity + validator + DB schema ✅
+6. AssetCoverageBinding entity + validator + DB schema ✅
+7. ComplianceScopeBinding entity + validator + DB schema ✅
+8. Asset entity extended (4 nullable fields) ✅
+9. Asset classification expanded 9→52 (backward-compatible) ✅
+10. Migrations 0017 (estate schema) + 0018 (asset extension) ✅
+11. Seed fixtures: 6 estate nodes, 10 relationships, 6 coverage bindings, 4 scope bindings ✅
+12. Governance chain complete (DATA_DICTIONARY, DOMAIN_REGISTER, DECISIONS, BUILD_SEQUENCE) ✅
+
+**Source tag:** Foundational
+
+---
+
 ## Summary
 
-**Total build units:** 52 (Unit 0 foundation-correction + Units 1–49, 51, with Unit 16 split into 16a + 16b per `DEC-command-centre-split-16a-16b`)
+**Total build units:** 53 (Unit 0 foundation-correction + Units 1–49, 51–52, with Unit 16 split into 16a + 16b per `DEC-command-centre-split-16a-16b`)
 
-**Readiness state (computed 2026-06-03):** READY = 0. DONE = 24 (foundational completion + Unit 51). BLOCKED = 28 (Team 2 units gated by ARCH-006). See the Live Status Snapshot for the full per-unit table.
+**Readiness state (computed 2026-06-08):** READY = 0. DONE = 25 (foundational completion + Unit 51 + Unit 52). BLOCKED = 28 (Team 2 units gated by ARCH-006). See the Live Status Snapshot for the full per-unit table.
 
 **Foundation correction (Team 1):** Unit 0 (closed ARCH-DEBT-033, `common.ts` contract-vs-source drift) — DONE.
 

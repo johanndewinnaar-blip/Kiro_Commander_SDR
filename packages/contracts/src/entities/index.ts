@@ -579,6 +579,47 @@ export { deriveJourneyId, validateJourney } from './journey';
 export type { JourneyTemplate, JourneyTemplateStatus, JourneyTemplateApplicability, JourneyTemplateValidation } from './journey-template';
 export { JOURNEY_TEMPLATE_STATUSES, validateJourneyTemplate } from './journey-template';
 
+// ─── Asset Architecture Intelligence (AAI-1.0 — Domain D-48) ────────────────
+export type {
+  ArchitecturalTier,
+  LifecycleModel,
+  ServiceClassification,
+  RelationshipType,
+  EstateNodeType,
+  EstateNodeStatus,
+  CoverageStatus,
+  ScopeStatus,
+  RelationshipStatus,
+  ConfirmedBy,
+  AssetClassificationExpanded,
+} from './asset-architecture-enums';
+export {
+  ARCHITECTURAL_TIERS,
+  ARCHITECTURAL_TIER_LABELS,
+  LIFECYCLE_MODELS,
+  LIFECYCLE_MODEL_LABELS,
+  SERVICE_CLASSIFICATIONS,
+  RELATIONSHIP_TYPES,
+  ESTATE_NODE_TYPES,
+  ESTATE_NODE_STATUSES,
+  COVERAGE_STATUSES,
+  SCOPE_STATUSES,
+  RELATIONSHIP_STATUSES,
+  CONFIRMED_BY_OPTIONS,
+  ASSET_CLASSIFICATIONS_EXPANDED,
+  ASSET_CLASSIFICATION_COUNT,
+  ASSET_TYPE_TO_TIER,
+  ASSET_TYPE_TO_LIFECYCLE,
+} from './asset-architecture-enums';
+export type { EstateNode, EstateNodeValidation } from './estate-node';
+export { validateEstateNode } from './estate-node';
+export type { AssetRelationship, AssetRelationshipValidation } from './asset-relationship';
+export { validateAssetRelationship } from './asset-relationship';
+export type { AssetCoverageBinding, AssetCoverageBindingValidation } from './asset-coverage-binding';
+export { validateAssetCoverageBinding } from './asset-coverage-binding';
+export type { ComplianceScopeBinding, ComplianceScopeBindingValidation } from './compliance-scope-binding';
+export { validateComplianceScopeBinding } from './compliance-scope-binding';
+
 // ─── Journey Intelligence Enumerations (JI-1.0 — Domain D-47) ────────────────
 export type {
   OodaStage,

@@ -72,6 +72,7 @@ Domain ordering follows the layer flow: foundation → connector → normalisati
 | D-45 | Entitlement Management | SDR Control Plane Specification v1.1; Spec #50 | Surface (Control Plane) + Cross-cutting |
 | D-46 | Platform Security | Spec #50 (RBAC/Entitlement); Spec #19; MTS v7.0 §17 | Cross-cutting |
 | D-47 | Journey Intelligence | JOURNEY_INTELLIGENCE.md (JI-1.0) | Cross-cutting + Analytics |
+| D-48 | Asset Architecture Intelligence | ASSET_ARCHITECTURE_INTELLIGENCE.md (AAI-1.0) | Cross-cutting + Estate |
 
 Existing domains extended with new code entities (no new domain number required):
 - **D-04** (Drift & Rule Engine) — extended with `finding.ts`, `rule-validation-engine.ts`, `rule-execution-engine.ts`, `suppression-engine.ts`

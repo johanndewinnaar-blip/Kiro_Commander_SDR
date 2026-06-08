@@ -2885,3 +2885,96 @@ Five entities forming the compliance/control-framework mapping layer:
 | status | `'active' \| 'draft' \| 'retired'` | Template lifecycle status |
 
 ---
+
+
+
+### 90. Estate Node
+
+**Source:** ASSET_ARCHITECTURE_INTELLIGENCE.md (AAI-1.0) §4  
+**Contract:** `packages/contracts/src/entities/estate-node.ts`  
+**Interface:** `EstateNode`  
+**Status:** LIVE  
+**Owning Domain:** D-48 Asset Architecture Intelligence (DOMAIN_REGISTER.md)  
+**Architectural Layer:** Cross-cutting (Estate)  
+**Use Cases:** UC-221 (Estate topology), UC-222 (Compliance scope inheritance)  
+**Relationships:** Asset (assets belong to estate nodes), ComplianceScopeBinding (scope inherited from nodes)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| entityType | `'estate-node'` | Discriminator |
+| nodeId | `string` | Unique node identifier |
+| name | `string` | Display name |
+| nodeType | `EstateNodeType` | enterprise, business_unit, environment, region, acquisition, shared_service |
+| parentNodeId | `string \| null` | Parent node (creates hierarchy) |
+| status | `EstateNodeStatus` | active, integrating, decommissioning, isolated |
+| geography | `string \| null` | Geographic location |
+| complianceScopes | `string[]` | Compliance frameworks (inherited downward) |
+| ownerTeam | `string` | Owning team |
+| tags | `string[]` | Tags |
+
+---
+
+### 91. Asset Relationship
+
+**Source:** ASSET_ARCHITECTURE_INTELLIGENCE.md (AAI-1.0) §6  
+**Contract:** `packages/contracts/src/entities/asset-relationship.ts`  
+**Interface:** `AssetRelationship`  
+**Status:** LIVE  
+**Owning Domain:** D-48 Asset Architecture Intelligence (DOMAIN_REGISTER.md)  
+**Architectural Layer:** Cross-cutting (Estate)  
+**Use Cases:** UC-223 (Dependency mapping), UC-224 (Blast radius computation)  
+**Relationships:** Asset (source and target), ConnectorClass (confirmed by connector)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| entityType | `'asset-relationship'` | Discriminator |
+| sourceAssetId | `string` | Source asset |
+| targetAssetId | `string` | Target asset |
+| relationshipType | `RelationshipType` | 12 typed bindings |
+| metadata | `Record<string, unknown>` | Type-specific metadata |
+| confirmedAt | `string` | When confirmed |
+| confirmedBy | `ConfirmedBy` | connector, manual, inference |
+| status | `RelationshipStatus` | active, stale, broken |
+
+---
+
+### 92. Asset Coverage Binding
+
+**Source:** ASSET_ARCHITECTURE_INTELLIGENCE.md (AAI-1.0) §6  
+**Contract:** `packages/contracts/src/entities/asset-coverage-binding.ts`  
+**Interface:** `AssetCoverageBinding`  
+**Status:** LIVE  
+**Owning Domain:** D-48 Asset Architecture Intelligence (DOMAIN_REGISTER.md)  
+**Use Cases:** UC-225 (Coverage gap detection)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| entityType | `'asset-coverage-binding'` | Discriminator |
+| assetId | `string` | Asset being covered |
+| connectorId | `string` | Connector providing coverage |
+| coverageType | `string` | edr, vuln-scan, cspm, etc. |
+| confirmedAt | `string` | When confirmed |
+| status | `CoverageStatus` | covered, gap, stale |
+
+---
+
+### 93. Compliance Scope Binding
+
+**Source:** ASSET_ARCHITECTURE_INTELLIGENCE.md (AAI-1.0) §6  
+**Contract:** `packages/contracts/src/entities/compliance-scope-binding.ts`  
+**Interface:** `ComplianceScopeBinding`  
+**Status:** LIVE  
+**Owning Domain:** D-48 Asset Architecture Intelligence (DOMAIN_REGISTER.md)  
+**Use Cases:** UC-226 (Compliance scoping)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| entityType | `'compliance-scope-binding'` | Discriminator |
+| assetId | `string` | Asset in scope |
+| frameworkId | `string` | Framework ID |
+| scopeStatus | `ScopeStatus` | in_scope, out_of_scope, conditional |
+| justification | `string` | Scope justification |
+| reviewedAt | `string` | When reviewed |
+| inheritedFrom | `string \| null` | Estate node inheritance source |
+
+---

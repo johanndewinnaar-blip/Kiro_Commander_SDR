@@ -54,6 +54,9 @@ export { seedJourneys } from './seed-journeys';
 export { seedJourneyTemplates } from './seed-journey-templates';
 export { seedJourneyFormulas } from './seed-journey-formulas';
 
+// ─── Asset Architecture Intelligence Fixtures (AAI-1.0 — Domain D-48) ────────
+export { seedEstateNodes, seedAssetRelationships, seedAssetCoverageBindings, seedComplianceScopeBindings } from './seed-estate';
+
 // ─── Pulse Fixtures ──────────────────────────────────────────────────────────
 export { seedTeamPulse, seedDomainPulse, seedSystemPulse } from './seed-pulse';
 
