@@ -248,6 +248,43 @@
 
 ---
 
+### Group 19: Journey Intelligence
+
+| Nav Item | Route | Status | Build Unit | Use Cases |
+|---|---|---|---|---|
+| Journey Lifecycle | /journey/lifecycle | BUILT | Unit 51 | UC-213 |
+| Journey Tempo | /journey/tempo | BUILT | Unit 51 | UC-214 |
+| Journey Leakage | /journey/leakage | BUILT | Unit 51 | UC-215 |
+| Journey Templates | /journey/templates | BUILT | Unit 51 | UC-216 |
+| Journey Quality | /journey/quality | BUILT | Unit 51 | UC-217 |
+| Automation Opportunity | /journey/opportunity | BUILT | Unit 51 | UC-218 |
+| Automation Friction | /journey/friction | BUILT | Unit 51 | UC-219 |
+| Automation Maturity | /journey/maturity | BUILT | Unit 51 | UC-220 |
+
+---
+
+### Group 20: Asset Architecture Intelligence
+
+| Nav Item | Route | Status | Build Unit | Use Cases |
+|---|---|---|---|---|
+| Estate Topology | /assets/estate | BUILT | Unit 52 | UC-221 |
+| Asset Dependencies | /assets/dependencies | BUILT | Unit 52 | UC-223 |
+| Coverage Gap Matrix | /assets/coverage-matrix | BUILT | Unit 52 | UC-225 |
+| Compliance Scope | /assets/compliance-scope | BUILT | Unit 52 | UC-226 |
+
+---
+
+### Group 21: Inception Posture Intelligence
+
+| Nav Item | Route | Status | Build Unit | Use Cases |
+|---|---|---|---|---|
+| Secure Design Profiles | /settings/secure-design | BUILT | Unit 53 | UC-227 |
+| Inception Posture | /posture/inception | BUILT | Unit 53 | UC-228 |
+| Not-Secure-by-Design Cases | /cases/inception | BUILT | Unit 53 | UC-229 |
+| Onboarding Activation | /settings/onboarding | BUILT | Unit 53 | UC-231 |
+
+---
+
 ### Posture (drill-path from Command Centre)
 
 | Nav Item | Route | Status | Build Unit | Use Cases |
@@ -413,9 +450,9 @@ These pages exist on disk (page.tsx) but are NOT in nav-groups.ts sidebar:
 
 | Metric | Count |
 |---|---|
-| Total BUILT pages (page.tsx on disk) | 36 |
+| Total BUILT pages (page.tsx on disk) | 52 |
 | Total SCAFFOLD nav items (no page.tsx) | 28 |
-| Sidebar nav groups (operational) | 19 |
+| Sidebar nav groups (operational) | 22 |
 | Top nav workspace tabs | 5 |
 | Detail views (no nav item) | 3 |
 | True orphan pages | 0 |

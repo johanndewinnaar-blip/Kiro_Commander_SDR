@@ -29,9 +29,9 @@
 
 | Status | Count |
 |--------|-------|
-| Resolved | 8 |
+| Resolved | 11 |
 | Deferred | 5 |
-| **Total** | **13** |
+| **Total** | **16** |
 
 ---
 
@@ -180,23 +180,24 @@
 **Source:** JOURNEY_INTELLIGENCE.md (JI-1.0), Unit 51  
 **Description:** Data layer complete (entities, engines, formulas, read models, 79 tests). UI pages rendering journey analytics to users NOT YET BUILT.  
 **Severity:** MEDIUM (data layer complete, UI surface pending)  
-**Status:** Active  
+**Status:** Resolved  
+**Resolved:** 2026-06-09  
 **Date Logged:** 2026-06-08  
 
 **What exists:** journey.ts, journey-template.ts, 4 tagger engines, 10 formula engines, 7 analytics read-model tables, 33 template fixtures, 10 formula policy fixtures, 8 journey fixtures  
-**What's missing:** UI pages rendering entity data
+**What's missing:** ~~UI pages rendering entity data~~ All pages built.
 
 **Page debt (conveyor items):**
-- [ ] Journey Lifecycle Dashboard — UC-213 — aggregate journey tempo, leakage, quality
-- [ ] Journey Tempo Detail — UC-214 — per-phase duration breakdown
-- [ ] Journey Leakage Monitor — UC-215 — stalled journeys past threshold
-- [ ] Automation Friction Dashboard — UC-219 — drag, failure, rescue rates
-- [ ] Automation Maturity Tracker — UC-220 — delivery mode progression
-- [ ] Journey Template Configuration — UC-216 — template management
-- [ ] Journey Quality Scores — UC-217 — composite quality per type
-- [ ] Automation Opportunity Scores — UC-218 — automatable journey identification
+- [x] Journey Lifecycle Dashboard — UC-213 — aggregate journey tempo, leakage, quality
+- [x] Journey Tempo Detail — UC-214 — per-phase duration breakdown
+- [x] Journey Leakage Monitor — UC-215 — stalled journeys past threshold
+- [x] Automation Friction Dashboard — UC-219 — drag, failure, rescue rates
+- [x] Automation Maturity Tracker — UC-220 — delivery mode progression
+- [x] Journey Template Configuration — UC-216 — template management
+- [x] Journey Quality Scores — UC-217 — composite quality per type
+- [x] Automation Opportunity Scores — UC-218 — automatable journey identification
 
-**Resolution:** Build pages per PAGE_SCHEDULE when UI pass sequenced.
+**Resolution:** All 8 pages built and registered in PAGE_SCHEDULE.md.
 
 ---
 
@@ -206,21 +207,22 @@
 **Source:** ASSET_ARCHITECTURE_INTELLIGENCE.md (AAI-1.0), Unit 52  
 **Description:** Data layer complete (entities, schemas, fixtures, enums, 52-type taxonomy). UI pages for estate topology, architecture map, and coverage/compliance views NOT YET BUILT.  
 **Severity:** MEDIUM (data layer complete, UI surface pending)  
-**Status:** Active  
+**Status:** Resolved  
+**Resolved:** 2026-06-09  
 **Date Logged:** 2026-06-08  
 
 **What exists:** estate-node.ts, asset-relationship.ts, asset-coverage-binding.ts, compliance-scope-binding.ts, asset-architecture-enums.ts (52 types, 12 tiers), estate DB schema (4 tables), asset extended (4 fields), seed fixtures  
-**What's missing:** UI pages, Architecture Map visualisation, blast radius traversal engine (Phase 2)
+**What's missing:** ~~UI pages, Architecture Map visualisation, blast radius traversal engine (Phase 2)~~ Phase 1 pages built. Architecture Map and blast radius remain Phase 2.
 
 **Page debt (conveyor items):**
-- [ ] Estate Topology View — UC-221 — organisational hierarchy with compliance inheritance
-- [ ] Asset Dependency Graph — UC-223 — relationship visualisation with staleness
+- [x] Estate Topology View — UC-221 — organisational hierarchy with compliance inheritance
+- [x] Asset Dependency Graph — UC-223 — relationship visualisation with staleness
 - [ ] Blast Radius Computation — UC-224 — dependency graph traversal (Phase 2)
-- [ ] Coverage Gap Matrix — UC-225 — explicit tool-to-asset binding gaps
-- [ ] Compliance Scope Manager — UC-226 — framework scoping with inheritance
+- [x] Coverage Gap Matrix — UC-225 — explicit tool-to-asset binding gaps
+- [x] Compliance Scope Manager — UC-226 — framework scoping with inheritance
 - [ ] Architecture Map — AAI-1.0 §8 — tier-organised visualisation with risk overlay (Phase 2)
 
-**Resolution:** Build pages per PAGE_SCHEDULE. Architecture Map and blast radius are Phase 2 (graph engine dependency).
+**Resolution:** Phase 1 pages built and registered in PAGE_SCHEDULE.md. Architecture Map and blast radius remain Phase 2 (graph engine dependency).
 
 ---
 
@@ -230,20 +232,21 @@
 **Source:** INCEPTION_POSTURE_INTELLIGENCE.md (IPI-1.0), Unit 53  
 **Description:** Data layer complete (enums, profile entity, evaluator engine, entity extensions). Case creation pipeline integration, profile management UI, systemic pattern detection, and onboarding activation UI NOT YET BUILT.  
 **Severity:** MEDIUM (data layer complete, integration + UI pending)  
-**Status:** Active  
+**Status:** Resolved  
+**Resolved:** 2026-06-09  
 **Date Logged:** 2026-06-08  
 
 **What exists:** inception-posture-enums.ts, secure-design-profile.ts, inception-posture-evaluator.ts, asset.postureOrigin, finding.rootCauseClass, case type #13, risk object type, migration 0019  
-**What's missing:** Evaluator integration into asset creation pipeline, profile management UI, case creation pipeline for inception failures, systemic pattern detection read model, onboarding activation config UI
+**What's missing:** ~~Evaluator integration into asset creation pipeline, profile management UI, case creation pipeline for inception failures, systemic pattern detection read model, onboarding activation config UI~~ Phase 1 pages built. Systemic pattern detection remains Phase 2.
 
 **Page debt (conveyor items):**
-- [ ] Secure Design Profile Manager — UC-227 — profile CRUD with strategy policy governance
-- [ ] Inception Posture Dashboard — UC-228 — posture origin distribution, evaluation results
-- [ ] Not-Secure-by-Design Case View — UC-229 — case type #13 routing to build team
+- [x] Secure Design Profile Manager — UC-227 — profile CRUD with strategy policy governance
+- [x] Inception Posture Dashboard — UC-228 — posture origin distribution, evaluation results
+- [x] Not-Secure-by-Design Case View — UC-229 — case type #13 routing to build team
 - [ ] Systemic Pattern Surface — UC-230 — shared root cause identification (Phase 2)
-- [ ] Onboarding Activation Manager — UC-231 — phased scope activation per node/tier
+- [x] Onboarding Activation Manager — UC-231 — phased scope activation per node/tier
 
-**Resolution:** Build pages per PAGE_SCHEDULE. Systemic pattern detection is Phase 2 (requires analytics read model).
+**Resolution:** Phase 1 pages built and registered in PAGE_SCHEDULE.md. Systemic pattern detection remains Phase 2 (requires analytics read model).
 
 ---
 
