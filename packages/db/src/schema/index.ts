@@ -84,3 +84,15 @@ export {
   journeys,
 } from './journeys';
 export { journeyTemplates, journeyTemplateStatusEnum } from './journey-templates';
+
+// ─── Journey Intelligence Analytics Read Models (JI-1.0 §8) ──────────────────
+export {
+  analyticsSchema,
+  journeyLifecycleTempo,
+  automationFrictionMetrics,
+  journeyLeakageReport,
+  deliveryModeDistribution,
+  journeyQualityScores,
+  journeyReworkAnalysis,
+  journeyOutcomeAnalysis,
+} from './analytics/journey-read-models';
