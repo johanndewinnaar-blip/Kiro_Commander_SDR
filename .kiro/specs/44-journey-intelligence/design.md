@@ -551,8 +551,85 @@ The existing `StrategySurfaceType` enum (currently 13 values in contract, 13 in 
 
 ---
 
-*Sections 3–6 to follow in subsequent commits:*
-- *§3: Template catalogue (33 templates)*
+## Journey Template Catalogue (33 Templates)
+
+**Traces to:** Req 3 AC-2. All 33 templates from JI-1.0 §6. Each becomes a seed fixture in `seed-journey-templates.ts`.
+
+Templates are **descriptive, not prescriptive** (Req 3 AC-3). Deviation is flagged, never prevented.
+
+### Signal Intake Journeys (4)
+
+| ID | Name | Anchor Type | Expected Phases | Typical Mode | Tempo (O/Or/D/A hours) | Leakage Threshold |
+|---|---|---|---|---|---|---|
+| JT-SIG-001 | IOC Email Intake | inbound_signal | O, Or, D | system_driven | 1/2/1/— | 8h |
+| JT-SIG-002 | IOC Feed Intake | inbound_signal | O, Or | system_driven | 0.5/1/—/— | 4h |
+| JT-SIG-003 | Vulnerability Intelligence Intake | inbound_signal | O, Or, D | system_driven | 1/4/2/— | 12h |
+| JT-SIG-004 | Connector Signal Intake (A/B/C) | inbound_signal | O | system_driven | 0.25/—/—/— | 2h |
+
+### Enrichment and Evaluation Journeys (3)
+
+| ID | Name | Anchor Type | Expected Phases | Typical Mode | Tempo (O/Or/D/A hours) | Leakage Threshold |
+|---|---|---|---|---|---|---|
+| JT-ENR-001 | IOC Enrichment and Matching | ioc_match | Or, D | system_driven | —/4/2/— | 12h |
+| JT-ENR-002 | Vulnerability Estate Evaluation | ioc_match | Or, D | system_driven | —/8/4/— | 24h |
+| JT-ENR-003 | Threat Relevance Scoring | inbound_signal | Or | system_driven | —/2/—/— | 6h |
+
+### Case Lifecycle Journeys (12)
+
+| ID | Name | Case Type | Expected Phases | Typical Modes | Tempo (O/Or/D/A hours) | Leakage Threshold |
+|---|---|---|---|---|---|---|
+| JT-CASE-001 | Drift Case | drift | O, Or, D, A | system_driven, human_confirmed_automation | 2/4/8/24 | 72h |
+| JT-CASE-002 | Vulnerability Case | vulnerability | O, Or, D, A | system_driven, human_confirmed_automation | 2/8/12/48 | 120h |
+| JT-CASE-003 | Identity Case | identity | O, Or, D, A | human_confirmed_automation, manual | 4/12/24/48 | 168h |
+| JT-CASE-004 | Exposure Case | exposure | O, Or, D, A | system_driven, human_confirmed_automation | 2/8/12/36 | 96h |
+| JT-CASE-005 | Coverage Case | coverage | O, Or, D, A | system_driven | 1/4/8/24 | 72h |
+| JT-CASE-006 | Tool Health Case | tool-health | O, Or, D, A | system_driven | 1/2/4/12 | 48h |
+| JT-CASE-007 | Threat Intelligence Estate Match | threat-intelligence-estate-match | O, Or, D, A | system_driven, ai_enhanced | 2/8/12/24 | 72h |
+| JT-CASE-008 | External Attack Correlation | external-attack-correlation | O, Or, D, A | human_confirmed_automation, manual | 1/4/12/48 | 120h |
+| JT-CASE-009 | Verdict Pattern Case | verdict-pattern | O, Or, D, A | human_confirmed_automation, manual | 4/12/24/72 | 168h |
+| JT-CASE-010 | Inverse Discovery Blindspot | inverse-discovery-coverage-blindspot | O, Or, D, A | system_driven | 2/4/8/24 | 72h |
+| JT-CASE-011 | Policy Effectiveness Case | policy-effectiveness | O, Or, D, A | system_driven, ai_enhanced | 2/8/12/36 | 96h |
+| JT-CASE-012 | OODA Tempo Degradation | ooda-tempo-degradation | O, Or, D, A | system_driven | 1/4/8/24 | 72h |
+
+### Action and Execution Journeys (6)
+
+| ID | Name | Anchor Type | Parent Anchor | Expected Phases | Typical Modes | Tempo (D/A hours) | Leakage Threshold |
+|---|---|---|---|---|---|---|---|
+| JT-ACT-001 | Remediation (Isolate) | push_action | case | D, A | human_confirmed_automation | 2/4 | 12h |
+| JT-ACT-002 | Remediation (Evict) | push_action | case | D, A | human_confirmed_automation, manual | 4/12 | 24h |
+| JT-ACT-003 | Remediation (Restore) | push_action | case | D, A | manual, human_confirmed_automation | 4/24 | 48h |
+| JT-ACT-004 | Remediation (Harden) | push_action | case | D, A | system_driven, human_confirmed_automation | 8/24 | 48h |
+| JT-ACT-005 | Remediation (Detect) | push_action | case | D, A | system_driven, ai_enhanced | 4/12 | 24h |
+| JT-ACT-006 | Automated Push Action | push_action | case/ioc_match | D, A | human_confirmed_automation, autonomous | 1/2 | 8h |
+
+### Strategic and Operational Journeys (5)
+
+| ID | Name | Anchor Type | Expected Phases | Typical Modes | Tempo (O/Or/D/A hours) | Leakage Threshold |
+|---|---|---|---|---|---|---|
+| JT-MIS-001 | Mission Lifecycle | mission | O, Or, D, A | manual, ai_enhanced | 24/48/72/168 | 720h |
+| JT-WAR-001 | War Room Coordination | war_room | O, Or, D, A | manual, human_confirmed_automation | 0.5/1/2/4 | 12h |
+| JT-STR-001 | Strategy Policy Lifecycle | strategy_policy | D, A | manual, system_driven | —/—/24/48 | 168h |
+| JT-STR-002 | Exposure Reduction Programme | mission | O, Or, D, A | system_driven, human_confirmed_automation | 24/72/168/720 | 2160h |
+| JT-GOV-001 | Risk Acceptance Journey | case | Or, D | manual, human_confirmed_automation | —/24/48/— | 168h |
+
+### Control and Posture Journeys (3)
+
+| ID | Name | Anchor Type | Expected Phases | Typical Modes | Tempo (O/Or/D hours) | Leakage Threshold |
+|---|---|---|---|---|---|---|
+| JT-CTL-001 | Control Validation | finding | O, Or, D | system_driven | 1/4/8 | 24h |
+| JT-CTL-002 | Posture Classification | finding | O, Or | system_driven | 1/4/— | 12h |
+| JT-AUT-001 | Autonomous Operation | varies | O, Or, D, A | autonomous | 0.25/0.5/0.5/1 | 4h |
+
+### Template Fixture Design Notes
+
+- Each template fixture includes: `templateId`, `name`, `anchorType`, `parentAnchorType` (null unless action/child), `applicability` (caseTypes for case templates, empty for others), `expectedCheckpoints` (subset of LifecycleCheckpoint relevant to the phases), `expectedPhases`, `expectedDeliveryModes`, `expectedOutcomeDistribution` (default: {successful: 0.7, partially_successful: 0.15, failed: 0.05, accepted_risk: 0.05, cancelled: 0.03, abandoned: 0.02}), `tempoThresholds`, `leakageThresholdHours`, `formulaRefs` (default formula pack IDs), `version` ('1.0.0'), `status` ('active').
+- Tempo thresholds are platform defaults — tenants may override per Req 3 AC-5.
+- `expectedCheckpoints` per template are derived from the phase list: each template includes all checkpoints that belong to its declared phases.
+- Action templates (JT-ACT-*) set `parentAnchorType: 'case'` to declare child-journey relationship.
+
+---
+
+*Sections 4–6 to follow in subsequent commits:*
 - *§4: Formula catalogue (10 families)*
 - *§5: Tagger engines + read models*
 - *§6: AI Analyst integration + governance + testing strategy + risks*
