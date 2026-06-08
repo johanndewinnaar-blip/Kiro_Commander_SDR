@@ -396,3 +396,26 @@ export {
   feedToPriorityEngine,
   integrateInverseDiscovery,
 } from './posture-accountability-engine';
+
+
+// ─── Journey Intelligence Tagger Engines (JI-1.0 — Domain D-47) ─────────────
+export type {
+  OodaStageTagResult,
+  ActorType,
+  DeliveryModeTagInput,
+  DeliveryModeTagResult,
+  CheckpointResolverInput,
+  CheckpointResolverResult,
+  JourneyIdResolverInput,
+  JourneyIdResolverResult,
+} from './journey-intelligence';
+export {
+  OODA_STAGE_RULES,
+  tagOodaStage,
+  DELIVERY_MODE_RULES,
+  tagDeliveryMode,
+  CHECKPOINT_RULES,
+  resolveLifecycleCheckpoint,
+  ENTITY_TO_ANCHOR_MAP,
+  resolveJourneyId,
+} from './journey-intelligence';
