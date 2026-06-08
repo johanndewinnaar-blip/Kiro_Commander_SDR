@@ -294,7 +294,90 @@ ComplianceScopeBinding:
 
 ---
 
-## 7. Architecture Map (Visual Capability)
+## 7. Mission & Strategy Architectural Binding
+
+### Principle
+
+Missions may bind DIRECTLY to architectural components as scope definition, independent of cases.
+
+Cases are execution artefacts — they are generated or linked LATER as work is discovered against scoped components. The mission exists BEFORE the cases. It defines the TARGET. Cases are the EXECUTION.
+
+### MissionBinding.boundEntityType
+
+The existing MissionBinding entity is extended to support direct architectural binding:
+
+```
+MissionBinding.boundEntityType:
+  case                    — existing: mission aligns to cases (execution)
+  asset                   — NEW: mission scopes to specific architectural components
+  estate_node             — NEW: mission scopes to an organisational boundary (all assets within)
+  architectural_tier      — NEW: mission scopes to a tier (e.g., "secure the build/deploy tier")
+```
+
+### Binding Rules (Extended)
+
+The existing `Mission.bindingRules[]` with types `tag_match | service_group | dependency` remain valid. They now additionally support:
+
+- `tag_match` matching against asset.architecturalTier, asset.estateNodeId, asset.classification
+- `service_group` matching against dependency graph (all assets in the dependency chain of a named application)
+- `dependency` matching against AssetRelationship chains (all assets downstream of a specific component)
+
+### What This Enables
+
+| Capability | Without Direct Binding | With Direct Binding |
+|---|---|---|
+| Mission scoping | Mission → cases → assets (indirect) | Mission → assets directly (scope before work exists) |
+| Mission impact BEFORE cases | Cannot calculate — no cases yet | Calculate from bound assets through dependency graph |
+| Strategic blast radius | Requires cases to exist first | Calculate from bound assets: "if these components are compromised, what's the blast radius?" |
+| Programme planning | "What cases exist on these assets?" | "These are our target assets — what's their current posture, coverage, risk?" |
+| Progress measurement | Count cases closed | Count assets reaching target posture state (richer than case count) |
+
+### Architectural Scope Examples
+
+```
+Mission: "Secure the Build Pipeline"
+  Binding: architectural_tier = build_deploy
+  Scope: all 56 build/deploy components (repos, pipelines, registries, IaC)
+  Impact: calculated from those 56 assets + their dependency chains
+  Cases: generated later as drift/vulnerability/coverage findings emerge
+
+Mission: "PCI Remediation Q3"
+  Binding: estate_node = UK Pharma Production + compliance scope = PCI
+  Scope: all 142 PCI-scoped assets in UK Pharma Production
+  Impact: calculated from those assets + blast radius through dependencies
+  Cases: generated as control evaluations identify non-compliance
+
+Mission: "Reduce Perimeter Exposure"
+  Binding: architectural_tier = perimeter
+  Scope: all 34 perimeter components
+  Impact: exposure score reduction across perimeter tier
+  Cases: generated as vulnerabilities and coverage gaps are detected
+```
+
+### Ownership Clarity
+
+This does NOT make AAI own Mission. It EXPOSES architectural scope FOR Mission/Strategy use:
+
+- Mission entity remains owned by its existing domain (D-25 Mission Control)
+- MissionBinding entity remains owned by its existing domain
+- AAI provides the ARCHITECTURAL CONTEXT that missions can bind to
+- The relationship is: Mission CONSUMES from AAI (reads architectural scope), AAI does not GOVERN missions
+
+### Impact Calculation Without Cases
+
+With direct asset binding, Commander can compute:
+
+- **Mission scope size:** count of bound assets (direct + resolved through dependency/tag/tier rules)
+- **Mission risk posture:** aggregated risk objects across all bound assets
+- **Mission coverage posture:** coverage binding status across all bound assets
+- **Mission blast radius:** dependency graph traversal from bound assets
+- **Mission progress:** posture improvement over time on bound assets (risk reduction, coverage improvement, drift remediation)
+
+All of these are calculable from the asset architecture model WITHOUT requiring cases to exist first.
+
+---
+
+## 8. Architecture Map (Visual Capability)
 
 ### What It Is
 
@@ -328,7 +411,7 @@ Architecture Map is a SIBLING to Fusion Map. Same underlying graph engine. Diffe
 
 ---
 
-## 8. Asset Entity Extension
+## 9. Asset Entity Extension
 
 ### New Fields on Existing Asset Entity (All Additive, Nullable)
 
@@ -350,7 +433,7 @@ All current Asset fields (id, entityType, tenant, name, classification, owner, e
 
 ---
 
-## 9. Population Strategy
+## 10. Population Strategy
 
 ### How Assets Get Classified
 
@@ -381,7 +464,7 @@ All current Asset fields (id, entityType, tenant, name, classification, owner, e
 
 ---
 
-## 10. Performance Constraints
+## 11. Performance Constraints
 
 ### Scale
 
@@ -418,7 +501,7 @@ All current Asset fields (id, entityType, tenant, name, classification, owner, e
 
 ---
 
-## 11. Governance
+## 12. Governance
 
 ### Conformance Assertions
 
@@ -441,7 +524,7 @@ Every new entity or connector that produces asset-like data must declare:
 
 ---
 
-## 12. What Commander Is NOT
+## 13. What Commander Is NOT
 
 - NOT a CMDB (Commander adds security overlay, consumes from CMDBs via Class C connectors)
 - NOT an infrastructure monitoring tool (Commander doesn't monitor uptime/performance)
@@ -452,7 +535,7 @@ Commander adds the SECURITY INTELLIGENCE LAYER over the customer's existing asse
 
 ---
 
-## 13. Impact on Existing Build
+## 14. Impact on Existing Build
 
 ### Breaking Changes: ZERO
 
@@ -474,7 +557,7 @@ No existing specs or entities are superseded. All are EXTENDED or ENRICHED. Spec
 
 ---
 
-## 14. Build Sequencing
+## 15. Build Sequencing
 
 ### Foundation Pass
 
@@ -505,7 +588,7 @@ No existing specs or entities are superseded. All are EXTENDED or ENRICHED. Spec
 
 ---
 
-## 15. Authority and Lineage
+## 16. Authority and Lineage
 
 This document is the deep authority for Asset Architecture Intelligence. It is referenced by:
 
