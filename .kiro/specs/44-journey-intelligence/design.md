@@ -202,8 +202,356 @@ Parent Journey (depth 0)
 
 ---
 
-*Sections 2–6 to follow in subsequent commits:*
-- *§2: Entity definitions (Journey + JourneyTemplate + audit extension + all 6 enums)*
+## Entity Definitions
+
+### Enumerations (6 new types)
+
+#### OodaStage
+
+```typescript
+export const OODA_STAGES = ['observe', 'orient', 'decide', 'act'] as const;
+export type OodaStage = typeof OODA_STAGES[number];
+```
+
+**Req 1 AC-1.** Exactly 4 values. Consumed by: Journey.currentPhase, JourneyTemplate.expectedPhases, AuditEvent.oodaStage, OODA Stage Tagger output.
+
+#### DeliveryMode
+
+```typescript
+export const DELIVERY_MODES = [
+  'manual',
+  'system_driven',
+  'ai_enhanced',
+  'human_confirmed_automation',
+  'autonomous'
+] as const;
+export type DeliveryMode = typeof DELIVERY_MODES[number];
+```
+
+**Req 1 AC-2.** Exactly 5 values. Taxonomy progression: Manual → System Driven → AI Enhanced → Human Confirmed Automation → Autonomous. Consumed by: Journey.deliveryMode, JourneyTemplate.expectedDeliveryModes, AuditEvent.deliveryMode, Delivery Mode Tagger output.
+
+#### JourneyStatus
+
+```typescript
+export const JOURNEY_STATUSES = [
+  'active',
+  'completed',
+  'stalled',
+  'abandoned',
+  'reworking'
+] as const;
+export type JourneyStatus = typeof JOURNEY_STATUSES[number];
+```
+
+**Req 1 AC-3.** Exactly 5 values. Terminal statuses: `completed`, `abandoned`. Non-terminal: `active`, `stalled`, `reworking`.
+
+#### JourneyOutcome
+
+```typescript
+export const JOURNEY_OUTCOMES = [
+  'successful',
+  'partially_successful',
+  'failed',
+  'accepted_risk',
+  'cancelled',
+  'abandoned',
+  'merged',
+  'superseded',
+  'pending'
+] as const;
+export type JourneyOutcome = typeof JOURNEY_OUTCOMES[number];
+
+export const TERMINAL_OUTCOMES: JourneyOutcome[] = [
+  'successful', 'partially_successful', 'failed',
+  'accepted_risk', 'cancelled', 'abandoned', 'merged', 'superseded'
+];
+```
+
+**Req 1 AC-4.** Exactly 9 values. `pending` is the only non-terminal outcome. Once set to any other value, outcome is immutable (ARCH-JI-008).
+
+#### JourneyAnchorType
+
+```typescript
+export const JOURNEY_ANCHOR_TYPES = [
+  'case',
+  'finding',
+  'ioc_match',
+  'mission',
+  'strategy_policy',
+  'inbound_signal',
+  'push_action',
+  'war_room',
+  'exposure_programme'
+] as const;
+export type JourneyAnchorType = typeof JOURNEY_ANCHOR_TYPES[number];
+```
+
+**Req 1 AC-5.** Exactly 9 values. Each maps to a deterministic journeyId pattern per JI-1.0 §5.6.
+
+#### LifecycleCheckpoint
+
+```typescript
+export const LIFECYCLE_CHECKPOINTS = {
+  observe: [
+    'signal_received',
+    'signal_normalised',
+    'signal_enriched',
+    'coverage_assessed',
+    'connector_pulled'
+  ],
+  orient: [
+    'context_established',
+    'drift_detected',
+    'risk_scored',
+    'blast_computed',
+    'classification_assigned',
+    'anomaly_detected',
+    'correlation_completed',
+    'entity_resolved'
+  ],
+  decide: [
+    'case_created',
+    'case_bound',
+    'case_routed',
+    'case_prioritised',
+    'action_decomposed',
+    'approval_requested',
+    'approval_granted',
+    'approval_denied',
+    'escalation_triggered'
+  ],
+  act: [
+    'action_started',
+    'action_dispatched',
+    'action_accepted',
+    'action_executed',
+    'action_failed',
+    'action_retried',
+    'human_rescue_initiated',
+    'recovery_completed',
+    'validation_started',
+    'validation_passed',
+    'validation_failed',
+    'journey_completed',
+    'journey_abandoned',
+    'journey_reopened'
+  ]
+} as const;
+
+export const ALL_LIFECYCLE_CHECKPOINTS = [
+  ...LIFECYCLE_CHECKPOINTS.observe,
+  ...LIFECYCLE_CHECKPOINTS.orient,
+  ...LIFECYCLE_CHECKPOINTS.decide,
+  ...LIFECYCLE_CHECKPOINTS.act
+] as const;
+// Total: 36 values (under the 50-value cap per ARCH-JI-002)
+
+export type LifecycleCheckpoint = typeof ALL_LIFECYCLE_CHECKPOINTS[number];
+```
+
+**Req 1 AC-6, AC-7.** 36 values grouped by OODA stage (5 + 8 + 9 + 14 = 36). Bounded at 50 max (ARCH-JI-002). Consumed by: Journey.currentCheckpoint, JourneyTemplate.expectedCheckpoints, AuditEvent.lifecycleCheckpoint, Lifecycle Checkpoint Resolver output.
+
+---
+
+### Journey Entity
+
+```typescript
+export interface Journey {
+  // Identity
+  id: string;                          // CommonFields — internal UUID
+  journeyId: string;                   // Deterministic: journey-{anchorType}-{anchorId}
+  tenant: TenantContext;               // CommonFields
+
+  // Anchor binding
+  anchorType: JourneyAnchorType;
+  anchorId: string;
+  templateRef: string | null;          // templateId of matching JourneyTemplate
+
+  // Hierarchy
+  parentJourneyId: string | null;      // null = root journey
+
+  // Current state
+  currentPhase: OodaStage;
+  currentCheckpoint: LifecycleCheckpoint;
+  status: JourneyStatus;
+  outcome: JourneyOutcome;             // 'pending' at creation; immutable once terminal
+  deliveryMode: DeliveryMode;
+
+  // Metrics
+  reworkCount: number;                 // Incremented on active→reworking transition
+  childCount: number;                  // Count of child journeys
+
+  // Timestamps
+  startedAt: string;                   // ISO 8601 — set at creation
+  completedAt: string | null;          // ISO 8601 — set when terminal
+
+  // CommonFields
+  source: SourceMetadata;
+  createdAt: string;
+  updatedAt: string;
+}
+```
+
+**Traces to:** Req 2 AC-1 (all fields), AC-2 (outcome=pending at creation), AC-3 (terminal outcome), AC-4 (immutability), AC-5 (deterministic ID), AC-6 (engine-only updates), AC-7 (hierarchy depth).
+
+**Journey ID derivation (Req 2 AC-5, JI-1.0 §5.6):**
+
+| Anchor Type | Pattern |
+|---|---|
+| case | `journey-case-{caseId}` |
+| finding | `journey-finding-{findingId}` |
+| ioc_match | `journey-ioc-{matchId}` |
+| mission | `journey-mission-{missionId}` |
+| strategy_policy | `journey-strategy-{policyId}` |
+| inbound_signal | `journey-signal-{signalBatchId}` |
+| push_action | `journey-push-{intentId}` |
+| war_room | `journey-warroom-{warRoomId}` |
+| exposure_programme | `journey-programme-{missionId}` |
+
+**Validation function:**
+```typescript
+export function validateJourney(journey: Journey): JourneyValidation {
+  // 1. journeyId matches derivation pattern for anchorType
+  // 2. outcome === 'pending' if status is non-terminal
+  // 3. outcome !== 'pending' if status is terminal (completed/abandoned)
+  // 4. completedAt is set iff status is terminal
+  // 5. parentJourneyId depth check (warn at 3+)
+  // 6. reworkCount >= 0, childCount >= 0
+  // 7. currentCheckpoint belongs to currentPhase's checkpoint group
+}
+```
+
+---
+
+### JourneyTemplate Entity
+
+```typescript
+export interface JourneyTemplate {
+  // Identity
+  id: string;                          // CommonFields
+  templateId: string;                  // e.g. 'JT-CASE-001'
+  tenant: TenantContext;               // CommonFields
+  name: string;                        // e.g. 'Drift Case'
+
+  // Anchor classification
+  anchorType: JourneyAnchorType;
+  parentAnchorType: JourneyAnchorType | null;
+
+  // Applicability filter
+  applicability: TemplateApplicability;
+
+  // Expected shape (descriptive, not prescriptive)
+  expectedCheckpoints: LifecycleCheckpoint[];
+  expectedPhases: OodaStage[];
+  expectedDeliveryModes: DeliveryMode[];
+  expectedOutcomeDistribution: Partial<Record<JourneyOutcome, number>>;
+
+  // Thresholds
+  tempoThresholds: Partial<Record<OodaStage, number>>;  // max hours per phase
+  leakageThresholdHours: number;
+
+  // Formula references
+  formulaRefs: string[];               // strategy policy IDs
+
+  // Lifecycle
+  version: string;                     // semver
+  status: 'active' | 'draft' | 'retired';
+
+  // CommonFields
+  source: SourceMetadata;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TemplateApplicability {
+  caseTypes?: string[];
+  domains?: string[];
+  d3fendTactics?: string[];
+  anchorSubtype?: string;
+}
+```
+
+**Traces to:** Req 3 AC-1 (all fields), AC-2 (33 seed fixtures), AC-3 (descriptive not prescriptive), AC-4 (status lifecycle), AC-5 (tenant-customisable thresholds).
+
+**Validation function:**
+```typescript
+export function validateJourneyTemplate(template: JourneyTemplate): TemplateValidation {
+  // 1. templateId matches pattern JT-{category}-{number}
+  // 2. expectedCheckpoints are valid LifecycleCheckpoint values
+  // 3. expectedPhases are valid OodaStage values
+  // 4. expectedDeliveryModes are valid DeliveryMode values
+  // 5. tempoThresholds values > 0
+  // 6. leakageThresholdHours > 0
+  // 7. status is one of active/draft/retired
+  // 8. version matches semver pattern
+}
+```
+
+---
+
+### Audit Event Extension
+
+```typescript
+// Additive extension to existing AuditEvent interface
+export interface AuditEventJourneyExtension {
+  oodaStage?: OodaStage;               // Nullable — computed by OODA Stage Tagger
+  deliveryMode?: DeliveryMode;         // Nullable — computed by Delivery Mode Tagger
+  lifecycleCheckpoint?: LifecycleCheckpoint;  // Nullable — computed by Checkpoint Resolver
+  journeyId?: string;                  // Nullable — computed by Journey ID Resolver
+  parentJourneyId?: string;            // Nullable — computed by Journey ID Resolver
+}
+```
+
+**Traces to:** Req 4 AC-1 (5 nullable fields), AC-2 (computed once at creation), AC-3 (immutable after write), AC-4 (nullable for backward compat), AC-5 (no direct dashboard queries).
+
+**Properties:**
+- All 5 fields are nullable (backward compatibility with pre-JI audit events)
+- Written exactly ONCE at audit event creation time via tagger engines
+- NEVER updated after initial write (immutability guarantee)
+- Indexed with tenant-leading composites (see Indexing Strategy above)
+- Dashboards query read models, never audit events directly (ARCH-JI-003)
+
+**DB Migration (additive-only):**
+```sql
+-- Migration: add journey attribution fields to audit_events
+ALTER TABLE audit_events ADD COLUMN ooda_stage text;
+ALTER TABLE audit_events ADD COLUMN delivery_mode text;
+ALTER TABLE audit_events ADD COLUMN lifecycle_checkpoint text;
+ALTER TABLE audit_events ADD COLUMN journey_id text;
+ALTER TABLE audit_events ADD COLUMN parent_journey_id text;
+
+-- Indexes (tenant-leading composites)
+CREATE INDEX idx_audit_events_ooda ON audit_events (tenant_id, ooda_stage, created_at DESC) WHERE ooda_stage IS NOT NULL;
+CREATE INDEX idx_audit_events_delivery ON audit_events (tenant_id, delivery_mode, created_at DESC) WHERE delivery_mode IS NOT NULL;
+CREATE INDEX idx_audit_events_checkpoint ON audit_events (tenant_id, lifecycle_checkpoint, created_at DESC) WHERE lifecycle_checkpoint IS NOT NULL;
+CREATE INDEX idx_audit_events_journey ON audit_events (tenant_id, journey_id, created_at DESC) WHERE journey_id IS NOT NULL;
+CREATE INDEX idx_audit_events_parent_journey ON audit_events (tenant_id, parent_journey_id) WHERE parent_journey_id IS NOT NULL;
+```
+
+---
+
+### Strategy Surface Type Migration
+
+The existing `StrategySurfaceType` enum (currently 13 values in contract, 13 in DB) must be migrated to include `journey-intelligence-formula` among the new surfaces. JI-1.0 §14 step 1 specifies this as the first foundation action.
+
+```typescript
+// Addition to existing StrategySurfaceType enum
+// Current: 13 values (sla, threshold, automation-boundary, routing, posture,
+//   mission-objective, operational-tempo, domain-specific, prioritisation-weight,
+//   validation-window, closure-gate, reopening-trigger, evidence-sufficiency)
+// + 4 CMEP-1.0 values (sla-modifier, correlation-policy, effectiveness-targets, ssvc-decision-tree)
+// + 3 JI-1.0 values:
+'journey-intelligence-formula'    // Hosts all 10 formula families
+'journey-template-governance'     // Template version/status governance
+'war-room-cadence'                // Already exists from WRCEP-1.0
+// Target: 20 values total
+```
+
+**Traces to:** Req 6 AC-6 (strategy surface enum migration 13→20).
+
+---
+
+*Sections 3–6 to follow in subsequent commits:*
 - *§3: Template catalogue (33 templates)*
 - *§4: Formula catalogue (10 families)*
 - *§5: Tagger engines + read models*
