@@ -413,3 +413,64 @@ They are correctly classified as ARCH-DEBT (structural gaps — mis-sourced cita
 | Decision ID | Date | Decision | Rationale | Impact |
 |---|---|---|---|---|
 | DEC-retire-root-build-docs | 2026-06-07 | BUILD_SEQUENCE.md and BUILD_VERSION_ROADMAP.md retired to docs/00_authority/_superseded/. REBASELINED_BUILD_SEQUENCE.md is the sole build authority. | Per artifact-lifecycle.md retirement procedure. Both documents were superseded by the rebaselined build sequence derived from the verified knowledge graph (DEC-build-plan-replacement). Root-level presence caused confusion about which document was authoritative. | Sole build planning authority is now docs/knowledge/REBASELINED_BUILD_SEQUENCE.md. Retired documents preserved for lineage per Commander Assertion 7. |
+
+
+
+## Journey Intelligence Foundation
+
+### DEC-journey-intelligence-foundation
+
+**Decision:** Introduce Journey Intelligence as a peer capability domain to Spec #58 (Security OODA Loop). Journey Intelligence is the measurement, attribution, optimisation and AI-grounding spine for Commander's security operating model.
+
+**Core Position:**
+- Capability name: Journey Intelligence
+- OODA remains the operating model; Journey Intelligence is the measurement layer
+- Journey First, Case Aware, OODA Driven, Formula Tunable, AI Ready, Governance Enforced
+- The primary object measured is the security workflow, not the analyst
+- Cases are major anchors but not the only journey origin
+
+**What is delivered:**
+- Authority document: `docs/00_authority/JOURNEY_INTELLIGENCE.md` (JI-1.0)
+- Journey entity (lightweight state carrier with status + outcome)
+- JourneyTemplate entity (33 templates, descriptive not prescriptive)
+- 6 new enums: OodaStage, DeliveryMode, LifecycleCheckpoint, JourneyStatus, JourneyOutcome, JourneyAnchorType
+- Audit event extension (5 nullable fields: oodaStage, deliveryMode, lifecycleCheckpoint, journeyId, parentJourneyId)
+- Formula framework (10 families as strategy policy surface #20: `journey-intelligence-formula`)
+- Default formula pack (10 strategy policies with conservative defaults)
+- 4 tagger engines (pure functions: OODA stage, delivery mode, checkpoint, journey ID)
+- 7 analytics read models (lifecycle tempo, automation friction, leakage, delivery mode distribution, quality, rework, outcome)
+- 8 conformance assertions (ARCH-JI-001 through ARCH-JI-008)
+- Future feature adoption rule (mandatory Journey Intelligence declaration)
+- AI Analyst readiness (Journey Intelligence as reasoning substrate)
+
+**Architectural decisions resolved:**
+1. Hierarchy: authority unbounded, v1 implementation depth 2, governance-controlled expansion
+2. Journey Outcome: foundation (9 values on Journey entity, immutable once terminal)
+3. Journey Impact: formula output (read model), not on entity
+4. Terminal precision: Status (5) + Outcome (9) as independent dimensions
+5. Automation friction: descriptive (observable checkpoints), not prescriptive
+6. Formula hosting: strategy policy specialisation (surface #20)
+7. Journey templates: foundation, lightweight, descriptive
+8. Journey ID: deterministic from root entity at write-time
+
+**Relationship to existing doctrine:**
+- Peer to Spec #58 (not subordinate)
+- Extends Spec #67 (OODA Dashboard Family) with journey-level panels
+- Extends Strategy Layer (Spec #32) with surface type #20
+- Inherits Performance Doctrine workload class discipline
+- Inherits Database Layer schema segmentation (new `journey` schema)
+- Inherits Data Layer read model architecture
+
+**What Commander must NOT become:**
+- Click tracking
+- User surveillance
+- HR/performance monitoring
+- Duplicate SIEM
+- Telemetry warehouse
+
+**Rationale:** Commander currently measures programme-level OODA health (Spec #58) but cannot answer: how does individual work travel through the organisation? Where does it stall? Where does it leak? Where does automation fail? What's the operational maturity progression? Is the AI Analyst grounded in structured journey context? Journey Intelligence fills this gap as a first-class capability domain.
+
+**Proposition Evolution:** EVO-011
+**Authority:** docs/00_authority/JOURNEY_INTELLIGENCE.md
+**Status:** Approved. Pending implementation.
+**Date:** 2026-06-08

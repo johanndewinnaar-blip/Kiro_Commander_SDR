@@ -178,3 +178,110 @@ See: Master Proposition §12.8; Feature Registry feat.search.universal
 Internal Commander/Seiertech control application for customer, tenant, licence, entitlement, deployment, support access and baseline profile operations.
 
 See: Spec #38; Master Technical Specification §8.3
+
+
+---
+
+## Journey Intelligence Terms
+
+### Journey Intelligence
+
+Commander's capability for understanding how security work travels through the organisation from first signal to validated outcome. The measurement, attribution, optimisation and AI-grounding spine for the operating model. Peer capability to Spec #58 (OODA Tempo).
+
+See: docs/00_authority/JOURNEY_INTELLIGENCE.md; DEC-journey-intelligence-foundation
+
+### Journey
+
+A complete lifecycle of security work from first signal to validated outcome, anchor-agnostic. May be anchored to a case, finding, IOC match, mission, strategy policy, inbound signal, push action, war room, or exposure programme.
+
+See: JOURNEY_INTELLIGENCE.md §5.2
+
+### Journey Anchor
+
+The primary entity a journey is bound to. Determines journey identity and scope. Cases are major anchors but not the only journey origin.
+
+See: JOURNEY_INTELLIGENCE.md §5.6
+
+### Journey Template
+
+A reference artefact declaring the expected shape of a journey type. Descriptive, not prescriptive. Enables expectation-based leakage detection and AI grounding.
+
+See: JOURNEY_INTELLIGENCE.md §5.3, §6
+
+### Delivery Mode
+
+The five-level taxonomy describing how an activity was completed: Manual, System Driven, AI Enhanced, Human Confirmed Automation, Autonomous.
+
+See: JOURNEY_INTELLIGENCE.md §5.1
+
+### Lifecycle Checkpoint
+
+A bounded canonical state transition within a journey (~35 values spanning Observe, Orient, Decide and Act phases). Only system-meaningful state changes qualify. UI interactions are not checkpoints.
+
+See: JOURNEY_INTELLIGENCE.md §5.1
+
+### Journey Tempo
+
+The duration a journey takes to traverse its lifecycle, measured per-phase and end-to-end. Extends Spec #58 OODA Tempo from programme-level to individual-journey-level measurement.
+
+See: JOURNEY_INTELLIGENCE.md §8
+
+### Journey Leakage
+
+Work that enters the lifecycle but never reaches a valid terminal outcome. Distinct from abandonment (intentional stop) and from tempo degradation (slowness). Leakage represents invisible unactioned risk.
+
+See: JOURNEY_INTELLIGENCE.md §4
+
+### Journey Rework
+
+A journey that repeats earlier phases because a previous cycle failed (validated_fail, reopening). Measured as rework count, rework cost, and rework cause.
+
+See: JOURNEY_INTELLIGENCE.md §4
+
+### Journey Abandonment
+
+Work intentionally stopped without reaching a successful outcome. Terminal states include: accepted_risk, cancelled, suppressed. Distinct from leakage (unintentional stall).
+
+See: JOURNEY_INTELLIGENCE.md §4
+
+### Journey Outcome
+
+How a journey ended. Independent of status. 9 values: successful, partially_successful, failed, accepted_risk, cancelled, abandoned, merged, superseded, pending. Completion does not imply success.
+
+See: JOURNEY_INTELLIGENCE.md §5.1
+
+### Automation Friction
+
+Resistance between decision and successful execution in automated workflows. Includes: drag, failure rate, human rescue rate, retry burden, recovery cost, connector reliability.
+
+See: JOURNEY_INTELLIGENCE.md §4, §7.6
+
+### Automation Drag
+
+The time between a decision being approved and the corresponding action being successfully executed. A component of automation friction.
+
+See: JOURNEY_INTELLIGENCE.md §4
+
+### Human Rescue Rate
+
+The percentage of automated actions that require human intervention to complete. A signal that automation is unreliable for a specific workflow or connector.
+
+See: JOURNEY_INTELLIGENCE.md §4
+
+### Automation Maturity
+
+The delivery mode progression of a workflow type over time, from manual toward autonomous. Measured as the distribution shift across the five delivery modes. Maturity requires both automation AND success.
+
+See: JOURNEY_INTELLIGENCE.md §7.7
+
+### Journey Formula
+
+A configurable, versioned computation definition that produces journey metrics. Hosted as a strategy policy of surface type `journey-intelligence-formula`. 10 formula families with default weights, tenant-tunable.
+
+See: JOURNEY_INTELLIGENCE.md §7
+
+### Journey Quality
+
+A composite metric measuring whether journeys end well, not just quickly. Inputs: validation pass rate, outcome success rate, rework rate, override rate, reopening rate. Prevents optimising tempo at the expense of correctness.
+
+See: JOURNEY_INTELLIGENCE.md §7.1

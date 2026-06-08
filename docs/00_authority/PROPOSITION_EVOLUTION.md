@@ -107,3 +107,15 @@
 - **Rationale:** Closes the inbound leg of the email lifecycle — enables phishing triage, IOC extraction, and case creation from user submissions.
 - **Decision record:** Part of Communications Excellence (CMEP-1.0).
 - **Status:** IMPLEMENTED (entity + fixture exist)
+
+
+---
+
+### EVO-011 — Journey Intelligence capability domain added
+
+- **Baseline position:** Spec #58 (Security OODA Loop) defines programme-level OODA tempo, phase health scoring, and OODA Tempo Degradation case type. Spec #67 defines OODA Dashboard Family surfaces. No explicit individual-journey measurement, delivery mode attribution, automation friction measurement, formula-driven lifecycle analytics, or AI-grounding journey context in the baseline.
+- **Evolution:** Journey Intelligence introduced as a peer capability domain providing: individual journey lifecycle measurement, OODA stage attribution on audit events, 5-level delivery mode taxonomy, 33 journey templates, 10 configurable formula families (as strategy policy surface #20), 7 analytics read models, lightweight Journey entity with status + outcome, AI Analyst reasoning substrate, and mandatory future-feature adoption rule.
+- **Rationale:** Commander can measure programme-level OODA health (Spec #58) but cannot answer: how does individual work travel from signal to outcome? Where does it leak, stall, or repeat? Where does automation fail? What is the operational maturity progression? Journey Intelligence fills this gap as the measurement, attribution, optimisation and AI-grounding spine for the entire operating model.
+- **Decision record:** DEC-journey-intelligence-foundation (DECISIONS.md)
+- **Authority:** docs/00_authority/JOURNEY_INTELLIGENCE.md (JI-1.0)
+- **Status:** APPROVED — pending implementation
