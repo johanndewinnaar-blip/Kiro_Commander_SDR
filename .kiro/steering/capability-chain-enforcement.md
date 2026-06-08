@@ -49,6 +49,18 @@ Complete these in the SAME session (same branch, before push or within same PR):
 
 ---
 
+## Page Build Completeness Rule
+
+When building any new page (`apps/web/src/app/**/page.tsx`), the SAME commit MUST also:
+
+1. Register the route in `apps/web/src/registry/routes.ts` (RouteEntry)
+2. Add the nav item to `apps/web/src/registry/nav-groups.ts` (NavGroup subItem or new NavGroup)
+3. Update `docs/00_authority/PAGE_SCHEDULE.md` (route + UC + status BUILT)
+
+A page that exists on disk but is NOT in the nav registry is INVISIBLE to users and counts as incomplete work. Pages without nav wiring are governance debt.
+
+---
+
 ## IMPACT Debt Registration Format
 
 For every new domain where entities are built but pages are NOT yet built, add to `debt-register.md`:

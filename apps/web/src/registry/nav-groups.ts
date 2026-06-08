@@ -248,6 +248,49 @@ export const OPERATIONAL_NAV_GROUPS: NavGroup[] = [
       { label: 'Cloud Security Manager', path: '/som/cloud-security', status: 'SCAFFOLD' },
     ],
   },
+  // Group 20 — Journey Intelligence (JI-1.0 — Domain D-47)
+  {
+    id: 'journey-intelligence',
+    label: 'Journey Intelligence',
+    badge: 'BUILD',
+    status: 'BUILD',
+    subItems: [
+      { label: 'Lifecycle Dashboard', path: '/journey/lifecycle', status: 'BUILD' },
+      { label: 'Tempo Detail', path: '/journey/tempo', status: 'BUILD' },
+      { label: 'Leakage Monitor', path: '/journey/leakage', status: 'BUILD' },
+      { label: 'Quality Scores', path: '/journey/quality', status: 'BUILD' },
+      { label: 'Templates', path: '/journey/templates', status: 'BUILD' },
+      { label: 'Automation Friction', path: '/journey/friction', status: 'BUILD' },
+      { label: 'Automation Maturity', path: '/journey/maturity', status: 'BUILD' },
+      { label: 'Automation Opportunity', path: '/journey/opportunity', status: 'BUILD' },
+    ],
+  },
+  // Group 21 — Estate & Architecture (AAI-1.0 — Domain D-48)
+  {
+    id: 'estate-architecture',
+    label: 'Estate & Architecture',
+    badge: 'BUILD',
+    status: 'BUILD',
+    subItems: [
+      { label: 'Estate Topology', path: '/assets/estate', status: 'BUILD' },
+      { label: 'Dependencies', path: '/assets/dependencies', status: 'BUILD' },
+      { label: 'Coverage Matrix', path: '/assets/coverage-matrix', status: 'BUILD' },
+      { label: 'Compliance Scope', path: '/assets/compliance-scope', status: 'BUILD' },
+    ],
+  },
+  // Group 22 — Inception Posture (IPI-1.0 — Domain D-49)
+  {
+    id: 'inception-posture',
+    label: 'Inception Posture',
+    badge: 'BUILD',
+    status: 'BUILD',
+    subItems: [
+      { label: 'Inception Dashboard', path: '/posture/inception', status: 'BUILD' },
+      { label: 'Inception Cases', path: '/cases/inception', status: 'BUILD' },
+      { label: 'Secure Design Profiles', path: '/settings/secure-design', status: 'BUILD' },
+      { label: 'Onboarding Activation', path: '/settings/onboarding', status: 'BUILD' },
+    ],
+  },
 ];
 
 /** Commercial Control Plane sidebar items per v3 shell reference */

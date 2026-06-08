@@ -354,4 +354,32 @@ export const operationalRoutes: RouteEntry[] = [
     showInNav: false,
     sortOrder: 30,
   },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // Journey Intelligence (JI-1.0 — Domain D-47, Unit 51)
+  // ═══════════════════════════════════════════════════════════════════════════
+  { path: '/journey/lifecycle', label: 'Journey Lifecycle Dashboard', boundary: 'operational', status: 'BUILD', version: 'v1.3', owningSpec: '44-journey-intelligence', workspaces: ['executive-posture', 'drift-operations'], rbac: ['CISO', 'SOM'], showInNav: true, sortOrder: 100 },
+  { path: '/journey/tempo', label: 'Journey Tempo Detail', boundary: 'operational', status: 'BUILD', version: 'v1.3', owningSpec: '44-journey-intelligence', workspaces: ['executive-posture'], rbac: ['CISO', 'SOM'], showInNav: true, sortOrder: 101 },
+  { path: '/journey/leakage', label: 'Journey Leakage Monitor', boundary: 'operational', status: 'BUILD', version: 'v1.3', owningSpec: '44-journey-intelligence', workspaces: ['drift-operations'], rbac: ['CISO', 'SOM'], showInNav: true, sortOrder: 102 },
+  { path: '/journey/quality', label: 'Journey Quality Scores', boundary: 'operational', status: 'BUILD', version: 'v1.3', owningSpec: '44-journey-intelligence', workspaces: ['executive-posture'], rbac: ['CISO', 'SOM'], showInNav: true, sortOrder: 103 },
+  { path: '/journey/templates', label: 'Journey Template Configuration', boundary: 'operational', status: 'BUILD', version: 'v1.3', owningSpec: '44-journey-intelligence', workspaces: ['drift-operations'], rbac: ['SOM'], showInNav: true, sortOrder: 104 },
+  { path: '/journey/friction', label: 'Automation Friction Dashboard', boundary: 'operational', status: 'BUILD', version: 'v1.3', owningSpec: '44-journey-intelligence', workspaces: ['drift-operations'], rbac: ['SOM'], showInNav: true, sortOrder: 105 },
+  { path: '/journey/maturity', label: 'Automation Maturity Tracker', boundary: 'operational', status: 'BUILD', version: 'v1.3', owningSpec: '44-journey-intelligence', workspaces: ['executive-posture'], rbac: ['CISO', 'SOM'], showInNav: true, sortOrder: 106 },
+  { path: '/journey/opportunity', label: 'Automation Opportunity Scores', boundary: 'operational', status: 'BUILD', version: 'v1.3', owningSpec: '44-journey-intelligence', workspaces: ['drift-operations'], rbac: ['SOM'], showInNav: true, sortOrder: 107 },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // Estate & Architecture (AAI-1.0 — Domain D-48, Unit 52)
+  // ═══════════════════════════════════════════════════════════════════════════
+  { path: '/assets/estate', label: 'Estate Topology', boundary: 'operational', status: 'BUILD', version: 'v1.3', owningSpec: '22-governance-reporting', workspaces: ['control-architecture', 'identity-asset-intelligence'], rbac: ['CISO', 'SOM'], showInNav: true, sortOrder: 110 },
+  { path: '/assets/dependencies', label: 'Asset Dependencies', boundary: 'operational', status: 'BUILD', version: 'v1.3', owningSpec: '22-governance-reporting', workspaces: ['control-architecture'], rbac: ['SOM'], showInNav: true, sortOrder: 111 },
+  { path: '/assets/coverage-matrix', label: 'Coverage Gap Matrix', boundary: 'operational', status: 'BUILD', version: 'v1.3', owningSpec: '22-governance-reporting', workspaces: ['control-architecture', 'drift-operations'], rbac: ['SOM'], showInNav: true, sortOrder: 112 },
+  { path: '/assets/compliance-scope', label: 'Compliance Scope Manager', boundary: 'operational', status: 'BUILD', version: 'v1.3', owningSpec: '22-governance-reporting', workspaces: ['assurance-audit'], rbac: ['SOM'], showInNav: true, sortOrder: 113 },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // Inception Posture (IPI-1.0 — Domain D-49, Unit 53)
+  // ═══════════════════════════════════════════════════════════════════════════
+  { path: '/posture/inception', label: 'Inception Posture Dashboard', boundary: 'operational', status: 'BUILD', version: 'v1.3', owningSpec: '39-posture-accountability', workspaces: ['executive-posture', 'drift-operations'], rbac: ['CISO', 'SOM'], showInNav: true, sortOrder: 120 },
+  { path: '/cases/inception', label: 'Not-Secure-by-Design Cases', boundary: 'operational', status: 'BUILD', version: 'v1.3', owningSpec: '06-case-management', workspaces: ['drift-operations'], rbac: [], showInNav: true, sortOrder: 121 },
+  { path: '/settings/secure-design', label: 'Secure Design Profiles', boundary: 'operational', status: 'BUILD', version: 'v1.3', owningSpec: '39-posture-accountability', workspaces: ['control-architecture'], rbac: ['SOM'], showInNav: true, sortOrder: 122 },
+  { path: '/settings/onboarding', label: 'Onboarding Activation', boundary: 'operational', status: 'BUILD', version: 'v1.3', owningSpec: '39-posture-accountability', workspaces: ['admin'], rbac: ['SOM'], showInNav: true, sortOrder: 123 },
 ];
