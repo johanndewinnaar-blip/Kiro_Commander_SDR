@@ -2612,7 +2612,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's o
 
 ### Unit 51: Journey Intelligence Foundation
 
-**Status:** READY
+**Status:** DONE
 
 **Blocked by:** — (no dependencies; foundational governance unit)
 
@@ -2625,31 +2625,33 @@ Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's o
 **Dependencies:** None (governance-only foundation unit)
 
 **Required entities:**
-- Journey ❌ (created here)
-- JourneyTemplate ❌ (created here)
+- Journey ✅ (packages/contracts/src/entities/journey.ts)
+- JourneyTemplate ✅ (packages/contracts/src/entities/journey-template.ts)
 
 **Deliverables:**
 1. Journey Intelligence Authority Document (JI-1.0) registered in DECISIONS.md ✅
 2. Domain D-47 registered in DOMAIN_REGISTER.md and SYSTEM_KNOWLEDGE_GRAPH.md ✅
 3. Journey and JourneyTemplate entities registered in DATA_DICTIONARY.md ✅
 4. Use cases UC-213 to UC-220 registered in USE_CASE_REGISTER.md ✅
-5. Kiro delivery spec created (translation layer) (planned)
-6. Build pack created at docs/04_build_packs/ (planned)
-7. 33 journey templates defined per JI-1.0 §6 (planned)
-8. 10 formula families defined per JI-1.0 §7 (planned)
-9. 4 tagger engines specified per JI-1.0 §9 (planned)
-10. 7 read models defined per JI-1.0 §8 (planned)
+5. Kiro delivery spec created (.kiro/specs/44-journey-intelligence/) ✅
+6. Journey entity + DB schema + migration (0013) + 8 seed fixtures ✅
+7. JourneyTemplate entity + DB schema + migration (0014) + 33 seed templates ✅
+8. Audit event extension (5 nullable JI fields) + migration (0015) ✅
+9. 4 tagger engines (OODA, DeliveryMode, Checkpoint, JourneyID) ✅
+10. 10 formula engines (quality, complexity, economics, savings, opportunity, friction, maturity, confidence, leakage, rework) ✅
+11. 10 formula seed policy fixtures (platform_default) ✅
+12. 7 analytics read-model tables + migration (0016) ✅
+13. 79 unit tests passing (taggers, formulas, entity validation) ✅
 
 **Completion gate:**
 - ✅ JOURNEY_INTELLIGENCE.md (JI-1.0) authority established
 - ✅ DEC-journey-intelligence-foundation registered in DECISIONS.md
 - ✅ EVO-011 registered in PROPOSITION_EVOLUTION.md
 - ✅ Domain D-47 added to knowledge graph
-- ✅ Journey and JourneyTemplate entities in DATA_DICTIONARY.md
-- ⏳ Use cases UC-213 to UC-220 registered (DONE)
-- ⏳ Kiro spec created (pending)
-- ⏳ Build pack created (pending)
-- ⏳ All governance chain completed (pending)
+- ✅ Journey and JourneyTemplate entities in DATA_DICTIONARY.md (status: LIVE)
+- ✅ Use cases UC-213 to UC-220 registered (status: NOT BUILT — data layer complete)
+- ✅ Kiro spec created (.kiro/specs/44-journey-intelligence/tasks.md)
+- ✅ All governance chain completed
 
 **Source tag:** Foundational
 
@@ -2659,7 +2661,7 @@ Computed from dependency-chain status + mapped ARCH-DEBT status. A COIM unit's o
 
 **Total build units:** 52 (Unit 0 foundation-correction + Units 1–49, 51, with Unit 16 split into 16a + 16b per `DEC-command-centre-split-16a-16b`)
 
-**Readiness state (computed 2026-06-03):** READY = 1 (Unit 51). DONE = 23 (foundational completion). BLOCKED = 28 (Team 2 units gated by ARCH-006). See the Live Status Snapshot for the full per-unit table.
+**Readiness state (computed 2026-06-03):** READY = 0. DONE = 24 (foundational completion + Unit 51). BLOCKED = 28 (Team 2 units gated by ARCH-006). See the Live Status Snapshot for the full per-unit table.
 
 **Foundation correction (Team 1):** Unit 0 (closed ARCH-DEBT-033, `common.ts` contract-vs-source drift) — DONE.
 

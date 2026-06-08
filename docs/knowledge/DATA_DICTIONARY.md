@@ -2827,9 +2827,9 @@ Five entities forming the compliance/control-framework mapping layer:
 ### 88. Journey
 
 **Source:** JOURNEY_INTELLIGENCE.md (JI-1.0) §5.2  
-**Contract:** `packages/contracts/src/entities/journey.ts` (planned)  
+**Contract:** `packages/contracts/src/entities/journey.ts`  
 **Interface:** `Journey`  
-**Status:** PLANNED (governance registered, implementation pending)  
+**Status:** LIVE  
 **Owning Domain:** D-47 Journey Intelligence (DOMAIN_REGISTER.md)  
 **Architectural Layer:** Cross-cutting + Analytics  
 **Use Cases:** UC-213 (Journey workflow measurement), UC-214 (Journey tempo analysis), UC-215 (Journey leakage detection), UC-219 (Automation friction), UC-220 (Automation maturity)  
@@ -2858,9 +2858,9 @@ Five entities forming the compliance/control-framework mapping layer:
 ### 89. Journey Template
 
 **Source:** JOURNEY_INTELLIGENCE.md (JI-1.0) §5.3  
-**Contract:** `packages/contracts/src/entities/journey-template.ts` (planned)  
+**Contract:** `packages/contracts/src/entities/journey-template.ts`  
 **Interface:** `JourneyTemplate`  
-**Status:** PLANNED (governance registered, implementation pending)  
+**Status:** LIVE  
 **Owning Domain:** D-47 Journey Intelligence (DOMAIN_REGISTER.md)  
 **Architectural Layer:** Cross-cutting + Analytics  
 **Use Cases:** UC-216 (Journey template definition), UC-217 (Journey quality measurement), UC-218 (Automation opportunity scoring)  
