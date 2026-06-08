@@ -793,8 +793,254 @@ export type FormulaFamily =
 
 ---
 
-*Sections 5–6 to follow in subsequent commits:*
-- *§5: Tagger engines + read models*
+## Tagger Engines (4 Pure Functions)
+
+**Traces to:** Req 5 AC-1 through AC-5. All engines are pure functions — no side effects, no API calls, testable in isolation (JI-1.0 §9).
+
+### Engine 1: OODA Stage Tagger
+
+| Attribute | Value |
+|---|---|
+| **Input** | `auditEvent.action` (string) |
+| **Output** | `OodaStage` |
+| **Logic** | Rule-based mapping (~40 action-to-stage rules) |
+| **Location** | `packages/contracts/src/engines/journey-intelligence/ooda-stage-tagger.ts` |
+
+```typescript
+export function tagOodaStage(action: string): TaggerOutput<OodaStage> {
+  // ~40 rules mapping action strings to OODA stages
+  // Examples:
+  //   'signal.received' → observe
+  //   'signal.normalised' → observe
+  //   'context.established' → orient
+  //   'drift.detected' → orient
+  //   'risk.scored' → orient
+  //   'case.created' → decide
+  //   'case.routed' → decide
+  //   'approval.requested' → decide
+  //   'action.dispatched' → act
+  //   'action.executed' → act
+  //   'validation.passed' → act
+  // Returns { value, confidence: 'deterministic', rule: '<matched-rule-id>' }
+  // Unmatched actions return null (field stays nullable on audit event)
+}
+```
+
+**Rule structure:** Each rule is a pattern match (exact string or prefix) mapped to an OodaStage. Rules are ordered by specificity (exact match before prefix). The rule set is declarative data, not branching logic.
+
+### Engine 2: Delivery Mode Tagger
+
+| Attribute | Value |
+|---|---|
+| **Input** | `auditEvent.actor.type` + `auditEvent.action` + approval context |
+| **Output** | `DeliveryMode` |
+| **Logic** | Actor-type-based with context refinement |
+| **Location** | `packages/contracts/src/engines/journey-intelligence/delivery-mode-tagger.ts` |
+
+```typescript
+export function tagDeliveryMode(
+  actorType: string,
+  action: string,
+  approvalContext?: { approvalRequired: boolean; approvalGranted: boolean }
+): TaggerOutput<DeliveryMode> {
+  // Decision tree:
+  // 1. actorType === 'system' && no approval required → 'system_driven'
+  // 2. actorType === 'system' && approval required && granted → 'human_confirmed_automation'
+  // 3. actorType === 'commander-ai' && no approval required → 'ai_enhanced'
+  // 4. actorType === 'commander-ai' && approval required && granted → 'human_confirmed_automation'
+  // 5. actorType === 'user' → 'manual'
+  // 6. actorType === 'connector' && action matches autonomous pattern → 'autonomous'
+  // 7. actorType === 'connector' && otherwise → 'system_driven'
+  // Fallback: 'manual' (safest default)
+}
+```
+
+### Engine 3: Lifecycle Checkpoint Resolver
+
+| Attribute | Value |
+|---|---|
+| **Input** | `auditEvent.entityRef.entityType` + `auditEvent.action` |
+| **Output** | `LifecycleCheckpoint` |
+| **Logic** | Entity-state-to-checkpoint mapping |
+| **Location** | `packages/contracts/src/engines/journey-intelligence/lifecycle-checkpoint-resolver.ts` |
+
+```typescript
+export function resolveLifecycleCheckpoint(
+  entityType: string,
+  action: string
+): TaggerOutput<LifecycleCheckpoint> | null {
+  // Maps (entityType, action) pairs to LifecycleCheckpoint values
+  // Examples:
+  //   ('inbound-signal', 'received') → signal_received
+  //   ('inbound-signal', 'normalised') → signal_normalised
+  //   ('risk-object', 'scored') → risk_scored
+  //   ('case', 'created') → case_created
+  //   ('case', 'bound') → case_bound
+  //   ('case', 'routed') → case_routed
+  //   ('action', 'dispatched') → action_dispatched
+  //   ('action', 'executed') → action_executed
+  //   ('action', 'failed') → action_failed
+  //   ('validation', 'passed') → validation_passed
+  //   ('journey', 'completed') → journey_completed
+  // Returns null for entity/action pairs that are not lifecycle checkpoints
+  // (not every audit event is a checkpoint — only meaningful state transitions)
+}
+```
+
+### Engine 4: Journey ID Resolver
+
+| Attribute | Value |
+|---|---|
+| **Input** | Entity reference chain (entityRef + parent entity chain) |
+| **Output** | `{ journeyId: string; parentJourneyId: string | null }` |
+| **Logic** | Deterministic derivation from root entity |
+| **Location** | `packages/contracts/src/engines/journey-intelligence/journey-id-resolver.ts` |
+
+```typescript
+export function resolveJourneyId(
+  entityRef: { entityType: string; entityId: string },
+  parentEntityRef?: { entityType: string; entityId: string }
+): { journeyId: string; parentJourneyId: string | null } {
+  // Derivation per JI-1.0 §5.6:
+  //   case → journey-case-{entityId}
+  //   finding → journey-finding-{entityId}
+  //   ioc_match → journey-ioc-{entityId}
+  //   mission → journey-mission-{entityId}
+  //   strategy_policy → journey-strategy-{entityId}
+  //   inbound_signal → journey-signal-{entityId}
+  //   push_action → journey-push-{entityId}
+  //   war_room → journey-warroom-{entityId}
+  //   exposure_programme → journey-programme-{entityId}
+  //
+  // parentJourneyId: derived from parentEntityRef if present
+  // (e.g. action with parent case → parentJourneyId = journey-case-{parentId})
+  //
+  // Returns null for parentJourneyId if no parent relationship exists
+}
+```
+
+### Tagger Execution Model
+
+All 4 taggers are invoked at **audit event write-time** in a single synchronous pass:
+
+```
+AuditEvent creation →
+  1. tagOodaStage(event.action)
+  2. tagDeliveryMode(event.actor.type, event.action, approvalContext)
+  3. resolveLifecycleCheckpoint(event.entityRef.entityType, event.action)
+  4. resolveJourneyId(event.entityRef, event.parentEntityRef)
+  → Write all 5 fields atomically with the audit event
+```
+
+No tagger depends on another tagger's output. All 4 run independently. If any tagger returns null, the corresponding field stays null on the audit event (nullable by design).
+
+---
+
+## Read Model Architecture (7 Foundation Models)
+
+**Traces to:** Req 7 AC-1 through AC-5, Req 8 (leakage detection), Req 9 (automation metrics).
+
+All read models live in the `analytics` database schema, workload class `analytics-read`. They are computed by scheduled refresh engines that read from Journey entities and audit events. Dashboards and AI consumers query read models exclusively (ARCH-JI-003).
+
+### Read Model 1: journey_lifecycle_tempo
+
+| Attribute | Value |
+|---|---|
+| **Purpose** | Per-journey, per-phase durations and checkpoint chain |
+| **Refresh** | Hourly |
+| **Source** | Journey entity + audit events (filtered by journeyId) |
+| **Grain** | One row per journey per OODA phase |
+| **Key columns** | tenant_id, journey_id, template_ref, ooda_stage, started_at, completed_at, duration_hours, checkpoint_count, delivery_mode |
+| **Feeds** | Lifecycle Savings formula, tempo dashboards |
+
+### Read Model 2: automation_friction_metrics
+
+| Attribute | Value |
+|---|---|
+| **Purpose** | Drag, failure rate, rescue rate per action type/connector |
+| **Refresh** | Hourly |
+| **Source** | Audit events (action-phase temporal gaps) |
+| **Grain** | One row per action type per connector per time period |
+| **Key columns** | tenant_id, action_type, connector_ref, period, drag_hours_avg, failure_rate, rescue_rate, retry_count_avg, recovery_hours_avg, connector_reliability |
+| **Feeds** | Automation Friction formula, Automation Opportunity formula |
+
+### Read Model 3: journey_leakage_report
+
+| Attribute | Value |
+|---|---|
+| **Purpose** | Stalled journeys past template thresholds |
+| **Refresh** | Every 15 minutes |
+| **Source** | Journey entity (status=active/stalled) + JourneyTemplate (leakageThresholdHours) |
+| **Grain** | One row per at-risk journey |
+| **Key columns** | tenant_id, journey_id, template_ref, current_checkpoint, hours_at_checkpoint, template_threshold_hours, overshoot_ratio, leakage_risk_score, delivery_mode, phase |
+| **Feeds** | Leakage Risk formula, operational alerting |
+
+### Read Model 4: delivery_mode_distribution
+
+| Attribute | Value |
+|---|---|
+| **Purpose** | Mode split per journey type per time period |
+| **Refresh** | Daily |
+| **Source** | Journey entity (grouped by templateRef, deliveryMode) |
+| **Grain** | One row per template per delivery mode per period |
+| **Key columns** | tenant_id, template_ref, delivery_mode, period, journey_count, percentage, trend_direction |
+| **Feeds** | Automation Maturity formula, maturity dashboards |
+
+### Read Model 5: journey_quality_scores
+
+| Attribute | Value |
+|---|---|
+| **Purpose** | Composite quality per journey type (formula-driven) |
+| **Refresh** | Daily |
+| **Source** | Journey entity (completed journeys) + validation outcomes + rework counts |
+| **Grain** | One row per template per period |
+| **Key columns** | tenant_id, template_ref, period, quality_score, band, validation_pass_rate, outcome_success_rate, rework_rate, override_rate, reopening_rate |
+| **Feeds** | Journey Quality formula output, quality dashboards |
+
+### Read Model 6: journey_rework_analysis
+
+| Attribute | Value |
+|---|---|
+| **Purpose** | Rework count, causes, cost per journey type |
+| **Refresh** | Daily |
+| **Source** | Journey entity (reworkCount > 0) + audit events (rework triggers) |
+| **Grain** | One row per template per period |
+| **Key columns** | tenant_id, template_ref, period, rework_count, rework_rate, avg_rework_cycles, rework_cause_distribution, rework_cost_hours_avg |
+| **Feeds** | Rework Risk formula, rework dashboards |
+
+### Read Model 7: journey_outcome_analysis
+
+| Attribute | Value |
+|---|---|
+| **Purpose** | Outcome distribution per template, trends, correlations |
+| **Refresh** | Daily |
+| **Source** | Journey entity (terminal journeys) |
+| **Grain** | One row per template per outcome per period |
+| **Key columns** | tenant_id, template_ref, outcome, period, count, percentage, trend_direction, avg_duration_hours, delivery_mode_distribution |
+| **Feeds** | Journey Quality formula inputs, outcome dashboards, AI Analyst |
+
+### Read Model Refresh Engine Design
+
+```typescript
+export interface ReadModelRefreshEngine {
+  modelName: string;
+  refreshCadence: '15min' | 'hourly' | 'daily';
+  sourceWorkload: 'operational-read';  // reads from journey/audit
+  targetWorkload: 'analytics-read';    // writes to analytics schema
+  computeFn: (tenantId: string, period: DateRange) => ReadModelRow[];
+}
+```
+
+- Each refresh engine is a **pure computation** over its declared sources.
+- At T1, refresh is triggered by a scheduled job (cron/EventBridge placeholder).
+- No cross-workload FKs — refresh engines read operationally, write analytically.
+- Read models store latest computation + 30-day trend history.
+- Read models are bounded by journey/template count, not raw event volume (Req 7 AC-4).
+- No individual-analyst granularity in any read model (Req 7 AC-5).
+
+---
+
+*Section 6 to follow in the final commit:*
 - *§6: AI Analyst integration + governance + testing strategy + risks*
 
 ## Correctness Properties
