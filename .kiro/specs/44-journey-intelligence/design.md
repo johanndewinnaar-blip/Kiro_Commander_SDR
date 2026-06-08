@@ -629,8 +629,171 @@ Templates are **descriptive, not prescriptive** (Req 3 AC-3). Deviation is flagg
 
 ---
 
-*Sections 4–6 to follow in subsequent commits:*
-- *§4: Formula catalogue (10 families)*
+## Formula Catalogue (10 Families)
+
+**Traces to:** Req 6 AC-1 (strategy policy hosting), AC-2 (10 families), AC-3 (default pack), AC-4 (governance), AC-5 (pure computation with banded output).
+
+All formulas are hosted as strategy policies of surface type `journey-intelligence-formula`. Each inherits versioning, tenant scope, approval lifecycle, audit trail, simulation capability, and override model from the strategy layer (Spec #32). Changes require strategy-policy governance (ARCH-JI-004).
+
+### Formula Engine Interface
+
+```typescript
+export interface FormulaPolicy {
+  formulaFamily: FormulaFamily;
+  formulaVersion: string;
+  weights: Record<string, number>;
+  thresholds: FormulaThresholds;
+  applicability: FormulaApplicability;
+  scope: 'platform_default' | 'tenant_default' | 'tenant_override';
+}
+
+export interface FormulaThresholds {
+  green: number;
+  amber: number;
+  red?: number;
+}
+
+export interface FormulaApplicability {
+  anchorTypes?: JourneyAnchorType[];
+  caseTypes?: string[];
+  domains?: string[];
+}
+
+export type FormulaFamily =
+  | 'journey_quality'
+  | 'journey_complexity'
+  | 'journey_economics'
+  | 'lifecycle_savings'
+  | 'automation_opportunity'
+  | 'automation_friction'
+  | 'automation_maturity'
+  | 'journey_confidence'
+  | 'leakage_risk'
+  | 'rework_risk';
+```
+
+### Family 1: Journey Quality
+
+| Attribute | Value |
+|---|---|
+| **Purpose** | Measures whether journeys end well, not just quickly |
+| **Inputs** | `validation_pass_rate`, `outcome_success_rate`, `rework_rate` (inverted), `override_rate` (inverted), `reopening_rate` (inverted) |
+| **Default Weights** | validation_pass_rate: 0.25, outcome_success_rate: 0.30, rework_rate: 0.20, override_rate: 0.10, reopening_rate: 0.15 |
+| **Thresholds** | green: ≥80, amber: ≥60, red: <60 |
+| **Applies To** | All case templates, action templates |
+| **Tenant Tunable** | All weights, all thresholds, input inclusion/exclusion |
+
+### Family 2: Journey Complexity
+
+| Attribute | Value |
+|---|---|
+| **Purpose** | Measures structural complexity of journeys |
+| **Inputs** | `checkpoint_count`, `actor_count`, `phase_count`, `approval_gate_count`, `rework_count`, `child_journey_count`, `escalation_count`, `delivery_mode_change_count` |
+| **Default Weights** | checkpoint_count: 0.15, actor_count: 0.20, phase_count: 0.10, approval_gate_count: 0.20, rework_count: 0.15, child_journey_count: 0.05, escalation_count: 0.10, delivery_mode_change_count: 0.05 |
+| **Thresholds** | low: ≤30, medium: 31–60, high: >60 |
+| **Applies To** | All templates (normalised against template expectations) |
+| **Tenant Tunable** | Weights, baseline expectations per template |
+
+### Family 3: Journey Economics
+
+| Attribute | Value |
+|---|---|
+| **Purpose** | Measures cost, effort, savings and value |
+| **Inputs** | `total_duration_hours`, `estimated_effort_hours`, `actual_effort_hours`, `baseline_duration_hours`, `automation_drag_hours`, `human_rescue_hours`, `rework_cost_hours`, `outcome` |
+| **Default Weights** | time_saved: 0.25, effort_efficiency: 0.25, automation_contribution: 0.20, outcome_value: 0.30 |
+| **Thresholds** | high_value: ≥70, moderate_value: 40–69, low_value: <40 |
+| **Impact Output** | impactClassification, riskDelta, exposureDelta, controlImprovement, timeSavedHours, effortSavedHours |
+| **Applies To** | All case templates, action templates, mission templates |
+| **Tenant Tunable** | All weights, baseline durations, outcome value mapping |
+
+### Family 4: Lifecycle Savings
+
+| Attribute | Value |
+|---|---|
+| **Purpose** | Measures time saved versus baseline per OODA phase |
+| **Inputs** | `per_phase_baseline_hours` (from template), `per_phase_actual_hours` (from checkpoints), `delivery_mode_per_phase` |
+| **Default Weights** | observe_savings: 0.20, orient_savings: 0.30, decide_savings: 0.25, act_savings: 0.25 |
+| **Thresholds** | green: ≥30% saved, amber: 10–29%, red: <10% or negative |
+| **Applies To** | All case templates, enrichment templates, action templates |
+| **Tenant Tunable** | Baseline hours per phase per template, phase weights |
+
+### Family 5: Automation Opportunity
+
+| Attribute | Value |
+|---|---|
+| **Purpose** | Scores how automatable a journey type is |
+| **Inputs** | `determinism_score`, `connector_available`, `evidence_pre_available`, `approval_required`, `repeatability_score`, `historical_success_rate`, `variance_score` |
+| **Default Weights** | determinism: 0.25, connector_available: 0.15, evidence_pre_available: 0.15, approval_required: −0.15, repeatability: 0.15, historical_success: 0.10, low_variance: 0.05 |
+| **Thresholds** | high: ≥70, medium: 40–69, low: <40 |
+| **Applies To** | All templates |
+| **Tenant Tunable** | All weights, approval gate impact |
+
+### Family 6: Automation Friction
+
+| Attribute | Value |
+|---|---|
+| **Purpose** | Measures resistance between decision and execution |
+| **Inputs** | `drag_hours`, `failure_rate`, `rescue_rate`, `retry_count`, `recovery_hours`, `connector_reliability` |
+| **Default Weights** | drag: 0.20, failure_rate: 0.30, rescue_rate: 0.20, retry_count: 0.15, recovery_hours: 0.10, connector_reliability: 0.05 |
+| **Thresholds** | low: ≤20, medium: 21–50, high: >50 (lower is better) |
+| **Applies To** | Action templates, case templates where delivery_mode includes automation |
+| **Tenant Tunable** | All weights, acceptable drag threshold, connector targets |
+
+### Family 7: Automation Maturity
+
+| Attribute | Value |
+|---|---|
+| **Purpose** | Tracks delivery mode progression toward autonomous |
+| **Inputs** | `delivery_mode_distribution`, `trend_direction`, `autonomous_success_rate` |
+| **Default Weights** | manual_fraction: −0.30, autonomous_fraction: 0.30, system_driven_fraction: 0.15, ai_enhanced_fraction: 0.10, trend_improvement: 0.10, autonomous_success: 0.05 |
+| **Thresholds** | mature: ≥70, developing: 40–69, immature: <40 |
+| **Applies To** | All templates (grouped by type) |
+| **Tenant Tunable** | Target maturity per template, band thresholds |
+
+### Family 8: Journey Confidence
+
+| Attribute | Value |
+|---|---|
+| **Purpose** | Estimates likelihood of successful outcome for active journeys |
+| **Inputs** | `phase_progress_ratio`, `checkpoint_adherence`, `evidence_confidence_avg`, `decision_confidence_avg`, `rework_occurring`, `template_deviation` |
+| **Default Weights** | phase_progress: 0.15, checkpoint_adherence: 0.20, evidence_confidence: 0.20, decision_confidence: 0.20, no_rework: 0.15, no_deviation: 0.10 |
+| **Thresholds** | high: ≥75, medium: 50–74, low: <50 |
+| **Applies To** | All case templates, action templates, mission templates |
+| **Tenant Tunable** | All weights, confidence-driven alerting rules |
+
+### Family 9: Leakage Risk
+
+| Attribute | Value |
+|---|---|
+| **Purpose** | Predicts which active journeys are at risk of leaking |
+| **Inputs** | `time_at_current_checkpoint_hours`, `template_expected_hours`, `historical_leakage_rate`, `delivery_mode`, `phase`, `child_journey_stall` |
+| **Default Weights** | time_overshoot_ratio: 0.35, historical_leakage_rate: 0.25, manual_delivery: 0.15, orient_decide_phase: 0.10, child_stall: 0.15 |
+| **Thresholds** | high_risk: ≥70, medium_risk: 40–69, low_risk: <40 |
+| **Applies To** | All active journeys (15-minute detection cycle) |
+| **Tenant Tunable** | Expected checkpoint durations (via template), risk thresholds |
+
+### Family 10: Rework Risk
+
+| Attribute | Value |
+|---|---|
+| **Purpose** | Predicts which journeys are likely to require rework |
+| **Inputs** | `evidence_sufficiency`, `decision_override_history`, `connector_reliability_for_type`, `validation_readiness`, `template_historical_rework_rate` |
+| **Default Weights** | evidence_sufficiency: 0.25, historical_override_rate: 0.20, connector_reliability: 0.20, validation_readiness: 0.15, template_historical_rate: 0.20 |
+| **Thresholds** | high_risk: ≥60, medium_risk: 30–59, low_risk: <30 |
+| **Applies To** | Active journeys in Decide or Act phase |
+| **Tenant Tunable** | Evidence sufficiency definition, risk thresholds |
+
+### Formula Fixture Design Notes
+
+- Each formula is seeded as a strategy policy with `surfaceType: 'journey-intelligence-formula'`.
+- The `configuration` JSON payload carries: `formulaFamily`, `formulaVersion` ('1.0.0'), `weights`, `thresholds`, `applicability`, `scope` ('platform_default').
+- Each seed formula has `status: 'active'`, `policyVersion: '1.0.0'`.
+- Tenants override by creating a new policy with `scope: 'tenant_override'` for their tenant — the resolution hierarchy is: tenant_override > tenant_default > platform_default.
+- Formula evaluation is a **pure function**: inputs + weights + thresholds → score + band + breakdown. No side effects, no state mutation, no API calls.
+
+---
+
+*Sections 5–6 to follow in subsequent commits:*
 - *§5: Tagger engines + read models*
 - *§6: AI Analyst integration + governance + testing strategy + risks*
 
