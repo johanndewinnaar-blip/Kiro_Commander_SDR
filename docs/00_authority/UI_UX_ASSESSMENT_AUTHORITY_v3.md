@@ -419,9 +419,51 @@ Assesses BOTH intensity ceiling adherence AND Mission mode operational posture d
 
 ---
 
-### 3.8 Future Capability Readiness (FCR)
+### 3.8 Posture Classification Rendering (PCR) — NEW (Secure by Design)
 
-**Retained from v2.1 §12.** 8 intelligence domain readiness scores. Advisory.
+**Doctrine:** Commander classifies every entity in the estate as one of three posture states. This is a CORE Commander concept — not future capability. The engines and data model are BUILT:
+
+| Posture State | Commander Term | Meaning | Engine Logic |
+|--------------|---------------|---------|--------------|
+| **Secure by Design** | PROTECTED | Configured correctly, controls in place, validated, no known weaknesses, posture data current | `classifyPostureState()` → no drift, no gaps, no exposure, entity resolved, data fresh |
+| **Drift** | PRE_WARNED | Was secure, has drifted — known unaddressed weaknesses exist | `classifyPostureState()` → `totalWeaknesses > 0` |
+| **Not Secure by Design** | NOVEL | Never configured to standard — entity unresolved, posture data stale, no baseline | `classifyPostureState()` → entity unresolved OR posture not current |
+
+**Available infrastructure:**
+- Engine: `posture-accountability-engine.ts` (full classification, transitions, escalation, time-in-state)
+- Engine: `temporal-posture-lookup-engine.ts` (evaluatePreWarned, evaluateProtected, evaluateNovel)
+- Entity: `posture-accountability.ts`
+- Entity: `architecture-component.ts` (driftState: compliant / minor_drift / major_drift / unknown)
+- Fixtures: `seed-posture-accountability.ts`, `seed-attack-classification-audits.ts`
+
+**Assessment Structure:**
+
+| Criterion | Assessment Question | Finding if absent |
+|-----------|-------------------|-------------------|
+| Posture classification visible | Does this page show PROTECTED / PRE_WARNED / NOVEL status for displayed entities? | HIGH — fundamental Commander concept missing |
+| Classification sourced from engine | Is the classification from `posture-accountability-engine`, not hardcoded? | MEDIUM |
+| Time-in-state visible | Can the user see how long an entity has been in its current posture state? | MEDIUM (escalation awareness) |
+| Transition visibility | Can the user see WHEN and WHY classification changed? | LOW |
+| Escalation flagging | Are entities exceeding escalation threshold highlighted? | MEDIUM |
+| Estate posture distribution | Does the page show % PROTECTED / % PRE_WARNED / % NOVEL for the domain? | HIGH for Command surfaces, MEDIUM for Intelligence |
+
+**Scoring:**
+
+| Score | Meaning |
+|-------|---------|
+| 0 | No posture classification on page (entities shown without posture context) |
+| 25 | driftState field rendered but not mapped to PROTECTED/PRE_WARNED/NOVEL taxonomy |
+| 50 | Classification visible for some entities but not all; no distribution summary |
+| 75 | Classification visible for all entities + estate distribution shown |
+| 100 | Full posture accountability: classification + time-in-state + transitions + escalation |
+
+**Applicability:** ALL pages rendering assets, identities, architecture components, or estate-level summaries. MANDATORY for Command and Intelligence surfaces. Advisory for Configuration/Control Plane.
+
+---
+
+### 3.9 Future Capability Readiness (FCR)
+
+**Retained from v2.1 §12.** 7 intelligence domain readiness scores (Secure by Design elevated to PCR above; removed from FCR advisory list). Advisory.
 
 ---
 
@@ -436,7 +478,8 @@ Assesses BOTH intensity ceiling adherence AND Mission mode operational posture d
 | 19 | Edge State Resilience | ESR | Assessed (scored) |
 | 20 | Strategy Consumption | SCC | Assessed (scored) |
 | 21 | Journey Intelligence | JI | Assessed (scored) |
-| 22 | Future Capability Readiness | FCR | Advisory |
+| 22 | **Posture Classification Rendering** | **PCR** | **Assessed (scored)** |
+| 23 | Future Capability Readiness | FCR | Advisory |
 
 ---
 
@@ -561,6 +604,17 @@ Outcome attribution possible: [YES / PARTIAL / NO]
 Contribution measurable: [YES / PARTIAL / NO]
 MOA Score: [0-100]
 
+POSTURE CLASSIFICATION RENDERING (PCR)
+──────────────────────────────────────
+Entities on page with posture applicability: [count]
+Entities showing PROTECTED/PRE_WARNED/NOVEL classification: [count / %]
+Classification sourced from engine (not hardcoded): [YES/NO]
+Time-in-state visible: [YES/NO]
+Transition visibility: [YES/NO]
+Escalation flagging: [YES/NO]
+Estate posture distribution shown: [YES/NO]
+PCR Score: [0-100]
+
 COMMANDER C2 CONTRIBUTION
 ─────────────────────────
 Command contribution: [how this page supports command decisions]
@@ -579,9 +633,9 @@ Outcome contribution: [how this page measures outcomes]
 | Category | v2.1 | v3.0 | Change |
 |----------|------|------|--------|
 | Core (weighted) | 15 | **14** | Consolidated (merged PL+TSR→PTR, UCC→UCR, added DSQ, merged TA into CU) |
-| Commander-Specific | 12 | **8** | Consolidated (merged VIC+MMR→VIM, merged telemetry into OODU, promoted WAR) |
+| Commander-Specific | 12 | **9** | Consolidated + PCR elevated from FCR advisory |
 | Programme-Level | 9 | **11** | Added DDEC, C2C |
-| **Total** | **36** | **33** | Net reduction — more focused, less overlap |
+| **Total** | **36** | **34** | Fewer but deeper — PCR elevated from advisory to scored |
 
 ### Design Philosophy (v3.0 vs v2.1)
 
@@ -663,7 +717,7 @@ CORE ASSESSMENT (14 dimensions)
 □ RE — Role Experience (audience-specific quality)
 □ CLC — Closed-Loop Contribution (loop position + progression)
 
-COMMANDER-SPECIFIC (8 dimensions, where applicable)
+COMMANDER-SPECIFIC (9 dimensions, where applicable)
 □ AIAL — AI Analyst Lifecycle (8 stages + grounding)
 □ WAR — Workflow & Automation Readiness (L0-L6)
 □ MOA — Mission & Outcome Alignment (7 criteria)
@@ -671,7 +725,8 @@ COMMANDER-SPECIFIC (8 dimensions, where applicable)
 □ ESR — Edge State Resilience (7 scenarios)
 □ SCC — Strategy Consumption (sourcing + attribution)
 □ JI — Journey Intelligence (entry/exit/checkpoints)
-□ FCR — Future Capability Readiness (8 domains, advisory)
+□ PCR — Posture Classification Rendering (PROTECTED/PRE_WARNED/NOVEL)
+□ FCR — Future Capability Readiness (7 domains, advisory)
 
 POST-ASSESSMENT
 □ Compute weighted composite
