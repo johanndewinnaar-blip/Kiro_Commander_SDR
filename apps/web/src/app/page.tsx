@@ -16,9 +16,11 @@ import {
   calculateDecideHealth,
   calculateActHealth,
   composeCommandTempo,
+  detectPhaseDegradation,
   type HealthThresholds,
   type PhaseHealthScore,
 } from '../../../../packages/contracts/src/engines/ooda-layer';
+import { useState } from 'react';
 
 /**
  * Command Centre — Pattern D Command Workspace (Unit 16a v2.0)
@@ -31,7 +33,13 @@ import {
  * Intensity Ceiling: Level 3 (Emergency Command — dynamic escalation)
  *
  * Source: UIAA-3.0, DS-1.0 §5/§8/§9, Spec #41, Spec #58, Spec #67,
- *         REVIEW_COMMAND_CENTRE_DEFINITIVE.md remediation path P0-P2.
+ *         REVIEW_COMMAND_CENTRE_DEFINITIVE.md remediation path P0-P4.
+ *
+ * P3 additions: System reasoning (degradation rationale, strategy attribution,
+ *   case routing rationale, OODA phase drill-paths). Uses existing engine outputs
+ *   and seed data fields — no invention.
+ * P4 additions: OODA phase drill-paths from gauges. Strategy policy attribution
+ *   visible on KPI strip. Context expansion placeholder markers.
  *
  * Architecture:
  *   FIXED: P0 Emergency Banner (conditional) + KPI Strip (always)
@@ -87,6 +95,15 @@ export default function CommandCentrePage() {
   }, thresholds);
   const tempo = composeCommandTempo([observe, orient, decide, act], thresholds, degradationThreshold, new Date().toISOString());
 
+  // ─── P3: OODA degradation detection (system reasoning — why is a phase degraded?) ──
+  const degradations = tempo.phases.map((ph) => detectPhaseDegradation(ph, degradationThreshold));
+  const degradedPhases = degradations.filter((d) => d.degraded);
+
+  // ─── P3: Strategy attribution (which policy governs these thresholds?) ──
+  const governingPolicyLabel = tempoStrategy
+    ? `${tempoStrategy.surfaceType} v${tempoStrategy.policyVersion} (approved ${tempoStrategy.approval?.approvedAt?.slice(0, 10) ?? 'pending'})`
+    : 'No active policy — using defensive defaults';
+
   // ─── Data derivations ─────────────────────────────────────────────────────
   const p0Cases = seedCases.filter((c) => c.priority === 'P0');
   const p1Cases = seedCases.filter((c) => c.priority === 'P1');
@@ -94,6 +111,14 @@ export default function CommandCentrePage() {
   const criticalAssets = seedAssets.filter((a) => a.criticality >= 4).length;
   const highRiskIdentities = seedIdentities.filter((i) => i.riskScore >= 50).length;
   const errorConnectors = seedConnectors.filter((c) => c.state === 'error');
+
+  // ─── P3: Case routing rationale (top 3 recent cases with system reasoning) ──
+  const recentCasesWithRationale = seedCases.slice(0, 3).map((c) => ({
+    ref: c.caseRef,
+    title: c.title,
+    priority: c.priority,
+    rationale: c.routingRationale ?? 'Routing rationale pending',
+  }));
 
   // ─── Semantic colour helpers (mode-aware) ──────────────────────────────────
   const bandColor = (band: PhaseHealthScore['band']) =>
@@ -235,6 +260,15 @@ export default function CommandCentrePage() {
           </div>
         ))}
       </div>
+      {/* P3: Strategy attribution — visible governance */}
+      <div style={{ ...fixedBandStyle, padding: '4px 16px', background: tokens.surface.primary, borderBottom: `1px solid ${tokens.border.subtle}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span style={{ fontSize: '9px', color: tokens.text.muted, fontFamily: "'JetBrains Mono', monospace" }}>
+          Governed by: {governingPolicyLabel}
+        </span>
+        <span style={{ fontSize: '9px', color: tokens.text.muted, fontFamily: "'JetBrains Mono', monospace" }}>
+          Thresholds: GREEN ≥{thresholds.greenMin} · AMBER ≥{thresholds.amberMin} · RED &lt;{thresholds.amberMin}
+        </span>
+      </div>
 
       {/* ═══ THREE-COLUMN WORKSPACE ═══ */}
       <div style={columnsStyle}>
@@ -318,12 +352,13 @@ export default function CommandCentrePage() {
         <div style={{ ...columnStyle, borderRight: `1px solid ${tokens.border.subtle}` }}>
           <div style={columnHeaderStyle}>OODA Health &amp; Estate Intelligence</div>
 
-          {/* OODA Phase Gauges */}
+          {/* OODA Phase Gauges — with P4 drill-paths */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '12px', marginBottom: '16px' }}>
             {OODA_PHASES.map((phase) => {
               const score = tempo.phases.find((p) => p.phase === phase)!;
+              const drillPath = phase === 'observe' ? '/tool-health' : phase === 'orient' ? '/operating-picture/external' : phase === 'decide' ? '/cases' : '/strategy/centre';
               return (
-                <div key={phase} style={{ ...cardStyle, textAlign: 'center' as const, marginBottom: 0 }}>
+                <a key={phase} href={drillPath} style={{ ...cardStyle, textAlign: 'center' as const, marginBottom: 0, textDecoration: 'none', cursor: 'pointer' }}>
                   <div style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.04em', color: tokens.text.secondary, marginBottom: '4px' }}>
                     {OODA_PHASE_LABELS[phase]}
                   </div>
@@ -338,10 +373,29 @@ export default function CommandCentrePage() {
                       {score.band === 'red' ? 'DEGRADED' : 'WATCH'}
                     </div>
                   )}
-                </div>
+                  {/* P4: drill-path hint */}
+                  <div style={{ fontSize: '8px', color: tokens.text.muted, marginTop: '4px' }}>
+                    → {phase === 'observe' ? 'Tool Health' : phase === 'orient' ? 'Operating Picture' : phase === 'decide' ? 'Case Queue' : 'Strategy'}
+                  </div>
+                </a>
               );
             })}
           </div>
+
+          {/* P3: Degradation Reasoning (only shows when phases are degraded) */}
+          {degradedPhases.length > 0 && (
+            <div style={{ ...cardStyle, borderColor: tokens.status.warning }}>
+              <div style={cardTitleStyle}>Phase Degradation Reasoning</div>
+              {degradedPhases.map((d) => (
+                <div key={d.phase} style={{ marginBottom: '8px', fontSize: '11px' }}>
+                  <div style={{ fontWeight: 600, color: bandColor(d.healthScore < thresholds.amberMin ? 'red' : 'amber') }}>
+                    {OODA_PHASE_LABELS[d.phase]} — Score {d.healthScore} (threshold: {d.degradationThreshold})
+                  </div>
+                  <div style={{ color: tokens.text.secondary, marginTop: '2px' }}>{d.rationale}</div>
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* Threat Picture */}
           <div style={cardStyle}>
@@ -405,13 +459,53 @@ export default function CommandCentrePage() {
             ))}
           </div>
 
-          {/* Drill Paths */}
+          {/* P3: System Reasoning — recent case routing decisions (SFD-1.0: UI explains system decisions) */}
           <div style={cardStyle}>
-            <div style={cardTitleStyle}>Operating Pictures</div>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <a href="/operating-picture/external" style={{ flex: 1, padding: '8px', border: `1px solid ${tokens.border.default}`, color: tokens.text.primary, fontSize: '11px', fontWeight: 600, textDecoration: 'none', textAlign: 'center' as const }}>External</a>
-              <a href="/operating-picture/internal" style={{ flex: 1, padding: '8px', border: `1px solid ${tokens.border.default}`, color: tokens.text.primary, fontSize: '11px', fontWeight: 600, textDecoration: 'none', textAlign: 'center' as const }}>Internal</a>
+            <div style={cardTitleStyle}>System Decisions (Recent Routing)</div>
+            {recentCasesWithRationale.map((c) => (
+              <div key={c.ref} style={{ marginBottom: '10px', paddingBottom: '8px', borderBottom: `1px solid ${tokens.border.subtle}` }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
+                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '10px', color: tokens.text.muted }}>{c.ref}</span>
+                  <span style={{ fontSize: '9px', padding: '1px 4px', fontWeight: 700, color: c.priority === 'P0' ? tokens.status.critical : c.priority === 'P1' ? tokens.status.warning : tokens.text.muted, border: `1px solid ${c.priority === 'P0' ? tokens.status.critical : c.priority === 'P1' ? tokens.status.warning : tokens.border.default}` }}>{c.priority}</span>
+                </div>
+                <div style={{ fontSize: '11px', color: tokens.text.primary, marginBottom: '2px' }}>{c.title.slice(0, 60)}{c.title.length > 60 ? '...' : ''}</div>
+                <div style={{ fontSize: '10px', color: tokens.text.secondary, fontStyle: 'italic' }}>↳ {c.rationale}</div>
+              </div>
+            ))}
+            <a href="/cases" style={{ fontSize: '10px', color: tokens.action.primary, textDecoration: 'none', fontWeight: 600 }}>View all case decisions →</a>
+          </div>
+
+          {/* P4: Drill Paths — OODA-aligned navigation */}
+          <div style={cardStyle}>
+            <div style={cardTitleStyle}>OODA Drill Paths</div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+              <a href="/operating-picture/external" style={{ padding: '8px', border: `1px solid ${tokens.border.default}`, color: tokens.text.primary, fontSize: '10px', fontWeight: 600, textDecoration: 'none', textAlign: 'center' as const }}>External Op Picture</a>
+              <a href="/operating-picture/internal" style={{ padding: '8px', border: `1px solid ${tokens.border.default}`, color: tokens.text.primary, fontSize: '10px', fontWeight: 600, textDecoration: 'none', textAlign: 'center' as const }}>Internal Op Picture</a>
+              <a href="/posture" style={{ padding: '8px', border: `1px solid ${tokens.border.default}`, color: tokens.text.primary, fontSize: '10px', fontWeight: 600, textDecoration: 'none', textAlign: 'center' as const }}>Posture Metrics</a>
+              <a href="/assets" style={{ padding: '8px', border: `1px solid ${tokens.border.default}`, color: tokens.text.primary, fontSize: '10px', fontWeight: 600, textDecoration: 'none', textAlign: 'center' as const }}>Asset Estate</a>
+              <a href="/identity" style={{ padding: '8px', border: `1px solid ${tokens.border.default}`, color: tokens.text.primary, fontSize: '10px', fontWeight: 600, textDecoration: 'none', textAlign: 'center' as const }}>Identity Intelligence</a>
+              <a href="/fusion-map" style={{ padding: '8px', border: `1px solid ${tokens.border.default}`, color: tokens.text.primary, fontSize: '10px', fontWeight: 600, textDecoration: 'none', textAlign: 'center' as const }}>Fusion Map</a>
             </div>
+          </div>
+
+          {/* P4: OODA Loop Flow indicator (visual continuity — not 4 independent gauges) */}
+          <div style={{ ...cardStyle, textAlign: 'center' as const }}>
+            <div style={cardTitleStyle}>OODA Cycle</div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', fontSize: '10px' }}>
+              {OODA_PHASES.map((phase, i) => {
+                const score = tempo.phases.find((p) => p.phase === phase)!;
+                return (
+                  <span key={phase}>
+                    <span style={{ fontWeight: 700, color: bandColor(score.band) }}>
+                      {OODA_PHASE_LABELS[phase]} ({score.score})
+                    </span>
+                    {i < 3 && <span style={{ color: tokens.text.muted, margin: '0 4px' }}>→</span>}
+                  </span>
+                );
+              })}
+              <span style={{ color: tokens.text.muted, margin: '0 4px' }}>↩</span>
+            </div>
+            <div style={{ fontSize: '9px', color: tokens.text.muted, marginTop: '4px' }}>Continuous programme-level loop · {degradedPhases.length > 0 ? `${degradedPhases.length} phase(s) degraded` : 'All phases healthy'}</div>
           </div>
         </div>
 
@@ -459,6 +553,12 @@ export default function CommandCentrePage() {
           <div style={{ padding: '8px 0', fontSize: '10px', color: tokens.text.muted, fontFamily: "'JetBrains Mono', monospace" }}>
             Last updated: {new Date().toLocaleTimeString()} · Seed data · Phase 1
           </div>
+
+          {/* P5 PLACEHOLDER: Journey Intelligence instrumentation checkpoint */}
+          {/* JI-CHECKPOINT: command-centre-viewed — session-start, orientation-complete, drill-taken */}
+
+          {/* P6 PLACEHOLDER: Context expansion — right column responds to left/centre selection */}
+          {/* CONTEXT-EXPANSION: When implemented, clicking a case in left column will update this column with case-specific context without navigation */}
         </div>
       </div>
 
