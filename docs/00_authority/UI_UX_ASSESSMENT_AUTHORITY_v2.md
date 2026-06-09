@@ -1,9 +1,9 @@
 # Commander SDR — UI/UX Assessment Authority
 
-**Version:** UIAA-2.0
-**Status:** Authoritative. Supersedes UIAA-1.0. Governs all future page-level, group-level, and programme-level UI/UX and operational conformity reviews.
+**Version:** UIAA-2.1
+**Status:** Authoritative. Supersedes UIAA-1.0 and UIAA-2.0. Governs all future page-level, group-level, and programme-level UI/UX and operational conformity reviews.
 **Date:** 2026-06-09
-**Supersedes:** UI_UX_ASSESSMENT_AUTHORITY.md (UIAA-1.0)
+**Supersedes:** UI_UX_ASSESSMENT_AUTHORITY.md (UIAA-1.0), UI_UX_ASSESSMENT_AUTHORITY_v2.md (UIAA-2.0)
 **Authority chain:** Subordinate to AUTHORITY_MODEL.md (Tier 5). References Tiers 1–4 as assessment inputs.
 **Scope:** Desktop only (per DS-1.0). Three application boundaries. All architectural layers where they surface to UI.
 
@@ -19,6 +19,27 @@ UIAA-2.0 expands the framework to assess Commander as a **Cyber Command Platform
 - System-First Doctrine adherence (not just rendered data)
 - Full data dictionary depth (entities + fields + resolvers + engines + relationships + derived metrics)
 - AI Analyst opportunity across the full AI lifecycle (not just AICAP markers)
+- OODA usability and actionability (not just data rendering)
+- Journey Intelligence checkpoint and flow assessment
+- Closed-loop operational contribution
+- Automation and orchestration opportunity
+- Command Platform surface classification
+- Role-specific cognitive experience
+- Future capability readiness across 8 intelligence domains
+
+**v2.1 Addendum:** Incorporates 11 architectural, design, and usability recommendations:
+
+- Situational Awareness Quality (command-grade cognitive assessment)
+- Temporal Awareness (freshness, velocity, change detection)
+- Cognitive Load Ceiling (per surface classification)
+- Progressive Disclosure Architecture (4-level information reveal)
+- Action Proximity Scoring (0-5 reachability scale)
+- Edge State Assessment (zero-data, overload, stale, partial scenarios)
+- Spatial Consistency (cross-page layout coherence)
+- Mission Mode as Operational Posture (functional differentiation, not cosmetic)
+- Cross-Page State Continuity (context preservation across navigation)
+- UIAA Self-Governance (version triggers, recalibration)
+- Assessment Observability (trend tracking, velocity, correlation)
 - OODA usability and actionability (not just data rendering)
 - Journey Intelligence checkpoint and flow assessment
 - Closed-loop operational contribution
@@ -773,7 +794,345 @@ The following sections from UIAA-1.0 remain valid and are incorporated by refere
 - §9 Rationalisation Framework (7 categories, decision tree)
 - §10 Review Execution Process (9-step, now expanded)
 
-These are not repeated here. Refer to UI_UX_ASSESSMENT_AUTHORITY.md (v1.0) for the retained sections. In case of conflict, v2.0 prevails.
+These are not repeated here. Refer to UI_UX_ASSESSMENT_AUTHORITY.md (v1.0) for the retained sections. In case of conflict, v2.1 prevails.
+
+---
+
+## 18. Situational Awareness Quality (NEW — Architect Recommendation 1)
+
+### 18.1 Doctrine
+
+Commander is a C2 platform. C2 platforms are judged by whether the operator achieves **situational awareness**, not whether data is present. The distinction between "data on screen" and "user understands the operational picture" is the defining quality measure for a Command Platform.
+
+### 18.2 Assessment Criteria
+
+| Criterion | Assessment Question | Method |
+|-----------|-------------------|--------|
+| Glanceability | Can the user answer "what is happening right now?" within 3 seconds of page load? | First-impression cognitive test |
+| Delta Visibility | Can the user answer "what has changed since I last looked?" without scrolling? | Change detection assessment |
+| Attention Direction | Can the user answer "what requires my attention?" without reading every element? | Signal-to-noise ratio measurement |
+| Trajectory Awareness | Can the user answer "what is the trajectory?" (getting better/worse) | Trend visibility assessment |
+| Anomaly Salience | Does the page distinguish between "normal" and "abnormal" at a glance? | Visual weight differentiation |
+| Spatial Priority | Does information arrangement follow cognitive priority? (most urgent → least urgent, top-left → bottom-right) | Spatial hierarchy validation |
+
+### 18.3 Scoring
+
+| Score | Meaning |
+|-------|---------|
+| 0–25 | Data present but no situational awareness achieved (user must study page to understand state) |
+| 26–50 | Partial awareness — user can identify problems but not trajectory or priority |
+| 51–75 | Good awareness — user can answer 4 of 6 criteria within first scan |
+| 76–90 | Strong awareness — user achieves operational understanding within 3 seconds |
+| 91–100 | Command-grade awareness — user immediately knows state, trajectory, priority, and required action |
+
+**Dimension: Situational Awareness Quality (SAQ)** — Weight: 8% (core dimension). Applicability: ALL Command and Intelligence surfaces mandatory. Advisory for other classifications.
+
+---
+
+## 19. Temporal Awareness (NEW — Architect Recommendation 2)
+
+### 19.1 Doctrine
+
+C2 operators must know data freshness and velocity. A page showing "3 P0 cases" is fundamentally different from "3 P0 cases — 2 opened in the last 15 minutes." Without temporal context, operators cannot judge urgency, staleness, or rate of change.
+
+### 19.2 Mandatory Temporal Elements
+
+| Element | Requirement | Applies To |
+|---------|------------|-----------|
+| Data freshness indicator | Every command/intelligence surface MUST show "last updated: [timestamp]" | Command, Intelligence surfaces |
+| Trend direction | Every metric MUST show direction (up/down/flat) | All KPI tiles, gauges |
+| Velocity indicator | Rate-of-change SHOULD be shown where operationally relevant | P0 count, SLA breach rate, OODA tempo |
+| Data-age warning | Surfaces consuming connector data MUST warn when data exceeds freshness thresholds | Any surface with connector-sourced data |
+| Mission mode clock | Mission mode surfaces MUST show a live clock and session duration | All Mission mode surfaces |
+| Temporal context on counts | Counts SHOULD include recency context ("3 P0 — 2 new in last 30m") | Case counts, alert counts |
+| Historical comparison | Summary metrics SHOULD show comparison to previous period | Posture metrics, OODA tempo |
+
+### 19.3 Assessment Integration
+
+Temporal awareness is assessed as part of:
+- **DC (Data Completeness)** — temporal fields available but not rendered
+- **SAQ (Situational Awareness Quality)** — trajectory awareness criterion
+- **CU (Cognitive Usability)** — freshness and staleness communication
+
+---
+
+## 20. Cognitive Load Ceiling (NEW — Architect Recommendation 3)
+
+### 20.1 Doctrine
+
+A CISO landing on Command Centre during a P0 event needs to make a decision within seconds. If the page contains 40 data points of equal visual weight, they cannot decide — even if all data is correct. Cognitive science establishes that working memory holds 4±1 items for immediate processing.
+
+### 20.2 Cognitive Ceilings by Surface Classification
+
+| Surface Classification | Max Primary Attention Items | Max Total Visible Elements | Rationale |
+|----------------------|---------------------------|---------------------------|-----------|
+| Command Surface | 4–6 | 20–25 (at scan level) | CISO/SOM must triage immediately |
+| Intelligence Surface | 8–12 | 30–40 (with drill-depth) | Pattern recognition, not exhaustive reading |
+| Investigation Surface | 12–20 | 40–60 (analyst expects density) | Detail examination with focused attention |
+| Execution Surface | 4–8 | 15–20 | Clear action focus, minimal distraction |
+| Health Dashboard | 6–10 | 25–35 | Quick health scan, anomaly detection |
+| Governance Surface | 8–12 | 30–40 | Structured assessment, sequential processing |
+| Strategy Surface | 6–10 | 20–30 | Policy clarity, simulation focus |
+| Administration Surface | Unlimited (form-based) | Sequential | Configuration is linear, not spatial |
+
+### 20.3 Assessment Rules
+
+1. Count "primary attention items" — elements competing for first-scan attention (cards of equal weight, KPIs without hierarchy, alerts without priority)
+2. If count exceeds ceiling: **MEDIUM finding** — page creates cognitive overload for its audience
+3. Remediation: Implement visual hierarchy (size, colour weight, position) to reduce effective attention items below ceiling while retaining data
+
+---
+
+## 21. Progressive Disclosure Architecture (NEW — Architect Recommendation 4)
+
+### 21.1 Doctrine
+
+Commander serves CISOs who want 4 numbers AND analysts who want 40 fields — often on the same pages. Progressive disclosure resolves this tension: information reveals itself as the user's attention moves deeper.
+
+### 21.2 Four Disclosure Levels
+
+| Level | Name | Timeframe | What's Visible | Interaction Required |
+|-------|------|-----------|---------------|---------------------|
+| 1 | Glance | 0–3 seconds | Top KPIs, alert state, trend direction, overall band | None — visible on page load |
+| 2 | Scan | 3–15 seconds | Section summaries, card headlines, priority distribution, anomaly indicators | Eye movement only |
+| 3 | Explore | 15–60 seconds | Expandable panels, drill-through links, detail tables, timeline segments | Click/expand/hover |
+| 4 | Investigate | 60+ seconds | Full entity detail, timeline, evidence, relationships, audit trail | Navigate to detail surface |
+
+### 21.3 Assessment Per Surface Classification
+
+| Surface | Must Support Levels | Finding if absent |
+|---------|-------------------|------------------|
+| Command Surface | ALL FOUR (1-4) | HIGH if no glance layer |
+| Intelligence Surface | Levels 1-3 (investigate on detail surface) | MEDIUM if all value requires clicks |
+| Investigation Surface | Levels 3-4 (users arrive intentionally) | LOW |
+| Administration Surface | Levels 3-4 (task-oriented) | N/A |
+
+---
+
+## 22. Action Proximity Scoring (NEW — Architect Recommendation 5)
+
+### 22.1 Doctrine
+
+Spec #41 states "actions belong near the object they affect." UIAA-2.1 formalises this as a measurable score.
+
+### 22.2 Scoring Scale
+
+| Score | Definition | Example |
+|-------|-----------|---------|
+| 0 | No actions available from this page | Pure display page with no interactive elements |
+| 1 | Actions available but require navigation to another page | "View details" → navigate → find action button |
+| 2 | Actions available within 1 click from the relevant data | Card has a "View Queue" button |
+| 3 | Actions visible inline alongside the data they affect | Risk object row has "Acknowledge" button in-row |
+| 4 | System-recommended action visible with 1-click execution | AI-suggested "Escalate to P0" button contextually shown |
+| 5 | Contextual action presented proactively based on page state | "P0 detected — Open War Room?" system prompt |
+
+### 22.3 Expected Scores by Surface Classification
+
+| Surface Classification | Minimum Expected | Target |
+|-----------------------|-----------------|--------|
+| Command Surface | 3 | 4–5 |
+| Execution Surface | 4 | 5 |
+| Investigation Surface | 3 | 4 |
+| Intelligence Surface | 2 | 3 |
+| Control/Strategy Surface | 3 | 4 |
+| Administration Surface | 3 | 3 |
+
+---
+
+## 23. Edge State Assessment (NEW — Architect Recommendation 6)
+
+### 23.1 Doctrine
+
+Pages must be assessed for behaviour under stress, absence, and degradation — not just with populated seed data.
+
+### 23.2 Mandatory Edge Scenarios
+
+| Scenario | Assessment Question | Expected Behaviour |
+|----------|-------------------|--------------------|
+| Zero-data state | What does the page show for a fresh tenant? | Guide toward first-value — never blank |
+| Partial-data state | What happens when some entities exist but others don't? | Distinguish "no data" from "healthy zero" |
+| Overload state | What happens under mass-incident (10+ P0, 100+ breached SLAs)? | Degrade gracefully — summarise, don't render 100 cards |
+| Stale-data state | What happens when connector data exceeds freshness thresholds? | Warn prominently — stale C2 data is operationally dangerous |
+| Single-domain-dark | One domain completely unreporting? | Indicate absence — absence of signal IS a signal |
+| All-connectors-error | Entire Observe phase collapsed? | Emergency indicator — this is an OODA crisis |
+| Routing anomaly | One analyst owns all cases? | Highlight as anomaly |
+
+---
+
+## 24. Spatial Consistency (NEW — Architect Recommendation 7)
+
+### 24.1 Doctrine
+
+Spatial consistency across pages of the same pattern is mandatory for a command platform. Users should never re-orient to find information they know exists.
+
+### 24.2 Spatial Rules by Pattern
+
+| Pattern | KPI Position | Filter Position | Action Position | Drill Position |
+|---------|-------------|-----------------|-----------------|---------------|
+| PAT-01 (Command Centre) | Top — KPI strip | Top-right (time range) | Header-right | Bottom / card drill |
+| PAT-03 (Case Queue) | Top — summary strip | Below header | Bulk top-right | Inline row drill |
+| PAT-05 (Entity Intelligence) | Top — count + risk summary | Left/top filter bar | Row-level actions | Row click |
+| PAT-07 (Health Dashboard) | Top — KPI strip | Top-right (time range) | N/A (read-only) | Card drill |
+| PAT-09 (Strategy Workspace) | Top — policy count + status | Top filter | Inline policy actions | Panel expand |
+
+### 24.3 Assessment Level
+
+Spatial consistency is assessed at **GROUP and PROGRAMME level** (cross-page comparison), not individual page level.
+
+---
+
+## 25. Mission Mode as Operational Posture (NEW — Architect Recommendation 8)
+
+### 25.1 Doctrine
+
+Mission mode is NOT a colour theme. It represents a shift in **operational posture**. The assessment must evaluate functional differentiation.
+
+### 25.2 Functional Differences Required
+
+| Aspect | Standard Mode | Mission Mode |
+|--------|--------------|-------------|
+| Information priority | Comprehensive | Signal clarity — operationally critical only |
+| Alert treatment | Integrated | ELEVATED — visual dominance, glow |
+| Non-urgent content | Full visibility | SUPPRESSED — lower opacity, collapsed |
+| Numeric display | Body font | JetBrains Mono MANDATORY |
+| Decision paths | Multiple options | ACCELERATED — fewer clicks |
+| Freshness | Periodic | LIVE indicators |
+| Noise | All domains visible | Active/degraded only |
+
+### 25.3 Assessment Question (definitive)
+
+> Can the user achieve situational awareness FASTER in Mission mode than Standard?
+
+If NO: Mission mode is cosmetic. **HIGH finding.**
+
+---
+
+## 26. Cross-Page State Continuity (NEW — Architect Recommendation 9)
+
+### 26.1 Assessment Criteria
+
+| Criterion | Finding if absent |
+|-----------|-------------------|
+| Breadcrumbs communicate workflow position (not just hierarchy) | LOW |
+| Returning preserves scroll position | LOW |
+| Filters maintained across navigation | MEDIUM |
+| OODA position preserved on drill-through | MEDIUM |
+| Back-navigation predictable | HIGH if broken |
+| Working set awareness (multiple open concerns) | MEDIUM for Investigation surfaces |
+
+### 26.2 Assessment Level
+
+Cross-page continuity is assessed at **GROUP level** — navigation flow within each assessment group.
+
+---
+
+## 27. UIAA Self-Governance (NEW — Architect Recommendation 10)
+
+### 27.1 Version Triggers
+
+| Trigger | Action |
+|---------|--------|
+| New baseline spec added | Review dimensions for coverage gap |
+| Intelligence domain activated | Promote FCR advisory → scored |
+| 10+ reviews completed | Recalibrate scoring bands |
+| Programme synthesis produced | Validate dimension weights |
+| Owner direction change | Full UIAA review → v3.0 |
+| Commander AI Phase 2 activates | Promote AICL to core scored |
+| Automation Phase 2 activates | Promote AO to core scored |
+
+### 27.2 Dimension Lifecycle States
+
+| State | Meaning |
+|-------|---------|
+| **Advisory** | Assessed and reported but NOT weighted in composite |
+| **Scored** | Assessed, reported, AND weighted in composite |
+| **Retired** | No longer assessed (superseded) |
+
+### 27.3 Recalibration Rules
+
+- If 80%+ pages GREEN on a dimension → raise threshold
+- If 80%+ pages RED on a dimension → assess whether target is unrealistic for current phase
+- If a dimension never produces findings → retire or merge
+- If scoring bands produce no differentiation → recalibrate
+
+---
+
+## 28. Assessment Observability (NEW — Architect Recommendation 11)
+
+### 28.1 Programme-Level Metrics (tracked across reviews)
+
+| Metric | Purpose |
+|--------|---------|
+| Estate Composite Score Trend | Is the estate improving or degrading? |
+| Per-Dimension Improvement Velocity | Which dimensions improve fastest/slowest? |
+| Build-to-Assessment Correlation | When a build unit completes, how much does composite improve? |
+| Findings Closure Rate | How quickly are findings remediated? |
+| Finding Recurrence Rate | Same finding types on new pages? (systemic vs page-specific) |
+| Remediation ROI | Which single fix improves the most pages simultaneously? |
+
+### 28.2 Assessment Health Indicators
+
+| Indicator | Healthy | Unhealthy |
+|-----------|---------|-----------|
+| Finding closure rate | >60% within 2 sprints | <30% (accumulating) |
+| Score improvement velocity | Positive trend | Flat or declining |
+| Dimension differentiation | Scores distributed across bands | All clustered |
+| Systemic finding count | Decreasing | Increasing |
+
+---
+
+## 29. Complete Dimension Framework (v2.1 Final)
+
+### 29.1 Core Dimensions (mandatory, weighted — 100% total)
+
+| # | Dimension | Code | Weight | Status |
+|---|-----------|------|--------|--------|
+| 1 | Proposition Lineage | PL | 8% | v2.0 |
+| 2 | Authority Alignment | AA | 8% | Retained |
+| 3 | System-First Adherence | SFA | 8% | v2.0 |
+| 4 | Use Case Coverage | UCC | 6% | Retained |
+| 5 | Data Completeness (6-layer) | DC | 10% | v2.0 expanded |
+| 6 | Situational Awareness Quality | SAQ | 8% | **v2.1 NEW** |
+| 7 | Design System Conformity | DSC | 7% | Retained |
+| 8 | Cognitive Usability (ceiling + disclosure + action proximity) | CU | 8% | **v2.1 expanded** |
+| 9 | Navigation Coherence (spatial + continuity) | NC | 5% | **v2.1 expanded** |
+| 10 | OODA Usability | OODU | 8% | v2.0 |
+| 11 | RBAC & Boundary | RBAC | 4% | Retained |
+| 12 | Cross-Domain Relationships | CDRR | 7% | Retained |
+| 13 | Closed-Loop Contribution | CLC | 5% | v2.0 |
+| 14 | Role Experience | RE | 4% | v2.0 |
+| 15 | Temporal Awareness | TA | 4% | **v2.1 NEW** |
+
+### 29.2 Commander-Specific Dimensions (assessed where applicable)
+
+| # | Dimension | Code | Status |
+|---|-----------|------|--------|
+| 16 | Commander AI Lifecycle | AICL | v2.0 |
+| 17 | Strategy Consumption | SCC | Retained |
+| 18 | Closed-Loop Integrity | CLI | Retained |
+| 19 | Visual Intensity Ceiling | VIC | Retained |
+| 20 | Mission Mode Operational Posture | MMR | **v2.1 reframed** |
+| 21 | Journey Intelligence (full flow) | JI | v2.0 |
+| 22 | Automation Opportunity | AO | v2.0 advisory |
+| 23 | Future Capability Readiness | FCR | v2.0 advisory |
+| 24 | Command Platform Classification | CPC | v2.0 |
+| 25 | Edge State Resilience | ESR | **v2.1 NEW** |
+| 26 | Progressive Disclosure | PD | **v2.1 NEW** |
+| 27 | Action Proximity | AP | **v2.1 NEW** |
+
+### 29.3 Programme-Level Dimensions
+
+| # | Dimension | Code | Status |
+|---|-----------|------|--------|
+| 28 | Proposition Coverage | PC | v2.0 |
+| 29 | Technical Spec Coverage | TSC | v2.0 |
+| 30 | Estate OODA Completeness | EOC | v2.0 |
+| 31 | Cross-Domain Flow Completeness | CDFC | v2.0 |
+| 32 | AI Surface Readiness | ASR | v2.0 |
+| 33 | Navigation Estate Coherence | NEC | v2.0 |
+| 34 | Rationalisation Register | RR | v2.0 |
+| 35 | Spatial Consistency | SC | **v2.1 NEW** |
+| 36 | Assessment Health | AH | **v2.1 NEW** |
 
 ---
 
