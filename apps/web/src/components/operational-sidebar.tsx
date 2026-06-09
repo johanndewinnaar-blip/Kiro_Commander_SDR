@@ -157,24 +157,49 @@ export function OperationalSidebar() {
                 )}
               </button>
               {!collapsed && isExpanded && (
-                <div style={{ marginLeft: '12px', padding: '4px 0 4px 12px', borderLeft: '1px solid rgba(255,255,255,0.14)' }}>
-                  {group.subItems.map((item) => (
-                    <a
-                      key={item.path}
-                      href={item.path}
-                      style={{
-                        height: componentTokens.itemHeight,
-                        display: 'flex',
-                        alignItems: 'center',
-                        padding: '8px 12px',
-                        color: standardTokens.chrome.navText,
-                        fontSize: primitiveTypeScale.caption,
-                        textDecoration: 'none',
-                      }}
-                    >
-                      {item.label}
-                    </a>
-                  ))}
+                <div style={{ marginLeft: '0', padding: '4px 0 4px 0', borderLeft: '1px solid rgba(255,255,255,0.14)', marginTop: '2px' }}>
+                  {group.subItems.map((item, idx) => {
+                    // Section header detection: items starting with "— " or section field
+                    const isSection = 'section' in item && (item as { section?: string }).section;
+                    const prevItem = idx > 0 ? group.subItems[idx - 1] : null;
+                    const showSectionBreak = idx > 0 && 'section' in item && (item as { section?: string }).section && (
+                      !prevItem || !('section' in prevItem) || (prevItem as { section?: string }).section !== (item as { section?: string }).section
+                    );
+
+                    return (
+                      <div key={item.path}>
+                        {showSectionBreak && (
+                          <div style={{
+                            padding: '8px 12px 4px 24px',
+                            fontSize: '9px',
+                            fontWeight: 700,
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.08em',
+                            color: 'rgba(255,255,255,0.35)',
+                            borderTop: idx > 0 ? '1px solid rgba(255,255,255,0.08)' : 'none',
+                            marginTop: idx > 0 ? '4px' : '0',
+                          }}>
+                            {(item as { section?: string }).section}
+                          </div>
+                        )}
+                        <a
+                          href={item.path}
+                          style={{
+                            height: componentTokens.itemHeight,
+                            display: 'flex',
+                            alignItems: 'center',
+                            padding: '6px 12px 6px 24px',
+                            color: standardTokens.chrome.navText,
+                            fontSize: primitiveTypeScale.caption,
+                            textDecoration: 'none',
+                            textAlign: 'left',
+                          }}
+                        >
+                          {item.label}
+                        </a>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>
