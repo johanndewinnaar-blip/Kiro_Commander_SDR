@@ -142,27 +142,18 @@ export const OPERATIONAL_NAV_GROUPS: NavGroup[] = [
       { label: 'Telemetry Coverage', path: '/coverage/telemetry', status: 'SCAFFOLD' },
     ],
   },
-  // Group 11 — Tool Health [Source: v11 shell reference]
-  {
-    id: 'tool-health',
-    label: 'Tool Health',
-    subItems: [
-      { label: 'Tool Health', path: '/tool-health', status: 'SCAFFOLD' },
-      { label: 'Connectors', path: '/tool-health/connectors', status: 'SCAFFOLD' },
-      { label: 'Source Freshness', path: '/tool-health/freshness', status: 'SCAFFOLD' },
-    ],
-  },
-  // Group 12 — Team Pulse [Source: v11 shell reference]
+  // Group 11 — Team Pulse [L2+L3 ONLY — management concern]
   {
     id: 'team-pulse',
     label: 'Team Pulse',
+    badge: 'L2+',
     subItems: [
       { label: 'Workload', path: '/team-pulse/workload', status: 'BUILD' },
       { label: 'SLA Pressure', path: '/team-pulse/sla', status: 'BUILD' },
       { label: 'Escalation Queue', path: '/team-pulse/escalation', status: 'BUILD' },
     ],
   },
-  // Group 13 — Domain Pulse [Source: v11 shell reference]
+  // Group 12 — Domain Pulse [Source: v11 shell reference]
   {
     id: 'domain-pulse',
     label: 'Domain Pulse',
@@ -172,48 +163,69 @@ export const OPERATIONAL_NAV_GROUPS: NavGroup[] = [
       { label: 'Closure Blockers', path: '/domain-pulse/closure-blockers', status: 'BUILD' },
     ],
   },
-  // Group 14 — System Pulse [Source: v11 shell reference]
-  {
-    id: 'system-pulse',
-    label: 'System Pulse',
-    subItems: [
-      { label: 'Engine Health', path: '/system-pulse/engine', status: 'BUILD' },
-      { label: 'Queue Backlog', path: '/system-pulse/queues', status: 'BUILD' },
-      { label: 'Data Freshness', path: '/system-pulse/freshness', status: 'BUILD' },
-    ],
-  },
-  // Group 15 — Platform [Source: v11 shell reference]
+  // Group 13 — Platform [LA ONLY — restructured with System Pulse + Tool Health absorbed]
+  // Source: RBAC rationalisation — System Pulse and Tool Health moved here (LA responsibility)
+  // 6 sub-sections: Overview | Data & Connectors | Rules & Models | AI & Automation | System Health | Audit
   {
     id: 'platform',
     label: 'Platform',
-    badge: 'BUILD',
+    badge: 'LA',
     status: 'BUILD',
     subItems: [
+      // — Overview —
       { label: 'Platform Overview', path: '/platform', status: 'SCAFFOLD' },
+      // — Data & Connectors —
       { label: 'Connectors & Data Sources', path: '/platform/connectors', status: 'SCAFFOLD' },
       { label: 'Data Quality', path: '/platform/data-quality', status: 'BUILD' },
+      { label: 'Tool Health', path: '/tool-health', status: 'BUILD' },
+      { label: 'Connector Health', path: '/tool-health/connectors', status: 'BUILD' },
+      { label: 'Source Freshness', path: '/tool-health/freshness', status: 'BUILD' },
+      // — Rules & Models —
       { label: 'Rule Engine', path: '/platform/rules', status: 'BUILD' },
       { label: 'Rule Validation', path: '/platform/rules/validation', status: 'BUILD' },
       { label: 'Rule Simulation', path: '/platform/rules/simulation', status: 'BUILD' },
       { label: 'Model Management', path: '/platform/models', status: 'BUILD' },
+      { label: 'Model Lifecycle', path: '/platform/models/lifecycle', status: 'BUILD' },
+      // — AI & Automation —
       { label: 'Commander AI', path: '/commander-ai', status: 'BUILD' },
       { label: 'Automation', path: '/platform/automation', status: 'BUILD' },
       { label: 'Feature Availability', path: '/platform/features', status: 'BUILD' },
+      // — System Health (formerly System Pulse — moved here, LA only) —
+      { label: 'Engine Health', path: '/system-pulse/engine', status: 'BUILD' },
+      { label: 'Queue Backlog', path: '/system-pulse/queues', status: 'BUILD' },
+      { label: 'Data Freshness', path: '/system-pulse/freshness', status: 'BUILD' },
+      // — Audit —
       { label: 'Audit & Logs', path: '/platform/audit', status: 'SCAFFOLD' },
     ],
   },
-  // Group 16 — Tenant Admin [Source: v11 shell reference]
+  // Group 14 — Tenant Admin [LA ONLY — restructured into 5 logical sections]
+  // Sections: General | Identity & Access | Policy & Rules | Platform | Audit
   {
     id: 'tenant-admin',
     label: 'Tenant Admin',
-    badge: 'ADMIN',
+    badge: 'LA',
     subItems: [
-      { label: 'Overview', path: '/settings/tenant', status: 'SCAFFOLD' },
-      { label: 'Baseline Configuration', path: '/settings/baselines', status: 'SCAFFOLD' },
-      { label: 'Users & Access', path: '/settings/users-rbac', status: 'SCAFFOLD' },
+      // — General —
+      { label: 'Tenant Overview', path: '/settings/tenant', status: 'SCAFFOLD' },
+      { label: 'Security', path: '/settings/security', status: 'BUILD' },
+      // — Identity & Access —
+      { label: 'Users & RBAC', path: '/settings/users-rbac', status: 'SCAFFOLD' },
+      // — Policy & Rules —
+      { label: 'SLA Configuration', path: '/settings/sla', status: 'BUILD' },
+      { label: 'Routing Configuration', path: '/settings/routing', status: 'BUILD' },
+      { label: 'Validation Rules', path: '/settings/validation', status: 'BUILD' },
+      { label: 'Closure & Reopening', path: '/settings/closure-reopening', status: 'BUILD' },
+      { label: 'P0 / Zero-Day Config', path: '/settings/p0-zero-day', status: 'SCAFFOLD' },
+      { label: 'Automation Boundaries', path: '/settings/automation-boundaries', status: 'BUILD' },
+      { label: 'Missions', path: '/settings/missions', status: 'BUILD' },
       { label: 'Rules & Models', path: '/settings/rules', status: 'SCAFFOLD' },
-      { label: 'AI Configuration', path: '/settings/commander-ai', status: 'SCAFFOLD' },
-      { label: 'Audit', path: '/settings/audit-export', status: 'SCAFFOLD' },
+      // — Platform —
+      { label: 'Connectors & Data Sources', path: '/settings/connectors', status: 'BUILD' },
+      { label: 'Feature Availability', path: '/settings/features', status: 'SCAFFOLD' },
+      { label: 'Commander AI Config', path: '/settings/commander-ai', status: 'BUILD' },
+      { label: 'Baseline Configuration', path: '/settings/baselines', status: 'SCAFFOLD' },
+      // — Audit —
+      { label: 'Audit & Export', path: '/settings/audit-export', status: 'SCAFFOLD' },
     ],
   },
   // Group 17 — Governance [Source: v11 shell reference]
