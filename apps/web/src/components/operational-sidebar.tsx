@@ -10,20 +10,34 @@ import { OPERATIONAL_NAV_GROUPS } from '@/registry/nav-groups';
 /**
  * Operational App Sidebar — Commander SDR (DS-1.0)
  *
- * DS-1.0 §7: 248px expanded / 68px icon rail. Collapsible via hamburger.
- * - Item height 36px, padding 8px 12px, icon 20px
- * - Active item: gold-tinted background + gold left border
- * - Custom scrollbar (6px, subtle thumb)
- * - Hierarchical groups, expand/collapse persisted per user
- * - Icons required (Lucide). Labels in expanded; tooltips in rail (200ms delay)
- * - Chrome is navy gradient both modes
- * - Transition 180ms ease-out
+ * THREE-LEVEL HIERARCHY:
+ *   Level 1: Group (e.g. Platform, Tenant Admin, Cases) — collapsible
+ *   Level 2: Section (e.g. DATA & CONNECTORS, RULES & MODELS) — collapsible sub-node
+ *   Level 3: Item (individual page link) — left-aligned, clickable
  *
- * Source: DESIGN_SYSTEM.md §7
+ * DS-1.0 §7: 248px expanded / 68px icon rail. Collapsible via hamburger.
+ * Source: DESIGN_SYSTEM.md §7, UIAA-3.0 Navigation Rationalisation
  */
 
 const STORAGE_PREFIX = 'commander-sdr.sidebar.';
 const DEFAULT_EXPANDED_GROUP = 'case-management';
+
+/** Group nav items by their section field */
+function groupBySection(items: { label: string; path: string; status: string; section?: string }[]) {
+  const sections: { name: string; items: typeof items }[] = [];
+  let currentSection = '';
+
+  for (const item of items) {
+    const sectionName = item.section || '';
+    if (sectionName !== currentSection) {
+      currentSection = sectionName;
+      sections.push({ name: sectionName, items: [] });
+    }
+    sections[sections.length - 1].items.push(item);
+  }
+
+  return sections;
+}
 
 export function OperationalSidebar() {
   const { collapsed, toggleCollapsed } = useSidebarCollapsed();
@@ -34,6 +48,9 @@ export function OperationalSidebar() {
     }
     return state;
   });
+
+  // Section-level expansion (independent of parent group)
+  const [sectionState, setSectionState] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     const stored: Record<string, boolean> = {};
@@ -48,6 +65,14 @@ export function OperationalSidebar() {
     setExpansionState((prev) => {
       const next = { ...prev, [groupId]: !prev[groupId] };
       localStorage.setItem(`${STORAGE_PREFIX}${groupId}.expanded`, String(next[groupId]));
+      return next;
+    });
+  }
+
+  function toggleSection(sectionKey: string) {
+    setSectionState((prev) => {
+      const next = { ...prev, [sectionKey]: !(prev[sectionKey] ?? true) };
+      localStorage.setItem(`${STORAGE_PREFIX}section.${sectionKey}`, String(next[sectionKey]));
       return next;
     });
   }
@@ -115,12 +140,16 @@ export function OperationalSidebar() {
         </a>
       )}
 
-      {/* Nav groups */}
+      {/* Nav groups — 3-level hierarchy */}
       <div style={{ padding: collapsed ? '4px' : '12px', overflowY: 'auto', flex: 1 }} className="sidebar-scroll">
         {OPERATIONAL_NAV_GROUPS.map((group) => {
           const isExpanded = expansionState[group.id] ?? false;
+          const hasSections = group.subItems.some((item) => item.section);
+          const sections = hasSections ? groupBySection(group.subItems) : null;
+
           return (
-            <div key={group.id} style={{ marginBottom: collapsed ? '4px' : '4px' }}>
+            <div key={group.id} style={{ marginBottom: '4px' }}>
+              {/* LEVEL 1: Group header (collapsible) */}
               <button
                 type="button"
                 onClick={() => !collapsed && toggleGroup(group.id)}
@@ -156,50 +185,101 @@ export function OperationalSidebar() {
                   </>
                 )}
               </button>
+
+              {/* Expanded content */}
               {!collapsed && isExpanded && (
-                <div style={{ marginLeft: '0', padding: '4px 0 4px 0', borderLeft: '1px solid rgba(255,255,255,0.14)', marginTop: '2px' }}>
-                  {group.subItems.map((item, idx) => {
-                    // Section header detection: items starting with "— " or section field
-                    const isSection = 'section' in item && (item as { section?: string }).section;
-                    const prevItem = idx > 0 ? group.subItems[idx - 1] : null;
-                    const showSectionBreak = idx > 0 && 'section' in item && (item as { section?: string }).section && (
-                      !prevItem || !('section' in prevItem) || (prevItem as { section?: string }).section !== (item as { section?: string }).section
-                    );
+                <div style={{ borderLeft: '1px solid rgba(255,255,255,0.14)', marginLeft: '12px', marginTop: '2px' }}>
+
+                  {/* Groups WITH sections → 3-level rendering */}
+                  {sections ? sections.map((section) => {
+                    const sectionKey = `${group.id}.${section.name}`;
+                    const isSectionExpanded = sectionState[sectionKey] ?? true;
 
                     return (
-                      <div key={item.path}>
-                        {showSectionBreak && (
-                          <div style={{
-                            padding: '8px 12px 4px 24px',
-                            fontSize: '9px',
-                            fontWeight: 700,
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.08em',
-                            color: 'rgba(255,255,255,0.35)',
-                            borderTop: idx > 0 ? '1px solid rgba(255,255,255,0.08)' : 'none',
-                            marginTop: idx > 0 ? '4px' : '0',
-                          }}>
-                            {(item as { section?: string }).section}
-                          </div>
+                      <div key={sectionKey} style={{ marginBottom: '2px' }}>
+                        {/* LEVEL 2: Section node (collapsible sub-group) */}
+                        {section.name && (
+                          <button
+                            type="button"
+                            onClick={() => toggleSection(sectionKey)}
+                            aria-expanded={isSectionExpanded}
+                            style={{
+                              width: '100%',
+                              border: 'none',
+                              background: 'transparent',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                              padding: '6px 8px 6px 12px',
+                              cursor: 'pointer',
+                              fontFamily: primitiveFonts.body,
+                              fontSize: '9px',
+                              fontWeight: 700,
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.08em',
+                              color: 'rgba(255,255,255,0.50)',
+                              textAlign: 'left',
+                            }}
+                          >
+                            <span style={{
+                              color: 'rgba(255,255,255,0.35)',
+                              transition: `transform ${primitiveMotion.standard} ${primitiveMotion.easeDefault}`,
+                              transform: isSectionExpanded ? 'rotate(0deg)' : 'rotate(-90deg)',
+                              display: 'inline-block',
+                              fontSize: '8px',
+                            }}>▸</span>
+                            <span style={{ flex: 1 }}>{section.name}</span>
+                          </button>
                         )}
-                        <a
-                          href={item.path}
-                          style={{
-                            height: componentTokens.itemHeight,
-                            display: 'flex',
-                            alignItems: 'center',
-                            padding: '6px 12px 6px 24px',
-                            color: standardTokens.chrome.navText,
-                            fontSize: primitiveTypeScale.caption,
-                            textDecoration: 'none',
-                            textAlign: 'left',
-                          }}
-                        >
-                          {item.label}
-                        </a>
+
+                        {/* LEVEL 3: Child links (left-aligned, under section) */}
+                        {(isSectionExpanded || !section.name) && section.items.map((item) => (
+                          <a
+                            key={item.path}
+                            href={item.path}
+                            style={{
+                              height: '30px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              padding: section.name ? '4px 12px 4px 28px' : '4px 12px 4px 12px',
+                              color: standardTokens.chrome.navText,
+                              fontSize: '11px',
+                              textDecoration: 'none',
+                              textAlign: 'left',
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                            }}
+                          >
+                            {item.label}
+                          </a>
+                        ))}
                       </div>
                     );
-                  })}
+                  }) : (
+                    /* Groups WITHOUT sections → 2-level rendering (flat child items) */
+                    group.subItems.map((item) => (
+                      <a
+                        key={item.path}
+                        href={item.path}
+                        style={{
+                          height: '30px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          padding: '4px 12px 4px 12px',
+                          color: standardTokens.chrome.navText,
+                          fontSize: '11px',
+                          textDecoration: 'none',
+                          textAlign: 'left',
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                        }}
+                      >
+                        {item.label}
+                      </a>
+                    ))
+                  )}
                 </div>
               )}
             </div>
