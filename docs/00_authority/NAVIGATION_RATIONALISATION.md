@@ -891,4 +891,263 @@ Every page in the proposed structure classified by surface type, OODA stage, C2 
 
 ---
 
+## 7. Three-Shell Architecture Analysis
+
+Commander operates three distinct application shells per Spec #39 (Three Application Boundary Doctrine). Each shell has its own chrome, navigation, and identity.
+
+### 7.1 Shell Inventory
+
+| Shell | Brand | Boundary | Pages | Horizontal Nav | Sidebar | Layout File |
+|-------|-------|----------|:-----:|:--------------:|:-------:|-------------|
+| **Operational App** | SEIERTECH \| COMMANDER SDR | Operational | 80 | 5 tabs | 19 groups (expandable) | `apps/web/src/components/shell.tsx` |
+| **Tenant Admin** | SEIERTECH \| COMMANDER SDR · TENANT ADMIN | Tenant Admin | 17 | None | 12 items (flat) | `apps/web/src/app/tenant-admin/layout.tsx` |
+| **Control Plane** | COMMANDER COMMERCIAL CONTROL | Control Plane | 13 | 5 tabs | 12 items (flat) | `apps/web/src/app/control-plane/layout.tsx` |
+
+### 7.2 Shell 1: Operational App (Detailed)
+
+#### Top Bar (56px, navy chrome, mode-invariant)
+
+| Element | Position | Function |
+|---------|----------|----------|
+| Hamburger | Left | Toggle sidebar collapse |
+| Brand Wordmark | Left (after hamburger) | SEIERTECH \| COMMANDER SDR — clickable → home |
+| Search | Centre | 440px, text + filters + commands |
+| Commander AI button | Right | Global AI entry point (gold-bordered) |
+| Mode toggle | Right | Standard ↔ Mission |
+| Notifications | Right | Icon + badge |
+| User avatar | Right | 32px gold-bordered initials → account menu |
+
+#### Horizontal Nav (below top bar, workspace tabs)
+
+```
+Command Centre | Fusion Map | Vulnerabilities | Identity | Architecture
+```
+
+| Tab | Route | Surface Type | Primary Persona |
+|-----|-------|-------------|-----------------|
+| Command Centre | `/` | Command | All |
+| Fusion Map | `/fusion-map` | Intelligence | Security Architect, SOM |
+| Vulnerabilities | `/vulnerabilities` | Intelligence | Vulnerability Analyst |
+| Identity | `/identity` | Intelligence | Identity Specialist |
+| Architecture | `/architecture` | Intelligence | Security Architect |
+
+**Rationalisation Observations:**
+
+| Issue | Detail | Recommendation |
+|-------|--------|----------------|
+| Cases missing from top nav | The most-used surface for analysts (daily primary workspace) has no horizontal shortcut | ADD Cases tab |
+| CISO missing from top nav | Executive entry point is SCAFFOLD but not in horizontal bar | ADD when built (or make role-conditional) |
+| Strategy missing from top nav | SOM's primary policy workspace has no horizontal shortcut | Consider role-conditional tab |
+| All 5 current tabs are Intelligence surfaces | Command Centre is the only non-Intelligence tab. Missing: Investigation, Decision, Governance | Rebalance to represent surface type diversity |
+
+**Recommended Operational Top Nav (option A — static, 7 tabs):**
+
+```
+Command Centre | Cases | Fusion Map | Vulnerabilities | Identity | Architecture | CISO
+```
+
+**Recommended Operational Top Nav (option B — role-adaptive, 5-6 tabs):**
+
+| Role | Tabs Shown |
+|------|-----------|
+| Security Analyst | Command Centre \| Cases \| Identity \| Vulnerabilities \| Assets |
+| SOM | Command Centre \| Cases \| Pulse \| Strategy \| Reporting |
+| CISO | Command Centre \| CISO \| Reporting \| Mission \| Strategy |
+| Security Architect | Command Centre \| Architecture \| Fusion Map \| Exposure \| Coverage |
+| Vulnerability Analyst | Command Centre \| Vulnerabilities \| Exposure \| Cases \| Assets |
+
+Role-adaptive requires RBAC-aware rendering — feasible within existing RBAC infrastructure but adds complexity.
+
+#### Sidebar (248px expanded / 68px rail, navy chrome)
+
+- 19 groups currently (see §1 for full breakdown)
+- Proposed: 8 super-groups (see §4)
+- Custom gold scrollbar, gold active indicator
+- Expand/collapse groups (state persisted per user)
+
+---
+
+### 7.3 Shell 2: Tenant Admin (Detailed)
+
+#### Top Bar (same height as Operational, navy chrome)
+
+| Element | Position | Function |
+|---------|----------|----------|
+| Brand Wordmark | Left | SEIERTECH \| COMMANDER SDR · TENANT ADMIN |
+| Label | Right | "Tenant Administration" (static text) |
+
+**Observations:**
+- No search bar (Tenant Admin has no global search)
+- No Commander AI button (AI config is here but AI interaction is operational)
+- No mode toggle (Tenant Admin is always Standard mode)
+- No notifications
+- No horizontal workspace tabs
+
+**This is the simplest shell.** Appropriate for a configuration boundary.
+
+#### Sidebar (same width as Operational sidebar, navy chrome)
+
+12 items from `tenant-admin-routes.ts`:
+
+| # | Label | Route | Surface Type | Grouping Recommendation |
+|---|-------|-------|-------------|------------------------|
+| 1 | Tenant Overview | /settings/tenant | Configuration | **GENERAL** |
+| 2 | Users & RBAC | /settings/users-rbac | Configuration | **IDENTITY & ACCESS** |
+| 3 | Connectors & Data Sources | /settings/connectors | Configuration | **PLATFORM** |
+| 4 | Feature Availability | /settings/features | Configuration | **PLATFORM** |
+| 5 | SLA Configuration | /settings/sla | Configuration | **POLICY & RULES** |
+| 6 | Routing Configuration | /settings/routing | Configuration | **POLICY & RULES** |
+| 7 | Validation Rules | /settings/validation | Configuration | **POLICY & RULES** |
+| 8 | Closure & Reopening | /settings/closure-reopening | Configuration | **POLICY & RULES** |
+| 9 | P0 / Zero-Day Config | /settings/p0-zero-day | Configuration | **POLICY & RULES** |
+| 10 | Automation Boundaries | /settings/automation-boundaries | Configuration | **POLICY & RULES** |
+| 11 | Commander AI Config | /settings/commander-ai | Configuration | **PLATFORM** |
+| 12 | Audit & Export | /settings/audit-export | Governance | **AUDIT** |
+
+**Additional pages on disk NOT in this sidebar:**
+
+| Route | In Sidebar? | Notes |
+|-------|:-----------:|-------|
+| /settings/security | ❌ | Built (Spec 35) but not in tenant-admin-routes.ts |
+| /settings/missions | ❌ | Built (Spec 37) but not in tenant-admin-routes.ts |
+| /settings/baselines | ❌ | SCAFFOLD, listed in operational sidebar Group 16 only |
+| /settings/rules | ❌ | SCAFFOLD, listed in operational sidebar Group 16 only |
+
+**Rationalisation Recommendations:**
+
+1. Add `/settings/security` and `/settings/missions` to `tenant-admin-routes.ts` (they exist but are unreachable from the Tenant Admin shell)
+2. Group the flat list into 4 logical sections:
+
+```
+TENANT ADMIN SIDEBAR (proposed grouped)
+
+GENERAL
+  ├── Tenant Overview
+  └── Security
+
+IDENTITY & ACCESS
+  └── Users & RBAC
+
+POLICY & RULES
+  ├── SLA Configuration
+  ├── Routing Configuration
+  ├── Validation Rules
+  ├── Closure & Reopening
+  ├── P0 / Zero-Day Config
+  ├── Automation Boundaries
+  └── Missions
+
+PLATFORM
+  ├── Connectors & Data Sources
+  ├── Feature Availability
+  └── Commander AI Config
+
+AUDIT
+  └── Audit & Export
+```
+
+---
+
+### 7.4 Shell 3: Control Plane (Detailed)
+
+#### Top Bar (same height, dark chrome #050505)
+
+| Element | Position | Function |
+|---------|----------|----------|
+| Brand | Left (330px panel) | COMMANDER COMMERCIAL CONTROL |
+| Horizontal nav tabs | Centre | 5 workspace tabs |
+| Search | Right | "Search customers, tenants, licences, features, rules..." |
+| INTERNAL badge | Right | Red border, "INTERNAL" |
+| Operator label | Right | "Operator" |
+
+**Distinct from Operational App:**
+- Different brand treatment (no SEIERTECH, no SDR)
+- INTERNAL badge (permanent environment indicator)
+- No Commander AI button (not available to operators)
+- No mode toggle (Control Plane is always its own dark mode)
+
+#### Horizontal Nav (5 tabs within top bar)
+
+```
+Command Overview | Customers | Tenants | Entitlements | Deployment
+```
+
+| Tab | Route | Surface Type | Notes |
+|-----|-------|-------------|-------|
+| Command Overview | /control-plane | Command | Operator's landing page |
+| Customers | /control-plane/customers | Configuration | Customer management |
+| Tenants | /control-plane/tenants | Configuration | Tenant provisioning |
+| Entitlements | /control-plane/licences | Configuration | Licence/entitlement management |
+| Deployment | /control-plane/deployment | Execution | Release management |
+
+**Observations:**
+- 5 tabs represent the most-frequent operator workflows ✅
+- Remaining 7 items (AI Models, Rule Packs, Baselines, Support, Billing, Audit, Features) accessible only via sidebar
+- No duplication between tabs and sidebar ✅
+
+#### Sidebar (330px, flat, dark panel)
+
+12 items from `CONTROL_PLANE_NAV_ITEMS`:
+
+| # | Label | Route | Surface Type |
+|---|-------|-------|-------------|
+| 1 | Command Overview | /control-plane | Command |
+| 2 | Customers | /control-plane/customers | Configuration |
+| 3 | Tenants | /control-plane/tenants | Configuration |
+| 4 | Licences & Entitlements | /control-plane/licences | Configuration |
+| 5 | Product & Feature Control | /control-plane/features | Configuration |
+| 6 | AI & Model Control | /control-plane/ai-models | Configuration |
+| 7 | Rule & Policy Packs | /control-plane/rule-packs | Configuration |
+| 8 | Baseline Profile Management | /control-plane/baselines | Configuration |
+| 9 | Deployment & Release | /control-plane/deployment | Execution |
+| 10 | Support Operations | /control-plane/support | Execution |
+| 11 | Billing / Usage Evidence | /control-plane/billing | Governance |
+| 12 | Operator Audit | /control-plane/audit | Governance |
+
+**Additional page on disk NOT in this sidebar:**
+
+| Route | In Sidebar? | Notes |
+|-------|:-----------:|-------|
+| /control-plane/entitlements | ❌ | Built (Spec 38) but separate from /control-plane/licences |
+
+**Rationalisation Recommendation:** Control Plane is well-structured. 12 items for a single-persona boundary is acceptable (operator visits all items). Minor recommendation: add `/control-plane/entitlements` to sidebar or merge with `/control-plane/licences`.
+
+#### Page Header (below top bar)
+
+Control Plane has a **unique page header bar** not present in the other shells:
+- Left: breadcrumb (grey uppercase) + page title (24px white bold)
+- Right: "PROD ACTIONS REQUIRE APPROVAL" warning badge (red border)
+
+This is appropriate for an internal operator console — the production-action warning is a permanent safety indicator.
+
+---
+
+### 7.5 Cross-Shell Governance Assessment
+
+| Check | Status | Notes |
+|-------|--------|-------|
+| Three boundaries preserved (Spec #39) | ✅ | Three separate layout.tsx files, three distinct brand treatments |
+| No cross-boundary data leak | ✅ | Control Plane pages don't render tenant data. Tenant Admin doesn't show Seiertech controls |
+| Shell chrome invariant within boundary | ✅ | Each shell has consistent chrome across its pages |
+| Mode toggle only on Operational | ✅ | Tenant Admin and Control Plane don't have Standard/Mission |
+| INTERNAL badge only on Control Plane | ✅ | Environment indicator correctly isolated |
+| Brand differentiation clear | ✅ | Three visually distinct brand treatments |
+| Shell chrome matches DS-1.0 | ⚠️ | Operational shell uses component tokens. Tenant Admin and Control Plane use inline styles (same v1.3.2 pattern) |
+
+---
+
+### 7.6 Shell-Level Rationalisation Summary
+
+| Shell | Current State | Recommendation | Priority |
+|-------|-------------|----------------|----------|
+| **Operational App Top Nav** | 5 Intelligence tabs. Cases (most-used) missing. CISO missing. | Add Cases. Consider role-adaptive or expand to 7 | MEDIUM |
+| **Operational App Sidebar** | 19 groups (too many) | Collapse to 8 super-groups | HIGH |
+| **Tenant Admin Top Bar** | Minimal (brand + label only) | Correct for configuration boundary. No change needed | NONE |
+| **Tenant Admin Sidebar** | 12 flat items (no grouping) | Add 4 logical sections. Add missing routes (/security, /missions) | LOW |
+| **Control Plane Top Nav** | 5 tabs (well-chosen for operator workflow) | No change needed | NONE |
+| **Control Plane Sidebar** | 12 flat items | Add /control-plane/entitlements or merge with /licences | LOW |
+| **Control Plane Page Header** | PROD ACTIONS warning | Appropriate. No change | NONE |
+
+---
+
 **End of Document.**
