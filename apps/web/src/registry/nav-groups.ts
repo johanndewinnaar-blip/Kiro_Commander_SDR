@@ -14,6 +14,8 @@ export interface NavSubItem {
   label: string;
   path: string;
   status: BuildStatus;
+  /** Optional section grouping — when present, a section divider renders before items with a new section value */
+  section?: string;
 }
 
 export interface NavGroup {
@@ -46,16 +48,18 @@ export const OPERATIONAL_NAV_GROUPS: NavGroup[] = [
       { label: 'Case Analytics', path: '/cases/analytics', status: 'BUILD' },
     ],
   },
-  // Group 2 — Mission Control [Source: v11 shell reference]
+  // Group 2 — Mission Control [L2+L3 ONLY — strategic planning]
   {
     id: 'mission-control',
     label: 'Mission Control',
-    badge: 'SCAFFOLD',
+    badge: 'L2+',
     status: 'SCAFFOLD',
     subItems: [
       { label: 'Mission Overview', path: '/mission/overview', status: 'SCAFFOLD' },
       { label: 'Mission Objectives', path: '/mission/objectives', status: 'SCAFFOLD' },
       { label: 'Mission Impact', path: '/mission/impact', status: 'SCAFFOLD' },
+      { label: 'Mission Overlay', path: '/fusion-map/mission', status: 'SCAFFOLD' },
+      { label: 'Mission Configuration', path: '/settings/missions', status: 'BUILD' },
     ],
   },
   // Group 3 — Fusion Map [Source: v11 shell reference]
@@ -65,7 +69,6 @@ export const OPERATIONAL_NAV_GROUPS: NavGroup[] = [
     subItems: [
       { label: 'Relationship Graph', path: '/fusion-map', status: 'SCAFFOLD' },
       { label: 'Blast Radius', path: '/fusion-map/blast-radius', status: 'SCAFFOLD' },
-      { label: 'Mission Overlay', path: '/fusion-map/mission', status: 'SCAFFOLD' },
       { label: 'P0 Overlay', path: '/fusion-map/p0', status: 'SCAFFOLD' },
     ],
   },
@@ -173,29 +176,29 @@ export const OPERATIONAL_NAV_GROUPS: NavGroup[] = [
     status: 'BUILD',
     subItems: [
       // — Overview —
-      { label: 'Platform Overview', path: '/platform', status: 'SCAFFOLD' },
+      { label: 'Platform Overview', path: '/platform', status: 'SCAFFOLD', section: 'OVERVIEW' },
       // — Data & Connectors —
-      { label: 'Connectors & Data Sources', path: '/platform/connectors', status: 'SCAFFOLD' },
-      { label: 'Data Quality', path: '/platform/data-quality', status: 'BUILD' },
-      { label: 'Tool Health', path: '/tool-health', status: 'BUILD' },
-      { label: 'Connector Health', path: '/tool-health/connectors', status: 'BUILD' },
-      { label: 'Source Freshness', path: '/tool-health/freshness', status: 'BUILD' },
+      { label: 'Connectors & Data Sources', path: '/platform/connectors', status: 'SCAFFOLD', section: 'DATA & CONNECTORS' },
+      { label: 'Data Quality', path: '/platform/data-quality', status: 'BUILD', section: 'DATA & CONNECTORS' },
+      { label: 'Tool Health', path: '/tool-health', status: 'BUILD', section: 'DATA & CONNECTORS' },
+      { label: 'Connector Health', path: '/tool-health/connectors', status: 'BUILD', section: 'DATA & CONNECTORS' },
+      { label: 'Source Freshness', path: '/tool-health/freshness', status: 'BUILD', section: 'DATA & CONNECTORS' },
       // — Rules & Models —
-      { label: 'Rule Engine', path: '/platform/rules', status: 'BUILD' },
-      { label: 'Rule Validation', path: '/platform/rules/validation', status: 'BUILD' },
-      { label: 'Rule Simulation', path: '/platform/rules/simulation', status: 'BUILD' },
-      { label: 'Model Management', path: '/platform/models', status: 'BUILD' },
-      { label: 'Model Lifecycle', path: '/platform/models/lifecycle', status: 'BUILD' },
+      { label: 'Rule Engine', path: '/platform/rules', status: 'BUILD', section: 'RULES & MODELS' },
+      { label: 'Rule Validation', path: '/platform/rules/validation', status: 'BUILD', section: 'RULES & MODELS' },
+      { label: 'Rule Simulation', path: '/platform/rules/simulation', status: 'BUILD', section: 'RULES & MODELS' },
+      { label: 'Model Management', path: '/platform/models', status: 'BUILD', section: 'RULES & MODELS' },
+      { label: 'Model Lifecycle', path: '/platform/models/lifecycle', status: 'BUILD', section: 'RULES & MODELS' },
       // — AI & Automation —
-      { label: 'Commander AI', path: '/commander-ai', status: 'BUILD' },
-      { label: 'Automation', path: '/platform/automation', status: 'BUILD' },
-      { label: 'Feature Availability', path: '/platform/features', status: 'BUILD' },
+      { label: 'Commander AI', path: '/commander-ai', status: 'BUILD', section: 'AI & AUTOMATION' },
+      { label: 'Automation', path: '/platform/automation', status: 'BUILD', section: 'AI & AUTOMATION' },
+      { label: 'Feature Availability', path: '/platform/features', status: 'BUILD', section: 'AI & AUTOMATION' },
       // — System Health (formerly System Pulse — moved here, LA only) —
-      { label: 'Engine Health', path: '/system-pulse/engine', status: 'BUILD' },
-      { label: 'Queue Backlog', path: '/system-pulse/queues', status: 'BUILD' },
-      { label: 'Data Freshness', path: '/system-pulse/freshness', status: 'BUILD' },
+      { label: 'Engine Health', path: '/system-pulse/engine', status: 'BUILD', section: 'SYSTEM HEALTH' },
+      { label: 'Queue Backlog', path: '/system-pulse/queues', status: 'BUILD', section: 'SYSTEM HEALTH' },
+      { label: 'Data Freshness', path: '/system-pulse/freshness', status: 'BUILD', section: 'SYSTEM HEALTH' },
       // — Audit —
-      { label: 'Audit & Logs', path: '/platform/audit', status: 'SCAFFOLD' },
+      { label: 'Audit & Logs', path: '/platform/audit', status: 'SCAFFOLD', section: 'AUDIT' },
     ],
   },
   // Group 14 — Tenant Admin [LA ONLY — restructured into 5 logical sections]
@@ -206,26 +209,25 @@ export const OPERATIONAL_NAV_GROUPS: NavGroup[] = [
     badge: 'LA',
     subItems: [
       // — General —
-      { label: 'Tenant Overview', path: '/settings/tenant', status: 'SCAFFOLD' },
-      { label: 'Security', path: '/settings/security', status: 'BUILD' },
+      { label: 'Tenant Overview', path: '/settings/tenant', status: 'SCAFFOLD', section: 'GENERAL' },
+      { label: 'Security', path: '/settings/security', status: 'BUILD', section: 'GENERAL' },
       // — Identity & Access —
-      { label: 'Users & RBAC', path: '/settings/users-rbac', status: 'SCAFFOLD' },
+      { label: 'Users & RBAC', path: '/settings/users-rbac', status: 'SCAFFOLD', section: 'IDENTITY & ACCESS' },
       // — Policy & Rules —
-      { label: 'SLA Configuration', path: '/settings/sla', status: 'BUILD' },
-      { label: 'Routing Configuration', path: '/settings/routing', status: 'BUILD' },
-      { label: 'Validation Rules', path: '/settings/validation', status: 'BUILD' },
-      { label: 'Closure & Reopening', path: '/settings/closure-reopening', status: 'BUILD' },
-      { label: 'P0 / Zero-Day Config', path: '/settings/p0-zero-day', status: 'SCAFFOLD' },
-      { label: 'Automation Boundaries', path: '/settings/automation-boundaries', status: 'BUILD' },
-      { label: 'Missions', path: '/settings/missions', status: 'BUILD' },
-      { label: 'Rules & Models', path: '/settings/rules', status: 'SCAFFOLD' },
+      { label: 'SLA Configuration', path: '/settings/sla', status: 'BUILD', section: 'POLICY & RULES' },
+      { label: 'Routing Configuration', path: '/settings/routing', status: 'BUILD', section: 'POLICY & RULES' },
+      { label: 'Validation Rules', path: '/settings/validation', status: 'BUILD', section: 'POLICY & RULES' },
+      { label: 'Closure & Reopening', path: '/settings/closure-reopening', status: 'BUILD', section: 'POLICY & RULES' },
+      { label: 'P0 / Zero-Day Config', path: '/settings/p0-zero-day', status: 'SCAFFOLD', section: 'POLICY & RULES' },
+      { label: 'Automation Boundaries', path: '/settings/automation-boundaries', status: 'BUILD', section: 'POLICY & RULES' },
+      { label: 'Rules & Models', path: '/settings/rules', status: 'SCAFFOLD', section: 'POLICY & RULES' },
       // — Platform —
-      { label: 'Connectors & Data Sources', path: '/settings/connectors', status: 'BUILD' },
-      { label: 'Feature Availability', path: '/settings/features', status: 'SCAFFOLD' },
-      { label: 'Commander AI Config', path: '/settings/commander-ai', status: 'BUILD' },
-      { label: 'Baseline Configuration', path: '/settings/baselines', status: 'SCAFFOLD' },
+      { label: 'Connectors & Data Sources', path: '/settings/connectors', status: 'BUILD', section: 'PLATFORM' },
+      { label: 'Feature Availability', path: '/settings/features', status: 'SCAFFOLD', section: 'PLATFORM' },
+      { label: 'Commander AI Config', path: '/settings/commander-ai', status: 'BUILD', section: 'PLATFORM' },
+      { label: 'Baseline Configuration', path: '/settings/baselines', status: 'SCAFFOLD', section: 'PLATFORM' },
       // — Audit —
-      { label: 'Audit & Export', path: '/settings/audit-export', status: 'SCAFFOLD' },
+      { label: 'Audit & Export', path: '/settings/audit-export', status: 'SCAFFOLD', section: 'AUDIT' },
     ],
   },
   // Group 17 — Governance [Source: v11 shell reference]
