@@ -9,6 +9,7 @@
 
 import type { CommonFields, SurfaceAttribution } from './common';
 import type { SourceClassification } from './coim';
+import type { ArchitecturalTier } from './architectural-tier';
 
 export interface Asset extends CommonFields {
   /** Canonical entity type discriminator */
@@ -70,6 +71,13 @@ export interface Asset extends CommonFields {
    * Immutable after write; informs but never governs lifecycle/priority.
    */
   sourceClassification?: SourceClassification;
+
+  // ─── AAI-1.0: Asset Architecture Intelligence (additive optional) ───
+
+  /** Architectural tier placement (AAI-1.0 §5). Inferred from classification or manually assigned. */
+  architecturalTier?: ArchitecturalTier;
+  /** Estate node membership (AAI-1.0 §9). Organisational placement within customer topology. */
+  estateNodeId?: string;
 }
 
 // ─── COIM-F: Asset Lifecycle State ──────────────────────────────────────────
