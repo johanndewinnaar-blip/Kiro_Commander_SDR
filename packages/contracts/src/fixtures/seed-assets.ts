@@ -10,6 +10,7 @@
  */
 
 import type { Asset } from '../entities/asset';
+import type { ArchitecturalTier } from '../entities/architectural-tier';
 import { SEED_TENANT, SEED_SOURCE, seedId } from './seed-tenant';
 
 export const seedAssets: Asset[] = [
@@ -29,6 +30,8 @@ export const seedAssets: Asset[] = [
     coverage: { hasEdr: true, hasVulnScan: true, hasPatchManagement: true, hasBackup: true },
     criticality: 5,
     tags: ['web-tier', 'public-facing', 'pci-scope'],
+    architecturalTier: 'compute',
+    estateNodeId: seedId('estate-node', 2),
   },
   {
     id: seedId('asset', 2),
@@ -46,6 +49,8 @@ export const seedAssets: Asset[] = [
     coverage: { hasEdr: true, hasVulnScan: true, hasPatchManagement: true, hasBackup: false },
     criticality: 3,
     tags: ['endpoint', 'corporate', 'executive'],
+    architecturalTier: 'compute',
+    estateNodeId: seedId('estate-node', 5),
   },
   {
     id: seedId('asset', 3),
@@ -63,6 +68,8 @@ export const seedAssets: Asset[] = [
     coverage: { hasEdr: false, hasVulnScan: true, hasPatchManagement: true, hasBackup: true },
     criticality: 5,
     tags: ['database', 'production', 'pci-scope', 'contains-pii'],
+    architecturalTier: 'data',
+    estateNodeId: seedId('estate-node', 2),
   },
   {
     id: seedId('asset', 4),
@@ -148,6 +155,8 @@ export const seedAssets: Asset[] = [
     coverage: { hasEdr: false, hasVulnScan: true, hasPatchManagement: true, hasBackup: true },
     criticality: 5,
     tags: ['firewall', 'perimeter', 'dmz'],
+    architecturalTier: 'perimeter',
+    estateNodeId: seedId('estate-node', 1),
   },
   {
     id: seedId('asset', 9),
@@ -250,6 +259,8 @@ export const seedAssets: Asset[] = [
     coverage: { hasEdr: true, hasVulnScan: true, hasPatchManagement: true, hasBackup: true },
     criticality: 5,
     tags: ['authentication', 'public-facing', 'identity-tier'],
+    architecturalTier: 'identity',
+    estateNodeId: seedId('estate-node', 3),
   },
   {
     id: seedId('asset', 15),
@@ -556,6 +567,8 @@ export const seedAssets: Asset[] = [
     coverage: { hasEdr: true, hasVulnScan: true, hasPatchManagement: true, hasBackup: true },
     criticality: 4,
     tags: ['cicd', 'build-server', 'production'],
+    architecturalTier: 'build_deploy',
+    estateNodeId: seedId('estate-node', 4),
   },
   {
     id: seedId('asset', 33),
@@ -573,6 +586,8 @@ export const seedAssets: Asset[] = [
     coverage: { hasEdr: false, hasVulnScan: true, hasPatchManagement: false, hasBackup: false },
     criticality: 5,
     tags: ['application', 'payment', 'pci-scope', 'public-facing'],
+    architecturalTier: 'application',
+    estateNodeId: seedId('estate-node', 2),
   },
   {
     id: seedId('asset', 34),
@@ -641,6 +656,8 @@ export const seedAssets: Asset[] = [
     coverage: { hasEdr: false, hasVulnScan: false, hasPatchManagement: false, hasBackup: false },
     criticality: 2,
     tags: ['iot', 'hvac', 'building-management'],
+    architecturalTier: 'iot_ot',
+    estateNodeId: seedId('estate-node', 5),
   },
   {
     id: seedId('asset', 38),
